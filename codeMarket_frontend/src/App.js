@@ -58,7 +58,7 @@ function App() {
 
     try {
       const { ethereum } = window;
-      console.log("recipient.vule",this.recipient)
+      // console.log("recipient.vule",this.recipient)
       if (ethereum) {
         const provider = new ethers.providers.Web3Provider(ethereum);
         const signer = provider.getSigner();
@@ -68,7 +68,7 @@ function App() {
 
         console.log("Initialize payment");
           let nftTxn = await nftContract.createProject({ 
-            title: this.recipient,
+            title: "test",
             price: 10,
             content: "test text",
             state: 0,
