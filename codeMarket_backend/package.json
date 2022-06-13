@@ -1,0 +1,23 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {},
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "ethers": "^5.5.3",
+    "koa": "^2.13.4",
+    "koa-bodyparser": "^4.3.0",
+    "koa-proxies": "^0.12.1",
+    "koa-router": "^10.1.1",
+    "koa2-cors": "^2.0.6",
+    "log4js": "^6.4.2",
+    "pg": "^8.7.3"
+  },
+  "devDependencies": {
+    "eslint": "^8.12.0"
+  }
+}
