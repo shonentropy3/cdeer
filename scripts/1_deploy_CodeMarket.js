@@ -30,31 +30,9 @@ async function main() {
             title: "test",
             price: 10,
             content: baseTokenURI,
-            state: 0,
             time: 786942864435
              });
     await txn.wait()
-
-
-    // View content
-    viewContent = await contract.ownerOf(0);
-    await txn.wait()
-    console.log("content:",viewContent)
-
-    // View content
-    viewContent = await contract.ownerOf(0);
-    await txn.wait()
-    console.log("content:",viewContent)
-
-    // // withdraw
-    // withdrawMetamask = await contract.withdraw("0x70997970C51812dc3A010C7d01b50e0d17dc79C8");
-    // await txn.wait()
-
-
-    
-
-    
-
 
     // // Get all token IDs of the owner
     // let tokens = await contract.tokensOfOwner(owner.address)

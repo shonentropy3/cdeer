@@ -2,7 +2,7 @@ const job = require('./job');
 
 
 function init() {
-    // global.lock_get_logs = 0;
+    global.lock_get_logs = 0;
 }
 
 function run() {

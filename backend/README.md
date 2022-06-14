@@ -1,9 +1,9 @@
-#  serve
+#  backend
 
 
 ## 安装依赖
 ```
-cd server
+cd  backend
 npm install
 ```
 

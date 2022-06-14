@@ -1,5 +1,5 @@
-// import USDR_ADDR from './deployments/ERC721Demo.json';
-const USDR_ADDR = require('./deployments/ERC721Demo.json');
+// import USDR_ADDR from './deployments/CodeMarket.json';
+const USDR_ADDR = require('./deployments/CodeMarket.json');
 const logger = require('./logger');
 const dbUtil = require('./dbUtil');
 const { ethers, network } = require("hardhat");
@@ -23,6 +23,7 @@ async function insertLog() {
 //监听
 async function _insertLog() {
     let latest = await rpcProvider.getBlockNumber();
+    console.log(latest)
     let last_check_block = await dbUtil.getLastCheckBlock();
     if (last_check_block >= latest) return; //区块已监听过了
 
@@ -35,13 +36,13 @@ async function _insertLog() {
         // address: "0x7a2088a1bFc9d81c55368AE168C2C02570cB814F",
         topics: [
         // 和topic一样
-            ethers.utils.id("CreateProject(address,uint256,string,uint256,string,uint8,uint256)")
+            ethers.utils.id("CreateProject(address,uint256,string,uint256,string,uint256)")
         ],
         fromBlock,
         toBlock
     }
     let logs = await rpcProvider.getLogs(filter);
-    const CreatProjectEvent = new ethers.utils.Interface(["event CreateProject(address indexed msgSenderAdddress, uint256 indexed tokenId, string title, uint256 price,string content, uint8 state, uint256 time)"]);
+    const CreatProjectEvent = new ethers.utils.Interface(["event CreateProject(address indexed msgSenderAdddress, uint256 indexed tokenId, string title, uint256 price, string content, uint256 time)"]);
     if (logs.length > 0) {
         let txs = logs.map(ele => {
             let decodedData = CreatProjectEvent.parseLog(ele);
@@ -51,13 +52,12 @@ async function _insertLog() {
                 title: decodedData.args.title,
                 price: decodedData.args.price,
                 content: decodedData.args.content,
-                state: decodedData.args.state,
                 time: decodedData.args.time,
             }
         });
         let value = ``;
         for (const v of txs) {
-            value += `('${v.msgSenderAdddress}',${v.tokenId},'${v.title}',${v.price},'${v.content}',${v.state},now()),`
+            value += `('${v.msgSenderAdddress}',${v.tokenId},'${v.title}',${v.price},'${v.content}',0,now()),`
         }
         await dbUtil.insertPro(value.substring(0,(value.length-1))); // 写入数据库
         // console.log("insert tokenId: ", (value))

@@ -1,13 +1,13 @@
 #  结构
 upchain--code--market：hardhat项目
-codeMarket_backend：node后端项目
-codeMarket_frontend：react前端项目
+backend：node后端项目
+frontend：react前端项目
 
 ## 安装依赖
 ```
 upchain--code--market：hardhat项目
-codeMarket_backend：node后端项目
-codeMarket_frontend：react前端项目
+backend：node后端项目
+frontend：react前端项目
 
 分别进入项目路径下，安装依赖。
 npm install
@@ -28,10 +28,10 @@ npx hardhat node
 本地部署：
 npx hardhat run scripts/1_deploy_CodeMarket.js --network dev
 
-(codeMarket_frontend目录下)：
+(frontend目录下)：
 npm run start
 
-(codeMarket_backend目录下)：
+(backend目录下)：
 node main.js
 ```
 

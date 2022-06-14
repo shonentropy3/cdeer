@@ -1,29 +1,10 @@
 {
-  "contractName": "ERC721Demo",
+  "contractName": "CodeMarket",
   "abi": [
     {
       "inputs": [],
       "stateMutability": "nonpayable",
       "type": "constructor"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "msgSenderAdddress",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint8",
-          "name": "a",
-          "type": "uint8"
-        }
-      ],
-      "name": "AddEvent",
-      "type": "event"
     },
     {
       "anonymous": false,
@@ -110,12 +91,6 @@
         },
         {
           "indexed": false,
-          "internalType": "uint8",
-          "name": "state",
-          "type": "uint8"
-        },
-        {
-          "indexed": false,
           "internalType": "uint256",
           "name": "time",
           "type": "uint256"
@@ -167,13 +142,6 @@
       ],
       "name": "Transfer",
       "type": "event"
-    },
-    {
-      "inputs": [],
-      "name": "add",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
     },
     {
       "inputs": [
@@ -232,17 +200,12 @@
               "type": "string"
             },
             {
-              "internalType": "uint8",
-              "name": "state",
-              "type": "uint8"
-            },
-            {
               "internalType": "uint256",
               "name": "time",
               "type": "uint256"
             }
           ],
-          "internalType": "struct ERC721Demo.ProjectContent",
+          "internalType": "struct CodeMarket.ProjectContent",
           "name": "projectContent_",
           "type": "tuple"
         }
@@ -293,6 +256,24 @@
         }
       ],
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_tokenId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint8",
+          "name": "_state",
+          "type": "uint8"
+        }
+      ],
+      "name": "modifyState",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -475,7 +456,7 @@
           "type": "address"
         }
       ],
-      "name": "tokensAmountOfMsg",
+      "name": "tokensAmount",
       "outputs": [
         {
           "internalType": "uint256",

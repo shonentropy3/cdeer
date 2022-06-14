@@ -12,25 +12,6 @@
         {
           "indexed": true,
           "internalType": "address",
-          "name": "msgSenderAdddress",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint8",
-          "name": "a",
-          "type": "uint8"
-        }
-      ],
-      "name": "AddEvent",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
           "name": "owner",
           "type": "address"
         },

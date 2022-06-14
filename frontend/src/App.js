@@ -1,8 +1,8 @@
 import { useAxios } from "use-axios-client";
 import { useEffect, useState } from 'react';
 import './App.css';
-import contract from './contracts/deployments/abi/ERC721Demo.json';
-import address from './contracts/deployments/ERC721Demo.json';
+import contract from './contracts/deployments/abi/CodeMarket.json';
+import address from './contracts/deployments/CodeMarket.json';
 import { ethers } from 'ethers';
 
 
@@ -58,28 +58,21 @@ function App() {
 
     try {
       const { ethereum } = window;
-      // console.log("recipient.vule",this.recipient)
       if (ethereum) {
         const provider = new ethers.providers.Web3Provider(ethereum);
         const signer = provider.getSigner();
         const nftContract = new ethers.Contract(contractAddress.address, abi, signer);
-
-        nftContract.add();
-
+        
+        console.log("countract",nftContract)
         console.log("Initialize payment");
           let nftTxn = await nftContract.createProject({ 
             title: "test",
             price: 10,
             content: "test text",
-            state: 0,
             time: 786942864435
           });
-          console.log(this.recipient)
-
         console.log("Mining... please wait");
         await nftTxn.wait();
-
-
       } else {
         console.log("Ethereum object does not exist");
       }
@@ -105,7 +98,6 @@ function App() {
     }else if (loading || !data) {
       return "Loading...";
     }else{
-      console.log(data); 
       for (let project of data) {
         responseData.push( // 循环每本书，构建 JSX，push 到数组中
           <div>
@@ -114,7 +106,6 @@ function App() {
             <div>标题：{project.title}</div>
             <div>价格：{project.price}</div>
             <div>项目内容：{project.pro_content}</div>
-            <div>项目状态：{project.pro_state}</div>
             <div>创建时间：{project.pro_time}</div>
             <hr />
           </div>
@@ -140,11 +131,7 @@ function App() {
 
   const mintNftButton = () => {
     return (
-
-     
-      
       <button onClick={mintNftHandler} className='cta-button mint-nft-button'>
-
         Mint NFT
       </button>
     )

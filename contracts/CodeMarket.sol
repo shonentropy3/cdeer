@@ -16,8 +16,6 @@ contract CodeMarket is ERC721, Ownable{
     event CreateProject(address indexed msgSenderAdddress, uint256 indexed tokenId, string title, uint price, 
             string content, uint time); 
 
-    event AddEvent(address indexed msgSenderAdddress, uint8 a); 
-
     struct ProjectContent{
         string title;
         uint price;

@@ -19,10 +19,10 @@ async function writeAbiAddr(artifacts, addr, name, network){
   deployments["address"] = addr;
   deployments["contractName"] = artifacts.contractName;
   //写入react前端
-  const deploymentPathDeploy = path.resolve(__dirname, `../codeMarket_frontend/src/contracts/deployments/${name}.json`);
+  const deploymentPathDeploy = path.resolve(__dirname, `../frontend/src/contracts/deployments/${name}.json`);
   await writeFile(deploymentPathDeploy, JSON.stringify(deployments, null, 2));
   //写入node后端
-  const deploymentPathDeploy_node = path.resolve(__dirname, `../codeMarket_backend/deployments/${name}.json`);
+  const deploymentPathDeploy_node = path.resolve(__dirname, `../backend/deployments/${name}.json`);
   await writeFile(deploymentPathDeploy_node, JSON.stringify(deployments, null, 2));
   await writeLog(deployments, name, network);
 
@@ -34,10 +34,10 @@ async function writeAbiAddr(artifacts, addr, name, network){
   const deploymentPath = path.resolve(__dirname, `../deployments/abi/${abis["contractName"]}.json`);
   await writeFile(deploymentPath, JSON.stringify(abis, null, 2));
   // 写入node后端
-  const deploymentPath_node = path.resolve(__dirname, `../codeMarket_backend/deployments/abi/${abis["contractName"]}.json`);
+  const deploymentPath_node = path.resolve(__dirname, `../backend/deployments/abi/${abis["contractName"]}.json`);
   await writeFile(deploymentPath_node, JSON.stringify(abis, null, 2));
   // 写入react前端
-  const deploymentPathReact = path.resolve(__dirname, `../codeMarket_frontend/src/contracts/deployments/abi/${abis["contractName"]}.json`);
+  const deploymentPathReact = path.resolve(__dirname, `../frontend/src/contracts/deployments/abi/${abis["contractName"]}.json`);
   await writeFile(deploymentPathReact, JSON.stringify(abis, null, 2));
 
 }
