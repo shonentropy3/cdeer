@@ -16,8 +16,6 @@ function _succeed(ctx, extraData={}) {
 }
 
 async function testGet(ctx) {
-    let queryData = ctx.request.query;
-
     let succeed = true;
     if (succeed) {
         return _succeed(ctx, { 'foo': 'bar' });
@@ -40,7 +38,6 @@ async function getProject(ctx) {
     }
     return;
 }
-
 
 async function testPost(ctx) {
     let queryData = ctx.request.body;

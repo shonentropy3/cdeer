@@ -1,7 +1,7 @@
-const test = require('./controller/test');
+const upchain = require('./controller/getInfo');
 
 module.exports = [
-    ['get', '/test/get', test.testGet],
-    ['post', '/test/post', test.testPost],
-    ['get', '/test/getProject', test.getProject],
+    ['get', '/upchain/get', upchain.testGet],
+    ['post', '/upchain/post', upchain.testPost],
+    ['get', '/upchain/getProject', upchain.getProject],
 ];

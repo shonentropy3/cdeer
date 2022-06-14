@@ -5,7 +5,6 @@ import contract from './contracts/deployments/abi/CodeMarket.json';
 import address from './contracts/deployments/CodeMarket.json';
 import { ethers } from 'ethers';
 
-
 const contractAddress = address;
 const abi = contract.abi;
 
@@ -54,7 +53,10 @@ function App() {
     }
   }
 
+
+
   const mintNftHandler = async () => {
+   
 
     try {
       const { ethereum } = window;
@@ -62,8 +64,8 @@ function App() {
         const provider = new ethers.providers.Web3Provider(ethereum);
         const signer = provider.getSigner();
         const nftContract = new ethers.Contract(contractAddress.address, abi, signer);
-        
-        console.log("countract",nftContract)
+        // const kokens = nftContract.tokensAmount("0x70997970C51812dc3A010C7d01b50e0d17dc79C8")
+        // console.log("countract",kokens)
         console.log("Initialize payment");
           let nftTxn = await nftContract.createProject({ 
             title: "test",
@@ -142,6 +144,9 @@ function App() {
   }, [])
 
 
+
+  const [name, setName] = useState('');
+console.log(setName)
   return (
 
 
@@ -150,6 +155,16 @@ function App() {
       <h1>Code—Market</h1>
 
       <div>
+
+
+
+
+      <div>
+      <input ype="text" onChange={(value) => setName(value)} value={name} />
+				{/* <input type="text" ref={input => this.input = input} defaultValue="Hello"/>
+				<button onClick={this.search.bind(this)}></button> */}
+			</div>
+
         <div >
                 <br />title:
                 <input type="text" v-model="recipient" />

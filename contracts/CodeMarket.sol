@@ -4,7 +4,6 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-
 import "hardhat/console.sol";
 
 
@@ -55,16 +54,15 @@ contract CodeMarket is ERC721, Ownable{
     }
     
     
-    function tokensAmount(address _account) external view returns (uint) {
-
+    function tokensAmount(address _account) public view returns (uint256) {
         uint tokenCount = balanceOf(_account);
-
+        console.log("tokenCount",tokenCount);
         return tokenCount;
     }
     
 
     function  modifyState(uint _tokenId,uint8 _state) external {
-        // require(msg.sender == (ERC721)._owners[_tokenId], "No modification permission");
+        require(msg.sender == _owners[_tokenId], "No modification permission");
         state[_tokenId] = _state;
     }    
   
