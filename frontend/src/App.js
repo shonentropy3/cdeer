@@ -13,7 +13,7 @@ function App() {
 
   const [currentAccount, setCurrentAccount] = useState(null);
   const { data, error, loading } = useAxios({
-    url: "http://127.0.0.1:3030/test/getProject"
+    url: "http://127.0.0.1:3030/upchain/getProject"
   });
   const checkWalletIsConnected = async () => {
     const { ethereum } = window;
@@ -115,17 +115,6 @@ function App() {
       }
       console.log(responseData) 
       return responseData;
-      const props = data.reduce((acc,item) => 
-        [...new Set([...acc, ...Object.keys(item)])]
-      , []);
-      console.log(props)
-
-    const records = data.map(item =>
-      props.map(key => item[key])
-    );
-
-    console.log(records);
-      console.log(data.id)
     } 
     }
   
