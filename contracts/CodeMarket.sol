@@ -22,9 +22,9 @@ contract CodeMarket is ERC721, Ownable{
         uint time;
     }
     
-    Counters.Counter private _tokenIds;
+    Counters.Counter private tokenIds;
 
-    mapping(uint256 => ProjectContent) _projectContent;
+    mapping(uint256 => ProjectContent) projectContent;
     
     mapping(uint256 => uint8) state;    
 
@@ -33,24 +33,24 @@ contract CodeMarket is ERC721, Ownable{
     }
     
 
-    function createProject(ProjectContent memory projectContent_) external payable{
-        require(projectContent_.price >= 0, "The price cannot be negative.");
-        uint256 tokenId = _tokenIds.current();        
-        _projectContent[tokenId] = ProjectContent({
-            title: projectContent_.title,
-            price: projectContent_.price,
-            content: projectContent_.content,
-            time: projectContent_.time
+    function createProject(ProjectContent memory _projectContent) external payable{
+        require(_projectContent.price >= 0, "The price cannot be negative.");
+        uint256 tokenId = tokenIds.current();        
+        projectContent[tokenId] = ProjectContent({
+            title: _projectContent.title,
+            price: _projectContent.price,
+            content: _projectContent.content,
+            time: _projectContent.time
         });
 
         _safeMint(msg.sender, tokenId);
         state[tokenId] = 0;
         console.log("Invoke the address: ",msg.sender);
-        _tokenIds.increment();   
+        tokenIds.increment();   
 
         console.log("tokenId:", tokenId);
-        emit CreateProject(msg.sender, tokenId, projectContent_.title, projectContent_.price, 
-            projectContent_.content, projectContent_.time);
+        emit CreateProject(msg.sender, tokenId, _projectContent.title, _projectContent.price, 
+            _projectContent.content, _projectContent.time);
     }
     
     
@@ -60,7 +60,10 @@ contract CodeMarket is ERC721, Ownable{
         return tokenCount;
     }
     
-
+    function state(uint256 _tokentd) public view returns (uint8) {
+        return state[_tokentd];
+    }
+    
     function  modifyState(uint _tokenId,uint8 _state) external {
         require(msg.sender == _owners[_tokenId], "No modification permission");
         state[_tokenId] = _state;

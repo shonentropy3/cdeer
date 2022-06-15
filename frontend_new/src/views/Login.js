@@ -57,15 +57,22 @@ function Login() {
             const provider = new ethers.providers.Web3Provider(ethereum);
             const signer = provider.getSigner();
             const nftContract = new ethers.Contract(contractAddress.address, abi, signer);
-            
-            console.log("countract",nftContract)
             console.log("Initialize payment");
-            // console.log(account);
+            
             let obj = {}
             for (let i = 0; i < account.length; i++) {
                 obj[account[i].title] = account[i].value
             }
-              let nftTxn = await nftContract.createProject(obj);
+            obj.price = Number(obj.price)
+            obj.time = Number(obj.time)
+            console.log(obj);
+              let nftTxn = await nftContract.createProject({
+                title: obj.title,
+                price: Number(obj.price),
+                content: obj.content,
+                time: Number(obj.time)
+              });
+              console.log(nftTxn);
             console.log("Mining... please wait");
             await nftTxn.wait();
           } else {
@@ -172,7 +179,7 @@ function Login() {
             <div className="box">
                 <h1>Code-Market</h1>
                 {
-                    account.map((item,index)=><div key={index} className="inner">
+                    account.map((item,index) => <div key={index} className="inner">
                         <div className="title">
                             {item.title}:
                         </div>
