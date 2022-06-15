@@ -1,0 +1,84 @@
+#Login{
+    // color: aqua;
+    width: 100%;
+    .box{
+        width: 25%;
+        margin: 5% auto 0;
+        box-sizing: border-box;
+        padding: 50px;
+        border-radius: 20px;
+        box-shadow: 0 0 2px 1px gray;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        .inner{
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            .title{
+                width: 100px;
+                text-align: center;
+            }
+            input{
+                outline: none;
+                border: none;
+                border-bottom: 1px solid #000;
+                box-sizing: border-box;
+                padding: 0 10px;
+            }
+        }
+        .btn{
+            width: 200px;
+            height: 50px;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 0 2px 1px rgb(167, 167, 167);
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .connect{
+            background-color: orange;
+        }
+        .login{
+            background-color: rgb(6, 169, 234);
+        }
+    }
+    .ul{
+        width: 1000px;
+        margin: 20px auto 0;
+        box-sizing: border-box;
+        padding: 25px 35px;
+        border-radius: 10px;
+        box-shadow: 0 0 2px 1px gray;
+        min-height: 500px;
+        .search{
+            width: 180px;
+            height: 30px;
+            padding: 8px 0;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid rgb(188, 188, 188);
+            border-radius: 2px;
+            margin-bottom: 20px;
+            input{
+                outline: none;
+                border: none;
+            }
+        }
+        .li{
+            width: 950px;
+            height: 150px;
+            margin: 0 auto;
+            padding: 21px 0;
+            border-top: 1px solid rgb(206, 206, 206);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+    }
+}
