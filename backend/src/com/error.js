@@ -5,7 +5,7 @@ const cors = require('koa2-cors');
 const KoaRouter = require('koa-router');
 const router = new KoaRouter();
 const bodyParser = require('koa-bodyparser');
-const rules = require('./router');
+const rules = require('../../config/router');
 
 
 app.use(cors({

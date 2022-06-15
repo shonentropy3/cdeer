@@ -1,5 +1,5 @@
 const db = require('./postgresql');
-const logger = require('./logger');
+const logger = require('../com/logger');
 
 
 async function get() {

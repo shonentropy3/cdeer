@@ -1,5 +1,5 @@
-const dbUtil = require('../dbUtil');
-const db = require('../postgresql');
+const dbUtil = require('../../db/dbUtil');
+const db = require('../../db/postgresql');
 
 function _fail(ctx, errmsg, errcode) {
     if (!errmsg) errmsg = '';

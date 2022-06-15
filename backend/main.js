@@ -1,9 +1,9 @@
 const dotenv = require('dotenv');
 const path = require('path');
 dotenv.config({ 'path': path.join(path.resolve(__dirname, '.'), '.env') });
-const logger = require('./logger');
-const cronJob = require('./cronJob');
-const app = require('./koa');
+const logger = require('./src/com/logger');
+const cronJob = require('./src/com/task');
+const app = require('./src/com/error');
 
 
 process.on('uncaughtException', (err, origin) => {
@@ -18,7 +18,6 @@ function run() {
     // 启动http
     app.listen(process.env.PORT);
     logger.info(`App listening on ${process.env.PORT}`);
-
     // 定时任务
     cronJob();
 }

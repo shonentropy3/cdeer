@@ -1,4 +1,4 @@
-const upchain = require('./controller/getInfo');
+const upchain = require('../src/controller/getInfo/getAccountInfo');
 
 module.exports = [
     ['get', '/upchain/get', upchain.testGet],

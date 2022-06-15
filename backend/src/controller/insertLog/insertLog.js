@@ -1,9 +1,9 @@
 // import USDR_ADDR from './deployments/CodeMarket.json';
-const USDR_ADDR = require('./deployments/CodeMarket.json');
-const logger = require('./logger');
-const dbUtil = require('./dbUtil');
+const USDR_ADDR = require('../../../deployments/CodeMarket.json');
+const logger = require('../../com/logger');
+const dbUtil = require('../../db/dbUtil');
 const { ethers, network } = require("hardhat");
-const { rpcProvider } = require('./provider');
+const { rpcProvider } = require('../../com/provider');
 
 
 async function insertLog() {
