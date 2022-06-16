@@ -1,5 +1,6 @@
 const dbUtil = require('../../db/dbUtil');
 const db = require('../../db/postgresql');
+const result = require('../../com/utils/result');
 
 function _fail(ctx, errmsg, errcode) {
     if (!errmsg) errmsg = '';
@@ -50,9 +51,40 @@ async function testPost(ctx) {
     }
 }
 
+async function insertLabel(ctx) {
+    let queryData = ctx.request.body;
+    console.log(queryData)
+    if (!queryData || queryData.length == 0) return _fail(ctx,'Failed to insert label',"Parameter error");
+    // let sql = `
+    // insert into project_log(sender_adddress,token_id,title,price,pro_content,pro_state,pro_time) VALUES ${insertDatas};
+    // `;
+
+    // let sql = `insert into project_label(token_id,pro_content,recruiting_role,pro_label,pro_type,create_time) 
+    // VALUES (167844,'ipfs://QmZbWNKJPAjxXuNFSEaksCJVd1M6DaKQViJBYPK2BdpDEP/','{"ok":1,"ok":2}','{"ok":1,"ok":2}','{"ok":1,"ok":2}',now());
+    // `;
+    let pro_content = queryData[0];
+    let recruiting_role = queryData[1];
+    let pro_label = queryData[2];
+    let pro_type = queryData[3];
+    
+    let sql = `insert into project_label(pro_content,recruiting_role,pro_label,pro_type,create_time) 
+    VALUES ('${pro_content}','${recruiting_role}','${pro_label}','${pro_type}',now());
+    `;
+    try {
+        let num = await db.batchInsert(sql);
+        console.log(num);
+        ctx.response.body = Object.assign(num);
+    } catch (err) {
+        console.log('Failed to insert label', { sql }, err);
+        return result.fail(ctx,'Failed to insert label',err);
+    }
+    return result.succeed(ctx);
+}
+
 
 module.exports = {
     testGet,
     testPost,
     getProject,
+    insertLabel,
 };

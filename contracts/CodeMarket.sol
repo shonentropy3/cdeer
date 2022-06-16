@@ -32,7 +32,6 @@ contract CodeMarket is ERC721, Ownable{
 
     }
     
-
     function createProject(ProjectContent memory _projectContent) external payable{
         require(_projectContent.price >= 0, "The price cannot be negative.");
         uint256 tokenId = tokenIds.current();        

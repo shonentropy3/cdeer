@@ -75,6 +75,17 @@ function Login() {
               console.log(nftTxn);
             console.log("Mining... please wait");
             await nftTxn.wait();
+
+            //  将角色，项目标签数据存入数据库
+            let data = ["pro_content","recruiting_role","pro_label","pro_type"];
+            axios.post(`http://127.0.0.1:3030/upchain/insertLabel`,data)
+            .then(res=>{
+                console.log('res=>',res);            
+            })
+
+
+
+
           } else {
             console.log("Ethereum object does not exist");
           }
@@ -154,6 +165,14 @@ function Login() {
             {
                 title: 'time',
                 value: ''
+            },
+            {
+              title: '角色',
+              value: '{"role1":"开发团队","role2":"开发工程师","role2":"产品经理"}'
+            },
+            {
+                title: '项目标签',
+                value: '{"项目标签1":"需求分析","项目标签2":"产品优化","项目标签3":"技术难题"}'
             },
         ]
     )
