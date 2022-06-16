@@ -62,12 +62,46 @@ function Login() {
             for (let i = 0; i < account.length; i++) {
                 obj[account[i].title] = account[i].value
             }
-                        //  将角色，项目标签数据存入数据库
-            let data = ["pro_content","recruiting_role","pro_type"];
-            axios.post(`http://127.0.0.1:3030/upchain/insertLabel`,data)
+            // obj.price = Number(obj.price)
+            // obj.time = Number(obj.time)
+            // console.log('==>',obj);
+
+            // ===============
+            //  将角色，项目标签数据存入数据库
+            // 内容,角色,项目类型
+            if (tuan.length === 0 && ge === null && pjc.length === 0) {
+              alert('角色、项目类型不能为空')
+              return
+            }
+            let role = ''
+            let project = ''
+            if (tuan.length === 0) {
+              role = ge
+            }else{
+              tuan.forEach((e,i)=>{
+                role+=e
+                if (i != tuan.length-1) {
+                  role+=','
+                }
+              })
+            }
+            pjc.forEach((e,i)=>{
+              project+=e
+              if (i != pjc.length-1) {
+                project+=','
+              }
+            })
+
+            console.log(account[3].value,'<===>',role,'<===>',project);
+            
+            // return
+            let data = [account[3],role,project];
+            axios.post(`http://192.168.1.7:3030/upchain/insertLabel`,data)
+
             .then(res=>{
                 console.log('res=>',res);            
             })
+
 
             let nftTxn = await nftContract.createProject({
               title: obj.title,
@@ -77,6 +111,7 @@ function Login() {
             });
             console.log("Mining... please wait");
             await nftTxn.wait();
+
 
 
           } else {
@@ -125,14 +160,194 @@ function Login() {
                     </div>
                 );
         }
+        console.log(data.state);
     }
 
-    // 数据绑定
+    // 个人角色类型
+    const individual = [
+      {
+        value: 1001,
+        name: '开发工程师'
+      },
+      {
+        value: 1002,
+        name: '设计师'
+      },
+      {
+        value: 1003,
+        name: '产品经理'
+      },
+      {
+        value: 1004,
+        name: '测试工程师'
+      }
+    ]
+
+    // 团队角色类型
+    const team = [
+      {
+        value: 2001,
+        name: '开发工程师'
+      },
+      {
+        value: 2002,
+        name: '设计师'
+      },
+      {
+        value: 2003,
+        name: '产品经理'
+      },
+      {
+        value: 2004,
+        name: '测试工程师'
+      }
+    ]
+
+    // 项目类型
+    const project = [
+      {
+        value: 3001,
+        name: 'Web网站'
+      },
+      {
+        value: 3002,
+        name: 'APP开发'
+      },
+      {
+        value: 3003,
+        name: '微信公众号'
+      },
+      {
+        value: 3004,
+        name: '小程序'
+      },
+      {
+        value: 3005,
+        name: 'HTML5应用'
+      },
+      {
+        value: 3006,
+        name: '其他项目'
+      },
+    ]
+
+    // 角色选择(输出)
+    const roleBox = () => {
+      if (role === '1') {
+        return(  <div className="check">
+                      选择具体角色
+                        {
+                          individual.map((item,index)=> <div className="result" key={index}>
+                            <input type="radio" value={item.value} name="role" onChange={e=>{get_ge(e)}}/>{item.name}
+                          </div> )
+                        }
+                </div> 
+        )
+      }
+      if (role === '2') {
+        return(  <div className="check">
+                      选择具体角色
+                        {
+                          team.map((item,index)=> <div className="result" key={index}>
+                            <input type="checkbox" value={item.value}  name="role" onChange={e=>{get_tuan(e)}}/>{item.name}
+                          </div> )
+                        }
+                </div> 
+        )
+      }
+    }
+
+    // 类型选择(输出)
+    const typeBox = () => {
+      return(
+        <div className="check">
+                      选择您的项目类型（可多选）
+                        {
+                          project.map((item,index)=> <div className="result" key={index}>
+                          <input type="checkbox" value={item.value} name="role" onChange={e=>{get_pjc(e)}}/>{item.name}
+                        </div> )
+                        }
+                </div> 
+        
+      )
+    }
+
+    // 角色类型绑定
+    let get_type = e => {
+      role = e.target.defaultValue
+      Set_role(role)
+    }
+    // 输入绑定
     let get_account = (e,i) =>{
         account[i].value = e.target.value;
         Set_account([...account])
     }
+    // 个人角色绑定
+    let get_ge = e => {
+      let res = e.target.defaultValue
+      ge = res
+      Set_ge(ge)
+    }
+    // 团队角色绑定
+    let get_tuan = e => {
+      let res = e.target.defaultValue
+      for (let i = 0; i < tuan.length; i++) {
+        if (res === tuan[i]) {
+          tuan.splice(i,1)
+          Set_tuan([...tuan])
+          return
+        }
+      }
+      tuan.push(res)
+      Set_tuan([...tuan])
+    }
+    let get_pjc = e => {
+      let res = e.target.defaultValue
+      for (let i = 0; i < pjc.length; i++) {
+        if (res === pjc[i]) {
+          pjc.splice(i,1)
+          Set_pjc([...pjc])
+          console.log(pjc);
+          return
+        }
+      }
+      pjc.push(res)
+      Set_pjc([...pjc])
+      console.log(pjc);
+    }
 
+
+    // 角色类型
+    let [role,Set_role] = useState(0)
+    // 输入数据
+    let [account,Set_account] = useState(
+      [
+          {
+              title: 'title',
+              value: ''
+          },
+          {
+              title: 'price',
+              value: ''
+          },
+          {
+              title: 'content',
+              value: ''
+          },
+          {
+              title: 'time',
+              value: ''
+          }
+      ]
+    )
+    // 个人角色
+    let [ge,Set_ge] = useState(null)
+    // 团队角色
+    let [tuan,Set_tuan] = useState([])
+    // 项目类型
+    let [pjc,Set_pjc] = useState([])
+    
+  
     // 首页数据
     let [data,Set_data] = useState({
         detail: '',
@@ -140,35 +355,7 @@ function Login() {
     })
     // 错误码
     let [error,Set_error] = useState('')
-    // input数据
-    let [account,Set_account] = useState(
-        [
-            {
-                title: 'title',
-                value: ''
-            },
-            {
-                title: 'price',
-                value: ''
-            },
-            {
-                title: 'content',
-                value: ''
-            },
-            {
-                title: 'time',
-                value: ''
-            },
-            {
-              title: '角色',
-              value: '{"role1":"开发团队","role2":"开发工程师","role2":"产品经理"}'
-            },
-            {
-                title: '项目标签',
-                value: '{"项目标签1":"需求分析","项目标签2":"产品优化","项目标签3":"技术难题"}'
-            },
-        ]
-    )
+    
 
     useEffect(() => {
         checkWalletIsConnected();
@@ -177,6 +364,7 @@ function Login() {
                 data.detail = res.data
                 data.state = 1
                 Set_data({...data})
+                // console.log('==>',data);
             })
             .catch( err => {
                 data.state = 2
@@ -199,6 +387,23 @@ function Login() {
                     </div>
                     )
                 }
+                <div className="role_type">
+                  <div className="check">
+                        选择您招募的角色类型
+                        <input type="radio" value={1} name="type" onChange={e=>{get_type(e)}}/>招募个人
+                        <input type="radio"  value={2} name="type" onChange={e=>{get_type(e)}}/>招募团队
+                  </div>
+                  {roleBox()}
+                </div>
+                <div className="pjc_type">
+                  {typeBox()}
+                </div>
+                {/* {
+                  list.map(()=> <div className="checkbox">
+                      
+                  </div>
+                  )
+                } */}
                 {currentAccount ? mintNftButton() : connectWalletButton()}
             </div>
             <div className="ul">
