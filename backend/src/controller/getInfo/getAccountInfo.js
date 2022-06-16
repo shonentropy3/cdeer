@@ -64,11 +64,10 @@ async function insertLabel(ctx) {
     // `;
     let pro_content = queryData[0];
     let recruiting_role = queryData[1];
-    let pro_label = queryData[2];
-    let pro_type = queryData[3];
+    let pro_type = queryData[2];
     
-    let sql = `insert into project_label(pro_content,recruiting_role,pro_label,pro_type,create_time) 
-    VALUES ('${pro_content}','${recruiting_role}','${pro_label}','${pro_type}',now());
+    let sql = `insert into project_label(pro_content,recruiting_role,pro_type,create_time) 
+    VALUES ('${pro_content}','${recruiting_role}','${pro_type}',now());
     `;
     try {
         let num = await db.batchInsert(sql);

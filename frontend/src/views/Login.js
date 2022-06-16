@@ -10,7 +10,6 @@ function Login() {
 
     const [currentAccount, setCurrentAccount] = useState(null);
 
-    
     const checkWalletIsConnected = async () => {
         const { ethereum } = window;
     
@@ -63,27 +62,21 @@ function Login() {
             for (let i = 0; i < account.length; i++) {
                 obj[account[i].title] = account[i].value
             }
-            obj.price = Number(obj.price)
-            obj.time = Number(obj.time)
-            console.log(obj);
-              let nftTxn = await nftContract.createProject({
-                title: obj.title,
-                price: Number(obj.price),
-                content: obj.content,
-                time: Number(obj.time)
-              });
-              console.log(nftTxn);
-            console.log("Mining... please wait");
-            await nftTxn.wait();
-
-            //  将角色，项目标签数据存入数据库
-            let data = ["pro_content","recruiting_role","pro_label","pro_type"];
+                        //  将角色，项目标签数据存入数据库
+            let data = ["pro_content","recruiting_role","pro_type"];
             axios.post(`http://127.0.0.1:3030/upchain/insertLabel`,data)
             .then(res=>{
                 console.log('res=>',res);            
             })
 
-
+            let nftTxn = await nftContract.createProject({
+              title: obj.title,
+              price: Number(obj.price),
+              content: obj.content,
+              time: Number(obj.time)
+            });
+            console.log("Mining... please wait");
+            await nftTxn.wait();
 
 
           } else {
