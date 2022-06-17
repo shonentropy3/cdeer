@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import contract from '../contracts/deployments/abi/CodeMarket.json';
 import address from '../contracts/deployments/CodeMarket.json';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, } from 'react';
 import '../css/login.scss';
 import axios from 'axios'
 const contractAddress = address;
@@ -84,25 +84,26 @@ function Login() {
             // ===============
             //  将角色，项目标签数据存入数据库
             // 内容,角色,项目类型
-            if (tuan.length === 0 && ge === null && pjc.length === 0) {
-              alert('角色、项目类型不能为空')
-              return
-            }
+            // if (tuan.length === 0 && ge === null && pjc.length === 0) {
+            //   alert('角色、项目类型不能为空')
+            //   return
+            // }
             let role = ''
             let project = ''
-            if (tuan.length === 0) {
-              role = ge
-            }else{
+            // if (tuan.length === 0) {
+            //   role = ge
+            // }else{
+            // }
               tuan.forEach((e,i)=>{
                 role+=e
-                if (i != tuan.length-1) {
+                if (i !== tuan.length-1) {
                   role+=','
                 }
               })
-            }
+            
             pjc.forEach((e,i)=>{
               project+=e
-              if (i != pjc.length-1) {
+              if (i !== pjc.length-1) {
                 project+=','
               }
             })
@@ -140,22 +141,14 @@ function Login() {
         }
     }
 
-    const connectWalletButton = () => {
-        return (
-          <button onClick={connectWalletHandler} className='btn connect'>  
-          {/* 未登录 */}
-            Connect Wallet
-          </button>
-        )
-    }
-
-    const mintNftButton = () => {
-        return (
-          <button onClick={mintNftHandler} className='btn login'>
-          {/* 已登录 */}
-            Mint NFT
-          </button>
-        )
+    // 登陆/下单按钮
+    const buttonModel = () => {
+      if (currentAccount) {
+        return <button onClick={mintNftHandler} className='btn login'> Mint NFT </button>
+      }
+      if (!currentAccount) {
+          return <button onClick={connectWalletHandler} className='btn connect'> Connect Wallet </button>
+      }
     }
 
     const responseDate = () => {
@@ -163,7 +156,7 @@ function Login() {
             return "Loading...";
         }
         if (data.state === 2) {
-            return "Error:",error;
+            return "Error:"+error;
         }
         if (data.state === 1) {
             return data.detail.map(
@@ -181,24 +174,24 @@ function Login() {
     }
 
     // 个人角色类型
-    const individual = [
-      {
-        value: 1001,
-        name: '开发工程师'
-      },
-      {
-        value: 1002,
-        name: '设计师'
-      },
-      {
-        value: 1003,
-        name: '产品经理'
-      },
-      {
-        value: 1004,
-        name: '测试工程师'
-      }
-    ]
+    // const individual = [
+    //   {
+    //     value: 1001,
+    //     name: '开发工程师'
+    //   },
+    //   {
+    //     value: 1002,
+    //     name: '设计师'
+    //   },
+    //   {
+    //     value: 1003,
+    //     name: '产品经理'
+    //   },
+    //   {
+    //     value: 1004,
+    //     name: '测试工程师'
+    //   }
+    // ]
 
     // 团队角色类型
     const team = [
@@ -250,61 +243,67 @@ function Login() {
 
     // 角色选择(输出)
     const roleBox = () => {
-      if (role === '1') {
-        return(  <div className="check">
-                      选择具体角色
+      // if (role === '1') {
+      //   return(  <div className="check">
+      //                 选择具体角色
+      //                   {
+      //                     individual.map((item,index)=> <div className="result" key={index}>
+      //                       <input type="radio" value={item.value} name="role" onChange={e=>{get_ge(e)}}/>{item.name}
+      //                     </div> )
+      //                   }
+      //           </div> 
+      //   )
+      // }
+      // if (role === '2') {
+      // }
+        return <>
+                      <p>选择具体角色</p>
+                      <div className="result">
                         {
-                          individual.map((item,index)=> <div className="result" key={index}>
-                            <input type="radio" value={item.value} name="role" onChange={e=>{get_ge(e)}}/>{item.name}
-                          </div> )
-                        }
-                </div> 
-        )
-      }
-      if (role === '2') {
-        return(  <div className="check">
-                      选择具体角色
-                        {
-                          team.map((item,index)=> <div className="result" key={index}>
+                          team.map((item,index)=> <div key={index}>
                             <input type="checkbox" value={item.value}  name="role" onChange={e=>{get_tuan(e)}}/>{item.name}
                           </div> )
                         }
-                </div> 
-        )
-      }
+                      </div>
+                        
+                </> 
+        
     }
 
     // 类型选择(输出)
     const typeBox = () => {
       return(
-        <div className="check">
-                      选择您的项目类型（可多选）
+        <>
+                      <p>选择您的项目类型（可多选）</p>
+                      <div className="result">
                         {
                           project.map((item,index)=> <div className="result" key={index}>
-                          <input type="checkbox" value={item.value} name="role" onChange={e=>{get_pjc(e)}}/>{item.name}
-                        </div> )
+                            <input type="checkbox" value={item.value} name="role" onChange={e=>{get_pjc(e)}}/>{item.name}
+                          </div> )
                         }
-                </div> 
+                      </div>
+                        
+        </> 
         
       )
     }
 
     // 角色类型绑定
-    let get_type = e => {
-      role = e.target.defaultValue
-      Set_role(role)
-    }
+    // let get_type = e => {
+    //   role = e.target.defaultValue
+    //   Set_role(role)
+    // }
     // 输入绑定
     let get_account = (e,i) =>{
         account[i].value = e.target.value;
         Set_account([...account])
     }
     // 个人角色绑定
-    let get_ge = e => {
-      let res = e.target.defaultValue
-      ge = res
-      Set_ge(ge)
-    }
+    // let get_ge = e => {
+    //   let res = e.target.defaultValue
+    //   ge = res
+    //   Set_ge(ge)
+    // }
     // 团队角色绑定
     let get_tuan = e => {
       let res = e.target.defaultValue
@@ -336,30 +335,31 @@ function Login() {
     // 发布订单数
     let[tokens,Set_tokens] = useState(0)
     // 角色类型
-    let [role,Set_role] = useState(0)
+    // let [role,Set_role] = useState(0)
     // 输入数据
     let [account,Set_account] = useState(
       [
           {
-              title: 'title',
+              title: '项目名称',
               value: ''
           },
           {
-              title: 'price',
+              title: '项目预算',
               value: ''
           },
           {
-              title: 'content',
-              value: ''
+            title: '项目周期',
+            value: ''
           },
           {
-              title: 'time',
+              title: '项目描述',
               value: ''
           }
+          
       ]
     )
     // 个人角色
-    let [ge,Set_ge] = useState(null)
+    // let [ge,Set_ge] = useState(null)
     // 团队角色
     let [tuan,Set_tuan] = useState([])
     // 项目类型
@@ -374,7 +374,9 @@ function Login() {
     // 错误码
     let [error,Set_error] = useState('')
     
+     
 
+    
     useEffect(() => {
         checkWalletIsConnected();
         axios.get('http://192.168.1.7:3030/upchain/getProject')
@@ -382,8 +384,7 @@ function Login() {
                 data.detail = res.data
                 data.state = 1
                 Set_data({...data})
-                // console.log('==>',data);
-            })
+            }) 
             .catch( err => {
                 data.state = 2
                 Set_data({...data})
@@ -394,43 +395,51 @@ function Login() {
       }, [])
 
 
+
     return(
         <div id="Login">
             <div className="box">
                 <h1>Code-Market</h1>
                 {
-                    account.map((item,index) => <div key={index} className="inner">
+                    account.map((item,index) => <div key={index} className={`inner`}>
                         <div className="title">
-                            {item.title}:
+                            {item.title}
                         </div>
-                        <input type="text" onChange={(e)=>{get_account(e,index)}} />
+                        <div className="content">
+                          {
+                            index !== account.length - 1 ? 
+                            <>
+                              <input className={`${'data'+index}`} type="text" onChange={(e)=>{get_account(e,index)}} />
+                              {index === 1 ? '元' : ''}
+                              {index === 2 ? '天' : ''}
+                            </>
+                            :
+                            <>
+                              <textarea name="" id="" cols="30" rows="10"></textarea>
+                            </>
+                          }
+                          
+                        </div>
+                        
                     </div>
                     )
                 }
-                <div className="role_type">
-                  <div className="check">
+                <div className="type">
+                  {/* <div className="check">
                         选择您招募的角色类型
                         <input type="radio" value={1} name="type" onChange={e=>{get_type(e)}}/>招募个人
                         <input type="radio"  value={2} name="type" onChange={e=>{get_type(e)}}/>招募团队
-                  </div>
+                  </div> */}
                   {roleBox()}
                 </div>
-                <div className="pjc_type">
+                <div className="type">
                   {typeBox()}
                 </div>
                 <div>
                       发布项目总数：{tokens}
                 </div>
-                {/* <div>
-                      状态：{tokens}
-                </div> */}
-                {/* {
-                  list.map(()=> <div className="checkbox">
-                      
-                  </div>
-                  )
-                } */}
-                {currentAccount ? mintNftButton() : connectWalletButton()}
+                {buttonModel()}
+
             </div>
             <div className="ul">
                 <div className="search">

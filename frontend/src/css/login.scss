@@ -14,20 +14,74 @@
         justify-content: center;
         .inner{
             display: flex;
-            align-items: center;
+            // align-items: center;
+            justify-content: space-between;
             margin-bottom: 30px;
+            
+            width: 800px;
+            .content{
+                width: 650px;
+            }
             .title{
                 width: 100px;
                 text-align: center;
+                font-size: 20px;
             }
             input{
                 outline: none;
-                border: none;
-                border-bottom: 1px solid #000;
-                box-sizing: border-box;
-                padding: 0 10px;
+                border: 1px solid #cad3de;
+                padding: 10px;
+                border-radius: 5px;
+            }
+            textarea{
+                width: 650px;
+                height: 80px;
+                resize:none ;
+                outline: none;
+                border: 1px solid #cad3de;
+                padding: 10px;
+                border-radius: 5px;
+            }
+            .data0{
+                width: 650px;
+            }
+            .data1{
+                width: 250px;
+                margin-right: 20px;
+            }
+            .data2{
+                width: 250px;
+                margin-right: 20px;
             }
         }
+        // 多选框
+        .type{
+            width: 800px;
+            margin-bottom: 50px;
+            p{
+                font-size: 20px;
+                letter-spacing: 1px;
+                font-weight: 600;
+            }
+            .result{
+                display: flex;
+                font-size: 15px;
+                color: rgb(79, 79, 79);
+                div{
+                    margin-right: 30px;
+                    display: flex;
+                    align-items: center;
+                    &:last-child{
+                        margin-right: 0;
+                    }
+                    input{
+                        width: 30px;
+                        height: 30px;
+                    }
+                }
+            }
+        }
+        // 登陆按钮
         .btn{
             width: 200px;
             height: 50px;
@@ -45,6 +99,7 @@
             background-color: rgb(6, 169, 234);
         }
     }
+    // 数据展示
     .ul{
         width: 1000px;
         margin: 20px auto 0;
