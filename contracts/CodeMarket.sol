@@ -59,12 +59,12 @@ contract CodeMarket is ERC721, Ownable{
         return tokenCount;
     }
     
-    function state(uint256 _tokentd) public view returns (uint8) {
-        return state[_tokentd];
+    function _state(uint256 _tokenId) public view returns (uint8) {
+        return state[_tokenId];
     }
     
-    function  modifyState(uint _tokenId,uint8 _state) external {
-        require(msg.sender == _owners[_tokenId], "No modification permission");
+    function  modifyState(uint _tokenId,uint8 _state) public {
+        require(msg.sender == ownerOf(_tokenId), "No modification permission");
         state[_tokenId] = _state;
     }    
   

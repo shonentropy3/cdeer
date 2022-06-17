@@ -48,6 +48,25 @@ function Login() {
         }
     }
 
+    const tokensAmount = async () => {
+      try {
+        const { ethereum } = window;
+        if (ethereum) {
+          const provider = new ethers.providers.Web3Provider(ethereum);
+          const signer = provider.getSigner();
+          const nftContract = new ethers.Contract(contractAddress.address, abi, signer);
+          let num = await nftContract.tokensAmount("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
+          Set_tokens(JSON.parse(num))
+        }
+       } catch (err) {
+          console.log(err);
+        }
+
+    }
+
+
+
+
     const mintNftHandler = async () => {
   
         try {
@@ -62,10 +81,6 @@ function Login() {
             for (let i = 0; i < account.length; i++) {
                 obj[account[i].title] = account[i].value
             }
-            // obj.price = Number(obj.price)
-            // obj.time = Number(obj.time)
-            // console.log('==>',obj);
-
             // ===============
             //  将角色，项目标签数据存入数据库
             // 内容,角色,项目类型
@@ -95,13 +110,15 @@ function Login() {
             console.log(account[3].value,'<===>',role,'<===>',project);
             
             // return
-            let data = [account[3],role,project];
+            let data = [account[3].value,role,project];
             axios.post(`http://192.168.1.7:3030/upchain/insertLabel`,data)
 
             .then(res=>{
                 console.log('res=>',res);            
             })
-
+            .catch(err=>{
+              console.log(err);
+            })
 
             let nftTxn = await nftContract.createProject({
               title: obj.title,
@@ -316,7 +333,8 @@ function Login() {
       console.log(pjc);
     }
 
-
+    // 发布订单数
+    let[tokens,Set_tokens] = useState(0)
     // 角色类型
     let [role,Set_role] = useState(0)
     // 输入数据
@@ -371,6 +389,8 @@ function Login() {
                 Set_data({...data})
                 Set_error(err)
             })
+
+            
       }, [])
 
 
@@ -398,6 +418,12 @@ function Login() {
                 <div className="pjc_type">
                   {typeBox()}
                 </div>
+                <div>
+                      发布项目总数：{tokens}
+                </div>
+                {/* <div>
+                      状态：{tokens}
+                </div> */}
                 {/* {
                   list.map(()=> <div className="checkbox">
                       

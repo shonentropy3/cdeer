@@ -26,6 +26,20 @@ async function main() {
              });
     await txn.wait()
 
+
+    state = await contract._state(0);
+    console.log("old",state)
+
+    tokensAmount = await contract.tokensAmount("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
+    console.log("tokensAmount",tokensAmount)
+
+    modifyState = await contract.modifyState(0,1);
+    await modifyState.wait() 
+
+    stateNow = await contract._state(0);
+    console.log("now",stateNow)
+
+
     let artifactT21 = await artifacts.readArtifact("CodeMarket");
     await writeAbiAddr(artifactT21, contract.address, "CodeMarket", network.name);
 
