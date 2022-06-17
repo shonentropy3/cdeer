@@ -67,18 +67,21 @@ function Publish() {
             //   return
             // }
 
-            let data = [account[3].value,tuan,pjc];
-            data = JSON.stringify(data)
+            // let data = [account[3].value,tuan,pjc];
+            let data = `[${account[3].value},"{${tuan}}","{${pjc}}"]`;
+            let para = {"proLabel":data}
+            // data = JSON.stringify(data)
             console.log(data);
             // return
-            axios.post(`http://192.168.1.7:3030/upchain/insertLabel`,data)
 
+            axios.post(`http://192.168.1.7:3030/upchain/insertLabel`,para)
             .then(res=>{
                 console.log('res=>',res);            
             })
             .catch(err=>{
               console.log('err==>',err);
             })
+
             let nftTxn = await nftContract.createProject({
               title: account[0].value,
               price: Number(account[1].value),

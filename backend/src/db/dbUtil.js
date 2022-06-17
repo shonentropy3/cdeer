@@ -13,6 +13,17 @@ async function get() {
     return records;
 }
 
+async function getLabel(proContent) {
+    let records = [];
+    let sql =`SELECT recruiting_role,pro_type FROM project_label WHERE pro_content = ${proContent};`;
+    try {
+        records = await db.get(sql);
+    } catch (err) {
+        console.log('dbUtil get failed', { sql }, err);
+    }
+    return records;
+}
+
 async function update(table, where, data) {
     let num = 0;
     try {
@@ -108,4 +119,5 @@ module.exports = {
     insertPro,
     updateLastCheckBlock,
     update,
+    getLabel,
 };

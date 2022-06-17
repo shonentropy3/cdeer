@@ -24,9 +24,7 @@ contract CodeMarket is ERC721, Ownable{
     
     Counters.Counter private tokenIds;
 
-    mapping(uint256 => ProjectContent) projectContent;
-    
-    mapping(uint256 => uint8) state;    
+    mapping(uint256 => ProjectContent) private projectContent; 
 
     constructor() ERC721("Create NFT ProjectContent","CPC") {
 
@@ -59,13 +57,6 @@ contract CodeMarket is ERC721, Ownable{
         return tokenCount;
     }
     
-    function _state(uint256 _tokenId) public view returns (uint8) {
-        return state[_tokenId];
-    }
-    
-    function  modifyState(uint _tokenId,uint8 _state) public {
-        require(msg.sender == ownerOf(_tokenId), "No modification permission");
-        state[_tokenId] = _state;
-    }    
+
   
 }

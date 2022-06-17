@@ -53,6 +53,7 @@ async function testPost(ctx) {
 
 async function insertLabel(ctx) {
     let queryData = ctx.request.body;
+    queryData = JSON.parse(queryData.proLabel)
     console.log(queryData)
     if (!queryData || queryData.length == 0) return _fail(ctx,'Failed to insert label',"Parameter error");
     // let sql = `

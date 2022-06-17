@@ -6,4 +6,5 @@ module.exports = [
     ['get', '/upchain/getProject', upchain.getProject],
     // 将项目中角色、项目标签存入数据库
     ['post', '/upchain/insertLabel', upchain.insertLabel],
+
 ];

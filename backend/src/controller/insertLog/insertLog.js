@@ -46,6 +46,8 @@ async function insertLog() {
             });
             let value = ``;
             for (const v of txs) {
+                let pro_type = dbUtil.getLabel(v.content);
+                console.log(pro_type);
                 value += `('${v.msgSenderAdddress}',${v.tokenId},'${v.title}',${v.price},'${v.content}',0,now()),`
             }
             await dbUtil.insertPro(value.substring(0,(value.length-1))); 
