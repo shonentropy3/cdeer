@@ -1,12 +1,12 @@
+import '../css/publish.scss'
 import { ethers } from 'ethers';
 import contract from '../contracts/deployments/abi/CodeMarket.json';
 import address from '../contracts/deployments/CodeMarket.json';
 import { useEffect, useState, } from 'react';
-import '../css/login.scss';
 import axios from 'axios'
 const contractAddress = address;
 const abi = contract.abi;
-function Login() {
+function Publish() {
 
     const [currentAccount, setCurrentAccount] = useState(null);
 
@@ -48,25 +48,6 @@ function Login() {
         }
     }
 
-    const tokensAmount = async () => {
-      try {
-        const { ethereum } = window;
-        if (ethereum) {
-          const provider = new ethers.providers.Web3Provider(ethereum);
-          const signer = provider.getSigner();
-          const nftContract = new ethers.Contract(contractAddress.address, abi, signer);
-          let num = await nftContract.tokensAmount("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
-          Set_tokens(JSON.parse(num))
-        }
-       } catch (err) {
-          console.log(err);
-        }
-
-    }
-
-
-
-
     const mintNftHandler = async () => {
   
         try {
@@ -76,11 +57,8 @@ function Login() {
             const signer = provider.getSigner();
             const nftContract = new ethers.Contract(contractAddress.address, abi, signer);
             console.log("Initialize payment");
+
             
-            let obj = {}
-            for (let i = 0; i < account.length; i++) {
-                obj[account[i].title] = account[i].value
-            }
             // ===============
             //  将角色，项目标签数据存入数据库
             // 内容,角色,项目类型
@@ -88,44 +66,24 @@ function Login() {
             //   alert('角色、项目类型不能为空')
             //   return
             // }
-            let role = ''
-            let project = ''
-            // if (tuan.length === 0) {
-            //   role = ge
-            // }else{
-            // }
-              tuan.forEach((e,i)=>{
-                role+=e
-                if (i !== tuan.length-1) {
-                  role+=','
-                }
-              })
-            
-            pjc.forEach((e,i)=>{
-              project+=e
-              if (i !== pjc.length-1) {
-                project+=','
-              }
-            })
 
-            console.log(account[3].value,'<===>',role,'<===>',project);
-            
+            let data = [account[3].value,tuan,pjc];
+            data = JSON.stringify(data)
+            console.log(data);
             // return
-            let data = [account[3].value,role,project];
             axios.post(`http://192.168.1.7:3030/upchain/insertLabel`,data)
 
             .then(res=>{
                 console.log('res=>',res);            
             })
             .catch(err=>{
-              console.log(err);
+              console.log('err==>',err);
             })
-
             let nftTxn = await nftContract.createProject({
-              title: obj.title,
-              price: Number(obj.price),
-              content: obj.content,
-              time: Number(obj.time)
+              title: account[0].value,
+              price: Number(account[1].value),
+              content: account[2].value,
+              time: Number(account[3].value)
             });
             console.log("Mining... please wait");
             await nftTxn.wait();
@@ -136,12 +94,15 @@ function Login() {
             console.log("Ethereum object does not exist");
           }
     
-        } catch (err) {
-          console.log(err);
+        } 
+        catch (err) {
+        //   console.log(err);
         }
     }
 
+
     // 登陆/下单按钮
+    
     const buttonModel = () => {
       if (currentAccount) {
         return <button onClick={mintNftHandler} className='btn login'> Mint NFT </button>
@@ -151,27 +112,6 @@ function Login() {
       }
     }
 
-    const responseDate = () => {
-        if (data.state === 0) {
-            return "Loading...";
-        }
-        if (data.state === 2) {
-            return "Error:"+error;
-        }
-        if (data.state === 1) {
-            return data.detail.map(
-                    (item, index) => <div key={index} className="li" >
-                        <div>创建地址：{item.sender_adddress}</div>
-                        <div>NFT-ID：{item.token_id}</div>
-                        <div>标题：{item.title}</div>
-                        <div>价格：{item.price}</div>
-                        <div>项目内容：{item.pro_content}</div>
-                        <div>创建时间：{item.pro_time}</div>
-                    </div>
-                );
-        }
-        console.log(data.state);
-    }
 
     // 个人角色类型
     // const individual = [
@@ -196,50 +136,48 @@ function Login() {
     // 团队角色类型
     const team = [
       {
-        value: 2001,
+        value: 'kfgcs',
         name: '开发工程师'
       },
       {
-        value: 2002,
+        value: 'sjs',
         name: '设计师'
       },
       {
-        value: 2003,
+        value: 'cpjl',
         name: '产品经理'
       },
       {
-        value: 2004,
+        value: 'csgcs',
         name: '测试工程师'
-      }
-    ]
+      }]
 
     // 项目类型
-    const project = [
-      {
-        value: 3001,
+    const project = [{
+        value: 'web',
         name: 'Web网站'
       },
       {
-        value: 3002,
-        name: 'APP开发'
+        value: 'app',
+        name: 'App开发'
       },
       {
-        value: 3003,
+        value: 'wechat',
         name: '微信公众号'
       },
       {
-        value: 3004,
+        value: 'applets',
         name: '小程序'
       },
       {
-        value: 3005,
+        value: 'html5',
         name: 'HTML5应用'
       },
       {
-        value: 3006,
+        value: 'other',
         name: '其他项目'
-      },
-    ]
+      }
+      ]
 
     // 角色选择(输出)
     const roleBox = () => {
@@ -297,6 +235,7 @@ function Login() {
     let get_account = (e,i) =>{
         account[i].value = e.target.value;
         Set_account([...account])
+        // console.log(e);
     }
     // 个人角色绑定
     // let get_ge = e => {
@@ -329,126 +268,83 @@ function Login() {
       }
       pjc.push(res)
       Set_pjc([...pjc])
-      console.log(pjc);
     }
 
-    // 发布订单数
-    let[tokens,Set_tokens] = useState(0)
-    // 角色类型
+        // 角色类型
     // let [role,Set_role] = useState(0)
     // 输入数据
     let [account,Set_account] = useState(
-      [
-          {
-              title: '项目名称',
+        [
+            {
+                title: '项目名称',
+                value: ''
+            },
+            {
+                title: '项目预算',
+                value: ''
+            },
+            {
+              title: '项目周期',
               value: ''
-          },
-          {
-              title: '项目预算',
-              value: ''
-          },
-          {
-            title: '项目周期',
-            value: ''
-          },
-          {
-              title: '项目描述',
-              value: ''
-          }
-          
-      ]
-    )
-    // 个人角色
-    // let [ge,Set_ge] = useState(null)
-    // 团队角色
-    let [tuan,Set_tuan] = useState([])
-    // 项目类型
-    let [pjc,Set_pjc] = useState([])
-    
-  
-    // 首页数据
-    let [data,Set_data] = useState({
-        detail: '',
-        state: 0,    // 0: loading; 1: success; 2: error
-    })
-    // 错误码
-    let [error,Set_error] = useState('')
-    
-     
-
-    
-    useEffect(() => {
-        checkWalletIsConnected();
-        axios.get('http://192.168.1.7:3030/upchain/getProject')
-            .then( res => {
-                data.detail = res.data
-                data.state = 1
-                Set_data({...data})
-            }) 
-            .catch( err => {
-                data.state = 2
-                Set_data({...data})
-                Set_error(err)
-            })
-
+            },
+            {
+                title: '项目描述',
+                value: ''
+            }
             
-      }, [])
-
+        ]
+      )
+      // 个人角色
+      // let [ge,Set_ge] = useState(null)
+      // 团队角色
+      let [tuan,Set_tuan] = useState([])
+      // 项目类型
+      let [pjc,Set_pjc] = useState([])
 
 
     return(
-        <div id="Login">
+        <div className="publish">
             <div className="box">
-                <h1>Code-Market</h1>
-                {
-                    account.map((item,index) => <div key={index} className={`inner`}>
-                        <div className="title">
-                            {item.title}
+                    <h1>Code-Market</h1>
+                    {
+                        account.map((item,index) => <div key={index} className={`inner`}>
+                            <div className="title">
+                                {item.title}
+                            </div>
+                            <div className="content">
+                                {
+                                    index !== account.length - 1 ? 
+                                    <>
+                                    <input className={`${'data'+index}`} type="text" onChange={(e)=>{get_account(e,index)}} />
+                                    {index === 1 ? '元' : ''}
+                                    {index === 2 ? '天' : ''}
+                                    </>
+                                    :
+                                    <>
+                                    <textarea name="" id="" cols="30" rows="10" onChange={(e)=>{get_account(e,index)}}></textarea>
+                                    </>
+                                }
+                            </div>
+                            
                         </div>
-                        <div className="content">
-                          {
-                            index !== account.length - 1 ? 
-                            <>
-                              <input className={`${'data'+index}`} type="text" onChange={(e)=>{get_account(e,index)}} />
-                              {index === 1 ? '元' : ''}
-                              {index === 2 ? '天' : ''}
-                            </>
-                            :
-                            <>
-                              <textarea name="" id="" cols="30" rows="10"></textarea>
-                            </>
-                          }
-                          
-                        </div>
-                        
+                        )
+                    }
+                    <div className="type">
+                    {/* <div className="check">
+                            选择您招募的角色类型
+                            <input type="radio" value={1} name="type" onChange={e=>{get_type(e)}}/>招募个人
+                            <input type="radio"  value={2} name="type" onChange={e=>{get_type(e)}}/>招募团队
+                    </div> */}
+                    {roleBox()}
                     </div>
-                    )
-                }
-                <div className="type">
-                  {/* <div className="check">
-                        选择您招募的角色类型
-                        <input type="radio" value={1} name="type" onChange={e=>{get_type(e)}}/>招募个人
-                        <input type="radio"  value={2} name="type" onChange={e=>{get_type(e)}}/>招募团队
-                  </div> */}
-                  {roleBox()}
-                </div>
-                <div className="type">
-                  {typeBox()}
-                </div>
-                <div>
-                      发布项目总数：{tokens}
-                </div>
-                {buttonModel()}
+                    <div className="type">
+                    {typeBox()}
+                    </div>
+                    {buttonModel()}
 
-            </div>
-            <div className="ul">
-                <div className="search">
-                    <input type="text" name="" id="" />
-                </div>
-                {responseDate()}
             </div>
         </div>
     )
 }
 
-export default Login;
+export default Publish

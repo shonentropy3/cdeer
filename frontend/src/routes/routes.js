@@ -1,10 +1,15 @@
-import Login from "../views/Login";
+import Market from "../views/Market";
+import Publish from "../views/Publish";
 
 
 
 export const routes = [
     {
         path:'/',
-        element: <Login/>
+        element: <Market/>
+    },
+    {
+        path:'/publish',
+        element: <Publish />
     }
 ]
