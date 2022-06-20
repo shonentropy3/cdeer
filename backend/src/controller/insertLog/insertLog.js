@@ -48,10 +48,12 @@ async function insertLog() {
             for (const v of txs) {
                 let pro_type = dbUtil.getLabel(v.content);
                 console.log(pro_type);
-                value += `('${v.msgSenderAdddress}',${v.tokenId},'${v.title}',${v.price},'${v.content}',0,now()),`
+                value += `('${v.msgSenderAdddress}',${v.tokenId},'${v.title}',${v.price},'${v.content}'),`
             }
-            await dbUtil.insertPro(value.substring(0,(value.length-1))); 
-            await dbUtil.updateLastCheckBlock(latest);
+            let result = await dbUtil.insertPro(value.substring(0,(value.length-1))); 
+            if (-1 != result) {
+                await dbUtil.updateLastCheckBlock(latest);   
+            }
         }
     }
 

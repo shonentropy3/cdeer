@@ -3,7 +3,7 @@ import contract from '../contracts/deployments/abi/CodeMarket.json';
 import address from '../contracts/deployments/CodeMarket.json';
 import { useEffect, useState, } from 'react';
 import '../css/market.scss';
-import axios from 'axios'
+import { getMarketData } from '../http/api';
 const contractAddress = address;
 const abi = contract.abi;
 function Market() {
@@ -36,17 +36,17 @@ function Market() {
           return "Loading...";
       }
       if (data.state === 2) {
-          return "Error:"+error;
+          // return "Error:"+error;
       }
       if (data.state === 1) {
           return data.detail.map(
                   (item, index) => <div key={index} className="li" >
-                      <div>创建地址：{item.sender_adddress}</div>
+                      <div>创建地址：{item.user_adddress}</div>
                       <div>NFT-ID：{item.token_id}</div>
                       <div>标题：{item.title}</div>
                       <div>价格：{item.price}</div>
-                      <div>项目内容：{item.pro_content}</div>
-                      <div>创建时间：{item.pro_time}</div>
+                      <div>项目内容：{item.content}</div>
+                      <div>创建时间：{item.create_time}</div>
                   </div>
               );
       }
@@ -69,10 +69,28 @@ function Market() {
 
     }
 
+    // 获取页面数据
+    const marketData = async()=>{
+      const res = await getMarketData()
+      data.detail = res
+      data.state = 1
+      Set_data({...data})
+    }
+
+    let checkRole = (val) => {
+      roleC = val
+      Set_roleC(roleC)
+    }
+
+    let checkPjc = (val) => {
+      pjcC = val
+      Set_pjcC(val)
+    }
+
     const roleData = () => {
       return <>
         {
-          role.map((item,index)=> <div key={index} className={`check ${roleC === item.value ? 'active':''}`} onClick={()=>{Set_roleC(item.value)}} >{item.name}</div> )
+          role.map((item,index)=> <div key={index} className={`check ${roleC === item.value ? 'active':''}`} onClick={()=>{checkRole(item.value)}} >{item.name}</div> )
         }
       </>
     }
@@ -80,7 +98,7 @@ function Market() {
     const pjcData = () => {
       return <>
         {
-          pjc.map((item,index)=> <div key={index} className={`check ${pjcC === item.value ? 'active':''}`} onClick={()=>{Set_pjcC(item.value)}} >{item.name}</div> )
+          pjc.map((item,index)=> <div key={index} className={`check ${pjcC === item.value ? 'active':''}`} onClick={()=>{checkPjc(item.value)}} >{item.name}</div> )
         }
       </>
     }
@@ -88,7 +106,7 @@ function Market() {
     // ============常量==>
     // 角色data
     const role = [{
-      value: 'qb',
+      value: null,
       name: '全部'
     },
     {
@@ -109,6 +127,10 @@ function Market() {
     }]
     // 项目类型data
     const pjc = [{
+      value: null,
+      name: '全部'
+    },
+    {
       value: 'web',
       name: 'Web网站'
     },
@@ -142,35 +164,19 @@ function Market() {
         detail: '',
         state: 0,    // 0: loading; 1: success; 2: error
     })
-
-    // 错误码
-    let [error,Set_error] = useState('')
     
     // 角色check
-    let [roleC,Set_roleC] = useState('')
+    let [roleC,Set_roleC] = useState(null)
      
     // 项目类型check
-    let [pjcC,Set_pjcC] = useState('')
+    let [pjcC,Set_pjcC] = useState(null)
 
     
     useEffect(() => {
         checkWalletIsConnected();
-        axios.get('http://192.168.1.7:3030/upchain/getProject')
-            .then( res => {
-                data.detail = res.data
-                data.state = 1
-                Set_data({...data})
-                console.log(res.data);
-            }) 
-            .catch( err => {
-                data.state = 2
-                Set_data({...data})
-                Set_error(err)
-            })
-
-            
+        marketData()
       }, [])
-
+      
 
 
     return(

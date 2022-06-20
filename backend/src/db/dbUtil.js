@@ -15,7 +15,8 @@ async function get() {
 
 async function getLabel(proContent) {
     let records = [];
-    let sql =`SELECT recruiting_role,pro_type FROM project_label WHERE pro_content = ${proContent};`;
+    let sql =`SELECT role,pro_type FROM project WHERE content = '${proContent}';`;
+    console.log(sql)
     try {
         records = await db.get(sql);
     } catch (err) {
@@ -73,7 +74,7 @@ async function getLastCheckBlock() {
 async function insertPro(insertDatas) {
     if (!insertDatas || insertDatas.length == 0) return 0;
     let sql = `
-    insert into project_log(sender_adddress,token_id,title,price,pro_content,pro_state,pro_time) VALUES ${insertDatas};
+    insert into project(user_address,token_id,title,price,content) VALUES ${insertDatas};
     `;
     let num = await db.batchInsert(sql);
     console.log(sql)
