@@ -68,9 +68,14 @@ function Publish() {
             // }
 
             // let data = [account[3].value,tuan,pjc];
-            let data = `[${account[3].value},"{${tuan}}","{${pjc}}"]`;
+            // let data = `{"pro_content": ${account[3].value},"recruiting_role": "{${tuan}}","pro_type": "{${pjc}}"}`;
+            let data = {pro_content: account[3].value,
+              recruiting_role: `{${tuan}}`,
+              pro_type: `{${pjc}}`}
+
+              data = JSON.stringify(data)
+
             let para = {"proLabel":data}
-            // data = JSON.stringify(data)
             console.log(data);
             // return
 
@@ -81,12 +86,13 @@ function Publish() {
             .catch(err=>{
               console.log('err==>',err);
             })
-
+            console.log(account[3].value);
+            console.log(typeof(account[2].value));
             let nftTxn = await nftContract.createProject({
               title: account[0].value,
               price: Number(account[1].value),
-              content: account[2].value,
-              time: Number(account[3].value)
+              content: account[3].value,
+              time: Number(account[2].value)
             });
             console.log("Mining... please wait");
             await nftTxn.wait();

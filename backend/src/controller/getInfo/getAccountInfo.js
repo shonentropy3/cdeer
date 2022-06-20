@@ -53,26 +53,27 @@ async function testPost(ctx) {
 
 async function insertLabel(ctx) {
     let queryData = ctx.request.body;
+    console.log("queryData=============",queryData);
     queryData = JSON.parse(queryData.proLabel)
-    console.log(queryData)
+    // queryData = queryData.proLabel;
+    console.log(queryData);
     if (!queryData || queryData.length == 0) return _fail(ctx,'Failed to insert label',"Parameter error");
     // let sql = `
     // insert into project(sender_adddress,token_id,title,price,pro_content,pro_state,pro_time) VALUES ${insertDatas};
     // `;
 
-    // let sql = `insert into project_label(token_id,pro_content,recruiting_role,pro_label,pro_type,create_time) 
+    // let sql = `insert into project(token_id,pro_content,recruiting_role,pro_label,pro_type,create_time) 
     // VALUES (167844,'ipfs://QmZbWNKJPAjxXuNFSEaksCJVd1M6DaKQViJBYPK2BdpDEP/','{"ok":1,"ok":2}','{"ok":1,"ok":2}','{"ok":1,"ok":2}',now());
     // `;
-    let pro_content = queryData[0];
-    let recruiting_role = queryData[1];
-    let pro_type = queryData[2];
+    let pro_content = queryData.pro_content;
+    let recruiting_role = queryData.recruiting_role;
+    let pro_type = queryData.pro_type;
     
-    let sql = `insert into project_label(pro_content,recruiting_role,pro_type,create_time) 
-    VALUES ('${pro_content}','${recruiting_role}','${pro_type}',now());
+    let sql = `insert into project(content,role,pro_type) 
+    VALUES ('${pro_content}','${recruiting_role}','${pro_type}');
     `;
     try {
         let num = await db.batchInsert(sql);
-        console.log(num);
         ctx.response.body = Object.assign(num);
     } catch (err) {
         console.log('Failed to insert label', { sql }, err);
