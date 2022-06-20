@@ -14,6 +14,8 @@ async function insertLog() {
     global.lock_get_logs = 0;
 }
 
+
+QmZbWNKJPAjxXuNFSEaksCJVd1M6DaKQViJBYPK2BdpDEP
     // 存入mintNFT日志信息
     async function _insertLog() {
         let latest = await rpcProvider.getBlockNumber();
@@ -46,18 +48,10 @@ async function insertLog() {
             });
             let value = ``;
             for (const v of txs) {
-                // let pro_type = dbUtil.getLabel(v.content);
-                // console.log(pro_type);
-                // role = '{"r"}',pro_type = '{"r"}', up_state = '1',
                 value += `
                 ('${v.msgSenderAdddress}',${v.tokenId},'${v.title}',${v.price},'${v.content}'),
                 `
-// user_address = '${v.msgSenderAdddress}',token_id = ${v.tokenId},title = '${v.title}',price = ${v.price},up_state = '1',
-//                 update_time = now(),WHERE content = '${v.content}';
- 
             }
-            //     value += `('${v.msgSenderAdddress}',${v.tokenId},'${v.title}',${v.price},'${v.content}'),`
-            // }
             let result = await dbUtil.insertPro(value.substring(0,(value.length-1))); 
             if (-1 != result) {
                 await dbUtil.updateLastCheckBlock(latest);   
