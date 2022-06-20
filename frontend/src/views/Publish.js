@@ -305,7 +305,7 @@ function Publish() {
     return(
         <div className="publish">
             <div className="box">
-                    <h1>Code-Market</h1>
+                    <h1>发布项目</h1>
                     {
                         account.map((item,index) => <div key={index} className={`inner`}>
                             <div className="title">

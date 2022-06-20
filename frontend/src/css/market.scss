@@ -26,6 +26,7 @@
             }
             .content{
                 display: flex;
+                flex-wrap: wrap;
                 margin-left: 100px;
                 .check{
                     padding: 5px 14px;
