@@ -4,6 +4,7 @@ import contract from '../contracts/deployments/abi/CodeMarket.json';
 import address from '../contracts/deployments/CodeMarket.json';
 import { useEffect, useState, } from 'react';
 import axios from 'axios'
+import { insertLabel } from '../http/api';
 const contractAddress = address;
 const abi = contract.abi;
 function Publish() {
@@ -48,6 +49,7 @@ function Publish() {
         }
     }
 
+
     const mintNftHandler = async () => {
   
         try {
@@ -76,18 +78,8 @@ function Publish() {
               data = JSON.stringify(data)
 
             let para = {"proLabel":data}
-            console.log(data);
-            // return
-
-            axios.post(`http://192.168.1.7:3030/upchain/insertLabel`,para)
-            .then(res=>{
-                console.log('res=>',res);            
-            })
-            .catch(err=>{
-              console.log('err==>',err);
-            })
-            console.log(account[3].value);
-            console.log(typeof(account[2].value));
+            insertLabel(para)
+            
             let nftTxn = await nftContract.createProject({
               title: account[0].value,
               price: Number(account[1].value),

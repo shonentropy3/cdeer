@@ -9,3 +9,12 @@ export const getMarketData = (data) => {
     }
 );
 }
+
+export const insertLabel = (data) => {
+    return serviceAxios({
+        url: "/upchain/insertLabel",
+        method: "post",
+        data,
+    }
+);
+}

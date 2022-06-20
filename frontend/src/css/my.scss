@@ -1,0 +1,81 @@
+
+.round{
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+}
+
+.My{
+    margin: 5% auto 0;
+    width: 1300px;
+    display: flex;
+    justify-content: space-between;
+    .my_l{
+        width: 400px;
+        .personalBar{
+            height: 220px;
+            box-sizing: border-box;
+            padding: 20px;
+            border: 1px solid #000;
+            margin-bottom: 30px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            .detail{
+                display: flex;
+                align-items: center;
+                .detail_l{
+                    background-color: rgb(175, 175, 175);
+                    box-shadow: 1px 2px 2px 1px rgb(193, 193, 193);
+                }
+                .detail_r{
+                    width: 65%;
+                    margin-left: 30px;
+                    p{margin: 0;}
+                    .name{
+                        font-size: 25px;
+                    }
+                    .type{
+                        color: gray;
+                    }
+                }
+            }
+            .list{
+                list-style: none;
+                display: flex;
+                justify-content: space-around;
+                padding: 0 20px;
+                text-align: center;
+                p{
+                    font-size: 20px;
+                    margin: 0;
+                }
+            }
+        }
+        .listBar{
+            border: 1px solid #000;
+            height: 550px;
+            .list{
+                list-style: none;
+                font-size: 23px;
+                text-align: center;
+                box-sizing: border-box;
+                padding: 0 20px;
+                display: flex;
+                flex-direction: column;
+                // justify-content: cen;
+                li{
+                    padding: 25px;
+                    border-bottom: 1px solid #000;
+                }
+            }
+        }
+    }
+    .my_r{
+        width: 850px;
+        height: 800px;
+        border: 1px solid #000;
+    }
+    
+}

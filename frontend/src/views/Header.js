@@ -36,7 +36,7 @@ function Header() {
                         在线沟通
                     </div>
                 </div>
-                <div className="avt">
+                <div className="avt" onClick={()=>{navigate('/my')}}>
 
                 </div>
             </div>

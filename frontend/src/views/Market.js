@@ -2,6 +2,7 @@ import { ethers } from 'ethers';
 import contract from '../contracts/deployments/abi/CodeMarket.json';
 import address from '../contracts/deployments/CodeMarket.json';
 import { useEffect, useState, } from 'react';
+import { Spin } from 'antd';
 import '../css/market.scss';
 import { getMarketData } from '../http/api';
 const contractAddress = address;
@@ -33,7 +34,9 @@ function Market() {
 
     const responseDate = () => {
       if (data.state === 0) {
-          return "Loading...";
+          return <>
+            <Spin />
+          </>;
       }
       if (data.state === 2) {
           // return "Error:"+error;

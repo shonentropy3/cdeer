@@ -11,6 +11,11 @@
 }
 
 .header {
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 100%;
   background-color: white;
   display: flex;
   justify-content: space-between;
@@ -37,7 +42,13 @@
   .right {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     .avt {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: aquamarine;
+      cursor: pointer;
     }
     .zone {
       display: flex;
