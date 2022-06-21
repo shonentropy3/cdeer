@@ -80,7 +80,7 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "price",
+          "name": "budget",
           "type": "uint256"
         },
         {
@@ -92,7 +92,7 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "time",
+          "name": "period",
           "type": "uint256"
         }
       ],
@@ -191,7 +191,7 @@
             },
             {
               "internalType": "uint256",
-              "name": "price",
+              "name": "budget",
               "type": "uint256"
             },
             {
@@ -201,7 +201,7 @@
             },
             {
               "internalType": "uint256",
-              "name": "time",
+              "name": "period",
               "type": "uint256"
             }
           ],
@@ -443,25 +443,6 @@
           "internalType": "string",
           "name": "",
           "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_account",
-          "type": "address"
-        }
-      ],
-      "name": "tokensAmount",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
         }
       ],
       "stateMutability": "view",

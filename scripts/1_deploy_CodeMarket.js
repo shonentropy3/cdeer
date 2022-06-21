@@ -20,20 +20,13 @@ async function main() {
     // Mint NFT by 
     txn = await contract.createProject({ 
             title: "test",
-            price: 10,
+            budget: 10,
             content: baseTokenURI,
-            time: 786942864435
+            period: 786942864435
              });
     await txn.wait()
 
-
-    state = await contract._state(0);
-    console.log("old",state)
-
-    tokensAmount = await contract.tokensAmount("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
-    console.log("tokensAmount",tokensAmount)
-
-    modifyState = await contract.modifyState(0,1);
+    modifyStatus = await contract.modifyStatus(0,1);
     await modifyState.wait() 
 
     stateNow = await contract._state(0);

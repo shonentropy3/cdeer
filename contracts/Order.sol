@@ -7,7 +7,7 @@ contract Order is CodeMarket{
     uint256 private remainingTime;
 
     mapping (uint256 => uint256) private _balances;
-    mapping(uint256 => uint8) private state;   
+    mapping(uint256 => uint8) private status;   
 
     constructor() {
 
@@ -24,13 +24,13 @@ contract Order is CodeMarket{
         require(condition);
     }
 
-    function _state(uint256 _tokenId) public view returns (uint8) {
-        return state[_tokenId];
+    function _status(uint256 _tokenId) public view returns (uint8) {
+        return status[_tokenId];
     }    
 
-    function  modifyState(uint _tokenId,uint8 _state) public {
+    function  modifyState(uint _tokenId,uint8 _status) public {
         require(msg.sender == ownerOf(_tokenId), "No modification permission");
-        state[_tokenId] = _state;
+        status[_tokenId] = _status;
     } 
 
     function acceptOrders

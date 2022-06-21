@@ -14,8 +14,6 @@ async function insertLog() {
     global.lock_get_logs = 0;
 }
 
-
-
     // 存入mintNFT日志信息
     async function _insertLog() {
         let latest = await rpcProvider.getBlockNumber();
@@ -33,7 +31,7 @@ async function insertLog() {
             toBlock
         }
         let logs = await rpcProvider.getLogs(filter);
-        const CreatProjectEvent = new ethers.utils.Interface(["event CreateProject(address indexed msgSenderAdddress, uint256 indexed tokenId, string title, uint256 price, string content, uint256 time)"]);
+        const CreatProjectEvent = new ethers.utils.Interface(["event CreateProject(address indexed msgSenderAdddress, uint256 indexed tokenId, string title, uint256 budget, string content, uint256 period)"]);
         if (logs.length > 0) {
             let txs = logs.map(ele => {
                 let decodedData = CreatProjectEvent.parseLog(ele);
@@ -41,15 +39,15 @@ async function insertLog() {
                     msgSenderAdddress: decodedData.args.msgSenderAdddress,
                     tokenId: decodedData.args.tokenId,
                     title: decodedData.args.title,
-                    price: decodedData.args.price,
+                    budget: decodedData.args.budget,
                     content: decodedData.args.content,
-                    time: decodedData.args.time,
+                    period: decodedData.args.period,
                 }
             });
             let value = ``;
             for (const v of txs) {
                 value += `
-                ('${v.msgSenderAdddress}',${v.tokenId},'${v.title}',${v.price},'${v.content}'),
+                ('${v.msgSenderAdddress}',${v.tokenId},'${v.title}',${v.budget},'${v.content}'),
                 `
             }
             let result = await dbUtil.insertPro(value.substring(0,(value.length-1))); 

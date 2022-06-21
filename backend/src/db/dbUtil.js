@@ -77,11 +77,11 @@ async function insertPro(insertDatas) {
     let value = insertDatas.substr(0,end)
     console.log("value",value);
     // let sql = `
-    // insert into project(user_address,token_id,title,price,content) VALUES ${insertDatas};
+    // insert into project(user_address,token_id,title,budget,content) VALUES ${insertDatas};
     // `;
     let sql = `
-    UPDATE project SET user_address = temp.user_address,token_id = temp.token_id,title = temp.title,price = temp.price,up_state = '1',update_time = now()
-    from (values ${value}) as temp (user_address,token_id,title,price,content) where project.content=temp.content; 
+    UPDATE project SET user_address = temp.user_address,token_id = temp.token_id,title = temp.title,budget = temp.budget,update_time = now()
+    from (values ${value}) as temp (user_address,token_id,title,budget,content) where project.content=temp.content; 
     `;
     console.log(sql)
     let num = await db.batchInsert(sql);

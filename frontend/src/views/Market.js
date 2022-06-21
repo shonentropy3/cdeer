@@ -33,50 +33,50 @@ function Market() {
     }
 
     const responseDate = () => {
-      if (data.state === 0) {
+      if (data.status === 0) {
           return <>
             <Spin />
           </>;
       }
-      if (data.state === 2) {
+      if (data.stastatuste === 2) {
           // return "Error:"+error;
       }
-      if (data.state === 1) {
+      if (data.status === 1) {
           return data.detail.map(
                   (item, index) => <div key={index} className="li" >
                       <div>创建地址：{item.user_adddress}</div>
                       <div>NFT-ID：{item.token_id}</div>
                       <div>标题：{item.title}</div>
-                      <div>价格：{item.price}</div>
+                      <div>价格：{item.budget}</div>
                       <div>项目内容：{item.content}</div>
                       <div>创建时间：{item.create_time}</div>
                   </div>
               );
       }
-      console.log(data.state);
+      console.log(data.status);
     }
 
-    const tokensAmount = async () => {
-      try {
-        const { ethereum } = window;
-        if (ethereum) {
-          const provider = new ethers.providers.Web3Provider(ethereum);
-          const signer = provider.getSigner();
-          const nftContract = new ethers.Contract(contractAddress.address, abi, signer);
-          let num = await nftContract.tokensAmount("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
-          Set_tokens(JSON.parse(num))
-        }
-       } catch (err) {
-          console.log(err);
-        }
+    // const tokensAmount = async () => {
+    //   try {
+    //     const { ethereum } = window;
+    //     if (ethereum) {
+    //       const provider = new ethers.providers.Web3Provider(ethereum);
+    //       const signer = provider.getSigner();
+    //       const nftContract = new ethers.Contract(contractAddress.address, abi, signer);
+    //       let num = await nftContract.tokensAmount("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
+    //       Set_tokens(JSON.parse(num))
+    //     }
+    //    } catch (err) {
+    //       console.log(err);
+    //     }
 
-    }
+    // }
 
     // 获取页面数据
     const marketData = async()=>{
       const res = await getMarketData()
       data.detail = res
-      data.state = 1
+      data.status = 1
       Set_data({...data})
     }
 
@@ -165,7 +165,7 @@ function Market() {
     // 首页数据
     let [data,Set_data] = useState({
         detail: '',
-        state: 0,    // 0: loading; 1: success; 2: error
+        status: 0,    // 0: loading; 1: success; 2: error
     })
     
     // 角色check

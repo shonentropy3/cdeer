@@ -119,7 +119,7 @@ function Publish() {
             
             let nftTxn = await nftContract.createProject({
               title: account[0].value,
-              price: Number(account[1].value),
+              budget: Number(account[1].value),
               content: account[3].value,
               time: Number(account[2].value)
             });

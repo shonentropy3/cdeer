@@ -69,9 +69,9 @@ function App() {
         console.log("Initialize payment");
           let nftTxn = await nftContract.createProject({ 
             title: "test",
-            price: 10,
+            budget: 10,
             content: "test text",
-            time: 786942864435
+            period: 786942864435
           });
         console.log("Mining... please wait");
         await nftTxn.wait();
@@ -106,7 +106,7 @@ function App() {
             <div>创建地址：{project.sender_adddress}</div>
             <div>NFT-ID：{project.token_id}</div>
             <div>标题：{project.title}</div>
-            <div>价格：{project.price}</div>
+            <div>价格：{project.budget}</div>
             <div>项目内容：{project.pro_content}</div>
             <div>创建时间：{project.pro_time}</div>
             <hr />
@@ -158,7 +158,7 @@ console.log(setName)
                 <br />title:
                 <input type="text" v-model="recipient" />
                 <br />
-                <br /> price:
+                <br /> budget:
                 <input type="text" v-model="amount" />
                 <br />
                 <br />content:
