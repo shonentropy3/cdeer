@@ -11,7 +11,7 @@ contract CodeMarket is ERC721Enumerable, Ownable{
 
     using SafeMath for uint256,uint8;
     using Counters for Counters.Counter;
-    uint public fee;
+    uint private fee;
     address private owner;
 
     event CreateProject(address indexed msgSenderAdddress, uint256 indexed tokenId, string title, uint budget, 
@@ -28,7 +28,7 @@ contract CodeMarket is ERC721Enumerable, Ownable{
 
     mapping(uint256 => ProjectContent) private projectContent; 
     mapping(uint => unit8) public  status;    
-    mapping(uint => uint) public updateTimes;
+    mapping(uint => uint) private updateTimes;
     mapping(bytes32 => uint) private tokenIdByContent;
     
     constructor(address _owner) ERC721("Create NFT ProjectContent","CPC") {
@@ -80,11 +80,5 @@ contract CodeMarket is ERC721Enumerable, Ownable{
             peroid: _projectContent.period
         });    
     }
-
-    // function withdrawal() public {
-    //     require(msg.sender == owner,"No permission to withdraw.");
-    //     //提币数量判断
-    //     require(condition);
-    // }    
   
 }
