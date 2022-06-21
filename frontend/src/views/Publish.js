@@ -59,21 +59,7 @@ function Publish() {
             const signer = provider.getSigner();
             const nftContract = new ethers.Contract(contractAddress.address, abi, signer);
             console.log("Initialize payment");
-
-            
-            // ===============
-            //  将角色，项目标签数据存入数据库
-            // 内容,角色,项目类型
-            // if (tuan.length === 0 && ge === null && pjc.length === 0) {
-            //   alert('角色、项目类型不能为空')
-            //   return
-            // }
-
-            // let data = [account[3].value,tuan,pjc];
-            // let data = `{"pro_content": ${account[3].value},"recruiting_role": "{${tuan}}","pro_type": "{${pjc}}"}`;
-            let data = {pro_content: account[3].value,
-              recruiting_role: `{${tuan}}`,
-              pro_type: `{${pjc}}`}
+            let data = {pro_content: account[3].value,recruiting_role: `{${tuan}}`,pro_type: `{${pjc}}`}
 
               data = JSON.stringify(data)
 
