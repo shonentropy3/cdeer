@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import contract from '../../contracts/deployments/abi/CodeMarket.json';
 import address from '../../contracts/deployments/CodeMarket.json';
 import { useEffect, useState, } from 'react';
@@ -96,33 +96,25 @@ function Publish() {
             const signer = provider.getSigner();
             const nftContract = new ethers.Contract(contractAddress.address, abi, signer);
             console.log("Initialize payment");
-
-            
-            // ===============
-            //  将角色，项目标签数据存入数据库
-            // 内容,角色,项目类型
-            // if (tuan.length === 0 && ge === null && pjc.length === 0) {
-            //   alert('角色、项目类型不能为空')
-            //   return
-            // }
-
-            // let data = [account[3].value,tuan,pjc];
-            // let data = `{"pro_content": ${account[3].value},"recruiting_role": "{${tuan}}","pro_type": "{${pjc}}"}`;
             let data = {pro_content: account[3].value,
               recruiting_role: `{${tuan}}`,
               pro_type: `{${pjc}}`}
-
               data = JSON.stringify(data)
-
             let para = {"proLabel":data}
             insertLabel(para)
-            
+                        let amount = ethers.utils.parseUnits('1', 18);
             let nftTxn = await nftContract.createProject({
               title: account[0].value,
               budget: Number(account[1].value),
               content: account[3].value,
-              time: Number(account[2].value)
-            });
+              period: Number(account[2].value)
+            }
+            ,
+             {
+                 value: amount
+             }
+            
+            );
             console.log("Mining... please wait");
             await nftTxn.wait();
 

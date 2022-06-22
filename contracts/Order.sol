@@ -1,38 +1,38 @@
-pragma solidity ^0.8.0;
+// pragma solidity ^0.8.0;
 
-import "./CodeMarket.sol";
+// import "./CodeMarket.sol";
 
-contract Order is CodeMarket{
+// contract Order is CodeMarket{
 
-    uint256 private remainingTime;
+//     uint256 private remainingTime;
 
-    mapping (uint256 => uint256) private _balances;
-    mapping(uint256 => uint8) private status;   
+//     mapping (uint256 => uint256) private _balances;
+//     mapping(uint256 => uint8) private status;   
 
-    constructor() {
+//     constructor() {
 
-    }
+//     }
 
-    function createOrder(
-        uint256 _tokenId,
-        uint256 _monetaryAmount,
-        uint256 _timePeriod
-    )
-        external payable
-    {
-        remainingTime = _timePeriod;
-        require(condition);
-    }
+//     function createOrder(
+//         uint256 _tokenId,
+//         uint256 _monetaryAmount,
+//         uint256 _timePeriod
+//     )
+//         external payable
+//     {
+//         remainingTime = _timePeriod;
+//         require(condition);
+//     }
 
-    function _status(uint256 _tokenId) public view returns (uint8) {
-        return status[_tokenId];
-    }    
+//     function _status(uint256 _tokenId) public view returns (uint8) {
+//         return status[_tokenId];
+//     }    
 
-    function  modifyState(uint _tokenId,uint8 _status) public {
-        require(msg.sender == ownerOf(_tokenId), "No modification permission");
-        status[_tokenId] = _status;
-    } 
+//     function  modifyState(uint _tokenId,uint8 _status) public {
+//         require(msg.sender == ownerOf(_tokenId), "No modification permission");
+//         status[_tokenId] = _status;
+//     } 
 
-    function acceptOrders
+//     function acceptOrders
 
-}
+// }

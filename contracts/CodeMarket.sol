@@ -9,10 +9,11 @@ import "hardhat/console.sol";
 
 contract CodeMarket is ERC721Enumerable, Ownable{
 
-    using SafeMath for uint256,uint8;
+    using SafeMath for uint256;
+    using SafeMath for uint8;
     using Counters for Counters.Counter;
     uint private fee;
-    address private owner;
+    address private ownerAddress;
 
     event CreateProject(address indexed msgSenderAdddress, uint256 indexed tokenId, string title, uint budget, 
             string content, uint period); 
@@ -20,20 +21,20 @@ contract CodeMarket is ERC721Enumerable, Ownable{
     struct ProjectContent{
         string title;
         uint budget;
-        bytes32 content;  //
+        string content;  //
         uint period;
     }
     
     Counters.Counter private tokenIds;
 
     mapping(uint256 => ProjectContent) private projectContent; 
-    mapping(uint => unit8) public  status;    
+    mapping(uint => uint8) public  status;    
     mapping(uint => uint) private updateTimes;
     mapping(bytes32 => uint) private tokenIdByContent;
     
-    constructor(address _owner) ERC721("Create NFT ProjectContent","CPC") {
-        require(_owner != address(0), "Owner is a zero address");
-        owner = _owner;
+    constructor(address _ownerAddress) ERC721("Create NFT ProjectContent","CPC") {
+        require(_ownerAddress != address(0), "Owner is a zero address");
+        ownerAddress = _ownerAddress;
     }
     
     function createProject(ProjectContent memory _projectContent) external payable {
@@ -43,7 +44,7 @@ contract CodeMarket is ERC721Enumerable, Ownable{
             title: _projectContent.title,
             budget: _projectContent.budget,
             content: _projectContent.content,
-            peroid: _projectContent.period
+            period: _projectContent.period
         });
 
         _safeMint(msg.sender, tokenId);
@@ -56,28 +57,28 @@ contract CodeMarket is ERC721Enumerable, Ownable{
             _projectContent.content, _projectContent.period);
     }
     
-    function modifyFee(uint memory _fee) public  {
-        require(msg.sender == owner,"No right of modification.");
+    function modifyFee(uint256 _fee) public  {
+        require(msg.sender == ownerAddress,"No right of modification.");
         fee = _fee;
     }
 
     function updateStatus(uint _tokenId,uint8 _status) public {
-        require(msg.sender == _owners(_tokenId),"No right of modification.");
-        require(_status < 5 && 1 == (_status - status(_tokenId)),"Status parameter error.");
-        status(_tokenId) = _status;
+        require(msg.sender == ownerOf(_tokenId),"No right of modification.");
+        require(_status < 5 && 1 == (_status - status[_tokenId]),"Status parameter error.");
+        status[_tokenId] = _status;
     }
 
     function updateProject(ProjectContent memory _projectContent,uint _tokenId) public payable{
-        require(msg.sender == _owners(_tokenId),"No right of modification.");
-        require(0 == status(_tokenId),"Projects have been taken on order.");
-        if(updateTimes(_tokenId)>3){
+        require(msg.sender == ownerOf(_tokenId),"No right of modification.");
+        require(0 == status[_tokenId],"Projects have been taken on order.");
+        if(updateTimes[_tokenId]>3){
             require(msg.value > fee, "Not enough handling fee.");
         }
         projectContent[_tokenId] = ProjectContent({
             title: _projectContent.title,
             budget: _projectContent.budget,
             content: _projectContent.content,
-            peroid: _projectContent.period
+            period: _projectContent.period
         });    
     }
   
