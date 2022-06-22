@@ -1,8 +1,4 @@
-.df{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+// btn===================>
 .btn_blue{
     border-radius: 5px;
     background-color: #4289db;
@@ -10,7 +6,73 @@
     color: white;
     margin-left: 20px;
 }
+
+// width===================>
 .w150{
     width: 150px;
     text-align: center;
+}
+
+// flex===================>
+.df{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.item_container{
+    padding: 21px 0;
+    display: flex;
+    justify-content: flex-start;
+}
+.item_img{
+    width: 150px;
+    height: 80px;
+    border-radius: 5px;
+    background-color: #4289db;
+}
+.item_content{
+    width: calc(100% - 150px);
+    height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+.between{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.flex_start{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+// margin===================>
+.ml20{
+    margin-left: 20px;
+}
+.ml10{
+    margin-left: 10px;
+}
+.mr30{
+    margin-right: 30px;
+}
+
+// color===================>
+.color_red{
+    color: #f75288;
+    font-size: small;
+}
+
+
+
+
+// utils===================>
+.utils_line{
+    background-color: #8796a8;
+    height: 20px;
+    
 }

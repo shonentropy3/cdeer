@@ -1,8 +1,13 @@
+
+p{
+    margin: 0;
+}
 .market{
     // color: aqua;
     background-color: #f0f2f5;
     width: 100%;
     padding-top: 5%;
+    min-height: 100vh;
     // 筛选
     .filter{
         width: 1000px;
@@ -55,7 +60,7 @@
         border-radius: 10px;
         background-color: white;
         box-shadow: 0 0 2px 1px rgb(230, 230, 230);
-        min-height: 500px;
+        min-height: 200px;
         .search{
             width: 180px;
             height: 30px;
@@ -73,15 +78,11 @@
             }
         }
         .li{
-            width: 950px;
-            height: 150px;
-            margin: 0 auto;
-            padding: 21px 0;
-            border-top: 1px solid rgb(206, 206, 206);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
+            transition: background-color 0.3s;
+            border-top: 1px solid rgb(236, 236, 236);
+            &:hover{
+                background-color: rgb(245, 245, 245);
+            }
         }
     }
 }

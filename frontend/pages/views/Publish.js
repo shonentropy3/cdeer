@@ -92,6 +92,7 @@ function Publish() {
           data = JSON.stringify(data)
         let para = {"proLabel":data}
         createProject(para,account)
+
     }
 
 
