@@ -36,7 +36,12 @@ contract CodeMarket is ERC721Enumerable, Ownable{
         require(_ownerAddress != address(0), "Owner is a zero address");
         ownerAddress = _ownerAddress;
     }
-    
+    //联系方式
+
+
+
+
+
     function createProject(ProjectContent memory _projectContent) external payable {
         require(msg.value > fee, "Not enough handling fee.");
         uint256 tokenId = tokenIds.current();        
