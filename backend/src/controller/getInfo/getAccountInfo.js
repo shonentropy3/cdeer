@@ -53,33 +53,9 @@ async function testPost(ctx) {
     }
 }
 
-async function insertLabel(ctx) {
-    let queryData = ctx.request.body;
-    console.log("queryData=============",queryData);
-    queryData = JSON.parse(queryData.proLabel)
-    console.log(queryData);
-    if (!queryData || queryData.length == 0) return _fail(ctx,'Failed to insert label',"Parameter error");
-    let pro_content = queryData.pro_content;
-    let recruiting_role = queryData.recruiting_role;
-    let pro_type = queryData.pro_type;
-    
-    let sql = `insert into project(content,role,pro_type) 
-    VALUES ('${pro_content}','${recruiting_role}','${pro_type}');
-    `;
-    try {
-        let num = await db.batchInsert(sql);
-        ctx.response.body = Object.assign(num);
-    } catch (err) {
-        console.log('Failed to insert label', { sql }, err);
-        return result.fail(ctx,'Failed to insert label',err);
-    }
-    return result.succeed(ctx);
-}
-
 
 module.exports = {
     testGet,
     testPost,
     getProject,
-    insertLabel,
 };

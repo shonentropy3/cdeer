@@ -10,9 +10,9 @@ export const getMarketData = (data) => {
 );
 }
 
-export const insertLabel = (data) => {
+export const createProject = (data) => {
     return serviceAxios({
-        url: "/upchain/insertLabel",
+        url: "/upchain/createProject",
         method: "post",
         data,
     }
