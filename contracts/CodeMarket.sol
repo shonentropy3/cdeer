@@ -13,7 +13,7 @@ contract CodeMarket is ERC721Enumerable, Ownable{
     using SafeMath for uint8;
     using Counters for Counters.Counter;
     uint private fee;
-    address private ownerAddress;
+    address private ownerAddr;
 
     event CreateProject(address indexed msgSenderAdddress, uint256 indexed tokenId, string title, uint budget, 
             string content, uint period); 
@@ -34,7 +34,7 @@ contract CodeMarket is ERC721Enumerable, Ownable{
     
     constructor(address _ownerAddress) ERC721("Create NFT ProjectContent","CPC") {
         require(_ownerAddress != address(0), "Owner is a zero address");
-        ownerAddress = _ownerAddress;
+        ownerAddr = _ownerAddress;
     }
     //联系方式
 
@@ -63,7 +63,7 @@ contract CodeMarket is ERC721Enumerable, Ownable{
     }
     
     function modifyFee(uint256 _fee) public  {
-        require(msg.sender == ownerAddress,"No right of modification.");
+        require(msg.sender == ownerAddr,"No right of modification.");
         fee = _fee;
     }
 
