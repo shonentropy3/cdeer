@@ -1,6 +1,7 @@
 pragma solidity ^0.8.0;
 
 import "./ICodeMarket.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract Order {
 
@@ -8,93 +9,80 @@ contract Order {
     event ConfirmOrder();
 
     struct Order{
-        uint projectTokenId;
+        uint proId;
         address applyAddr;
-        //项目酬金
-        uint remuneration;
-        
+        uint amount;
         //项目交付期数
-        uint8 deliveryTimes;
-        //预付款
+        uint8 submitTimes;
         uint prePayment;
-        uint startTime; 
         bool confirmed;
     }
 
     //交付进程
     struct Process {
-        //项目阶段中的酬金
-        uint remuneration;
+        uint amount;
         //甲方是否确认\
         uint8 confirmedordeny;
-
         bool withdrawed;
         uint period;
     }
 
-    uint orderId;
-
-    mapping(uint => uint[] ) projectOrdres;
+    Counters.Counter private orderId;
     // orderId = > 
     mapping(uint => Order) private orders;
+    // projectId = > orderId
+    mapping(uint => uint[]) private proOrders;
     //存交付
     mapping(uint => orderProcess[] ) private orderProcesses;
-
 
     constructor() {
 
     }
 
-    // pay by tokens
+    //TODO：考虑pay by tokens
     function createOrder(Order memory _order, uint [] periods, uint [] amounts) external {
         //TODO: 判断发起人是否是项目方本人
-        require(msg.sender == projectTokenId. );
+        require(msg.sender == proId. );
         
         require(ends.length = _order);
-        require(msg.sender == deliveryTimes, );
-        
+        require(msg.sender == submitTimes, );
+    
+        // require(msg.value == _order.amount,"Wrong amount of commission.");
+        require(proOrders[_order.proId].length < 10, "");
 
-        // require(msg.value == _order.remuneration,"Wrong amount of commission.");
-        require(projectOrdres[_order.projectTokenId].length < 10, "");
-
-        // TODO: check ( sum of amounts  + prePayment) == _order.remuneration ;
+        // TODO: check ( sum of amounts  + prePayment) == _order.amount ;
 
         orderId++;
 
         orders[orderId] =  Order({
-            projectTokenId: _order.projectTokenId,
+            proId: _order.proId,
             applyAddr: _order.applyAddr;
-            remuneration: _order.remuneration;
+            amount: _order.amount;
             status: _order.status;
-            deliveryTimes: _order.deliveryTimes;
+            submitTimes: _order.submitTimes;
             confirmed: false
         });
 
-        projectOrdres[_order.projectTokenId].push(orderId);
+        proOrders[_order.proId].push(orderId);
         
 
 
-        emit CreateOrder(_order.projectTokenId, msg.sender, msg.value, _order.applyAddr, _order.remuneration, _order.status, _order.deliveryTimes, _order.period)
+        emit CreateOrder(_order.proId, msg.sender, msg.value, _order.applyAddr, _order.amount, _order.status, _order.submitTimes, _order.period)
 
         orderProcesses [] orderProcesses = orderProcesses[orderid];
 
-        for ( uint i = 0; i< deliveryTimes; i++ ) {
+        for ( uint i = 0; i< submitTimes; i++ ) {
 
             Process pro = new Process{
-                remuneration = amounts[i];
+                amount = amounts[i];
                 confired : false;
                 period =  periods[i];
             }
 
             orderProcesses.push(pro)
         }
-
-        // TODO: TransferFrom  remuneration tokens
-
-        
+        // TODO: TransferFrom  amount tokens
     }
-
-
 
     function confirmOrder(uint orderId) external {
         require(orders[orderId].applyAddr == msg.sender, "");
@@ -105,7 +93,6 @@ contract Order {
 
         if(0 != order[orderId].prePayment){
             // TODO: transfer 
-
         }
 
         emit ConfirmOrder(orderId, msg.sender);
@@ -116,7 +103,6 @@ contract Order {
         // check msg.sender;
                 Proecess storage pro = orderProcesses[orderId][i];
         pro.confired = true;
-
     }
 
     function withdraw(uint orderId, uint i) external {
@@ -124,11 +110,10 @@ contract Order {
         require(!pro.withdrawed, "aleady withdrawed");
         
         if (pro.confired || starttime + pro.period - 7 days > block.timestamp ) {
-            // TODO transfer pro.remuneration
+            // TODO transfer pro.amount
 
             pro.withdrawed = true;
         }
-
     }
 
     function _status(uint256 _tokenId) public view returns (uint8) {
