@@ -10,6 +10,7 @@ contract Project is ERC721Enumerable{
     //TODO:考虑手续费
     event CreateProject(address indexed msgSender, uint indexed tokenId, string title, uint budget, 
             string indexed desc, uint period); 
+    event  ApplyProject(address indexed msg.sender, uint indexed _proId);
 
     struct ProjectInfo{
         string title;
@@ -18,13 +19,11 @@ contract Project is ERC721Enumerable{
         uint period;
     }
 
-
-    
     Counters.Counter private tokenIds;
 
     mapping(uint => ProjectInfo) private projects; 
-    // project => apply => bool 
-    mapping(uint => mapping(address => bool)) private  
+    //报名信息
+    mapping(uint => mapping(address => bool)) private  applications;
 
     //TODO:项目NFT名称
     constructor() {
@@ -62,8 +61,12 @@ contract Project is ERC721Enumerable{
     }
 
     function applyProject(uint _proId) external {
-        require(address(0) == ownerOf(_proId),"Project does not exist.");
-        //TODO:判断项目是否存在订单，5
+        require(address(0) != ownerOf(_proId),"Project does not exist.");
+        //TODO:判断项目是否存在订单
+        require(!applications[_proId][msg.sender],"Already applied.");
+        applications[_proId][msg.sender] = true;
+
+        emit  ApplyProject(msg.sender,_proId)
         
         
     }
