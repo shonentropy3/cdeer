@@ -1,6 +1,6 @@
 pragma solidity ^0.8.0;
 
-import "./ICodeMarket.sol";
+import "./interface/IProject.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract Order {
@@ -12,8 +12,6 @@ contract Order {
         uint proId;
         address applyAddr;
         uint amount;
-        //项目交付期数
-        uint8 submitTimes;
         uint prePayment;
         bool confirmed;
     }
@@ -27,63 +25,56 @@ contract Order {
         uint period;
     }
 
-    Counters.Counter private orderId;
+    Counters.Counter private orderIds;
     // orderId = > 
     mapping(uint => Order) private orders;
     // projectId = > orderId
     mapping(uint => uint[]) private proOrders;
     //存交付
-    mapping(uint => orderProcess[] ) private orderProcesses;
+    mapping(uint => orderProcess[]) private orderProcesses;
 
     constructor() {
 
     }
 
     //TODO：考虑pay by tokens
-    function createOrder(Order memory _order, uint [] periods, uint [] amounts) external {
-        //TODO: 判断发起人是否是项目方本人
-        require(msg.sender == proId. );
-        
-        require(ends.length = _order);
-        require(msg.sender == submitTimes, );
+    function createOrder(uint _proId, Order memory _order, uint [] periods, uint [] amounts) external {
+        require(msg.sender == IProject.ownerOf(_proId),"No create permission.");
+        require(address(0) != _order.applyAddr,"Application address is zero address.");
+        require(periods.length = amounts.length && periods.length < 10,"Wrong number of processes");
     
         // require(msg.value == _order.amount,"Wrong amount of commission.");
-        require(proOrders[_order.proId].length < 10, "");
+        require(proOrders[_order.proId].length < 10, "Excessive number of project orders.");
 
         // TODO: check ( sum of amounts  + prePayment) == _order.amount ;
 
-        orderId++;
+        uint orderId = orderIds.current();      
 
-        orders[orderId] =  Order({
-            proId: _order.proId,
+        orders[orderId] = Order({
+            proId: _order.proId;
             applyAddr: _order.applyAddr;
             amount: _order.amount;
-            status: _order.status;
-            submitTimes: _order.submitTimes;
-            confirmed: false
+            prePayment: _order.prePayment;
+            confirmed: false;
         });
 
         proOrders[_order.proId].push(orderId);
         
+        orderProcesses [] orderProcessesArr = orderProcesses[orderId];
 
-
-        emit CreateOrder(_order.proId, msg.sender, msg.value, _order.applyAddr, _order.amount, _order.status, _order.submitTimes, _order.period)
-
-        orderProcesses [] orderProcesses = orderProcesses[orderid];
-
-        for ( uint i = 0; i< submitTimes; i++ ) {
-
+        for ( uint i = 0; i< periods.length; i++ ) {
             Process pro = new Process{
                 amount = amounts[i];
-                confired : false;
                 period =  periods[i];
+                confired : false;
             }
-
-            orderProcesses.push(pro)
+            orderProcessesArr.push(pro)
         }
         // TODO: TransferFrom  amount tokens
-    }
 
+        emit CreateOrder(_order.proId, msg.sender, msg.value, _order.applyAddr, _order.amount, _order.status, _order.submitTimes, _order.period);        
+    }
+    //TODO：整理至此
     function confirmOrder(uint orderId) external {
         require(orders[orderId].applyAddr == msg.sender, "");
         require(!order[orderId].confirmed ," ...");

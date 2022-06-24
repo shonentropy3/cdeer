@@ -5,12 +5,12 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "hardhat/console.sol";
 
 
-contract Project is ERC721Enumerable{
+contract Project is ERC721Enumerable {
     using Counters for Counters.Counter;
     //TODO:考虑手续费
-    event CreateProject(address indexed msgSender, uint indexed tokenId, string title, uint budget, 
+    event CreateProject(uint indexed tokenId, address indexed msgSender, string title, uint budget, 
             string indexed desc, uint period); 
-    event  ApplyProject(address indexed msg.sender, uint indexed _proId);
+    event  ApplyProject(uint indexed _proId, address indexed msg.sender);
 
     struct ProjectInfo{
         string title;
@@ -45,7 +45,7 @@ contract Project is ERC721Enumerable{
         console.log("Owner Address: ",msg.sender);
         tokenIds.increment();   
         console.log("tokenId:", tokenId);
-        emit CreateProject(msg.sender, tokenId, _projectInfo.title, _projectInfo.budget, 
+        emit CreateProject(tokenId, msg.sender, _projectInfo.title, _projectInfo.budget, 
             _projectInfo.desc, _projectInfo.period);
     }
 
@@ -66,7 +66,7 @@ contract Project is ERC721Enumerable{
         require(!applications[_proId][msg.sender],"Already applied.");
         applications[_proId][msg.sender] = true;
 
-        emit  ApplyProject(msg.sender,_proId)
+        emit  ApplyProject( _proId, msg.sender)
         
         
     }
