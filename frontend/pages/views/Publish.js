@@ -1,5 +1,5 @@
-import contract from '../../contracts/deployments/abi/CodeMarket.json';
-import address from '../../contracts/deployments/CodeMarket.json';
+import contract from '../../contracts/deployments/abi/Project.json';
+import address from '../../contracts/deployments/Project.json';
 import { useEffect, useState, } from 'react';
 import { createProject } from '../http/api';
 import { Input,Form,message } from 'antd';
@@ -264,7 +264,7 @@ function Publish() {
                             <div className="title">
                                 {item.title}
                             </div>
-                            <div className="content">
+                            <div className="requirements">
                                 {
                                     index !== account.length - 1 ? 
                                     <>

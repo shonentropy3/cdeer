@@ -10,20 +10,20 @@ async function main() {
     // Get owner/deployer's wallet address
     const [owner] = await hre.ethers.getSigners();
     // Get contract that we want to deploy
-    const contractFactory = await hre.ethers.getContractFactory("CodeMarket");
+    const contractFactory = await hre.ethers.getContractFactory("Project");
     // Deploy contract with the correct constructor arguments
     const contract = await contractFactory.deploy("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
     // Wait for this transaction to be mined
     await contract.deployed();
     // Get contract address
-    console.log("CodeMarket deployed to:", contract.address);
+    console.log("Project deployed to:", contract.address);
 
     // Mint NFT by 
     txn = await contract.createProject(
         { 
             title: "test",
             budget: 10,
-            content: baseTokenURI,
+            requirements: baseTokenURI,
             period: 786942864435
              },
              {
@@ -38,8 +38,8 @@ async function main() {
     // console.log("now",stateNow)
 
 
-    let artifactT21 = await artifacts.readArtifact("CodeMarket");
-    await writeAbiAddr(artifactT21, contract.address, "CodeMarket", network.name);
+    let artifactT21 = await artifacts.readArtifact("Project");
+    await writeAbiAddr(artifactT21, contract.address, "Project", network.name);
 
 }
 

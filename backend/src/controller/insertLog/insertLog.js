@@ -1,5 +1,5 @@
-// import USDR_ADDR from './deployments/CodeMarket.json';
-const USDR_ADDR = require('../../../deployments/CodeMarket.json');
+// import USDR_ADDR from './deployments/Project.json';
+const USDR_ADDR = require('../../../deployments/Project.json');
 const logger = require('../../com/logger');
 const dbUtil = require('../../db/dbUtil');
 const { ethers, network } = require("hardhat");
@@ -31,7 +31,7 @@ async function insertLog() {
             toBlock
         }
         let logs = await rpcProvider.getLogs(filter);
-        const CreatProjectEvent = new ethers.utils.Interface(["event CreateProject(address indexed msgSenderAdddress, uint256 indexed tokenId, string title, uint256 budget, string content, uint256 period)"]);
+        const CreatProjectEvent = new ethers.utils.Interface(["event CreateProject(address indexed msgSender, uint256 indexed tokenId, string title, uint256 budget, string requirements, uint256 period)"]);
         if (logs.length > 0) {
             let txs = logs.map(ele => {
                 let decodedData = CreatProjectEvent.parseLog(ele);
@@ -40,14 +40,14 @@ async function insertLog() {
                     tokenId: decodedData.args.tokenId,
                     title: decodedData.args.title,
                     budget: decodedData.args.budget,
-                    content: decodedData.args.content,
+                    requirements: decodedData.args.requirements,
                     period: decodedData.args.period,
                 }
             });
             let value = ``;
             for (const v of txs) {
                 value += `
-                ('${v.msgSenderAdddress}',${v.tokenId},'${v.title}',${v.budget},'${v.content}'),
+                ('${v.msgSenderAdddress}',${v.tokenId},'${v.title}',${v.budget},'${v.requirements}'),
                 `
             }
             let result = await dbUtil.insertPro(value.substring(0,(value.length-1))); 
@@ -68,7 +68,7 @@ async function insertLog() {
         let recruiting_role = queryData.recruiting_role;
         let pro_type = queryData.pro_type;
         
-        let sql = `insert into project(content,role,pro_type) 
+        let sql = `insert into project(requirements,role,pro_type) 
         VALUES ('${pro_content}','${recruiting_role}','${pro_type}');
         `;
         try {

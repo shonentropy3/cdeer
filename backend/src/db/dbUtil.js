@@ -15,7 +15,7 @@ async function get() {
 
 async function getLabel(proContent) {
     let records = [];
-    let sql =`SELECT role,pro_type FROM project WHERE content = '${proContent}';`;
+    let sql =`SELECT role,pro_type FROM project WHERE requirements = '${proContent}';`;
     console.log(sql)
     try {
         records = await db.get(sql);
@@ -77,11 +77,11 @@ async function insertPro(insertDatas) {
     let value = insertDatas.substr(0,end)
     console.log("value",value);
     // let sql = `
-    // insert into project(user_address,token_id,title,budget,content) VALUES ${insertDatas};
+    // insert into project(user_address,token_id,title,budget,requirements) VALUES ${insertDatas};
     // `;
     let sql = `
     UPDATE project SET user_address = temp.user_address,token_id = temp.token_id,title = temp.title,budget = temp.budget,update_time = now()
-    from (values ${value}) as temp (user_address,token_id,title,budget,content) where project.content=temp.content; 
+    from (values ${value}) as temp (user_address,token_id,title,budget,requirements) where project.requirements=temp.requirements; 
     `;
     console.log(sql)
     let num = await db.batchInsert(sql);

@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
-import contract from '../contracts/deployments/abi/CodeMarket.json';
-import address from '../contracts/deployments/CodeMarket.json';
+import contract from '../contracts/deployments/abi/Project.json';
+import address from '../contracts/deployments/Project.json';
 import { useEffect, useState, } from 'react';
 import Head from 'next/head'
 import Image from 'next/image'
@@ -92,7 +92,7 @@ export default function Home() {
                 //     <div>NFT-ID：{item.token_id}</div>
                 //     <div>标题：{item.title}</div>
                 //     <div>价格：{item.budget}</div>
-                //     <div>项目内容：{item.content}</div>
+                //     <div>项目内容：{item.requirements}</div>
                 //     <div>创建时间：{item.create_time}</div>
                 // </div>
             );
@@ -231,7 +231,7 @@ export default function Home() {
                 <div className="title">
                   角色
                 </div>
-                <div className="content">
+                <div className="requirements">
                   {roleData()}
                 </div>
               </div>
@@ -239,7 +239,7 @@ export default function Home() {
                 <div className="title">
                   项目类型
                 </div>
-                <div className="content">
+                <div className="requirements">
                   {pjcData()}
                 </div>
               </div>

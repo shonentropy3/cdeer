@@ -1,5 +1,5 @@
 {
-  "contractName": "CodeMarket",
+  "contractName": "Project",
   "abi": [
     {
       "inputs": [
@@ -211,7 +211,7 @@
               "type": "uint256"
             }
           ],
-          "internalType": "struct CodeMarket.ProjectContent",
+          "internalType": "struct Project.ProjectInfo",
           "name": "_projectContent",
           "type": "tuple"
         }
@@ -585,7 +585,7 @@
               "type": "uint256"
             }
           ],
-          "internalType": "struct CodeMarket.ProjectContent",
+          "internalType": "struct Project.ProjectInfo",
           "name": "_projectContent",
           "type": "tuple"
         },

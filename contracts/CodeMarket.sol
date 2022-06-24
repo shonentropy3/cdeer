@@ -1,90 +1,76 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "hardhat/console.sol";
 
 
-contract CodeMarket is ERC721Enumerable, Ownable{
-
-    using SafeMath for uint256;
-    using SafeMath for uint8;
+contract Project is ERC721Enumerable{
     using Counters for Counters.Counter;
-    uint private fee;
-    address private ownerAddr;
+    //TODO:考虑手续费
+    event CreateProject(address indexed msgSender, uint indexed tokenId, string title, uint budget, 
+            string indexed requirements, uint period); 
 
-    event CreateProject(address indexed msgSenderAdddress, uint256 indexed tokenId, string title, uint budget, 
-            string content, uint period); 
-
-    struct ProjectContent{
+    struct ProjectInfo{
         string title;
         uint budget;
-        string content;  //
+        string requirements;
         uint period;
+        bool orderStatus;
+    }
+
+    struct Declaration{
+        uint proId;
+        uint applyTime;
     }
     
     Counters.Counter private tokenIds;
 
-    mapping(uint256 => ProjectContent) private projectContent; 
-    mapping(uint => uint8) public  status;    
-    mapping(uint => uint) private updateTimes;
-    mapping(bytes32 => uint) private tokenIdByContent;
+    mapping(uint => ProjectInfo) private projects; 
     
-    constructor(address _ownerAddress) ERC721("Create NFT ProjectContent","CPC") {
-        require(_ownerAddress != address(0), "Owner is a zero address");
-        ownerAddr = _ownerAddress;
+    //TODO:项目NFT名称
+    constructor() {
+
     }
-    //联系方式
-
-
-
-
-
-    function createProject(ProjectContent memory _projectContent) external payable {
+    //TODO:考虑支付其他货币
+    function createProject(ProjectInfo memory _projectInfo) external payable {
         require(msg.value > fee, "Not enough handling fee.");
-        uint256 tokenId = tokenIds.current();        
-        projectContent[tokenId] = ProjectContent({
-            title: _projectContent.title,
-            budget: _projectContent.budget,
-            content: _projectContent.content,
-            period: _projectContent.period
+        uint tokenId = tokenIds.current();        
+        projectContent[tokenId] = ProjectInfo({
+            title: _projectInfo.title,
+            budget: _projectInfo.budget,
+            requirements: _projectInfo.requirements,
+            period: _projectInfo.period
         });
 
         _safeMint(msg.sender, tokenId);
-        status[tokenId] = 1;
-        console.log("Invoke the address: ",msg.sender);
+
+        console.log("Owner Address: ",msg.sender);
         tokenIds.increment();   
-
         console.log("tokenId:", tokenId);
-        emit CreateProject(msg.sender, tokenId, _projectContent.title, _projectContent.budget, 
-            _projectContent.content, _projectContent.period);
-    }
-    
-    function modifyFee(uint256 _fee) public  {
-        require(msg.sender == ownerAddr,"No right of modification.");
-        fee = _fee;
+        emit CreateProject(msg.sender, tokenId, _projectInfo.title, _projectInfo.budget, 
+            _projectInfo.requirements, _projectInfo.period);
     }
 
-    function updateStatus(uint _tokenId,uint8 _status) public {
+    function modifyProject(uint _tokenId, ProjectInfo memory _projectInfo) external {
         require(msg.sender == ownerOf(_tokenId),"No right of modification.");
-        require(_status < 5 && 1 == (_status - status[_tokenId]),"Status parameter error.");
-        status[_tokenId] = _status;
-    }
-
-    function updateProject(ProjectContent memory _projectContent,uint _tokenId) public payable{
-        require(msg.sender == ownerOf(_tokenId),"No right of modification.");
-        require(0 == status[_tokenId],"Projects have been taken on order.");
-        if(updateTimes[_tokenId]>3){
-            require(msg.value > fee, "Not enough handling fee.");
-        }
-        projectContent[_tokenId] = ProjectContent({
-            title: _projectContent.title,
-            budget: _projectContent.budget,
-            content: _projectContent.content,
-            period: _projectContent.period
-        });    
+        require(!_projectInfo.orderStatus,"Projects have been taken on order.");
+        projectContent[_tokenId] = ProjectInfo({
+            title: _projectInfo.title,
+            budget: _projectInfo.budget,
+            requirements: _projectInfo.requirements,
+            period: _projectInfo.period
+        });
     }
   
+    function orderStatus(uint _tokenId,bool _orderStatus) external {
+        require(msg.sender == ownerOf(_tokenId),"No right of modification.");
+        require(projects[_tokenId].orderStatus != _orderStatus,"Already in this status.");
+        projects[_tokenId].orderStatus = _orderStatus;
+    }
+
+    function applyProject(uint _proId) external {
+        require(address(0) == ownerOf(_proId),"Project does not exist.");
+        
+    }
 }
