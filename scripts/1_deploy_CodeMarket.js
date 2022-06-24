@@ -23,7 +23,7 @@ async function main() {
         { 
             title: "test",
             budget: 10,
-            requirements: baseTokenURI,
+            desc: baseTokenURI,
             period: 786942864435
              },
              {

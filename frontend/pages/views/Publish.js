@@ -264,7 +264,7 @@ function Publish() {
                             <div className="title">
                                 {item.title}
                             </div>
-                            <div className="requirements">
+                            <div className="desc">
                                 {
                                     index !== account.length - 1 ? 
                                     <>

@@ -31,7 +31,7 @@ async function createProject(ctx) {
           let nftTxn = await nftContract.createProject({
             title: pro[0].value,
             budget: Number(pro[1].value),
-            requirements: pro[3].value,
+            desc: pro[3].value,
             period: Number(pro[2].value)
           },
            {
@@ -66,7 +66,7 @@ async function apply(ctx) {
           let nftTxn = await nftContract.createProject({
             title: pro[0].value,
             budget: Number(pro[1].value),
-            requirements: pro[3].value,
+            desc: pro[3].value,
             period: Number(pro[2].value)
           },
            {

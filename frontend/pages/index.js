@@ -92,7 +92,7 @@ export default function Home() {
                 //     <div>NFT-ID：{item.token_id}</div>
                 //     <div>标题：{item.title}</div>
                 //     <div>价格：{item.budget}</div>
-                //     <div>项目内容：{item.requirements}</div>
+                //     <div>项目内容：{item.desc}</div>
                 //     <div>创建时间：{item.create_time}</div>
                 // </div>
             );
@@ -231,7 +231,7 @@ export default function Home() {
                 <div className="title">
                   角色
                 </div>
-                <div className="requirements">
+                <div className="desc">
                   {roleData()}
                 </div>
               </div>
@@ -239,7 +239,7 @@ export default function Home() {
                 <div className="title">
                   项目类型
                 </div>
-                <div className="requirements">
+                <div className="desc">
                   {pjcData()}
                 </div>
               </div>

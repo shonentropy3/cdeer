@@ -9,25 +9,23 @@ contract Project is ERC721Enumerable{
     using Counters for Counters.Counter;
     //TODO:考虑手续费
     event CreateProject(address indexed msgSender, uint indexed tokenId, string title, uint budget, 
-            string indexed requirements, uint period); 
+            string indexed desc, uint period); 
 
     struct ProjectInfo{
         string title;
+        string desc;
         uint budget;
-        string requirements;
         uint period;
-        bool orderStatus;
     }
 
-    struct Declaration{
-        uint proId;
-        uint applyTime;
-    }
+
     
     Counters.Counter private tokenIds;
 
     mapping(uint => ProjectInfo) private projects; 
-    
+    // project => apply => bool 
+    mapping(uint => mapping(address => bool)) private  
+
     //TODO:项目NFT名称
     constructor() {
 
@@ -39,7 +37,7 @@ contract Project is ERC721Enumerable{
         projectContent[tokenId] = ProjectInfo({
             title: _projectInfo.title,
             budget: _projectInfo.budget,
-            requirements: _projectInfo.requirements,
+            desc: _projectInfo.desc,
             period: _projectInfo.period
         });
 
@@ -49,28 +47,24 @@ contract Project is ERC721Enumerable{
         tokenIds.increment();   
         console.log("tokenId:", tokenId);
         emit CreateProject(msg.sender, tokenId, _projectInfo.title, _projectInfo.budget, 
-            _projectInfo.requirements, _projectInfo.period);
+            _projectInfo.desc, _projectInfo.period);
     }
 
     function modifyProject(uint _tokenId, ProjectInfo memory _projectInfo) external {
         require(msg.sender == ownerOf(_tokenId),"No right of modification.");
-        require(!_projectInfo.orderStatus,"Projects have been taken on order.");
+        //TODO:判断项目是否存在订单
         projectContent[_tokenId] = ProjectInfo({
             title: _projectInfo.title,
             budget: _projectInfo.budget,
-            requirements: _projectInfo.requirements,
+            desc: _projectInfo.desc,
             period: _projectInfo.period
         });
-    }
-  
-    function orderStatus(uint _tokenId,bool _orderStatus) external {
-        require(msg.sender == ownerOf(_tokenId),"No right of modification.");
-        require(projects[_tokenId].orderStatus != _orderStatus,"Already in this status.");
-        projects[_tokenId].orderStatus = _orderStatus;
     }
 
     function applyProject(uint _proId) external {
         require(address(0) == ownerOf(_proId),"Project does not exist.");
+        //TODO:判断项目是否存在订单，5
+        
         
     }
 }
