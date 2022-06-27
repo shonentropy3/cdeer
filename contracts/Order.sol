@@ -8,6 +8,8 @@ contract Order {
     event CreateOrder();
     event ConfirmOrder();
 
+    enum ConfirmeOrDeny{ NULL, TRUE, FALSE }
+
     struct Order{
         uint proId;
         address applyAddr;
@@ -19,10 +21,9 @@ contract Order {
     //交付进程
     struct Process {
         uint amount;
-        //甲方是否确认\
-        uint8 confirmedordeny;
+        ConfirmeOrDeny NULL;
         bool withdrawed;
-        uint period;
+        uint endDate;
     }
 
     Counters.Counter private orderIds;
@@ -38,15 +39,15 @@ contract Order {
     }
 
     //TODO：考虑pay by tokens
-    function createOrder(uint _proId, Order memory _order, uint [] periods, uint [] amounts) external {
+    function createOrder(uint _proId, Order memory _order, uint [] _periods, uint [] _amounts) external {
         require(msg.sender == IProject.ownerOf(_proId),"No create permission.");
         require(address(0) != _order.applyAddr,"Application address is zero address.");
-        require(periods.length = amounts.length && periods.length < 10,"Wrong number of processes");
+        require(_periods.length = _amounts.length && _periods.length < 10,"Wrong number of processes");
     
         // require(msg.value == _order.amount,"Wrong amount of commission.");
         require(proOrders[_order.proId].length < 10, "Excessive number of project orders.");
 
-        // TODO: check ( sum of amounts  + prePayment) == _order.amount ;
+        // TODO: check ( sum of _amounts  + prePayment) == _order.amount ;
 
         uint orderId = orderIds.current();      
 
@@ -62,10 +63,10 @@ contract Order {
         
         orderProcesses [] orderProcessesArr = orderProcesses[orderId];
 
-        for ( uint i = 0; i< periods.length; i++ ) {
+        for ( uint i = 0; i< _periods.length; i++ ) {
             Process pro = new Process{
-                amount = amounts[i];
-                period =  periods[i];
+                amount = _amounts[i];
+                period =  _periods[i];
                 confired : false;
             }
             orderProcessesArr.push(pro)
@@ -74,49 +75,46 @@ contract Order {
 
         emit CreateOrder(_order.proId, msg.sender, msg.value, _order.applyAddr, _order.amount, _order.status, _order.submitTimes, _order.period);        
     }
-    //TODO：整理至此
-    function confirmOrder(uint orderId) external {
-        require(orders[orderId].applyAddr == msg.sender, "");
-        require(!order[orderId].confirmed ," ...");
 
-        orders[orderId].startTime = block.timestamp;
-        orders[orderId].confirmed = true;
-
-        if(0 != order[orderId].prePayment){
+    function confirmOrder(uint _orderId) external {
+        require(orders[_orderId].applyAddr == msg.sender, "No permission.");
+        require(!orders[_orderId].confirmed, "The order has been confirmed.");
+        orders[_orderId].confirmed = true;
+        if(0 != order[_orderId].prePayment){
             // TODO: transfer 
         }
 
-        emit ConfirmOrder(orderId, msg.sender);
+        emit ConfirmOrder(_orderId, msg.sender);
     }
 
-    // 
-    function confirmOrderProcess(uint orderId, uint i) external {
-        // check msg.sender;
-                Proecess storage pro = orderProcesses[orderId][i];
-        pro.confired = true;
+    function confirmOrderProcess(uint _proId, uint _orderId, uint i, bool _confirmOrder ) external {
+        require(msg.sender == IProject.ownerOf(_proId),"No create permission.");
+        for ( uint j = 0; j< proOrders[_proId].length; j++ ) {
+            if(proOrders[_proId][j] == _orderId){
+                break;
+            }else{
+                require(!j == proOrders[_proId].length,"No orders for this project.");
+            }
+            Proecess storage pro = orderProcesses[_orderId][i];
+            if{_confirmOrder}{
+                pro.ConfirmeOrDeny = ConfirmeOrDeny.TRUE;
+            }else{
+                pro.ConfirmeOrDeny = ConfirmeOrDeny.FALSE;
+            }
+        }
     }
 
-    function withdraw(uint orderId, uint i) external {
-        Proecess storage pro = orderProcesses[orderId][i];
+    function withdraw(uint _orderId, uint i) external {
+        require(orders[_orderId].applyAddr == msg.sender, "No permission.");
+        Proecess storage pro = orderProcesses[_orderId][i];
         require(!pro.withdrawed, "aleady withdrawed");
         
-        if (pro.confired || starttime + pro.period - 7 days > block.timestamp ) {
+        if (pro.confired || pro.endDate + 7 days < block.timestamp ) {
             // TODO transfer pro.amount
 
             pro.withdrawed = true;
         }
     }
-
-    function _status(uint256 _tokenId) public view returns (uint8) {
-        return status[_tokenId];
-    }    
-
-    function  modifyState(uint _tokenId,uint8 _status) public {
-        require(msg.sender == ownerOf(_tokenId), "No modification permission");
-        status[_tokenId] = _status;
-    } 
-
-    function acceptOrders
 
 //查询剩余时间
 //接单
