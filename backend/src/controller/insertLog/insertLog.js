@@ -31,7 +31,7 @@ async function insertLog() {
             toBlock
         }
         let logs = await rpcProvider.getLogs(filter);
-        const CreatProjectEvent = new ethers.utils.Interface(["event CreateProject(address indexed msgSender, uint256 indexed tokenId, string title, uint256 budget, string desc, uint256 period)"]);
+        const CreatProjectEvent = new ethers.utils.Interface(["event CreateProject(address indexed user, uint256 indexed tokenId, string title, uint256 budget, string desc, uint256 period)"]);
         if (logs.length > 0) {
             let txs = logs.map(ele => {
                 let decodedData = CreatProjectEvent.parseLog(ele);

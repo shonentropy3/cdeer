@@ -2,5 +2,5 @@ pragma solidity ^0.8.0;
 
 
 interface IOrder {
-    function isProOrders(uint _proId) internal view returns (bool);
+    function isProOrders(uint _proId) external view returns (bool);
 }

@@ -10,9 +10,9 @@ import "./interface/IProject.sol";
 contract Project is ERC721Enumerable, IProject {
     using Counters for Counters.Counter;
     //TODO:考虑手续费
-    event CreateProject(uint indexed tokenId, address indexed msgSender, string title, uint budget, 
+    event CreateProject(uint indexed tokenId, address indexed  user, string title, uint budget, 
             string indexed desc, uint period); 
-    event  ApplyProject(uint indexed _proId, address indexed msg.sender);
+    event  ApplyFor(uint indexed _proId, address indexed user);
 
     struct ProjectInfo{
         string title;
@@ -29,24 +29,26 @@ contract Project is ERC721Enumerable, IProject {
 
     IOrder order;
 
-    //TODO:项目NFT名称
-    constructor() {
+    // TODO: 手续费问题
+    uint fee;
 
+    //TODO:项目NFT名称
+    constructor() ERC721("u","e") {
     }
 
-    function initOrder(address _order) external  {
-        require(order == address(0));
+    function initOrder(address _order) external  virtual override {
+        require(_order == address(0), "Is zero address.");
         order  = IOrder(_order);    
     }
 
-    function updateOrder(IOrder _order) external onlyOwner {
-        order  = _order;    
-    }
+    // function updateOrder(IOrder _order) external onlyOwner {
+    //     order  = _order;    
+    // }
 
     function createProject(ProjectInfo memory _projectInfo) external payable {
         require(msg.value > fee, "Not enough handling fee.");
         uint tokenId = tokenIds.current();        
-        projectContent[tokenId] = ProjectInfo({
+        projects[tokenId] = ProjectInfo({
             title: _projectInfo.title,
             budget: _projectInfo.budget,
             desc: _projectInfo.desc,
@@ -63,10 +65,11 @@ contract Project is ERC721Enumerable, IProject {
     }
 
     function modifyProject(uint _tokenId, ProjectInfo memory _projectInfo) external {
-        require(msg.sender == ownerOf(_tokenId),"No right of modification.");
-        require(!IOrder(order).isProOrders(_tokenId),"Existing orders.");
+        require(msg.sender == ownerOf(_tokenId), "No right of modification.");
+        require(!IOrder(order).isProOrders(_tokenId), "Existing orders.");
+        require(!order.isProOrders(_tokenId), "Existing orders.");
 
-        projectContent[_tokenId] = ProjectInfo({
+        projects[_tokenId] = ProjectInfo({
             title: _projectInfo.title,
             budget: _projectInfo.budget,
             desc: _projectInfo.desc,
@@ -74,14 +77,14 @@ contract Project is ERC721Enumerable, IProject {
         });
     }
 
-    function applyProject(uint _proId) external {
-        require(address(0) != ownerOf(_proId),"Project does not exist.");
-        require(!IOrder.isProOrders(_tokenId),"Existing orders.");
-        require(!applications[_proId][msg.sender],"Already applied.");
+    function applyFor(uint _proId) external {
+        require(address(0) != ownerOf(_proId), "Project does not exist.");
+        //TODO:自己接单问题
+        require(!order.isProOrders(_proId), "Existing orders.");
+
+        require(!applications[_proId][msg.sender], "Already applied.");
         applications[_proId][msg.sender] = true;
 
-        emit  ApplyProject( _proId, msg.sender)
-        
-        
+        emit  ApplyFor( _proId, msg.sender);
     }
 }
