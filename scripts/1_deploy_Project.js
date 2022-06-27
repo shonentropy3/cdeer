@@ -12,7 +12,7 @@ async function main() {
     // Get contract that we want to deploy
     const contractFactory = await hre.ethers.getContractFactory("Project");
     // Deploy contract with the correct constructor arguments
-    const contract = await contractFactory.deploy("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
+    const contract = await contractFactory.deploy();
     // Wait for this transaction to be mined
     await contract.deployed();
     // Get contract address

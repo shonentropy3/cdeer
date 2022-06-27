@@ -30,6 +30,10 @@ contract Project is ERC721Enumerable {
     constructor() {
 
     }
+    setOrder(IOrder _order) external onlyOwner {
+        
+    }
+
     //TODO:考虑支付其他货币
     function createProject(ProjectInfo memory _projectInfo) external payable {
         require(msg.value > fee, "Not enough handling fee.");
@@ -52,7 +56,8 @@ contract Project is ERC721Enumerable {
 
     function modifyProject(uint _tokenId, ProjectInfo memory _projectInfo) external {
         require(msg.sender == ownerOf(_tokenId),"No right of modification.");
-        require(!IOrder.isProOrders(_tokenId),"Existing orders.");
+        require(!IOrder(order).isProOrders(_tokenId),"Existing orders.");
+
         projectContent[_tokenId] = ProjectInfo({
             title: _projectInfo.title,
             budget: _projectInfo.budget,
