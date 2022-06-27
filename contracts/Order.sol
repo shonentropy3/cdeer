@@ -1,9 +1,10 @@
 pragma solidity ^0.8.0;
 
 import "./interface/IProject.sol";
+import "./interface/IOrder.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract Order {
+contract Order is IOrder {
 
     event CreateOrder();
     event ConfirmOrder();
@@ -61,7 +62,7 @@ contract Order {
 
         proOrders[_order.proId].push(orderId);
         
-        orderProcesses [] orderProcessesArr = orderProcesses[orderId];
+        Process[] orderProcessesArr = orderProcesses[orderId];
 
         for ( uint i = 0; i< _periods.length; i++ ) {
             Process pro = new Process{
@@ -114,6 +115,14 @@ contract Order {
 
             pro.withdrawed = true;
         }
+    }
+
+    function isProOrders(uint _proId) internal view returns (bool){
+        if(proOrders[_proId].length > 0){
+            return true;
+        }else{
+            return false;
+        } 
     }
 
 //查询剩余时间

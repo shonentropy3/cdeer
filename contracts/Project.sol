@@ -1,5 +1,6 @@
 pragma solidity ^0.8.0;
 
+import "./interface/IOrder.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "hardhat/console.sol";
@@ -51,7 +52,7 @@ contract Project is ERC721Enumerable {
 
     function modifyProject(uint _tokenId, ProjectInfo memory _projectInfo) external {
         require(msg.sender == ownerOf(_tokenId),"No right of modification.");
-        //TODO:判断项目是否存在订单
+        require(!IOrder.isProOrders(_tokenId),"Existing orders.");
         projectContent[_tokenId] = ProjectInfo({
             title: _projectInfo.title,
             budget: _projectInfo.budget,
@@ -62,7 +63,7 @@ contract Project is ERC721Enumerable {
 
     function applyProject(uint _proId) external {
         require(address(0) != ownerOf(_proId),"Project does not exist.");
-        //TODO:判断项目是否存在订单
+        require(!IOrder.isProOrders(_tokenId),"Existing orders.");
         require(!applications[_proId][msg.sender],"Already applied.");
         applications[_proId][msg.sender] = true;
 
