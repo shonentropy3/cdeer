@@ -4,9 +4,10 @@ import "./interface/IOrder.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "hardhat/console.sol";
+import "./interface/IProject.sol";
 
 
-contract Project is ERC721Enumerable {
+contract Project is ERC721Enumerable, IProject {
     using Counters for Counters.Counter;
     //TODO:考虑手续费
     event CreateProject(uint indexed tokenId, address indexed msgSender, string title, uint budget, 
@@ -23,18 +24,25 @@ contract Project is ERC721Enumerable {
     Counters.Counter private tokenIds;
 
     mapping(uint => ProjectInfo) private projects; 
-    //报名信息
+    //报名信息,proId = > applyAddr
     mapping(uint => mapping(address => bool)) private  applications;
+
+    IOrder order;
 
     //TODO:项目NFT名称
     constructor() {
 
     }
-    setOrder(IOrder _order) external onlyOwner {
-        
+
+    function initOrder(address _order) external  {
+        require(order == address(0));
+        order  = IOrder(_order);    
     }
 
-    //TODO:考虑支付其他货币
+    function updateOrder(IOrder _order) external onlyOwner {
+        order  = _order;    
+    }
+
     function createProject(ProjectInfo memory _projectInfo) external payable {
         require(msg.value > fee, "Not enough handling fee.");
         uint tokenId = tokenIds.current();        

@@ -15,7 +15,7 @@ contract Order is IOrder {
     struct Order{
         uint proId;
         address applyAddr;
-        //token
+        IERC20 token;
         uint amount;
         uint prePayment;
         bool confirmed;
@@ -41,6 +41,7 @@ contract Order is IOrder {
 
     constructor(IProject _project) {
         project = _project;
+        IProject(project).initOrder(address(this));
     }
 
     //TODO：考虑coin
@@ -60,7 +61,7 @@ contract Order is IOrder {
         });
 
         proOrders[_order.proId].push(orderId);
-        
+
         Process[] orderProcessesArr = orderProcesses[orderId];
 
         for ( uint i = 0; i< _periods.length; i++ ) {
@@ -126,20 +127,4 @@ contract Order is IOrder {
             return false;
         } 
     }
-
-//查询剩余时间
-//接单
-//查看状态
-//阶段性付款
-//完成交易
-//提款
-//查看余额
-//交易手续费
-//查看个人申报项目状体
-//查看报名人数和个人信息
-//查询订单详情
-//接单放已完成，项目方  待验收
-//单方面终止
-//修改订单，双方确定
-
 }
