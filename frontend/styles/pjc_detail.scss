@@ -1,0 +1,31 @@
+.pjc_detail{
+    width: 100%;
+    padding: 100px 20% 0;
+    margin: 0;
+    background-color: #f0f2f5;
+    .container{
+        box-shadow: 0 1px 3px rgb(0 0 0 / 20%);
+        .top{
+            height: 190px;
+            background: #F7FAFC;
+            border-bottom: 1px solid #ededed;
+            border-top: 1px solid #fff;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+
+            display: flex;
+            flex-direction: column;
+            div:first-child{
+                display: flex;
+                align-items: center;
+            }
+            div:last-child{
+                display: flex;
+            }
+        }
+        .content{
+            background-color: white;
+            height: calc(100vh - 290px);
+        }
+    }
+}

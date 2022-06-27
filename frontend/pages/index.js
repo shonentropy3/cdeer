@@ -2,6 +2,7 @@ import { ethers } from 'ethers';
 import contract from '../contracts/deployments/abi/Project.json';
 import address from '../contracts/deployments/Project.json';
 import { useEffect, useState, } from 'react';
+import Router from "next/router";
 import Head from 'next/head'
 import Image from 'next/image'
 import { Spin,BackTop,Divider } from 'antd';
@@ -45,59 +46,104 @@ export default function Home() {
         // return "Error:"+error;
     }
     if (data.status === 1) {
-      let res = data.detail
-      res.forEach(e => {
-        // let i = e.budget.indexOf('.')
-        // e.budget = e.budget.slice(i,8)
-        console.log(typeof(e.budget));
-      });
-      console.log(res);
-        return data.detail.map(
-                (item, index) => 
-                <div className={`li ${style.item_container}`}>
-                    <div className={style.item_img}>
+      // let res = data.detail
+      // res.forEach(e => {
+      //   // let i = e.budget.indexOf('.')
+      //   // e.budget = e.budget.slice(i,8)
+      //   console.log(typeof(e.budget));
+      // });
+      // console.log(res);
+        // return data.detail.map(
+        //         (item, index) => 
+        //         <div className={`li ${style.item_container}`} key={index} onClick={()=>goDetail(index)}>
+        //             <div className={style.item_img}>
 
-                    </div>
-                    <div className={`${style.item_content} ${style.ml20}`}>
-                        <div className={style.between}>
-                            <p>
-                              NO.{item.token_id}{item.title}
-                              <span className={style.ml10}>Android 图片增强效果开发</span>
-                            </p>
-                            <span className={style.color_red}>¥{item.budget}</span>
+        //             </div>
+        //             <div className={`${style.item_content} ${style.ml20}`}>
+        //                 <div className={style.between}>
+        //                     <p>
+        //                       NO.{item.token_id}{item.title}
+        //                       <span className={style.ml10}>Android 图片增强效果开发</span>
+        //                     </p>
+        //                     <span className={style.color_red}>¥{item.budget}</span>
+        //                 </div>
+        //                 <div>
+        //                     <div className={style.flex_start}>
+        //                       <div className={style.mr30}>
+        //                         招募: {item.role}
+        //                       </div>
+        //                       <div className={style.mr30}>
+        //                         类型: {item.pro_type}
+        //                       </div>
+        //                       <div>
+        //                         {/* 周期: {item.period} */}
+        //                         周期: 7天
+        //                       </div>
+        //                     </div>
+        //                 </div>
+        //                 <div>
+        //                   {item.create_time}
+        //                   <Divider type="vertical" />
+
+        //                 </div>
+        //             </div>
+        //         </div>
+        //         // <div key={index} className="li" >
+        //         //     <div>创建地址：{item.user_adddress}</div>
+        //         //     <div>NFT-ID：{item.token_id}</div>
+        //         //     <div>标题：{item.title}</div>
+        //         //     <div>价格：{item.budget}</div>
+        //         //     <div>项目内容：{item.content}</div>
+        //         //     <div>创建时间：{item.create_time}</div>
+        //         // </div>
+        //     );
+        return sql.data.map(
+          (item, index) => 
+          <div className={`li ${style.item_container}`} key={index} onClick={()=>goDetail(item.id)}>
+              <div className={style.item_img}>
+                <img src={item.cover} alt="" />
+              </div>
+              <div className={`${style.item_content} ${style.ml20}`}>
+                  <div className={style.between}>
+                      <p>
+                        NO.{item.id}
+                        <span className={style.ml10}>{item.name}</span>
+                      </p>
+                      <span className={style.color_red}>¥{item.price}</span>
+                  </div>
+                  <div>
+                      <div className={style.flex_start}>
+                        <div className={style.mr30}>
+                          招募: {item.roles}
+                        </div>
+                        <div className={style.mr30}>
+                          类型: {item.typeText}
                         </div>
                         <div>
-                            <div className={style.flex_start}>
-                              <div className={style.mr30}>
-                                招募: {item.role}
-                              </div>
-                              <div className={style.mr30}>
-                                类型: {item.pro_type}
-                              </div>
-                              <div>
-                                {/* 周期: {item.period} */}
-                                周期: 7天
-                              </div>
-                            </div>
+                          {/* 周期: {item.period} */}
+                          周期: {item.duration}天
                         </div>
-                        <div>
-                          {item.create_time}
-                          <Divider type="vertical" />
+                      </div>
+                  </div>
+                  <div>
+                    {item.create_time}
+                    <Divider type="vertical" />
 
-                        </div>
-                    </div>
-                </div>
-                // <div key={index} className="li" >
-                //     <div>创建地址：{item.user_adddress}</div>
-                //     <div>NFT-ID：{item.token_id}</div>
-                //     <div>标题：{item.title}</div>
-                //     <div>价格：{item.budget}</div>
-                //     <div>项目内容：{item.desc}</div>
-                //     <div>创建时间：{item.create_time}</div>
-                // </div>
-            );
+                  </div>
+              </div>
+          </div>
+      );
     }
-    console.log(data.status);
+  }
+  
+  
+
+  const goDetail = (id) => {
+    // Router.push({pathname:'/views/Pro_detail',query:{id: id}})
+    // let newId = {
+    //   id: id
+    // }
+    Router.push({pathname:'/views/Pro_detail',search: id})
   }
 
   const tokensAmount = async () => {
@@ -218,11 +264,18 @@ export default function Home() {
   // 项目类型check
   let [pjcC,Set_pjcC] = useState(null)
 
+  let [sql,sqlSet] = useState({})
   
   useEffect(() => {
       checkWalletIsConnected();
       marketData()
+      sql = require('./testData/test.json')
+      sqlSet({...sql})
+      console.log('sql==>',sql);
     }, [])
+  
+
+
     
   return (
     <div className="market">

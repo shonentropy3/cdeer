@@ -1,6 +1,6 @@
 import { CaretDownOutlined } from '@ant-design/icons';
 import { Dropdown, Menu, Space, Typography } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import style from '../../styles/utils.module.scss'
 
 
@@ -15,6 +15,7 @@ export default function Myproject() {
         setTitle(title)
         console.log(list[e.key].url);
     }
+
     const list = [
         {
           key: '0',
@@ -47,6 +48,7 @@ export default function Myproject() {
           url:'查看招募中'
         }
       ]
+
     const menu = (
         <Menu
           selectable
@@ -57,22 +59,30 @@ export default function Myproject() {
         />
       );
 
+      
+
     return(
-        <div className="myproject">
-            我发布的项目
-            <div className={style.df}>
-                <Dropdown overlay={menu} onVisibleChange={handleVisibleChange} visible={visible} placement="bottomRight">
-                    <Typography.Link>
-                    <Space>
-                        { list[title].label }
-                        <CaretDownOutlined />
-                    </Space>
-                    </Typography.Link>
-                </Dropdown>
-                <div className={style.btn_blue}>
-                    发布新项目
+        <div className={`Myproject ${style.pt5_} ${style.padding_0_20} ${style.bg1} ${style.h100vh}`}>
+            <div className={`topbar ${style.between}`}>
+                我发布的项目
+                <div className={style.df}>
+                    <Dropdown overlay={menu} onVisibleChange={handleVisibleChange} visible={visible} placement="bottomRight">
+                        <Typography.Link>
+                        <Space>
+                            { list[title].label }
+                            <CaretDownOutlined />
+                        </Space>
+                        </Typography.Link>
+                    </Dropdown>
+                    <div className={style.btn_blue}>
+                        发布新项目
+                    </div>
                 </div>
             </div>
+            <div className={`content`}>
+
+            </div>
+
         </div>
     )
 }
