@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 interface IProject is IERC721 {
 
-    function initOrder(address) external;
+    function setOrder(address) external;
 
 
 

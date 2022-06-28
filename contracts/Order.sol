@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 pragma solidity ^0.8.0;
 
 import "./interface/IProject.sol";
@@ -8,9 +10,11 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 contract Order is IOrder {
 
     using Counters for Counters.Counter;
+
     //TODO:缺少数量
     event CreateOrder(uint proId, address user, address applyAddr, uint amount);
     event ConfirmOrder(uint _orderId, address user);
+
     enum ConfirmOrDeny{ NULL, TRUE, FALSE }
 
     struct Order{
@@ -42,13 +46,13 @@ contract Order is IOrder {
 
     constructor(IProject _project) {
         project = _project;
-        IProject(project).initOrder(address(this));
+        IProject(project).setOrder(address(this));
     }
 
     //TODO：考虑coin,token 类型又问题
     function createOrder(uint _proId, Order memory _order, IERC20 _token) external {
-        require(msg.sender == project.ownerOf(_proId),"No create permission.");
-        require(address(0) != _order.applyAddr,"Application address is zero address.");
+        require(msg.sender == project.ownerOf(_proId), "No create permission.");
+        require(address(0) != _order.applyAddr, "Application address is zero address.");
 
         uint orderId = orderIds.current();  
 
@@ -92,7 +96,7 @@ contract Order is IOrder {
         emit ConfirmOrder(_orderId, msg.sender);
     }
 
-    function confirmOrderProcess(uint _orderId, uint i, ConfirmOrDeny _confirmed) external returns(bool) {
+    function confirmOrderProcess(uint _orderId, uint i, ConfirmOrDeny _confirmed) external returns(bool resultConfirmed_) {
         uint _proId  = orders[_orderId].proId;
         require(msg.sender == project.ownerOf(_proId), "No create permission.");
         //无取款
@@ -100,8 +104,9 @@ contract Order is IOrder {
         Process storage pro = orderProcesses[_orderId][i];
         if (pro.confirmed != (ConfirmOrDeny.NULL)){
             pro.confirmed = _confirmed;
+            resultConfirmed_ = true;
         }else{
-            return false;
+            resultConfirmed_ = false;
         }
     }
 
