@@ -1,3 +1,5 @@
+//SPDX-License-Identifier: MIT
+
 pragma solidity ^0.8.0;
 
 import "./interface/IOrder.sol";
@@ -78,6 +80,7 @@ contract Project is ERC721Enumerable, IProject {
         require(!IOrder(order).isProOrders(_tokenId), "Existing orders.");
         require(!order.isProOrders(_tokenId), "Existing orders.");
 
+//TODO: 修改钱
         projects[_tokenId] = ProjectInfo({
             title: _projectInfo.title,
             budget: _projectInfo.budget,
@@ -89,13 +92,13 @@ contract Project is ERC721Enumerable, IProject {
 
     function applyFor(uint _proId) external {
         require(address(0) != ownerOf(_proId), "Project does not exist.");
-        //TODO:自己接单问题
+        require(msg.sender != ownerOf(_proId), "Not taking orders yourself.");
         require(!order.isProOrders(_proId), "Existing orders.");
         require(!applyInfo[_proId][msg.sender], "Already applied.");
 
         applyInfo[_proId][msg.sender] = true;
 
-        emit  ApplyFor( _proId, msg.sender);
+        emit ApplyFor(_proId, msg.sender);
     }
 
     function modifyFee(uint _fee) external onlyOperator {
