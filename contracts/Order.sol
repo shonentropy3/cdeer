@@ -10,36 +10,36 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract Order is IOrder {
     using SafeERC20 for IERC20;
+    //TODO: 添加uint安全校验
     using Counters for Counters.Counter;
 
     //TODO:缺少数量
     event CreateOrder(uint proId, address user, address applyAddr, uint amount);
     event ConfirmOrder(uint _orderId, address user);
 
-    enum OrderConfirmOrDeny{ NULL, TRUE, FINISH }
-    enum ProcessConfirmOrDeny{ NULL, TRUE, FALSE }
-
     struct Order{
         uint proId;
         address applyAddr;
         address token;
         uint amount;
-        OrderConfirmOrDeny confirmed;
+        uint startDate;
     }
 
     //交付进程
     struct Process {
         uint amount;
-        ProcessConfirmOrDeny confirmed;
+        bool confirmed;
         bool withdrawed;
-        bool[2] terminated;
-        uint endDate;
+        uint period;
     }
 
     Counters.Counter private orderIds;
 
     // orderId = > 
+    //TODO：减数据，全部提款
+
     mapping(uint => Order) private orders;
+    
     // projectId = > orderId
     mapping(uint => uint[]) private proOrders;
     //orderId = >
@@ -51,7 +51,7 @@ contract Order is IOrder {
         project = _project;
         IProject(project).setOrder(address(this));
     }
-
+    
     function createOrder(uint _proId, Order memory _order, address _token) external payable {
         require(msg.sender == project.ownerOf(_proId), "No create permission.");
         require(address(0) != _order.applyAddr, "Application address is zero address.");
@@ -63,7 +63,7 @@ contract Order is IOrder {
                 applyAddr: _order.applyAddr,
                 token: _token,
                 amount: msg.value,
-                confirmed: OrderConfirmOrDeny.NULL
+                confirmed: false
             });
             proOrders[_order.proId].push(orderId);
 
@@ -76,7 +76,7 @@ contract Order is IOrder {
                 applyAddr: _order.applyAddr,
                 token: _token,
                 amount: _order.amount,
-                confirmed: OrderConfirmOrDeny.NULL
+                confirmed: false
             });
             proOrders[_order.proId].push(orderId);
             
@@ -85,33 +85,38 @@ contract Order is IOrder {
         }
     }
 
-    function confirmOrder(uint _orderId, uint[] memory _amounts, uint[] memory _endDate) external {
+    function confirmOrder(uint _orderId, uint[] memory _amounts, uint[] memory _periods) external {
         require(orders[_orderId].applyAddr == msg.sender, "No permission.");
-        require(orders[_orderId].confirmed != OrderConfirmOrDeny.FINISH, "The order has been finished.");
-        require(orders[_orderId].confirmed != OrderConfirmOrDeny.TRUE, "The order has been confirmed.");
-        require((_amounts.length == _endDate.length && _endDate.length < 10), "Wrong number of processes");
+
+        //TODO：大于天数
+        //校验传入参数天数
+        require(!orders[_orderId].confirmed, "The order has been confirmed.");
+        require((_amounts.length == _periods.length && _periods.length < 10), "Wrong number of processes");
         // 时间排序
         uint totalAmounts;
-        for ( uint i = 0; i< _endDate.length; i++ ) {
+        for ( uint i = 0; i< _periods.length; i++ ) {
             Process memory pro = Process ({
                 amount: _amounts[i],
                 confirmed: ProcessConfirmOrDeny.NULL,
                 withdrawed: false,
-                endDate: _endDate[i]
+                period: _periods[i]
             });
             orderProcesses[_orderId].push(pro);
             totalAmounts += _amounts[i];
         }
         require(totalAmounts == orders[_orderId].amount, "Wrong amount of commission.");
     
-        orders[_orderId].confirmed = OrderConfirmOrDeny.TRUE;
+        orders[_orderId].confirmed = true;
 
         emit ConfirmOrder(_orderId, msg.sender);
     }
 
+    //TODO：增加甲方确认阶段
+
+
     function confirmOrderProcess(uint _orderId, uint i, ProcessConfirmOrDeny _confirmed) external returns(bool resultConfirmed_) {
         uint _proId  = orders[_orderId].proId;
-        require(msg.sender == project.ownerOf(_proId), "No create permission.");
+        require(msg.sender == project.ownerOf(_proId), "No confirming permission.");
         //无取款
         require(orderProcesses[_orderId][i].withdrawed == false, "Aleady withdrawed");
         Process storage pro = orderProcesses[_orderId][i];
@@ -123,43 +128,33 @@ contract Order is IOrder {
         }
     }
 
-    function terminateProcess(uint _orderId, uint[] memory i) public {
-        require();
-    }
-
-
-   function projectSideWithdraw(uint _orderId, address _token, uint _amount, uint i) external {
-        //TODO：项目方提款 1.接单方没有确认订单/接单方做一半
+    function terminateProcess(uint _orderId, uint i) public {
         uint _proId  = orders[_orderId].proId;
+        require(project.ownerOf(_proId) == msg.sender || orders[_orderId].applyAddr == msg.sender, "No terminate permission.");
+        uint startDate = ordorderProcessesers[_orderId][i].startDate;
+        uint period = ordorderProcessesers[_orderId][i].period;
         uint sumAmount;
-        require(msg.sender == project.ownerOf(_proId), "No create permission.");
-        if(orders[_orderId].confirmed == OrderConfirmOrDeny.NULL) {
-            orders[_orderId].confirmed = OrderConfirmOrDeny.FINISH;
-            withdraw(_token, mgs.sender, _amount);
-            //TODO：在进程下面再区分时间段
-        } else if(orders[_orderId].confirmed == OrderConfirmOrDeny.TRUE){
-            Process storage pro = ordorderProcessesers[_orderId][i];
-            for( uint i = 0; i< ordorderProcessesers[_orderId].length; i++ ) {
-               if(!pro.withdrawed && pro.confirmed != ProcessConfirmOrDeny.TRUE){
-                   pro.withdrawed = true;
-                   sumAmount += pro.amount;
-               }
+        i -= 1
+        for (uint j; j < ordorderProcessesers[_orderId].length; j++) {
+            terminated = ordorderProcessesers[_orderId][i].terminated[0];
+            if (j >= i) {
+                sumAmount += ordorderProcessesers[_orderId][j].amount;
             }
-            orders[_orderId].confirmed == OrderConfirmOrDeny.FINISH;
-            withdraw(_token, mgs.sender, _amount);
-        }else{
-            return;
         }
+        ratioB = (block.timestamp - startDate)/(60*60*24*period)
+        amountsA = ratioB * ordorderProcessesers[_orderId][i].amount + 
+        
 
     }
 
-    function orderSideWithdraw(uint _orderId, uint i) external {
+   
+    function withdrawByB(uint _orderId, uint i) external {
         require(orders[_orderId].applyAddr == msg.sender, "No permission.");
         Process storage pro = orderProcesses[_orderId][i];
         //无取款
         require(pro.withdrawed == false, "Aleady withdrawed");
 
-        if (pro.confirmed == ProcessConfirmOrDeny.FALSE || pro.endDate + 7 days < block.timestamp) {
+        if (pro.confirmed == ProcessConfirmOrDeny.FALSE || pro.period + 7 days < block.timestamp) {
             // TODO transfer pro.amount
             pro.withdrawed = true;
         }
