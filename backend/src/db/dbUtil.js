@@ -81,7 +81,7 @@ async function insertPro(insertDatas) {
     // `;
     let sql = `
     UPDATE project SET user_address = temp.user_address,token_id = temp.token_id,title = temp.title,budget = temp.budget,update_time = now()
-    from (values ${value}) as temp (user_address,token_id,title,budget,desc) where project.desc=temp.desc; 
+    from (values ${value}) as temp (user_address,token_id,title,budget,desc) where project.desc=temp.requirements; 
     `;
     console.log(sql)
     let num = await db.batchInsert(sql);
