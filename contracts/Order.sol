@@ -50,7 +50,7 @@ contract Order is IOrder {
         IProject(project).setOrder(address(this));
     }
     
-    function createOrder(uint _proId, Order memory _order, address _token) external payable {
+    function createOrder(uint _proId, Order memory _order, address _token, uint[] memory _amounts, uint[] memory _periods) external payable {
         require(msg.sender == project.ownerOf(_proId), "No create permission.");
         require(address(0) != _order.applyAddr, "Application address is zero address.");
 
@@ -78,18 +78,36 @@ contract Order is IOrder {
             });
             proOrders[_order.proId].push(orderId);
             
-
             emit CreateOrder(_order.proId, msg.sender, _order.applyAddr, _order.amount);   
         }
+
+        if (_amounts.length != 0) {
+            setStage(orderId, _amounts, _periods); 
+        }
+        orderIds.increment();
     }
 
-    function confirmOrder(uint _orderId, uint[] memory _amounts, uint[] memory _periods) external {
+    function confirmOrderByB(uint _orderId, uint[] memory _amounts, uint[] memory _periods) external {
         require(orders[_orderId].applyAddr == msg.sender, "No permission.");
-
         //TODO：大于天数
         //校验传入参数天数
-        require(orders[_orderId].startDate != 0, "The order has been confirmed.");
-        require((_amounts.length == _periods.length && _periods.length < 10), "Wrong number of processes");
+        require(!(orders[_orderId].startDate == 0 || orders[_orderId].startDate == 1), "The order has been confirmed.");
+        require(!(orderStages[_orderId].length == 0 && _amounts.length == 0), "Missing stages.");
+
+        if (orderStages[_orderId].length != 0){
+            orders[_orderId].startDate = block.timestamp;
+        } else {
+            setStage(_orderId, _amounts, _periods); 
+            orders[_orderId].startDate = 1;
+        }
+
+        emit ConfirmOrder(_orderId, msg.sender);
+    }
+
+    function setStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods) private {
+        uint _proId  = orders[_orderId].proId;
+        require(msg.sender == project.ownerOf(_proId) || msg.sender == orders[_orderId].applyAddr, "No setting permission.");
+        require(_amounts.length == _periods.length, "Wrong parameter lengt.");
         // 时间排序
         uint totalAmounts;
         for ( uint i = 0; i< _periods.length; i++ ) {
@@ -103,13 +121,18 @@ contract Order is IOrder {
             totalAmounts += _amounts[i];
         }
         require(totalAmounts == orders[_orderId].amount, "Wrong amount of commission.");
-    
+    }
+
+
+    function confirmOrderByA(uint _orderId) external {
+        uint _proId  = orders[_orderId].proId;
+        require(msg.sender == project.ownerOf(_proId), "No confirming permission.");
+        require(orders[_orderId].startDate == 1, "No need to confirm");
         orders[_orderId].startDate = block.timestamp;
 
         emit ConfirmOrder(_orderId, msg.sender);
     }
 
-    //TODO：增加甲方确认阶段
     //TODO: 修改所有的拿去mapping中结构体
 
 
@@ -180,7 +203,7 @@ contract Order is IOrder {
    
     function withdrawByB(uint _orderId, uint i) external {
         require(orders[_orderId].applyAddr == msg.sender, "No permission.");
-        require(orders[_orderId].startDate != 0, "The order is not confirmed.");
+        require(!(orders[_orderId].startDate == 0 || orders[_orderId].startDate == 1), "The order is not confirmed.");
         Stage storage pro = orderStages[_orderId][i];
         //无取款
         require(pro.withdrawed == false, "Aleady withdrawed");
