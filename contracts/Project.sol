@@ -19,7 +19,7 @@ contract Project is ERC721Enumerable, IProject {
     uint fee;
     address  private operator;
 
-    struct ProjectInfo{
+    struct ProInfo{
         string title;
         string desc;
         string attachment;
@@ -28,8 +28,8 @@ contract Project is ERC721Enumerable, IProject {
     }
 
     Counters.Counter private tokenIds;
-
-    mapping(uint => ProjectInfo) private projects; 
+    //proId = >
+    mapping(uint => ProInfo) private projects; 
     //报名信息,proId = > applyAddr
     mapping(uint => mapping(address => bool)) private  applyInfo;
 
@@ -55,15 +55,15 @@ contract Project is ERC721Enumerable, IProject {
         order  = IOrder(_order);    
     }
 
-    function createProject(ProjectInfo memory _projectInfo) external payable {
+    function createProject(ProInfo memory _proInfo) external payable {
         require(msg.value > fee, "Not enough handling fee.");
         uint tokenId = tokenIds.current();        
-        projects[tokenId] = ProjectInfo({
-            title: _projectInfo.title,
-            budget: _projectInfo.budget,
-            desc: _projectInfo.desc,
-            attachment: _projectInfo.attachment,
-            period: _projectInfo.period
+        projects[tokenId] = ProInfo({
+            title: _proInfo.title,
+            budget: _proInfo.budget,
+            desc: _proInfo.desc,
+            attachment: _proInfo.attachment,
+            period: _proInfo.period
         });
 
         _safeMint(msg.sender, tokenId);
@@ -71,22 +71,21 @@ contract Project is ERC721Enumerable, IProject {
         console.log("Owner Address: ",msg.sender);
         tokenIds.increment();   
         console.log("tokenId:", tokenId);
-        emit CreateProject(tokenId, msg.sender, _projectInfo.title, _projectInfo.budget, 
-            _projectInfo.desc, _projectInfo.period);
+        emit CreateProject(tokenId, msg.sender, _proInfo.title, _proInfo.budget, 
+            _proInfo.desc, _proInfo.period);
     }
 
-    function modifyProject(uint _tokenId, ProjectInfo memory _projectInfo) external {
+    function modifyProject(uint _tokenId, ProInfo memory _proInfo) external {
         require(msg.sender == ownerOf(_tokenId), "No right of modification.");
         require(!IOrder(order).isProOrders(_tokenId), "Existing orders.");
         require(!order.isProOrders(_tokenId), "Existing orders.");
 
-//TODO: 修改钱
-        projects[_tokenId] = ProjectInfo({
-            title: _projectInfo.title,
-            budget: _projectInfo.budget,
-            desc: _projectInfo.desc,
-            attachment: _projectInfo.attachment,
-            period: _projectInfo.period
+        projects[_tokenId] = ProInfo({
+            title: _proInfo.title,
+            budget: _proInfo.budget,
+            desc: _proInfo.desc,
+            attachment: _proInfo.attachment,
+            period: _proInfo.period
         });
     }
 

@@ -25,8 +25,8 @@ contract Order is IOrder {
         uint startDate;
     }
 
-    //交付进程
-    struct Process {
+    //交付阶段
+    struct Stage {
         uint amount;
         bool confirmed;
         bool withdrawed;
@@ -35,15 +35,13 @@ contract Order is IOrder {
 
     Counters.Counter private orderIds;
 
-    // orderId = > 
     //TODO：减数据，全部提款
-
+    //orderId  = > 
     mapping(uint => Order) private orders;
-    
     // projectId = > orderId
     mapping(uint => uint[]) private proOrders;
     //orderId = >
-    mapping(uint => Process[]) private orderProcesses;
+    mapping(uint => Stage[]) private orderStages;
 
     IProject project;
 
@@ -95,13 +93,13 @@ contract Order is IOrder {
         // 时间排序
         uint totalAmounts;
         for ( uint i = 0; i< _periods.length; i++ ) {
-            Process memory pro = Process ({
+            Stage memory pro = Stage ({
                 amount: _amounts[i],
                 confirmed: ProcessConfirmOrDeny.NULL,
                 withdrawed: false,
                 period: _periods[i]
             });
-            orderProcesses[_orderId].push(pro);
+            orderStages[_orderId].push(pro);
             totalAmounts += _amounts[i];
         }
         require(totalAmounts == orders[_orderId].amount, "Wrong amount of commission.");
@@ -114,12 +112,12 @@ contract Order is IOrder {
     //TODO：增加甲方确认阶段
 
 
-    function confirmOrderProcess(uint _orderId, uint i, ProcessConfirmOrDeny _confirmed) external returns(bool resultConfirmed_) {
+    function confirmOrderStage(uint _orderId, uint i, ProcessConfirmOrDeny _confirmed) external returns(bool resultConfirmed_) {
         uint _proId  = orders[_orderId].proId;
         require(msg.sender == project.ownerOf(_proId), "No confirming permission.");
         //无取款
-        require(orderProcesses[_orderId][i].withdrawed == false, "Aleady withdrawed");
-        Process storage pro = orderProcesses[_orderId][i];
+        require(orderStages[_orderId][i].withdrawed == false, "Aleady withdrawed");
+        Stage storage pro = orderStages[_orderId][i];
         if (pro.confirmed == (ProcessConfirmOrDeny.NULL)){
             pro.confirmed = _confirmed;
             resultConfirmed_ = true;
@@ -128,21 +126,21 @@ contract Order is IOrder {
         }
     }
 
-    function terminateProcess(uint _orderId, uint i) public {
+    function terminateStage(uint _orderId, uint i) public {
         uint _proId  = orders[_orderId].proId;
         require(project.ownerOf(_proId) == msg.sender || orders[_orderId].applyAddr == msg.sender, "No terminate permission.");
-        uint startDate = ordorderProcessesers[_orderId][i].startDate;
-        uint period = ordorderProcessesers[_orderId][i].period;
+        uint startDate = orderStages[_orderId][i].startDate;
+        uint period = orderStages[_orderId][i].period;
         uint sumAmount;
         i -= 1
-        for (uint j; j < ordorderProcessesers[_orderId].length; j++) {
-            terminated = ordorderProcessesers[_orderId][i].terminated[0];
+        for (uint j; j < orderStages[_orderId].length; j++) {
+            terminated = orderStages[_orderId][i].terminated[0];
             if (j >= i) {
-                sumAmount += ordorderProcessesers[_orderId][j].amount;
+                sumAmount += orderStages[_orderId][j].amount;
             }
         }
         ratioB = (block.timestamp - startDate)/(60*60*24*period)
-        amountsA = ratioB * ordorderProcessesers[_orderId][i].amount + 
+        amountsA = ratioB * orderStages[_orderId][i].amount + 
         
 
     }
@@ -150,7 +148,7 @@ contract Order is IOrder {
    
     function withdrawByB(uint _orderId, uint i) external {
         require(orders[_orderId].applyAddr == msg.sender, "No permission.");
-        Process storage pro = orderProcesses[_orderId][i];
+        Stage storage pro = orderStages[_orderId][i];
         //无取款
         require(pro.withdrawed == false, "Aleady withdrawed");
 
