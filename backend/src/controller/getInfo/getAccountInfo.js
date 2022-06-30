@@ -43,6 +43,7 @@ async function getProject(ctx) {
 }
 
 async function testPost(ctx) {
+    console.log("后端执行了");
     let queryData = ctx.request.body;
 
     let succeed = true;
@@ -57,5 +58,5 @@ async function testPost(ctx) {
 module.exports = {
     testGet,
     testPost,
-    getProject,
+    getProject
 };
