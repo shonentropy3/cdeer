@@ -67,7 +67,7 @@ contract Project is ERC721Enumerable, IProject {
         });
 
         _safeMint(msg.sender, tokenId);
-
+        applyInfo[_proId][msg.sender] = true;
         console.log("Owner Address: ",msg.sender);
         tokenIds.increment();   
         console.log("tokenId:", tokenId);
@@ -98,6 +98,17 @@ contract Project is ERC721Enumerable, IProject {
         applyInfo[_proId][msg.sender] = true;
 
         emit ApplyFor(_proId, msg.sender);
+    }
+
+    function cancelApplyFor(uint _proId) external {
+        require(msg.sender != ownerOf(_proId), "Not applied.");
+        applyInfo[_proId][msg.sender] = false;
+    }
+
+    function closeApplyFor(uint _proId) external {
+        require(msg.sender != ownerOf(_proId), "No Root.");
+        require(applyInfo[_proId][msg.sender], "Already closed.");
+        applyInfo[_proId][msg.sender] = false;
     }
 
     function modifyFee(uint _fee) external onlyOperator {
