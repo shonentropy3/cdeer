@@ -1,51 +1,43 @@
 import { CaretDownOutlined } from '@ant-design/icons';
 import { Dropdown, Menu, Space, Typography } from 'antd';
 import { useEffect, useState } from 'react';
+import MyprojectList from '../../components/MypjcList';
 import style from '../../styles/utils.module.scss'
 
 
 export default function Myproject() {
     const [visible, setVisible] = useState(false);
     const [title, setTitle] = useState('0');
+    const [test, setTest] = useState('');
     const handleVisibleChange = (flag) => {
         setVisible(flag);
     };
     const handleMenuClick = e => {
         title = e.key
+        test = list[e.key].label
+        setTest(test)
+
         setTitle(title)
-        console.log(list[e.key].url);
     }
 
     const list = [
         {
-          key: '0',
-          label: '所有状态',
-          url:'查看全部'
+          key: '0', label: '所有状态', url:'查看全部'
         },
         {
-          key: '1',
-          label: '待支付',
-          url:'查看待支付'
+          key: '1', label: '待支付', url:'查看待支付'
         },
         {
-          key: '2',
-          label: '招募中',
-          url:'查看招募中'
+          key: '2', label: '招募中', url:'查看招募中'
         },
         {
-          key: '3',
-          label: '开发中',
-          url:'查看招募中'
+          key: '3', label: '开发中', url:'查看招募中'
         },
         {
-          key: '4',
-          label: '已结束',
-          url:'查看招募中'
+          key: '4', label: '已结束', url:'查看招募中'
         },
         {
-          key: '5',
-          label: '已取消',
-          url:'查看招募中'
+          key: '5', label: '已取消', url:'查看招募中'
         }
       ]
 
@@ -59,7 +51,30 @@ export default function Myproject() {
         />
       );
 
+      // 账号
+      const [currentAccount, setCurrentAccount] = useState(null);
+
+      const connectWalletHandler = async () => {
       
+        const { ethereum } = window;
+    
+        if (!ethereum) {
+          alert("Please install Metamask!");
+        }
+    
+        try {
+          const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+          console.log("Found an account! Address: ", accounts[0]);
+          setCurrentAccount(accounts[0]);
+        } catch (err) {
+          console.log(err)
+        }
+    }
+
+      useEffect(()=>{
+        console.log('获取当前账号登陆状态');
+        connectWalletHandler()
+      },[])
 
     return(
         <div className={`Myproject ${style.pt5_} ${style.padding_0_20} ${style.bg1} ${style.h100vh}`}>
@@ -80,7 +95,19 @@ export default function Myproject() {
                 </div>
             </div>
             <div className={`content`}>
-
+                <h1>{test}</h1>
+                <div className="list">
+                    <MyprojectList />
+                  <div className="li">
+                    项目一
+                  </div>
+                  <div className="li">
+                    项目二
+                  </div>
+                  <div className="li">
+                    项目三
+                  </div>
+                </div>
             </div>
 
         </div>

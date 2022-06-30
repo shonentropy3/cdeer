@@ -12,7 +12,7 @@ const Sport = ({router})=>{
         oid = location.search
         oid = oid.replace('?','')
         
-        data = require("../testData/test.json")
+        data = require("../testData/mock.json")
         data = data.data
         getDetail()
     },[])

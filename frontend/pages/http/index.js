@@ -92,6 +92,7 @@ serviceAxios.interceptors.response.use(
           break;
       }
     }
+    console.log(error.response.config.baseURL+error.response.config.url);
     return Promise.reject(message);
   }
 );

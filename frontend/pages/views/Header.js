@@ -1,5 +1,7 @@
 import Link from 'next/link'
 // import style from '../../styles/header.module.scss'
+// import { MessageOutlined } from '@ant-design/icons';
+import { Badge } from 'antd';
 function Header() {    return (
         <div className='header'>
             <div className="left">
@@ -32,9 +34,15 @@ function Header() {    return (
                             发布项目
                         </div>
                     </Link>
-                    <div className="_li">
-                        在线沟通
-                    </div>
+                    
+                        <div className="_li">
+                            {/* <MessageOutlined style={{ fontSize: '20px' }} /> */}
+                            <Badge count={5} size="small">
+                                <div className="notice">
+                                    
+                                </div>
+                            </Badge>
+                        </div>
                 </div>
                 <Link href="/views/My">
                     <div className="avt">

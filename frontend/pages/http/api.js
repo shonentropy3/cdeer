@@ -18,3 +18,12 @@ export const createProject = (data) => {
     }
 );
 }
+
+export const createStorage = (data) => {
+    return serviceAxios({
+        url: "/upchain/storage",
+        method: "post",
+        data,
+    }
+);
+}

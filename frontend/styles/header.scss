@@ -5,10 +5,21 @@
   line-height: 64px;
   cursor: pointer;
   transition: color 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
   &:hover {
     color: skyblue;
   }
 }
+
+.notice{
+  width: 30px;
+  height: 30px;
+  background-color: aquamarine;
+
+}
+
 .header {
   position: fixed;
   top: 0;

@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
-import contract from '../contracts/deployments/abi/Project.json';
-import address from '../contracts/deployments/Project.json';
+import contract from '../contracts/deployments/abi/CodeMarket.json';
+import address from '../contracts/deployments/CodeMarket.json';
 import { useEffect, useState, } from 'react';
 import Router from "next/router";
 import Head from 'next/head'
@@ -162,6 +162,11 @@ export default function Home() {
 
   }
 
+  // 筛选分类
+  let filter = () => {
+    console.log(pjcC,roleC);
+  }
+
   // 获取页面数据
   const marketData = async()=>{
     const res = await getMarketData()
@@ -173,11 +178,13 @@ export default function Home() {
   let checkRole = (val) => {
     roleC = val
     Set_roleC(roleC)
+    filter()
   }
 
   let checkPjc = (val) => {
     pjcC = val
     Set_pjcC(val)
+    filter()
   }
 
   const roleData = () => {
@@ -269,7 +276,7 @@ export default function Home() {
   useEffect(() => {
       checkWalletIsConnected();
       marketData()
-      sql = require('./testData/test.json')
+      sql = require('./testData/mock.json')
       sqlSet({...sql})
       console.log('sql==>',sql);
     }, [])

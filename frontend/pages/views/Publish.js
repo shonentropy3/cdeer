@@ -1,9 +1,10 @@
-import contract from '../../contracts/deployments/abi/Project.json';
-import address from '../../contracts/deployments/Project.json';
-import { useEffect, useState, } from 'react';
-import { createProject } from '../http/api';
-import { Input,Form,message } from 'antd';
-
+import contract from '../../contracts/deployments/abi/CodeMarket.json';
+import address from '../../contracts/deployments/CodeMarket.json';
+import { useEffect, useState, useRef } from 'react';
+import { createProject,createStorage } from '../http/api';
+import { Input,Form,message,Button,Upload,notification } from 'antd';
+import { UploadOutlined,WarningOutlined } from '@ant-design/icons';
+import axios from 'axios';
 function Publish() {
 
     const [currentAccount, setCurrentAccount] = useState(null);
@@ -165,7 +166,6 @@ function Publish() {
                       </div>
                         
                 </> 
-        
     }
 
     // 类型选择(输出)
@@ -253,7 +253,81 @@ function Publish() {
       let [tuan,Set_tuan] = useState([])
       // 项目类型
       let [pjc,Set_pjc] = useState([])
+      // 附件
+      let [file,fileSet] = useState()
 
+      // 上传附件
+      let upload = () => {
+      //   // $req = $this->curl("http://127.0.0.1:5001/api/v0/add", $myJSON);
+      //   // $req = json_decode($req, TRUE);
+      //   // $hash = $req['Hash'];
+        
+      }
+      
+      useEffect(()=>{
+        // upload()
+        console.log();
+      },[])
+
+      const beforeUpload = (file) => {
+        console.log(file);
+        const isLt2M = file.size / 1024 / 1024 < 20;
+      
+        if (!isLt2M) {
+          message.error('Must smaller than 20MB!');
+        }
+        return isLt2M;
+      };
+      
+      let num = 0
+      const handleChange = (info) => {
+        console.log('list===>',info.fileList);
+        if (num === 1) {
+          notification.open({
+            message: '最大文件数量不可超过一个!',
+            closeIcon: (
+              <></>
+            ),
+            duration: 5,
+            icon: (
+              <WarningOutlined
+                style={{
+                  color: 'white',
+                }}
+              />
+            ),
+          });
+          return false
+        }
+        if (info.file.status === 'done') {
+          message.success(`${info.file.name} file uploaded successfully`);
+          num++
+        } else if (info.file.status === 'error') {
+          message.error(`${info.file.name} file upload failed.`);
+        } else if (info.file.status === 'removed') {
+          num--
+        }
+      };
+
+      let customRequest = (file)=> {
+
+
+        // const config = {
+        //   headers: { "Content-Type": "multipart/form-data" }
+        // };
+        let test = {'file': file.file}
+        console.log(test);
+        axios.post("http://127.0.0.1:3000/codemarket/user/find-one", test)
+        .then((response) => {
+            console.log(response);
+          //   if (response.status === 200) {
+          //   console.log(response);
+          // }
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      }
 
     return(
         <div className="publish">
@@ -291,6 +365,24 @@ function Publish() {
                         </div>
                         )
                     }
+                    <div>
+                      相关文档<span>(选填)</span>
+
+                        <Upload 
+                          // accept='"Content-Type": "multipart/form-data"'
+                          maxCount='1'
+                          name="file"
+                          // action='http://127.0.0.1:3030/upchain/storage'
+                          // data={file}
+                          customRequest={customRequest}
+                          fileList={file}
+                          beforeUpload={beforeUpload}
+                          onChange={handleChange}
+                        >
+                          <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                        </Upload>
+                      
+                    </div>
                     <div className="type">
                     {roleBox()}
                     </div>
@@ -302,6 +394,7 @@ function Publish() {
             </div>
         </div>
     )
+    
 }
 
 export default Publish

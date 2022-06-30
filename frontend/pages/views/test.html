@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!--必须声明 multipart/form-data -->
+<!-- <form action="http://127.0.0.1:3030/upchain/storage" method="post" enctype="multipart/form-data" >
+    <input type="file" multiple="multiple" class="upload" />
+    <input type="submit" value="上传">
+</form> -->
+    
+    <input type="file" multiple="multiple" class="upload" onchange="processFiles(this.files)" />
+  <img class="previewImg" src=""/>
+
+
+  <input id="fileInput" type="file" multiple/>新的测试
+</body>
+<script>
+
+        const fileInput = document.querySelector('#fileInput');
+
+        async function formData() {
+            const data = new FormData();
+            data.set('file', fileInput.files[0]);
+
+            const res = await axios.post('/api/person/file', data, {
+                headers: { 'content-type': 'multipart/form-data' }
+            });
+            console.log(res);     
+        }
+
+        fileInput.onchange = formData;
+
+
+
+
+        
+    let path = document.querySelector('.upload')
+     function processFiles(files) {
+        var dataUrl;
+        var file = files[0];
+        var fr = new FileReader();
+        fr.readAsDataURL(file); //读取文件内容，读取完成,result属性中将包含一个data: URL格式的字符串以表示所读取文件的内容。
+        // fr.readAsBinaryString(file) 读取文件内容，读取完成，result属性中将包含所读取文件的原始二进制数据。
+        // fr.readAsText(file) 读取文件内容,读取完成,result属性中将包含一个字符串以表示所读取的文件内容。
+        // fr.readAsArrayBuffer(file) 读取文件内容,读取完成,result 属性中保存的将是被读取文件的 ArrayBuffer 数据对象.
+        fr.onload=function(){ //文件读取成功回调
+            dataUrl = fr.result;  //result属性为data:URL格式,与读取方式有关
+            document.querySelector('img.previewImg').src = dataUrl 
+            var blob = dataURLtoBlob(dataUrl);
+            var file = blobToFile(blob, 'test');
+            // axios.post("http://127.0.0.1:3030/upchain/storage", test)
+            // console.log(file);
+            var ajax = new XMLHttpRequest();
+            ajax.onreadystatechange = function (res){
+                // console.log('res==>',res,'===>',ajax);
+                if(ajax.readyState==4){
+                   console.log(ajax.responseText,'<==ajax.responseText')
+                }
+            }
+            //3.连接服务器
+            ajax.open('post','http://127.0.0.1:3000/codemarket/user/upload',true);
+            // ajax.open('post','http://127.0.0.1:3000/codemarket/user/find-one',true);
+            
+            //设置请求头信息    
+            // ajax.setRequestHeader('content-type','multipart/form-data');
+            //4.发送请求
+            // var formData = new FormData();
+            // formData.set('file',blob);
+            // console.log(formData);
+            console.log({"file":file});
+
+            ajax.send(dataUrl);
+            // console.log(path.value);
+            
+        };
+    //将base64转换为blob
+    let dataURLtoBlob = function(dataurl) { 
+        var arr = dataurl.split(','),
+            mime = arr[0].match(/:(.*?);/)[1],
+            bstr = atob(arr[1]),
+            n = bstr.length,
+            u8arr = new Uint8Array(n);
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new Blob([u8arr], { type: mime });
+    }
+    //将blob转换为file
+    let blobToFile = function(theBlob, fileName){
+       theBlob.lastModifiedDate = new Date();
+       theBlob.name = fileName;
+       return theBlob;
+    }
+    //调用
+    
+    
+}
+</script>
+</html>

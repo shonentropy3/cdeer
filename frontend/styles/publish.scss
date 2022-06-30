@@ -3,6 +3,20 @@
     padding: 5% 0;
     background-color: #f0f2f5;
 }
+.ant-notification-notice-message{
+    color: white;
+}
+.ant-notification-notice{
+    background-color: #bd362f;
+    opacity: 0.8;
+    box-shadow: 0 0 8px 2px rgb(200, 200, 200);
+    transition: opacity 0.3s,box-shadow 0.3s;
+    &:hover{
+        opacity: 1;
+        box-shadow: 0 0 8px 2px rgb(101, 101, 101);
+    }
+}
+
 .box{
     width: 800px;
     // min-width: 500px;
@@ -44,6 +58,9 @@
             border: 1px solid #cad3de;
             padding: 10px;
             border-radius: 5px;
+        }
+        .desc{
+            width: 100%;
         }
         .data0{
             // width: 650px;
