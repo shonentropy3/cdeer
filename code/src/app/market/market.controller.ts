@@ -13,7 +13,6 @@ export class MarketController {
     uploadFile(@UploadedFiles() files){
 
         return new Promise ((resolve,reject)=>{
-            // this.marketService.getFile(files)
             resolve(this.marketService.getFile(files))
          })
          .then((res)=>{

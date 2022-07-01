@@ -75,6 +75,24 @@
             margin-right: 20px;
         }
     }
+    .upload{
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+        margin-bottom: 30px;
+        .mr20{
+            margin-right: 20px;
+            color: gray;
+            font-size: 17px;
+        }
+        p{
+            margin: 5px;
+        }
+        span .ant-upload{
+            display: flex;
+        }
+    }
     // 多选框
     .type{
         width: 100%;

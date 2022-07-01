@@ -36,7 +36,12 @@ export class MarketService {
 
     // 获取hash
     getFile(files) {
+
+        if (files.length === 0 ) {
+            return false
+        }
         return new Promise((resolve, reject) => {
+            
             const file = files[0]
             let time = `${Date.now()}-${file.originalname}`
             // let time = `${Date.now()}-${file.name}`
@@ -64,16 +69,17 @@ export class MarketService {
         }).then(res=>{
             return res
         }).catch(() => {
-            let obj = {
-                status: 500,
-                message: '请求超时'
-            }
-            return obj
+            
+            return false
         })
     }
 
     // 传入数据库
     pushFile(file,obj) {
+        if (obj === false) {
+            // return '未上传图片'
+            return
+        }
 
         // 上传upyun
         // client.putFile(hash, file[0].buffer)

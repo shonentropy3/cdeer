@@ -3,8 +3,11 @@ import address from '../../contracts/deployments/CodeMarket.json';
 import { useEffect, useState, useRef } from 'react';
 import { createProject,getHash } from '../http/api';
 import { Input,Form,message,Button,Upload,notification } from 'antd';
-import { UploadOutlined,WarningOutlined } from '@ant-design/icons';
+import { UploadOutlined, WarningOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import axios from 'axios';
+import style from '../../styles/utils.module.scss'
+
+
 function Publish() {
 
     const [currentAccount, setCurrentAccount] = useState(null);
@@ -276,7 +279,7 @@ function Publish() {
 
       // 上传前
       const beforeUpload = (file) => {
-        console.log(file);
+        // console.log(file);
         const isLt2M = file.size / 1024 / 1024 < 20;
       
         if (!isLt2M) {
@@ -285,41 +288,41 @@ function Publish() {
         return isLt2M;
       };
       
-      let num = 0
+      // 上传提醒
+      const tips = () => {
+        notification.config({
+          maxCount: 1,
+        })
+        notification.open({
+          message: `最大文件数量不可超过一个!`,
+          closeIcon: (
+            <></>
+          ),
+          duration: 5,
+          icon: (
+            <WarningOutlined
+              style={{
+                color: 'white',
+              }}
+            />
+          ),
+        });
+      }
+
+      let ulStatus = false
       const handleChange = (info) => {
-        console.log('list===>',info.fileList);
-        if (num === 1) {
-          notification.open({
-            message: '最大文件数量不可超过一个!',
-            closeIcon: (
-              <></>
-            ),
-            duration: 5,
-            icon: (
-              <WarningOutlined
-                style={{
-                  color: 'white',
-                }}
-              />
-            ),
-          });
-          return false
-        }
-        if (info.file.status === 'done') {
-          message.success(`${info.file.name} file uploaded successfully`);
-          num++
-        } else if (info.file.status === 'error') {
-          message.error(`${info.file.name} file upload failed.`);
-        } else if (info.file.status === 'removed') {
-          num--
-        }
+        var formData=new FormData();
+        formData.append('files',info.fileList[0]);
+        console.log(formData.get('files'));
+        // getHash(formData)
+          if (info.file.status === 'done') {
+            ulStatus = true
+            message.success(`${info.file.name} file uploaded successfully`);
+          } else if (info.file.status === 'error') {
+            message.error(`${info.file.name} file upload failed.`);
+          } 
       };
 
-      let customRequest = (file)=> {
-        var formData=new FormData();
-        formData.append('files',file.file);
-        // setState(formData)
-      }
 
     return(
         <div className="publish">
@@ -357,18 +360,31 @@ function Publish() {
                         </div>
                         )
                     }
-                    <div>
-                      相关文档<span>(选填)</span>
+                    <div className={`upload`}>
+                      <p>相关文档<span>(选填)</span></p>
 
-                        <Upload 
+                      <InfoCircleOutlined className='mr20' onClick={()=>tips()} />
+
+                        {/* <Upload 
+                          // showUploadList={false}
                           maxCount='1'
                           name="file"
-                          customRequest={customRequest}
                           fileList={file}
                           beforeUpload={beforeUpload}
                           onChange={handleChange}
                         >
                           <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                        </Upload> */}
+
+                        <Upload
+                          listType="picture"
+                          maxCount={1}
+                          name="file"
+                          fileList={file}
+                          beforeUpload={beforeUpload}
+                          onChange={handleChange}
+                        >
+                          <Button icon={<UploadOutlined />}>Upload (Max: 1)</Button>
                         </Upload>
                       
                     </div>

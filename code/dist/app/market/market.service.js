@@ -22,6 +22,9 @@ const contractabi = require('../../../deployments/abi/Project.json');
 const abi = contractabi.abi;
 let MarketService = class MarketService {
     getFile(files) {
+        if (files.length === 0) {
+            return false;
+        }
         return new Promise((resolve, reject) => {
             const file = files[0];
             let time = `${Date.now()}-${file.originalname}`;
@@ -49,14 +52,13 @@ let MarketService = class MarketService {
         }).then(res => {
             return res;
         }).catch(() => {
-            let obj = {
-                status: 500,
-                message: '请求超时'
-            };
-            return obj;
+            return false;
         });
     }
     pushFile(file, obj) {
+        if (obj === false) {
+            return;
+        }
         fs.unlink(obj.res, (err) => {
             if (err)
                 throw err;
