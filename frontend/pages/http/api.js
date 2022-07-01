@@ -12,16 +12,16 @@ export const getMarketData = (data) => {
 
 export const createProject = (data) => {
     return serviceAxios({
-        url: "/upchain/createProject",
+        url: "/market/publish",
         method: "post",
         data,
     }
 );
 }
 
-export const createStorage = (data) => {
+export const getHash = (data) => {
     return serviceAxios({
-        url: "/upchain/storage",
+        url: "/market/upload",
         method: "post",
         data,
     }

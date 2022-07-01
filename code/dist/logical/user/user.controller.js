@@ -14,7 +14,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
 const common_1 = require("@nestjs/common");
-const platform_express_1 = require("@nestjs/platform-express");
 const user_service_1 = require("./user.service");
 let UserController = class UserController {
     constructor(usersService) {
@@ -26,18 +25,6 @@ let UserController = class UserController {
     }
     testPort() {
         return this.usersService.testPort();
-    }
-    uploadFile(files) {
-        return new Promise((resolve, reject) => {
-            this.usersService.getFile(files);
-            resolve(this.usersService.getFile(files));
-        })
-            .then((res) => {
-            return this.usersService.addFile(files, res);
-        });
-    }
-    xx() {
-        return 'xx';
     }
 };
 __decorate([
@@ -53,20 +40,6 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], UserController.prototype, "testPort", null);
-__decorate([
-    (0, common_1.Post)('upload'),
-    (0, common_1.UseInterceptors)((0, platform_express_1.FilesInterceptor)('files')),
-    __param(0, (0, common_1.UploadedFiles)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", void 0)
-], UserController.prototype, "uploadFile", null);
-__decorate([
-    (0, common_1.Get)('xx'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], UserController.prototype, "xx", null);
 UserController = __decorate([
     (0, common_1.Controller)('user'),
     __metadata("design:paramtypes", [user_service_1.UserService])

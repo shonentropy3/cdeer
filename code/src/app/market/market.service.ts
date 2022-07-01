@@ -1,13 +1,32 @@
-import { Injectable } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import { BadRequestException, Body, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { AxiosError } from 'axios';
 import { createWriteStream } from 'fs';
 import { join } from 'path/posix';
+import { map, Observable, tap, throwError } from 'rxjs';
 const fs  = require('fs');
 var upyun = require("upyun")
 const ipfsAPI = require('ipfs-api');
 const ipfs = ipfsAPI({host: 'localhost', port: '5001', protocol: 'http'});
-
+const service = new upyun.Service('ipfs0','upchain', 'upchain123')
+const client = new upyun.Client(service);
 @Injectable()
 export class MarketService {
+    // constructor(private readonly http: HttpService) {}
+    // findOne(@Body() body: any) {
+    //     // return this.usersService.findOne(body.username);
+    //     console.log(body);
+    //     return body
+    // }
+
+    // testPort(): Observable<any> {
+    //     return this.http
+    //       .get(`http://127.0.0.1:3000/codemarket/app`)
+    //       .pipe(
+    //         tap((res) => (`Status: ${res.status}`)),
+    //         map((res) => res.data)
+    //       );
+    //   }
 
     // 获取hash
     getFile(files) {
@@ -25,19 +44,49 @@ export class MarketService {
                         if (err || typeof files == "undefined") {
                             console.log(err);
                         } else {
-                            resolve(files[0].hash)
+                            let obj = {
+                                hash: files[0].hash,
+                                path: path,
+                                res: res,
+                                name: time
+                            }
+                            resolve(obj)
                         }
                     })
                 }
             })
-        }).then((res)=>{
+        }).then(res=>{
             return res
+        }).catch(() => {
+            let obj = {
+                status: 500,
+                message: '请求超时'
+            }
+            return obj
         })
+    }
+
+    
+    pushFile(file,obj) {
+
+        // 上传upyun
+        // client.putFile(hash, file[0].buffer)
+
+        // 删除文件
+        fs.unlink(obj.res, (err) => {
+            if (err) throw err;
+            // console.log('文件已删除');
+        });
+
+        // 存入数据库
+        return  '还差存入数据库'
     }
 
 
     // 创建项目
-    // createPjc(body) {
+    createPjc(body) {
+        console.log(body);
+        
     //     let queryData = body;
     //     let{proType,pro} = queryData;
     //     const { ethereum } = window;
@@ -70,5 +119,22 @@ export class MarketService {
     //         return;
     //     }
     //     return ctx.response.body = _succeed();
-    // }
+    }
+
+
+// AxiosErrorTip
+    handleError(error: AxiosError) {
+        if (error.response) {
+          if (error.response.status === HttpStatus.NOT_FOUND) {
+            return throwError(new NotFoundException(error.response.data));
+          } else if (error.response.status === HttpStatus.BAD_REQUEST) {
+            return throwError(new BadRequestException(error.response.data));
+          } else {
+            return throwError(new HttpException(error.response.data, error.response.status));
+          }
+        } else {
+          return throwError(error.message);
+        }
+    }
+
 }

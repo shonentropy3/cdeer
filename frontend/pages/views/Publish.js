@@ -1,7 +1,7 @@
 import contract from '../../contracts/deployments/abi/CodeMarket.json';
 import address from '../../contracts/deployments/CodeMarket.json';
 import { useEffect, useState, useRef } from 'react';
-import { createProject,createStorage } from '../http/api';
+import { createProject,getHash } from '../http/api';
 import { Input,Form,message,Button,Upload,notification } from 'antd';
 import { UploadOutlined,WarningOutlined } from '@ant-design/icons';
 import axios from 'axios';
@@ -84,15 +84,27 @@ function Publish() {
         // 校验四:预防xss攻击
         account[0].value = account[0].value.replace(/<|>|\//g,"")
         Set_account([...account])
-        // console.log(account[0].value);
-        // console.log('通过了 ==>',account);
        
-        let data = {pro_content: account[3].value,
+        let data = {
+          pro_content: account[3].value,
           recruiting_role: `{${tuan}}`,
-          pro_type: `{${pjc}}`}
-          data = JSON.stringify(data)
+          pro_type: `{${pjc}}`
+        }
+        data = JSON.stringify(data)
         let para = {"proLabel":data}
-        createProject(para,account)
+
+        // 1、hash存入数据库
+        getHash(formData)
+        .then((response) => {
+
+          console.log(response);
+          createProject(para,account)
+
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+        
 
     }
 
@@ -255,14 +267,6 @@ function Publish() {
       let [pjc,Set_pjc] = useState([])
       // 附件
       let [file,fileSet] = useState()
-
-      // 上传附件
-      let upload = () => {
-      //   // $req = $this->curl("http://127.0.0.1:5001/api/v0/add", $myJSON);
-      //   // $req = json_decode($req, TRUE);
-      //   // $hash = $req['Hash'];
-        
-      }
       
       useEffect(()=>{
         // upload()
@@ -312,14 +316,7 @@ function Publish() {
       let customRequest = (file)=> {
         var formData=new FormData();
         formData.append('files',file.file);
-        axios.post("http://localhost:3000/codemarket/user/upload",formData)
-        // axios.get("http://localhost:3000/codemarket/user/hello")
-        .then((response) => {
-          console.log('response==>',response.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+        // setState(formData)
       }
 
     return(

@@ -10,10 +10,13 @@ exports.MarketService = void 0;
 const common_1 = require("@nestjs/common");
 const fs_1 = require("fs");
 const posix_1 = require("path/posix");
+const rxjs_1 = require("rxjs");
 const fs = require('fs');
 var upyun = require("upyun");
 const ipfsAPI = require('ipfs-api');
 const ipfs = ipfsAPI({ host: 'localhost', port: '5001', protocol: 'http' });
+const service = new upyun.Service('ipfs0', 'upchain', 'upchain123');
+const client = new upyun.Client(service);
 let MarketService = class MarketService {
     getFile(files) {
         return new Promise((resolve, reject) => {
@@ -29,14 +32,52 @@ let MarketService = class MarketService {
                             console.log(err);
                         }
                         else {
-                            resolve(files[0].hash);
+                            let obj = {
+                                hash: files[0].hash,
+                                path: path,
+                                res: res,
+                                name: time
+                            };
+                            resolve(obj);
                         }
                     });
                 }
             });
-        }).then((res) => {
+        }).then(res => {
             return res;
+        }).catch(() => {
+            let obj = {
+                status: 500,
+                message: '请求超时'
+            };
+            return obj;
         });
+    }
+    pushFile(file, obj) {
+        fs.unlink(obj.res, (err) => {
+            if (err)
+                throw err;
+        });
+        return '还差存入数据库';
+    }
+    createPjc(body) {
+        console.log(body);
+    }
+    handleError(error) {
+        if (error.response) {
+            if (error.response.status === common_1.HttpStatus.NOT_FOUND) {
+                return (0, rxjs_1.throwError)(new common_1.NotFoundException(error.response.data));
+            }
+            else if (error.response.status === common_1.HttpStatus.BAD_REQUEST) {
+                return (0, rxjs_1.throwError)(new common_1.BadRequestException(error.response.data));
+            }
+            else {
+                return (0, rxjs_1.throwError)(new common_1.HttpException(error.response.data, error.response.status));
+            }
+        }
+        else {
+            return (0, rxjs_1.throwError)(error.message);
+        }
     }
 };
 MarketService = __decorate([

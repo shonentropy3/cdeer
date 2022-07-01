@@ -6,19 +6,18 @@ import { MarketService } from './market.service';
 export class MarketController {
     constructor(private readonly marketService: MarketService){}
 
-    @Post('upload') //  暂存文件|获取hash
+    @Post('upload') //  暂存文件 => 获取hash => 删除文件 => 存入数据库
     @UseInterceptors(FilesInterceptor('files'))
     uploadFile(@UploadedFiles() files){
 
-        return this.marketService.getFile(files)
-
-        // return new Promise ((resolve,reject)=>{
-        //     this.usersService.getFile(files)
-        //     resolve(this.usersService.getFile(files))
-        //  })
-        //  .then((res)=>{
-        //     return this.usersService.addFile(files,res)
-        //  })
+        return new Promise ((resolve,reject)=>{
+            // this.marketService.getFile(files)
+            resolve(this.marketService.getFile(files))
+         })
+         .then((res)=>{
+            return this.marketService.pushFile(files,res)
+         })
+         
     }
 
     @Post('publish')  //  创建项目

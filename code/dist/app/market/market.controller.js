@@ -21,7 +21,12 @@ let MarketController = class MarketController {
         this.marketService = marketService;
     }
     uploadFile(files) {
-        return this.marketService.getFile(files);
+        return new Promise((resolve, reject) => {
+            resolve(this.marketService.getFile(files));
+        })
+            .then((res) => {
+            return this.marketService.pushFile(files, res);
+        });
     }
     createProject(body) {
     }
