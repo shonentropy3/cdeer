@@ -124,7 +124,7 @@ contract Order is IOrder {
         emit ConfirmOrder(_orderId, msg.sender);
     }
 
-
+    // TODO:考虑阶段，是否已经确认
     // function _modifyStage(uint _orderId, uint[] memory _amounts, uint[] memory _endDate) private {
     //     uint _proId  = orders[_orderId].proId;
     //     require(msg.sender == demand.ownerOf(_proId) || msg.sender == orders[_orderId].applyAddr, "No setting permission.");
@@ -174,36 +174,30 @@ contract Order is IOrder {
     function terminateStage(uint _orderId, uint _stageIndex) external {
         uint _proId  = orders[_orderId].proId;
         require(demand.ownerOf(_proId) == msg.sender || orders[_orderId].applyAddr == msg.sender, "No terminate permission.");
-        
+
         require(!orderStages[_orderId][_stageIndex].confirmed, "Already confirmed.");
         Stage[] storage orderStagesArr = orderStages[_orderId];
         uint startDate = orders[_orderId].startDate;
         uint stageStartDate;
         uint sumAmount;
         uint sumAmountA;
-        uint sumAmountB;
-
+        uint sumAmountB;        
         if (_stageIndex == 0) {
             stageStartDate = startDate;
         } else {
             stageStartDate = orderStagesArr[_stageIndex - 1].endDate;
         }
-        if (_stageIndex < orderStagesArr.length && _stageIndex != 0) {
-            require(orderStagesArr[_stageIndex - 1].confirmed, "Error stage.");
-        }
+        require(block.timestamp > stageStartDate && block.timestamp < orderStagesArr[_stageIndex].endDate, "Out stage.");        
         uint period = stageStartDate - stageStartDate;
         sumAmountB += orderStagesArr[_stageIndex].amount * (block.timestamp - stageStartDate) / (60*60*24*period);
         for (_stageIndex; _stageIndex < orderStagesArr.length; _stageIndex++) {
             sumAmount += orderStagesArr[_stageIndex].amount;
             orderStagesArr[_stageIndex].withdrawed == true;
         }
-
         sumAmountA = sumAmount - sumAmountB;
-
         _transfer(orders[_orderId].token, demand.ownerOf(_proId), sumAmountA);
         _transfer(orders[_orderId].token, orders[_orderId].applyAddr, sumAmountB);
     }
-
    
     function withdrawByB(uint _orderId, uint _stageIndex) external {
         require(orders[_orderId].applyAddr == msg.sender, "No permission.");
@@ -266,7 +260,7 @@ contract Order is IOrder {
 
     function _transfer(address _token, address _to, uint _amount) private {
         if (address(0) == _token) {
-           TransferHelper.safeTransfer(_token, _to, _amount);
+           TransferHelper.safeTransferETH(_to, _amount);
         } else {
             IERC20(_token).safeTransfer(_to, _amount);
         }
