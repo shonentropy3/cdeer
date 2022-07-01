@@ -46,10 +46,12 @@ export class MarketService {
             let time = `${Date.now()}-${file.originalname}`
             // let time = `${Date.now()}-${file.name}`
             let path = '../../../public'+'/'+ time
+            // let path = 'public'+'/'+ time
             let writeStream = createWriteStream(join(__dirname, path))
             writeStream.write(file.buffer , function (err) {
                 if (!err) {
-                    let res = '/Users/xiaonahe/Desktop/work/code-market/code/public/'+time
+                    // let res = '/Users/xiaonahe/Desktop/work/code-market/code/public/'+time
+                    let res = 'public/'+ time
                     // resolve(res)
                     ipfs.add(fs.readFileSync(res),   function (err, files) {
                         if (err || typeof files == "undefined") {
@@ -57,9 +59,7 @@ export class MarketService {
                         } else {
                             let obj = {
                                 hash: files[0].hash,
-                                path: path,
-                                res: res,
-                                name: time
+                                path: res
                             }
                             resolve(obj)
                         }
@@ -82,16 +82,16 @@ export class MarketService {
         }
 
         // 上传upyun
-        // client.putFile(hash, file[0].buffer)
+        // client.putFile(obj.hash, file[0].buffer)
 
         // 删除文件
-        fs.unlink(obj.res, (err) => {
+        fs.unlink(obj.path, (err) => {
             if (err) throw err;
             // console.log('文件已删除');
         });
 
         // 存入数据库
-        return  '还差存入数据库'
+        return  obj
     }
 
 

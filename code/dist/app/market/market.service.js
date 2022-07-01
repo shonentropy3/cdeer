@@ -32,7 +32,7 @@ let MarketService = class MarketService {
             let writeStream = (0, fs_1.createWriteStream)((0, posix_1.join)(__dirname, path));
             writeStream.write(file.buffer, function (err) {
                 if (!err) {
-                    let res = '/Users/xiaonahe/Desktop/work/code-market/code/public/' + time;
+                    let res = 'public/' + time;
                     ipfs.add(fs.readFileSync(res), function (err, files) {
                         if (err || typeof files == "undefined") {
                             console.log(err);
@@ -40,9 +40,7 @@ let MarketService = class MarketService {
                         else {
                             let obj = {
                                 hash: files[0].hash,
-                                path: path,
-                                res: res,
-                                name: time
+                                path: res
                             };
                             resolve(obj);
                         }
@@ -59,11 +57,11 @@ let MarketService = class MarketService {
         if (obj === false) {
             return;
         }
-        fs.unlink(obj.res, (err) => {
+        fs.unlink(obj.path, (err) => {
             if (err)
                 throw err;
         });
-        return '还差存入数据库';
+        return obj;
     }
     async createPjc(body) {
         console.log(body);
