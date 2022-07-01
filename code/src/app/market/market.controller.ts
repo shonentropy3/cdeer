@@ -2,6 +2,8 @@ import { Body, Controller, Post, UploadedFiles, UseInterceptors } from '@nestjs/
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { MarketService } from './market.service';
 
+
+
 @Controller('market')
 export class MarketController {
     constructor(private readonly marketService: MarketService){}

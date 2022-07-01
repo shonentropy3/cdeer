@@ -17,6 +17,9 @@ const ipfsAPI = require('ipfs-api');
 const ipfs = ipfsAPI({ host: 'localhost', port: '5001', protocol: 'http' });
 const service = new upyun.Service('ipfs0', 'upchain', 'upchain123');
 const client = new upyun.Client(service);
+const { contractAddress, address } = require('../../../deployments/Project.json');
+const contractabi = require('../../../deployments/abi/Project.json');
+const abi = contractabi.abi;
 let MarketService = class MarketService {
     getFile(files) {
         return new Promise((resolve, reject) => {
@@ -60,7 +63,7 @@ let MarketService = class MarketService {
         });
         return '还差存入数据库';
     }
-    createPjc(body) {
+    async createPjc(body) {
         console.log(body);
     }
     handleError(error) {

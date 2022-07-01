@@ -10,6 +10,12 @@ const ipfsAPI = require('ipfs-api');
 const ipfs = ipfsAPI({host: 'localhost', port: '5001', protocol: 'http'});
 const service = new upyun.Service('ipfs0','upchain', 'upchain123')
 const client = new upyun.Client(service);
+import { ethers } from 'ethers';
+const { contractAddress , address} = require('../../../deployments/Project.json')
+const contractabi = require('../../../deployments/abi/Project.json')
+const abi = contractabi.abi
+
+
 @Injectable()
 export class MarketService {
     // constructor(private readonly http: HttpService) {}
@@ -66,7 +72,7 @@ export class MarketService {
         })
     }
 
-    
+    // 传入数据库
     pushFile(file,obj) {
 
         // 上传upyun
@@ -84,41 +90,43 @@ export class MarketService {
 
 
     // 创建项目
-    createPjc(body) {
+    async createPjc(body) {
         console.log(body);
-        
-    //     let queryData = body;
-    //     let{proType,pro} = queryData;
-    //     const { ethereum } = window;
-    //     try {
-    //         if (ethereum) {
-    //         const provider = new ethers.providers.Web3Provider(ethereum);
-    //         const signer = provider.getSigner();
-    //         const nftContract = new ethers.Contract(contractAddress.address, abi, signer);
-    //         getAccountInfo.insertLabel(proType)
 
-    //         //Project publishing fee
-    //         let fee = ethers.utils.parseUnits('1', 18);
-    //         let nftTxn = await nftContract.createProject({
-    //             title: pro[0].value,
-    //             budget: Number(pro[1].value),
-    //             desc: pro[3].value,
-    //             period: Number(pro[2].value)
-    //         },
-    //         {
-    //             value: fee
-    //         });
-    //         await nftTxn.wait();
-    //         } else {
-    //         console.log("Ethereum object does not exist");
-    //         }
-    
-    //     } 
-    //     catch (err) {
-    //         ctx.response.body = _fail(err);
-    //         return;
+
+    // let queryData = body;
+    // let{proType,pro} = queryData;
+    // const {ethereum} = window;
+    // try {
+    //     if (ethereum) {
+    //       const provider = new ethers.providers.Web3Provider(ethereum);
+    //       const signer = provider.getSigner();
+    //       const nftContract = new ethers.Contract(contractAddress.address, abi, signer);
+    //       getAccountInfo.insertLabel(proType)
+
+    //       //Project publishing fee
+    //       let fee = ethers.utils.parseUnits('1', 18);
+    //       let nftTxn = await nftContract.createProject({
+    //         title: pro[0].value,
+    //         budget: Number(pro[1].value),
+    //         desc: pro[3].value,
+    //         period: Number(pro[2].value)
+    //       },
+    //        {
+    //         value: fee
+    //        });
+    //       await nftTxn.wait();
+    //     } else {
+    //       console.log("Ethereum object does not exist");
     //     }
-    //     return ctx.response.body = _succeed();
+  
+    //   } 
+    //   catch (err) {
+    //     ctx.response.body = _fail(err);
+    //     return;
+    //   }
+    // return ctx.response.body = _succeed();
+        
     }
 
 

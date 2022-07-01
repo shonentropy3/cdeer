@@ -98,6 +98,7 @@ function Publish() {
         .then((response) => {
 
           console.log(response);
+          // 2、创建项目
           createProject(para,account)
 
         })
@@ -273,6 +274,7 @@ function Publish() {
         console.log();
       },[])
 
+      // 上传前
       const beforeUpload = (file) => {
         console.log(file);
         const isLt2M = file.size / 1024 / 1024 < 20;
@@ -359,11 +361,8 @@ function Publish() {
                       相关文档<span>(选填)</span>
 
                         <Upload 
-                          // accept='"Content-Type": "multipart/form-data"'
                           maxCount='1'
                           name="file"
-                          // action='http://127.0.0.1:3030/upchain/storage'
-                          // data={file}
                           customRequest={customRequest}
                           fileList={file}
                           beforeUpload={beforeUpload}
