@@ -6,6 +6,7 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { createWriteStream } from 'fs';
 import { join, resolve } from 'path/posix';
 const fs  = require('fs');
+var upyun = require("upyun")
 const ipfsAPI = require('ipfs-api');
 const ipfs = ipfsAPI({host: 'localhost', port: '5001', protocol: 'http'});
 
@@ -32,58 +33,50 @@ export class UserService {
 
 
     getFile(files) {
-        let hash = 'chu'
-        new Promise((resolve, reject) => {
+        // console.log('files==>',files);
+        
+        return new Promise((resolve, reject) => {
             const file = files[0]
             let time = `${Date.now()}-${file.originalname}`
+            // let time = `${Date.now()}-${file.name}`
             let path = '../../../public'+'/'+ time
             let writeStream = createWriteStream(join(__dirname, path))
             writeStream.write(file.buffer , function (err) {
                 if (!err) {
-                    resolve (time)
+                    let res = '/Users/xiaonahe/Desktop/work/code-market/code/public/'+time
+                    // resolve(res)
+                    ipfs.add(fs.readFileSync(res),   function (err, files) {
+                        if (err || typeof files == "undefined") {
+                            console.log(err);
+                        } else {
+                            resolve(files[0].hash)
+                        }
+                    })
                 }
             })
-        })
-        .then((time) =>{
-            // return this.add(time)
-            let res = '/Users/xiaonahe/Desktop/work/code-market/code-market/public/'+time
-            ipfs.add(fs.readFileSync(res),   function (err, files) {
-                if (err || typeof files == "undefined") {
-                    console.log(err);
-                } else {
-                    console.log(files[0].hash);
-                    return (files[0].hash)
-                    resolve(hash = files[0].hash)
-                }
-            })
-        })
-        .then(res => {
-            console.log('3==>',hash);
-            
-            return 'xx'
+        }).then((res)=>{
+            return res
         })
     }
 
-    add(time){
-        return new Promise((resolve,reject)=>{
-            try {
-                let res = '/Users/xiaonahe/Desktop/work/code-market/code-market/public/'+time
-                ipfs.add(fs.readFileSync(res), function (err, files) {
-                    if (err || typeof files == "undefined") {
-                        reject(err);
-                    } else {
-                        console.log(files[0].hash);
-                        resolve(files[0].hash);
-                    }
-                })
-            }catch(ex) {
-                reject(ex);
+    addFile(file,hash) {
+        console.log('file==>',file);
+        console.log('hash==>',hash);
+        // TODO: 上传upyun ==> 删除本地文件
+        const service = new upyun.Service('ipfs0','upchain', 'upchain123')
+        const client = new upyun.Client(service);
+        // client.putFile(hash, file[0].buffer)
+
+        
+        let obj = {
+            code: 0,
+            message: "请求成功",
+            data:{
+                hash:hash
             }
-        })
+        }
+        return  obj
     }
-
-
-
 
     // AxiosErrorTip
     handleError(error: AxiosError) {

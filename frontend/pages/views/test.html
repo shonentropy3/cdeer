@@ -53,29 +53,25 @@
             document.querySelector('img.previewImg').src = dataUrl 
             var blob = dataURLtoBlob(dataUrl);
             var file = blobToFile(blob, 'test');
-            // axios.post("http://127.0.0.1:3030/upchain/storage", test)
-            // console.log(file);
             var ajax = new XMLHttpRequest();
             ajax.onreadystatechange = function (res){
-                // console.log('res==>',res,'===>',ajax);
-                if(ajax.readyState==4){
-                   console.log(ajax.responseText,'<==ajax.responseText')
+                console.log('res==>',res,'===>',ajax);
+                if(ajax.readyState==4&&ajax.status==200){
+                   console.log(ajax,'<==ajax.responseText')
                 }
             }
             //3.连接服务器
             ajax.open('post','http://127.0.0.1:3000/codemarket/user/upload',true);
-            // ajax.open('post','http://127.0.0.1:3000/codemarket/user/find-one',true);
+            // ajax.open('get','http://localhost:3000/codemarket/user/hello',true);
             
             //设置请求头信息    
             // ajax.setRequestHeader('content-type','multipart/form-data');
             //4.发送请求
-            // var formData = new FormData();
-            // formData.set('file',blob);
-            // console.log(formData);
-            console.log({"file":file});
+            var formData = new FormData();
+            formData.append('files',file);
 
-            ajax.send(dataUrl);
-            // console.log(path.value);
+            ajax.send(formData);
+            // ajax.send();
             
         };
     //将base64转换为blob

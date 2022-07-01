@@ -6,7 +6,13 @@ export declare class UserService {
     constructor(http: HttpService);
     findOne(body: any): any;
     testPort(): Observable<any>;
-    getFile(files: any): void;
-    add(time: any): Promise<unknown>;
+    getFile(files: any): Promise<unknown>;
+    addFile(file: any, hash: any): {
+        code: number;
+        message: string;
+        data: {
+            hash: any;
+        };
+    };
     handleError(error: AxiosError): Observable<never>;
 }

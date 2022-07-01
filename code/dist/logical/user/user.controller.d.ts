@@ -4,6 +4,12 @@ export declare class UserController {
     constructor(usersService: UserService);
     findOne(body: any): string;
     testPort(): import("rxjs").Observable<any>;
-    uploadFile(files: any): Promise<unknown>;
-    getUserHello(): string;
+    uploadFile(files: any): Promise<{
+        code: number;
+        message: string;
+        data: {
+            hash: any;
+        };
+    }>;
+    xx(): string;
 }

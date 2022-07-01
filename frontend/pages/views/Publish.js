@@ -310,21 +310,14 @@ function Publish() {
       };
 
       let customRequest = (file)=> {
-
-
-        // const config = {
-        //   headers: { "Content-Type": "multipart/form-data" }
-        // };
-        let test = {'file': file.file}
-        console.log(test);
-        axios.post("http://127.0.0.1:3000/codemarket/user/find-one", test)
+        var formData=new FormData();
+        formData.append('files',file.file);
+        axios.post("http://localhost:3000/codemarket/user/upload",formData)
+        // axios.get("http://localhost:3000/codemarket/user/hello")
         .then((response) => {
-            console.log(response);
-          //   if (response.status === 200) {
-          //   console.log(response);
-          // }
+          console.log('response==>',response.data);
         })
-        .catch(function (error) {
+        .catch((error) => {
           console.log(error);
         });
       }

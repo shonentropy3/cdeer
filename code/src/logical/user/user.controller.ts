@@ -1,11 +1,6 @@
-import { Body, Controller, Get, Post, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Post, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { createWriteStream } from 'fs';
-import { join } from 'path/posix';
 import { UserService } from './user.service';
-const fs  = require('fs');
-const ipfsAPI = require('ipfs-api');
-const ipfs = ipfsAPI({host: 'localhost', port: '5001', protocol: 'http'});
 @Controller('user')
 export class UserController {
     constructor(private readonly usersService: UserService){}
@@ -27,17 +22,22 @@ export class UserController {
     @Post('upload')
     @UseInterceptors(FilesInterceptor('files'))
     uploadFile(@UploadedFiles() files){
-        
-        // return 
-        return new Promise((resolve,reject)=>{
+
+
+        // return this.usersService.getFile(files)
+
+        return new Promise ((resolve,reject)=>{
+            this.usersService.getFile(files)
             resolve(this.usersService.getFile(files))
-        })
-         
+         })
+         .then((res)=>{
+            return this.usersService.addFile(files,res)
+         })
     }
 
-
-    @Get('hello')  //  局部路由
-    getUserHello(): string {
-        return 'UserHello';
+    @Get('xx')
+    xx(){
+        return 'xx'
     }
+
 }
