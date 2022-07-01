@@ -2,11 +2,12 @@
 
 pragma solidity ^0.8.0;
 
-import "./interface/IProject.sol";
+import "./interface/IDemand.sol";
 import "./interface/IOrder.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import '@uniswap/lib/contracts/libraries/TransferHelper.sol';
 
 contract Order is IOrder {
     using SafeERC20 for IERC20;
@@ -18,7 +19,9 @@ contract Order is IOrder {
     event ConfirmOrder(uint _orderId, address user);
 
 
-    IProject project;
+    IDemand demand;
+
+    address  private operator;
 
     uint8 private maxStages = 12;
 
@@ -50,13 +53,13 @@ contract Order is IOrder {
     mapping(uint => Stage[]) private orderStages;
 
 
-    constructor(IProject _project) {
-        project = _project;
-        IProject(project).setOrder(address(this));
+    constructor(IDemand _demand) {
+        demand = _demand;
+        IDemand(demand).setOrder(address(this));
     }
     
     function createOrder(uint _proId, Order memory _order, address _token, uint[] memory _amounts, uint[] memory _periods) external payable {
-        require(msg.sender == project.ownerOf(_proId), "No create permission.");
+        require(msg.sender == demand.ownerOf(_proId), "No create permission.");
         require(address(0) != _order.applyAddr, "Application address is zero address.");
 
         uint orderId = orderIds.current();  
@@ -84,16 +87,17 @@ contract Order is IOrder {
 
 
     function confirmOrderByB(uint _orderId, uint[] memory _amounts, uint[] memory _periods) external {
+
         require(orders[_orderId].applyAddr == msg.sender, "No permission.");
         //TODO：大于天数
         //校验传入参数天数
         require(!(orders[_orderId].startDate == 0 || orders[_orderId].startDate == 1), "The order has been confirmed.");
         require(!(orderStages[_orderId].length == 0 && _amounts.length == 0), "Missing stages.");
-
-        if (orderStages[_orderId].length != 0){
-            delayTime = orders[_orderId].startDate - block.timestamp;
-            for (uint i; i < orderStages[_orderId].length; i++) {
-                orderStages[_orderId][i].endDate += delayTime;
+        Stage[] storage orderStagesArr = orderStages[_orderId];
+        if (orderStagesArr.length != 0){
+            uint delayTime = orders[_orderId].startDate - block.timestamp;
+            for (uint i; i < orderStagesArr.length; i++) {
+                orderStagesArr[i].endDate += delayTime;
             }
             orders[_orderId].startDate = block.timestamp;
             orders[_orderId].confirmed = 1;
@@ -107,12 +111,12 @@ contract Order is IOrder {
 
     function confirmOrderByA(uint _orderId) external {
         uint _proId  = orders[_orderId].proId;
-        require(msg.sender == project.ownerOf(_proId), "No confirming permission.");
+        require(msg.sender == demand.ownerOf(_proId), "No confirming permission.");
         require(orders[_orderId].confirmed == 2, "No need to confirm");
-
-        delayTime = orders[_orderId].startDate - block.timestamp;
-        for (uint i; i < orderStages[_orderId].length; i++) {
-            orderStages[_orderId][i].endDate += delayTime;
+        Stage[] storage orderStagesArr = orderStages[_orderId];
+        uint delayTime = orders[_orderId].startDate - block.timestamp;
+        for (uint i; i < orderStagesArr.length; i++) {
+            orderStagesArr[i].endDate += delayTime;
         }
         orders[_orderId].confirmed = 1;
         orders[_orderId].startDate = block.timestamp;
@@ -120,29 +124,28 @@ contract Order is IOrder {
         emit ConfirmOrder(_orderId, msg.sender);
     }
 
+    // TODO:考虑阶段，是否已经确认
+    // function _modifyStage(uint _orderId, uint[] memory _amounts, uint[] memory _endDate) private {
+    //     uint _proId  = orders[_orderId].proId;
+    //     require(msg.sender == demand.ownerOf(_proId) || msg.sender == orders[_orderId].applyAddr, "No setting permission.");
+    //     require(_amounts.length == _endDate.length, "Wrong parameter lengt.");
+    //     // 时间排序
+    //     uint totalAmounts;
+    //     uint _endDate = block.timestamp;
 
-    function _modifyStage(uint _orderId, uint[] memory _amounts, uint[] memory _endDate) private {
-        uint _proId  = orders[_orderId].proId;
-        require(msg.sender == project.ownerOf(_proId) || msg.sender == orders[_orderId].applyAddr, "No setting permission.");
-        require(_amounts.length == _periods.length, "Wrong parameter lengt.");
-        // 时间排序
-        uint totalAmounts;
-        uint _endDate = block.timestamp;
-
-        for ( uint i = 0; i< _periods.length; i++ ) {
-            _endDate = startDate + _periods[i];
-            Stage memory pro = Stage ({
-                amount: _amounts[i],
-                confirmed: false,
-                withdrawed: false,
-                endDate: _periods[i]
-            });
-            orderStages[_orderId].push(pro);
-            totalAmounts += _amounts[i];
-            startDate = _endDate;
-        }
-        require(totalAmounts == orders[_orderId].amount, "Wrong amount of commission.");
-    }
+    //     for ( uint i = 0; i< _endDate.length; i++ ) {
+    //         _endDate += startDate;
+    //         Stage memory pro = Stage ({
+    //             amount: _amounts[i],
+    //             confirmed: false,
+    //             withdrawed: false,
+    //             endDate: 0
+    //         });
+    //         orderStagesArr.push(pro);
+    //         totalAmounts += _amounts[i];
+    //     }
+    //     require(totalAmounts == orders[_orderId].amount, "Wrong amount of commission.");
+    // }
 
 
     //TODO: 修改所有的拿去mapping中结构体
@@ -150,18 +153,17 @@ contract Order is IOrder {
 
     function confirmOrderStage(uint _orderId, uint _stageIndex) external {
         uint _proId  = orders[_orderId].proId;
-        require(msg.sender == project.ownerOf(_proId), "No confirming permission.");
+        require(msg.sender == demand.ownerOf(_proId), "No confirming permission.");
         //无取款
         require(!orderStages[_orderId][_stageIndex].withdrawed, "Aleady withdrawed");
         require(!orderStages[_orderId][_stageIndex].confirmed, "A ");
-        Stage storage pro = orderStages[_orderId][_stageIndex];
-        pro.confirmed = true;
+        orderStages[_orderId][_stageIndex].confirmed = true;
     }
 
 
     function terminateOrder(uint _orderId) external {
         uint _proId  = orders[_orderId].proId;
-        require(project.ownerOf(_proId) == msg.sender || orders[_orderId].applyAddr == msg.sender, "No terminate permission.");
+        require(demand.ownerOf(_proId) == msg.sender || orders[_orderId].applyAddr == msg.sender, "No terminate permission.");
         require(orders[_orderId].confirmed != 1, "The order has been confirmed.");
         //提取全部的币
         _transfer(orders[_orderId].token, msg.sender, orders[_orderId].amount);
@@ -171,36 +173,31 @@ contract Order is IOrder {
 
     function terminateStage(uint _orderId, uint _stageIndex) external {
         uint _proId  = orders[_orderId].proId;
-        require(project.ownerOf(_proId) == msg.sender || orders[_orderId].applyAddr == msg.sender, "No terminate permission.");
-        require(!orderStages[_orderId][_stageIndex].confirmed, "Already confirmed.");
+        require(demand.ownerOf(_proId) == msg.sender || orders[_orderId].applyAddr == msg.sender, "No terminate permission.");
 
+        require(!orderStages[_orderId][_stageIndex].confirmed, "Already confirmed.");
+        Stage[] storage orderStagesArr = orderStages[_orderId];
         uint startDate = orders[_orderId].startDate;
         uint stageStartDate;
-        uint stageEndDate = orderStages[_orderId][_stageIndex].endDate;
         uint sumAmount;
         uint sumAmountA;
-        uint sumAmountB;
+        uint sumAmountB;        
         if (_stageIndex == 0) {
             stageStartDate = startDate;
         } else {
-            stageStartDate = orderStages[_orderId][_stageIndex - 1].endDate;
+            stageStartDate = orderStagesArr[_stageIndex - 1].endDate;
         }
-        if (_stageIndex < orderStages[_orderId].length && _stageIndex != 0) {
-            require(orderStages[_orderId][_stageIndex - 1].confirmed == 1, "Error stage.");
-        }
+        require(block.timestamp > stageStartDate && block.timestamp < orderStagesArr[_stageIndex].endDate, "Out stage.");        
         uint period = stageStartDate - stageStartDate;
-        sumAmountB += orderStages[_orderId][i].amount * (block.timestamp - stageStartDate) / (60*60*24*period);
-        for (_stageIndex; _stageIndex < orderStages[_orderId].length; _stageIndex++) {
-            sumAmount += orderStages[_orderId][_stageIndex].amount;
-            orderStages[_orderId][_stageIndex].withdrawed == true;
+        sumAmountB += orderStagesArr[_stageIndex].amount * (block.timestamp - stageStartDate) / (60*60*24*period);
+        for (_stageIndex; _stageIndex < orderStagesArr.length; _stageIndex++) {
+            sumAmount += orderStagesArr[_stageIndex].amount;
+            orderStagesArr[_stageIndex].withdrawed == true;
         }
-
         sumAmountA = sumAmount - sumAmountB;
-
-        _transfer(orders[_orderId].token, project.ownerOf(_proId), sumAmountA);
+        _transfer(orders[_orderId].token, demand.ownerOf(_proId), sumAmountA);
         _transfer(orders[_orderId].token, orders[_orderId].applyAddr, sumAmountB);
     }
-
    
     function withdrawByB(uint _orderId, uint _stageIndex) external {
         require(orders[_orderId].applyAddr == msg.sender, "No permission.");
@@ -233,14 +230,17 @@ contract Order is IOrder {
     }
 
     modifier onlyOperator() {
-        require(msg.sender == project.operator;, "No Root.");
+        require(msg.sender == operator, "No Root.");
         _;
     }
 
     function _setStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods) private {
         uint _proId  = orders[_orderId].proId;
-        require(msg.sender == project.ownerOf(_proId) || msg.sender == orders[_orderId].applyAddr, "No setting permission.");
-        require(_amounts.length == _periods.length != 0 && maxStages >= _amounts.length, "Wrong parameter length.");
+        require(msg.sender == demand.ownerOf(_proId) || msg.sender == orders[_orderId].applyAddr, "No setting permission.");
+        require(_amounts.length == _periods.length  && _amounts.length != 0, "Wrong parameter length.");
+        require(maxStages >= _amounts.length, "Wrong parameter length.");
+
+        Stage[] storage orderStagesArr = orderStages[_orderId];
         // 时间排序
         uint totalAmounts;
         uint _endDate = block.timestamp;
@@ -252,18 +252,17 @@ contract Order is IOrder {
                 withdrawed: false,
                 endDate: _endDate
             });
-            orderStages[_orderId].push(pro);
+            orderStagesArr.push(pro);
             totalAmounts += _amounts[i];
         }
         require(totalAmounts == orders[_orderId].amount, "Wrong amount of commission.");
     }
 
-    function _transfer(address _token, address _receiver, uint _amount) private {
+    function _transfer(address _token, address _to, uint _amount) private {
         if (address(0) == _token) {
-           address payable _receiver;
-           _receiver.transfer(_amount);
+           TransferHelper.safeTransferETH(_to, _amount);
         } else {
-            IERC20(_token).safeTransfer(_receiver, _amount);
+            IERC20(_token).safeTransfer(_to, _amount);
         }
     }
 

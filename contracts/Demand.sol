@@ -6,10 +6,9 @@ import "./interface/IOrder.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "hardhat/console.sol";
-import "./interface/IProject.sol";
+import "./interface/IDemand.sol";
 
-
-contract Project is ERC721Enumerable, IProject {
+contract Demand is ERC721Enumerable, IDemand {
     using Counters for Counters.Counter;
     //TODO: 必要函数添加event
     event CreateProject(uint indexed tokenId, address indexed  user, string title, uint budget, 
@@ -67,7 +66,8 @@ contract Project is ERC721Enumerable, IProject {
         });
 
         _safeMint(msg.sender, tokenId);
-        applyInfo[_proId][msg.sender] = true;
+
+        applyInfo[tokenId][msg.sender] = true;
         console.log("Owner Address: ",msg.sender);
         tokenIds.increment();   
         console.log("tokenId:", tokenId);
@@ -90,7 +90,7 @@ contract Project is ERC721Enumerable, IProject {
     }
 
     function applyFor(uint _proId) external {
-        require(address(0) != ownerOf(_proId), "Project does not exist.");
+        require(address(0) != ownerOf(_proId), "Demand does not exist.");
         require(msg.sender != ownerOf(_proId), "Not taking orders yourself.");
         require(!order.isProOrders(_proId), "Existing orders.");
         require(!applyInfo[_proId][msg.sender], "Already applied.");
