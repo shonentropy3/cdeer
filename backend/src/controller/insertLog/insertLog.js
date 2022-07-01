@@ -1,5 +1,5 @@
-// import USDR_ADDR from './deployments/Project.json';
-const USDR_ADDR = require('../../../deployments/Project.json');
+// import USDR_ADDR from './deployments/Demand.json';
+const USDR_ADDR = require('../../../deployments/Demand.json');
 const logger = require('../../com/logger');
 const dbUtil = require('../../db/dbUtil');
 const { ethers, network } = require("hardhat");

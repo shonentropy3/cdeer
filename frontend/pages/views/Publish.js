@@ -127,7 +127,7 @@ function Publish() {
       }]
 
     // 项目类型
-    const project = [{
+    const demand = [{
         value: 'web',
         name: 'Web网站'
       },
@@ -175,7 +175,7 @@ function Publish() {
                       <p>选择您的项目类型（可多选）</p>
                       <div className="result">
                         {
-                          project.map((item,index)=> <div className="result" key={index}>
+                          demand.map((item,index)=> <div className="result" key={index}>
                             <input type="checkbox" value={item.value} name="role" onChange={e=>{get_pjc(e)}}/>{item.name}
                           </div> )
                         }

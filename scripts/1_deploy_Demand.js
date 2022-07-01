@@ -10,13 +10,13 @@ async function main() {
     // Get owner/deployer's wallet address
     const [owner] = await hre.ethers.getSigners();
     // Get contract that we want to deploy
-    const contractFactory = await hre.ethers.getContractFactory("Project");
+    const contractFactory = await hre.ethers.getContractFactory("Demand");
     // Deploy contract with the correct constructor arguments
     const contract = await contractFactory.deploy();
     // Wait for this transaction to be mined
     await contract.deployed();
     // Get contract address
-    console.log("Project deployed to:", contract.address);
+    console.log("Demand deployed to:", contract.address);
 
     // Mint NFT by 
     txn = await contract.createProject(
@@ -38,8 +38,8 @@ async function main() {
     // console.log("now",stateNow)
 
 
-    let artifactT21 = await artifacts.readArtifact("Project");
-    await writeAbiAddr(artifactT21, contract.address, "Project", network.name);
+    let artifactT21 = await artifacts.readArtifact("Demand");
+    await writeAbiAddr(artifactT21, contract.address, "Demand", network.name);
 
 }
 
