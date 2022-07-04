@@ -70,7 +70,6 @@ contract Order is IOrder, Ownable {
         } else {
             IERC20(_token).safeTransferFrom(msg.sender, address(this), _order.amount);
         }
-        // TODO：修改映射
         orders[orderId] = Order({
             proId: _order.proId,
             applyAddr: _order.applyAddr,
@@ -89,11 +88,8 @@ contract Order is IOrder, Ownable {
 
 
     function confirmOrderByB(uint _orderId, uint[] memory _amounts, uint[] memory _periods) external {
-
         require(orders[_orderId].applyAddr == msg.sender, "No permission.");
-        //TODO：大于天数
-        //校验传入参数天数
-        require(!(orders[_orderId].startDate == 0 || orders[_orderId].startDate == 1), "The order has been confirmed.");
+        require(orders[_orderId].confirmed == 0, "The order has been confirmed.");
         require(!(orderStages[_orderId].length == 0 && _amounts.length == 0), "Missing stages.");
         Stage[] storage orderStagesArr = orderStages[_orderId];
         if (orderStagesArr.length != 0) {
@@ -108,6 +104,7 @@ contract Order is IOrder, Ownable {
             }
         } else {
             _setStage(_orderId, _amounts, _periods); 
+            orders[_orderId].startDate = block.timestamp;
             orders[_orderId].confirmed = 2;
         }
 
@@ -207,7 +204,7 @@ contract Order is IOrder, Ownable {
    
     function withdrawByB(uint _orderId, uint _stageIndex) external {
         require(orders[_orderId].applyAddr == msg.sender, "No permission.");
-        require(!(orders[_orderId].startDate == 0 || orders[_orderId].startDate == 1), "The order is not confirmed.");
+        require(orders[_orderId].confirmed == 1, "The order is not confirmed.");
         Stage storage pro = orderStages[_orderId][_stageIndex];
         //无取款
         require(pro.withdrawed == false, "Aleady withdrawed");
@@ -267,7 +264,7 @@ contract Order is IOrder, Ownable {
     }
 
     function _prePayment(uint _orderId) private {
-        uint _proId  = orders[_orderId].proId;
+        uint _proId = orders[_orderId].proId;
         require(msg.sender == demand.ownerOf(_proId) || msg.sender == orders[_orderId].applyAddr, "No permission.");
         Stage storage pro = orderStages[_orderId][0];
         require(pro.withdrawed == false, "Aleady withdrawed");

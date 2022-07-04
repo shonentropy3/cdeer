@@ -76,7 +76,6 @@ contract Demand is ERC721Enumerable, IDemand, Ownable {
     }
 
     function applyFor(uint _proId) external {
-        require(address(0) != ownerOf(_proId), "Demand does not exist.");
         require(msg.sender != ownerOf(_proId), "Not apply for orders yourself.");
         require(!order.isProOrders(_proId), "Existing orders.");
         require(!applyInfo[_proId][msg.sender], "Already applied.");
@@ -89,6 +88,12 @@ contract Demand is ERC721Enumerable, IDemand, Ownable {
     function cancelApplyFor(uint _proId) external {
         require(msg.sender != ownerOf(_proId), "Not applied.");
         applyInfo[_proId][msg.sender] = false;
+    }
+
+    function openApplyFor(uint _proId) external {
+        require(msg.sender != ownerOf(_proId), "No Root.");
+        require(!applyInfo[_proId][msg.sender], "Already opened.");
+        applyInfo[_proId][msg.sender] = true;
     }
 
     function closeApplyFor(uint _proId) external {

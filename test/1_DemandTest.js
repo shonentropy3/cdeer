@@ -1,3 +1,8 @@
+
+
+
+
+
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
@@ -7,6 +12,7 @@ let accounts = [];
 let owner;
 let demandAddr;
 let orderAddr = ''
+let zeroAddr = '0x0000000000000000000000000000000000000000'
 
 const testHash = `QmSsw6EcnwEiTT9c4rnAGeSENvsJMepNHmbrgi2S9bXNJr`;
 
@@ -18,7 +24,7 @@ async function init() {
     const Demand = await ethers.getContractFactory("Demand");
     demand = await Demand.deploy();
     await demand.deployed();
-    demandAddr = demand.address.toLowerCase();
+    demandAddr = demand.address;
   
     // Order
     const Order = await ethers.getContractFactory("Order");
@@ -45,23 +51,23 @@ describe("Demand", function() {
             title: "test",
             desc: testHash,
             attachment: testHash,
-            budget: 10,
+            budget: tokenAmount("10"),
             period: 1
         },
         {
-            value: 10000000000
+            value: tokenAmount("1"),
         });
   });
 
     it("modifyDemand", async function(){
-            await demand.connect(accounts[1]).modifyDemand(0, 
-                { 
-                    title: "test",
-                    budget: 10,
-                    desc: testHash,
-                    attachment: testHash,
-                    period: 786942864435
-                });
+        await demand.connect(accounts[1]).modifyDemand(0, 
+            { 
+                title: "test",
+                budget: tokenAmount("10"),
+                desc: testHash,
+                attachment: testHash,
+                period: 786942864435
+            });
     });
     
     it("applyFor", async function(){
@@ -80,20 +86,33 @@ describe("Order", function() {
         await init();
       });
 
-    // it("createDemand", async function() {
-    //     await order.connect(accounts[1]).createOrder(0,
-    //         {
-    //             proId: "test",
-    //             applyAddr: testHash,
-    //             token: testHash,
-    //             amount: tokenAmount("10"),
-    //             confirmed: 1,
-    //             startDate: 0
-    //         },
-    //         accounts[1].address,
-    //         [tokenAmount("1"),tokenAmount("1"),tokenAmount("1")],
-    //         [1,2,3]
-    //     );
-    // });
+    it("createOrder", async function() {
+        await demand.connect(accounts[1]).createDemand(
+            { 
+                title: "test",
+                desc: testHash,
+                attachment: testHash,
+                budget: tokenAmount("10"),
+                period: 1
+            },
+            {
+                value: tokenAmount("1"),
+            });
+
+        await order.connect(accounts[1]).createOrder(0,
+            {
+                proId: 0,
+                applyAddr: accounts[2].address,
+                token: zeroAddr,
+                amount: tokenAmount("10"),
+                confirmed: 1,
+                startDate: 0
+            },
+            accounts[1].address,
+            [tokenAmount("1"),tokenAmount("1"),tokenAmount("1")],
+            [1,2,3],
+
+        );
+    });
 
 });
