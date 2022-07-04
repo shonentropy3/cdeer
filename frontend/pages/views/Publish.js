@@ -1,9 +1,9 @@
 import { useEffect, useState, useRef } from 'react';
-<<<<<<< Updated upstream
-import { createProject,getHash } from '../http/api';
-=======
+
+// import { createProject,getHash } from '../http/api';
+
 import { createDemand,createStorage } from '../http/api';
->>>>>>> Stashed changes
+
 import { Input,Form,message,Button,Upload,notification } from 'antd';
 import { UploadOutlined, WarningOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import axios from 'axios';
