@@ -1,9 +1,8 @@
 import { CaretDownOutlined } from '@ant-design/icons';
 import { Dropdown, Menu, Space, Typography } from 'antd';
 import { useEffect, useState } from 'react';
-import MyprojectList from '../../components/MypjcList';
+import ProjectList from '../../components/ProjectList';
 import style from '../../styles/utils.module.scss'
-
 
 export default function Myproject() {
     const [visible, setVisible] = useState(false);
@@ -97,16 +96,8 @@ export default function Myproject() {
             <div className={`content`}>
                 <h1>{test}</h1>
                 <div className="list">
-                    <MyprojectList />
-                  <div className="li">
-                    项目一
-                  </div>
-                  <div className="li">
-                    项目二
-                  </div>
-                  <div className="li">
-                    项目三
-                  </div>
+                    <ProjectList />
+                    <ProjectList />
                 </div>
             </div>
 

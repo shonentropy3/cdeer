@@ -8,6 +8,7 @@ import '../styles/publish.scss'
 import '../styles/myproject.scss'
 import '../styles/my.scss'
 import '../styles/pjc_detail.scss'
+import '../styles/c.projectlist.scss'
 function MyApp({ Component, pageProps }) {
   return (
     <div>
