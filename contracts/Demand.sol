@@ -27,9 +27,9 @@ contract Demand is ERC721Enumerable, IDemand, Ownable {
     }
 
     Counters.Counter private demandIds;
-    //proId = >
+    //demandId = >
     mapping(uint => DemandInfo) private demands; 
-    //报名信息,proId = > applyAddr
+    //报名信息,demandId = > applyAddr
     mapping(uint => mapping(address => bool)) private  applyInfo;
 
     IOrder order;
@@ -39,11 +39,9 @@ contract Demand is ERC721Enumerable, IDemand, Ownable {
     }
 
     function setOrder(address _order) external  virtual override onlyOwner {
-        require(_order == address(0), "The parameter is zero address.");
+        require(_order != address(0), "The parameter is zero address.");
         order  = IOrder(_order);    
     }
-
-    
 
     function createDemand(DemandInfo memory _demandInfo) external payable {
         require(msg.value > fee, "Not enough fee.");
@@ -58,18 +56,14 @@ contract Demand is ERC721Enumerable, IDemand, Ownable {
         });
         _safeMint(msg.sender, demandId);
         applyInfo[demandId][msg.sender] = true;
-        console.log("Owner Address: ", msg.sender);
         demandIds.increment();   
-        console.log("demandId:", demandId);
 
         emit CreateDemand(demandId, msg.sender, _demandInfo.title, _demandInfo.budget, 
             _demandInfo.desc, _demandInfo.attachment, _demandInfo.period);
     }
 
     function modifyDemand(uint _tokenId, DemandInfo memory _demandInfo) external {
-        console.log("modifyDemand address" , msg.sender);
-        require(msg.sender == ownerOf(_tokenId), "No right of modification.");
-        require(!IOrder(order).isProOrders(_tokenId), "Existing orders.");
+        require(msg.sender == ownerOf(_tokenId), "No root.");
         require(!order.isProOrders(_tokenId), "Existing orders.");
 
         demands[_tokenId] = DemandInfo({
@@ -83,7 +77,7 @@ contract Demand is ERC721Enumerable, IDemand, Ownable {
 
     function applyFor(uint _proId) external {
         require(address(0) != ownerOf(_proId), "Demand does not exist.");
-        require(msg.sender != ownerOf(_proId), "Not taking orders yourself.");
+        require(msg.sender != ownerOf(_proId), "Not apply for orders yourself.");
         require(!order.isProOrders(_proId), "Existing orders.");
         require(!applyInfo[_proId][msg.sender], "Already applied.");
 

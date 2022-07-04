@@ -1,66 +1,99 @@
-
-
-const { demandAddr, address} = require('../deployments/dev/Demand.json');
-const demandAbi = require('../deployments/abi/Demand.json').abi;
-const { ethereum } = window;
-const hre = require("hardhat");
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-async function main() {
-    await hre.run('compile');
+let demand;
+let order;
+let accounts = [];
+let owner;
+let demandAddr;
+let orderAddr = ''
 
-    const [deployer,deployer1] = await ethers.getSigners();
-    console.log("deployer address", deployer);
-    // deployer = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266';
-    const baseTokenURI = `QmSsw6EcnwEiTT9c4rnAGeSENvsJMepNHmbrgi2S9bXNJr`;
+const testHash = `QmSsw6EcnwEiTT9c4rnAGeSENvsJMepNHmbrgi2S9bXNJr`;
 
-    demand = new ethers.Contract(demandAddr, 
-        demandAbi, deployer);
+async function init() {
+    accounts = await ethers.getSigners();
+    owner = accounts[0];
 
-    demand.setOrder(address(this));
+    // Demand
+    const Demand = await ethers.getContractFactory("Demand");
+    demand = await Demand.deploy();
+    await demand.deployed();
+    demandAddr = demand.address.toLowerCase();
+  
+    // Order
+    const Order = await ethers.getContractFactory("Order");
+    order = await Order.deploy(demandAddr);
+    orderAddr = order.address;
+    await order.deployed();
 
-    if (ethereum) {
-        const provider = new ethers.providers.Web3Provider(ethereum);
-        const signer = provider.getSigner();
-        const nftContract = new ethers.Contract(contractAddress.address, abi, signer);
-    }
+    await demand.connect(owner).setOrder(orderAddr);
+  }
 
-   // CreateDemand
-    createDemand = await contract.createDemand(
+async function tokenAmount(value) {
+    let tokenAmount = ethers.utils.parseEther(value);
+    return tokenAmount;
+}
+describe("Demand", function() {
+    before(async function () {
+        await init();
+      });
+
+  it("createDemand", async function() {
+    // createDemand
+    await demand.connect(accounts[1]).createDemand(
         { 
             title: "test",
-            desc: baseTokenURI,
-            attachment: baseTokenURI,
+            desc: testHash,
+            attachment: testHash,
             budget: 10,
-            period: 786942864435
+            period: 1
         },
         {
             value: 10000000000
         });
-    await createDemand.wait()
+  });
 
-    // modifyProject
-    modifyDemand = await demand.modifyDemand(0, 
-        { 
-            title: "test",
-            desc: baseTokenURI,
-            attachment: baseTokenURI,
-            budget: 10,
-            period: 786942864435
-        }
-        );
-    await modifyDemand.wait()
-
-    let c = await demand.demand();
-    console.log("----->"+c.toString());
-    expect(c.toString()).to.equal("1");
-
-}
-
-main()
-    .then(() => process.exit(0))
-    .catch((error) => {
-        console.error(error);
-        process.exit(1);
+    it("modifyDemand", async function(){
+            await demand.connect(accounts[1]).modifyDemand(0, 
+                { 
+                    title: "test",
+                    budget: 10,
+                    desc: testHash,
+                    attachment: testHash,
+                    period: 786942864435
+                });
     });
+    
+    it("applyFor", async function(){
+        await demand.connect(owner).applyFor(0);
+        await demand.connect(owner).cancelApplyFor(0);
+        await demand.connect(owner).applyFor(0);
+    });
+
+    it("modifyFee", async function(){
+        await demand.connect(owner).modifyFee(1);
+    });
+});
+
+describe("Order", function() {
+    before(async function () {
+        await init();
+      });
+
+    // it("createDemand", async function() {
+    //     await order.connect(accounts[1]).createOrder(0,
+    //         {
+    //             proId: "test",
+    //             applyAddr: testHash,
+    //             token: testHash,
+    //             amount: tokenAmount("10"),
+    //             confirmed: 1,
+    //             startDate: 0
+    //         },
+    //         accounts[1].address,
+    //         [tokenAmount("1"),tokenAmount("1"),tokenAmount("1")],
+    //         [1,2,3]
+    //     );
+    // });
+
+});

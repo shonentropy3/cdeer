@@ -19,7 +19,6 @@ contract Order is IOrder, Ownable {
     event CreateOrder(uint proId, address user, address applyAddr, uint amount);
     event ConfirmOrder(uint _orderId, address user);
 
-
     IDemand demand;
 
     uint8 private maxStages = 12;
@@ -51,12 +50,17 @@ contract Order is IOrder, Ownable {
     //orderId = >
     mapping(uint => Stage[]) private orderStages;
 
-
     constructor(address _demand) {
         demand = IDemand(_demand);
     }
     
-    function createOrder(uint _proId, Order memory _order, address _token, uint[] memory _amounts, uint[] memory _periods) external payable {
+    function createOrder(
+        uint _proId, 
+        Order memory _order, 
+        address _token, 
+        uint[] memory _amounts, 
+        uint[] memory _periods
+    ) external payable {
         require(msg.sender == demand.ownerOf(_proId), "No create permission.");
         require(address(0) != _order.applyAddr, "Application address is zero address.");
 
@@ -92,13 +96,16 @@ contract Order is IOrder, Ownable {
         require(!(orders[_orderId].startDate == 0 || orders[_orderId].startDate == 1), "The order has been confirmed.");
         require(!(orderStages[_orderId].length == 0 && _amounts.length == 0), "Missing stages.");
         Stage[] storage orderStagesArr = orderStages[_orderId];
-        if (orderStagesArr.length != 0){
+        if (orderStagesArr.length != 0) {
             uint delayTime = orders[_orderId].startDate - block.timestamp;
             for (uint i; i < orderStagesArr.length; i++) {
                 orderStagesArr[i].endDate += delayTime;
             }
             orders[_orderId].startDate = block.timestamp;
             orders[_orderId].confirmed = 1;
+            if (orderStagesArr[0].endDate == orders[_orderId].startDate) {
+                _prePayment(_orderId);
+            }
         } else {
             _setStage(_orderId, _amounts, _periods); 
             orders[_orderId].confirmed = 2;
@@ -118,7 +125,9 @@ contract Order is IOrder, Ownable {
         }
         orders[_orderId].confirmed = 1;
         orders[_orderId].startDate = block.timestamp;
-
+        if (orderStagesArr[0].endDate == orders[_orderId].startDate) {
+            _prePayment(_orderId);
+        }
         emit ConfirmOrder(_orderId, msg.sender);
     }
 
@@ -207,7 +216,6 @@ contract Order is IOrder, Ownable {
             pro.withdrawed = true;
             return;
         }
-
         if (pro.confirmed || pro.endDate + 7*24*60*60 < block.timestamp) {
             _transfer(orders[_orderId].token, msg.sender, pro.amount);
             pro.withdrawed = true;
@@ -258,4 +266,13 @@ contract Order is IOrder, Ownable {
         }
     }
 
+    function _prePayment(uint _orderId) private {
+        uint _proId  = orders[_orderId].proId;
+        require(msg.sender == demand.ownerOf(_proId) || msg.sender == orders[_orderId].applyAddr, "No permission.");
+        Stage storage pro = orderStages[_orderId][0];
+        require(pro.withdrawed == false, "Aleady withdrawed");
+        _transfer(orders[_orderId].token, orders[_orderId].applyAddr, pro.amount);
+        pro.withdrawed = true;
+        return;
+    }
 }
