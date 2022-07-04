@@ -30,6 +30,9 @@ let MarketController = class MarketController {
     }
     createProject(body) {
     }
+    getMarketList() {
+        return 'test';
+    }
 };
 __decorate([
     (0, common_1.Post)('upload'),
@@ -46,6 +49,12 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], MarketController.prototype, "createProject", null);
+__decorate([
+    (0, common_1.Get)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", String)
+], MarketController.prototype, "getMarketList", null);
 MarketController = __decorate([
     (0, common_1.Controller)('market'),
     __metadata("design:paramtypes", [market_service_1.MarketService])

@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Post, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { MarketService } from './market.service';
 
@@ -25,4 +25,11 @@ export class MarketController {
     createProject(@Body() body: any){
         // return this.marketService.createPjc(body)
     }
+
+    @Get()
+    getMarketList(): string {
+
+        return 'test' 
+  }
+
 }

@@ -63,6 +63,9 @@ let MarketService = class MarketService {
         });
         return obj;
     }
+    getMarketList() {
+        return;
+    }
     async createPjc(body) {
         console.log(body);
     }

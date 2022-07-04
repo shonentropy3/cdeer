@@ -50,9 +50,7 @@ export class MarketService {
             let writeStream = createWriteStream(join(__dirname, path))
             writeStream.write(file.buffer , function (err) {
                 if (!err) {
-                    // let res = '/Users/xiaonahe/Desktop/work/code-market/code/public/'+time
                     let res = 'public/'+ time
-                    // resolve(res)
                     ipfs.add(fs.readFileSync(res),   function (err, files) {
                         if (err || typeof files == "undefined") {
                             console.log(err);
@@ -92,6 +90,12 @@ export class MarketService {
 
         // 存入数据库
         return  obj
+    }
+
+
+    getMarketList(): string{
+        
+        return
     }
 
 
