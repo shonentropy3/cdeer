@@ -1,3 +1,5 @@
+
+const { address } = require('../deployments/dev/Demand.json');
 const hre = require("hardhat");
 const { writeAbiAddr } = require('./artifact_log.js');
 const { utils } = require("ethers");
@@ -10,19 +12,18 @@ async function main() {
     // Get owner/deployer's wallet address
     const [owner] = await hre.ethers.getSigners();
     // Get contract that we want to deploy
-    const contractFactory = await hre.ethers.getContractFactory("Demand");
+    const contractFactory = await hre.ethers.getContractFactory("Order");
     // Deploy contract with the correct constructor arguments
-    const contract = await contractFactory.deploy();
+    console.log("Order demand", address);
+    const contract = await contractFactory.deploy(address);
     // Wait for this transaction to be mined
     await contract.deployed();
     // Get contract address
-    console.log("Demand deployed to:", contract.address);
-    console.log("Owner address:", await contract.owner());
+    console.log("Order deployed to:", contract.address);
 
-    let artifactT21 = await artifacts.readArtifact("Demand");
-    demand = new ethers.Contract(contract.address, 
-        artifactT21.abi, deployer);
-    await writeAbiAddr(artifactT21, contract.address, "Demand", network.name);
+
+    let artifactT21 = await artifacts.readArtifact("Order");
+    await writeAbiAddr(artifactT21, contract.address, "Order", network.name);
 
 }
 

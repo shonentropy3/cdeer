@@ -4,21 +4,21 @@ pragma solidity ^0.8.0;
 
 import "./interface/IOrder.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "hardhat/console.sol";
 import "./interface/IDemand.sol";
 
-contract Demand is ERC721Enumerable, IDemand {
+contract Demand is ERC721Enumerable, IDemand, Ownable {
     using Counters for Counters.Counter;
     //TODO: 必要函数添加event
-    event CreateProject(uint indexed tokenId, address indexed  user, string title, uint budget, 
-            string indexed desc, uint period); 
+    event CreateDemand(uint indexed demandId, address indexed  demander, string title, uint budget, 
+            string indexed desc, string attachment, uint period); 
     event  ApplyFor(uint indexed _proId, address indexed user);
 
-    uint fee;
-    address  private operator;
+    uint fee = 1;
 
-    struct ProInfo{
+    struct DemandInfo{
         string title;
         string desc;
         string attachment;
@@ -26,66 +26,58 @@ contract Demand is ERC721Enumerable, IDemand {
         uint period;
     }
 
-    Counters.Counter private tokenIds;
+    Counters.Counter private demandIds;
     //proId = >
-    mapping(uint => ProInfo) private projects; 
+    mapping(uint => DemandInfo) private demands; 
     //报名信息,proId = > applyAddr
     mapping(uint => mapping(address => bool)) private  applyInfo;
 
     IOrder order;
 
     //TODO:项目NFT名称
-    constructor(address _operator) ERC721("u","e") {
-       operator = _operator;
+    constructor() ERC721("u","e") {
     }
 
-    modifier onlyOperator() {
-        require(msg.sender == operator, "No Root.");
-        _;
-    }
-
-    function modifyOperator(address _operator) external onlyOperator {
-        require(_operator != address(0), "Operator is zero address.");
-        operator = _operator;
-    }
-
-    function setOrder(address _order) external  virtual override onlyOperator {
+    function setOrder(address _order) external  virtual override onlyOwner {
         require(_order == address(0), "The parameter is zero address.");
         order  = IOrder(_order);    
     }
 
-    function createProject(ProInfo memory _proInfo) external payable {
-        require(msg.value > fee, "Not enough handling fee.");
-        uint tokenId = tokenIds.current();        
-        projects[tokenId] = ProInfo({
-            title: _proInfo.title,
-            budget: _proInfo.budget,
-            desc: _proInfo.desc,
-            attachment: _proInfo.attachment,
-            period: _proInfo.period
+    
+
+    function createDemand(DemandInfo memory _demandInfo) external payable {
+        require(msg.value > fee, "Not enough fee.");
+
+        uint demandId = demandIds.current();        
+        demands[demandId] = DemandInfo({
+            title: _demandInfo.title,
+            budget: _demandInfo.budget,
+            desc: _demandInfo.desc,
+            attachment: _demandInfo.attachment,
+            period: _demandInfo.period
         });
+        _safeMint(msg.sender, demandId);
+        applyInfo[demandId][msg.sender] = true;
+        console.log("Owner Address: ", msg.sender);
+        demandIds.increment();   
+        console.log("demandId:", demandId);
 
-        _safeMint(msg.sender, tokenId);
-
-        applyInfo[tokenId][msg.sender] = true;
-        console.log("Owner Address: ",msg.sender);
-        tokenIds.increment();   
-        console.log("tokenId:", tokenId);
-        emit CreateProject(tokenId, msg.sender, _proInfo.title, _proInfo.budget, 
-            _proInfo.desc, _proInfo.period);
+        emit CreateDemand(demandId, msg.sender, _demandInfo.title, _demandInfo.budget, 
+            _demandInfo.desc, _demandInfo.attachment, _demandInfo.period);
     }
 
-    function modifyProject(uint _tokenId, ProInfo memory _proInfo) external {
+    function modifyDemand(uint _tokenId, DemandInfo memory _demandInfo) external {
+        console.log("modifyDemand address" , msg.sender);
         require(msg.sender == ownerOf(_tokenId), "No right of modification.");
         require(!IOrder(order).isProOrders(_tokenId), "Existing orders.");
         require(!order.isProOrders(_tokenId), "Existing orders.");
 
-        projects[_tokenId] = ProInfo({
-            title: _proInfo.title,
-            budget: _proInfo.budget,
-            desc: _proInfo.desc,
-            attachment: _proInfo.attachment,
-            period: _proInfo.period
+        demands[_tokenId] = DemandInfo({
+            title: _demandInfo.title,
+            budget: _demandInfo.budget,
+            desc: _demandInfo.desc,
+            attachment: _demandInfo.attachment,
+            period: _demandInfo.period
         });
     }
 
@@ -111,7 +103,7 @@ contract Demand is ERC721Enumerable, IDemand {
         applyInfo[_proId][msg.sender] = false;
     }
 
-    function modifyFee(uint _fee) external onlyOperator {
+    function modifyFee(uint _fee) external onlyOwner {
         fee = _fee;
     }
 }

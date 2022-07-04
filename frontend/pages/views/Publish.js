@@ -1,7 +1,9 @@
-import contract from '../../contracts/deployments/abi/CodeMarket.json';
-import address from '../../contracts/deployments/CodeMarket.json';
 import { useEffect, useState, useRef } from 'react';
+<<<<<<< Updated upstream
 import { createProject,getHash } from '../http/api';
+=======
+import { createDemand,createStorage } from '../http/api';
+>>>>>>> Stashed changes
 import { Input,Form,message,Button,Upload,notification } from 'antd';
 import { UploadOutlined, WarningOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import axios from 'axios';
@@ -96,19 +98,22 @@ function Publish() {
         data = JSON.stringify(data)
         let para = {"proLabel":data}
 
-        // 1、hash存入数据库
-        getHash(formData)
-        .then((response) => {
+//         // 1、hash存入数据库
+//         getHash(formData)
+//         .then((response) => {
 
-          console.log(response);
-          // 2、创建项目
-          createProject(para,account)
+//           console.log(response);
+//           // 2、创建项目
+//           createProject(para,account)
 
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+//         })
+//         .catch((error) => {
+//           console.log(error);
+//         });
         
+
+        createDemand(para,account)
+
 
     }
 

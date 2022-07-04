@@ -5,7 +5,7 @@ module.exports = [
     ['post', '/upchain/post', upchain.testPost],
     ['get', '/upchain/getProject', upchain.getProject],
     // 发布项目
-    // ['post', '/upchain/createProject', upchain.createProject],
+    // ['post', '/upchain/createDemand', upchain.createDemand],
     // ['post', '/upchain/apply', upchain.apply],
     // 接收附件
     ['post', '/upchain/storage', test.storage],

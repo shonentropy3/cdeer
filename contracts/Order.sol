@@ -5,11 +5,12 @@ pragma solidity ^0.8.0;
 import "./interface/IDemand.sol";
 import "./interface/IOrder.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import '@uniswap/lib/contracts/libraries/TransferHelper.sol';
 
-contract Order is IOrder {
+contract Order is IOrder, Ownable {
     using SafeERC20 for IERC20;
     //TODO: 添加uint安全校验
     using Counters for Counters.Counter;
@@ -20,8 +21,6 @@ contract Order is IOrder {
 
 
     IDemand demand;
-
-    address  private operator;
 
     uint8 private maxStages = 12;
 
@@ -39,7 +38,7 @@ contract Order is IOrder {
         uint amount;
         bool confirmed;
         bool withdrawed;
-        uint endDate;  //  no startDate mean peroid;
+        uint endDate;  
     }
 
     Counters.Counter private orderIds;
@@ -53,9 +52,8 @@ contract Order is IOrder {
     mapping(uint => Stage[]) private orderStages;
 
 
-    constructor(IDemand _demand) {
-        demand = _demand;
-        IDemand(demand).setOrder(address(this));
+    constructor(address _demand) {
+        demand = IDemand(_demand);
     }
     
     function createOrder(uint _proId, Order memory _order, address _token, uint[] memory _amounts, uint[] memory _periods) external payable {
@@ -174,7 +172,6 @@ contract Order is IOrder {
     function terminateStage(uint _orderId, uint _stageIndex) external {
         uint _proId  = orders[_orderId].proId;
         require(demand.ownerOf(_proId) == msg.sender || orders[_orderId].applyAddr == msg.sender, "No terminate permission.");
-
         require(!orderStages[_orderId][_stageIndex].confirmed, "Already confirmed.");
         Stage[] storage orderStagesArr = orderStages[_orderId];
         uint startDate = orders[_orderId].startDate;
@@ -225,13 +222,8 @@ contract Order is IOrder {
         } 
     }
 
-    function modifyMaxStages(uint8 _maxStages) external onlyOperator {
+    function modifyMaxStages(uint8 _maxStages) external onlyOwner {
         maxStages = _maxStages;
-    }
-
-    modifier onlyOperator() {
-        require(msg.sender == operator, "No Root.");
-        _;
     }
 
     function _setStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods) private {

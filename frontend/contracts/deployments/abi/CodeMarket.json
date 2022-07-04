@@ -216,7 +216,7 @@
           "type": "tuple"
         }
       ],
-      "name": "createProject",
+      "name": "createDemand",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function"

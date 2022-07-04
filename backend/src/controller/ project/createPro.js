@@ -15,7 +15,7 @@ function _succeed(extraData) {
     return Object.assign(base, extraData)
 }
 
-async function createProject(ctx) {
+async function createDemand(ctx) {
     let queryData = ctx.request.body;
     let{proType,pro} = queryData;
     const { ethereum } = window;
@@ -28,7 +28,7 @@ async function createProject(ctx) {
 
           //Project publishing fee
           let fee = ethers.utils.parseUnits('1', 18);
-          let nftTxn = await nftContract.createProject({
+          let nftTxn = await nftContract.createDemand({
             title: pro[0].value,
             budget: Number(pro[1].value),
             desc: pro[3].value,
@@ -63,7 +63,7 @@ async function apply(ctx) {
 
           //Project publishing fee
           let fee = ethers.utils.parseUnits('1', 18);
-          let nftTxn = await nftContract.createProject({
+          let nftTxn = await nftContract.createDemand({
             title: pro[0].value,
             budget: Number(pro[1].value),
             desc: pro[3].value,
@@ -88,6 +88,6 @@ async function apply(ctx) {
 
 
 module.exports = {
-    createProject,
+    createDemand,
     apply,
 };
