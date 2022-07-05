@@ -3,7 +3,8 @@ import serviceAxios from "./index";
 
 export const getMarketData = (data) => {
     return serviceAxios({
-        url: "/upchain/getProject",
+        // url: "/upchain/getProject",
+        url: "/market/getMarketData",
         method: "get",
         data,
     }
@@ -13,9 +14,8 @@ export const getMarketData = (data) => {
 export const createDemand = (data) => {
     return serviceAxios({
 
-        // url: "/market/publish",
-        url: "/upchain/createDemand",
-
+        url: "/market/publish",
+        // url: "/upchain/createDemand",
         method: "post",
         data,
     }

@@ -176,31 +176,30 @@ function Publish() {
 
     // 角色选择(输出)
     const roleBox = () => {
-        return <>
-                      <p>选择具体角色</p>
-                      <div className="result">
-                        {
-                          team.map((item,index)=> <div key={index}>
-                            <input type="checkbox" value={item.value}  name="role" onChange={e=>{get_tuan(e)}}/>{item.name}
-                          </div> )
-                        }
-                      </div>
-                        
-                </> 
+      return <>
+                <p>选择具体角色</p>
+                <div className="result">
+                  {
+                    team.map((item,index)=> <div key={index}>
+                      <input type="checkbox" value={item.value}  name="role" onChange={e=>{get_tuan(e)}}/>{item.name}
+                    </div> )
+                  }
+                </div>
+            </> 
     }
 
     // 类型选择(输出)
     const typeBox = () => {
       return(
         <>
-                      <p>选择您的项目类型（可多选）</p>
-                      <div className="result">
-                        {
-                          demand.map((item,index)=> <div className="result" key={index}>
-                            <input type="checkbox" value={item.value} name="role" onChange={e=>{get_pjc(e)}}/>{item.name}
-                          </div> )
-                        }
-                      </div>
+                <p>选择您的项目类型（可多选）</p>
+                <div className="result">
+                  {
+                    demand.map((item,index)=> <div className="result" key={index}>
+                      <input type="checkbox" value={item.value} name="role" onChange={e=>{get_pjc(e)}}/>{item.name}
+                    </div> )
+                  }
+                </div>
                         
         </> 
         
@@ -348,7 +347,7 @@ function Publish() {
                                             >
                                             {/* <Input placeholder="unavailable choice" id="error" /> */}
                                         
-                                            <Input status={item.status} className={`${'data'+index}`} type={ index > 0 ? "number" : "text"} onChange={(e)=>{get_account(e,index)}} />
+                                            <Input status={item.status} className={`${'data'+index}`} min="0" type={ index > 0 ? "number" : "text"} onChange={(e)=>{get_account(e,index)}} />
                                             {index === 1 ? '元' : ''}
                                             {index === 2 ? '天' : ''}
                                         </Form.Item>
