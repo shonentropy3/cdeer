@@ -17,10 +17,12 @@ contract Order is IOrder, Ownable {
 
     //TODO:缺少数量
     event CreateOrder(uint proId, address user, address applyAddr, uint amount);
-    event ConfirmOrder(uint _orderId, address user);
+    event ConfirmOrder(uint orderId, address user);
+    event PrePayment(uint orderId, uint amount);
 
     IDemand demand;
 
+    uint8 private maxDemandOrders = 12;
     uint8 private maxStages = 12;
 
     struct Order{
@@ -42,12 +44,12 @@ contract Order is IOrder, Ownable {
 
     Counters.Counter private orderIds;
 
-    //TODO：减数据，全部提款
-    //orderId  = > 
+    // TODO：减数据，全部提款
+    // orderId  = > 
     mapping(uint => Order) private orders;
-    // projectId = > orderId
-    mapping(uint => uint[]) private proOrders;
-    //orderId = >
+    // demandId = > orderId
+    mapping(uint => uint[]) private demandOrders;
+    // orderId = >
     mapping(uint => Stage[]) private orderStages;
 
     constructor(address _demand) {
@@ -56,20 +58,13 @@ contract Order is IOrder, Ownable {
     
     function createOrder(
         uint _proId, 
-        Order memory _order, 
-        address _token, 
-        uint[] memory _amounts, 
-        uint[] memory _periods
-    ) external payable {
+        Order memory _order
+    ) external {
         require(msg.sender == demand.ownerOf(_proId), "No create permission.");
         require(address(0) != _order.applyAddr, "Application address is zero address.");
+        require(maxDemandOrders >= demandOrders[_order.proId].length, "Excessive number of orders.");
 
         uint orderId = orderIds.current();  
-        if (_order.token == address(0)) {
-            require(_order.amount == msg.value);
-        } else {
-            IERC20(_token).safeTransferFrom(msg.sender, address(this), _order.amount);
-        }
         orders[orderId] = Order({
             proId: _order.proId,
             applyAddr: _order.applyAddr,
@@ -78,43 +73,40 @@ contract Order is IOrder, Ownable {
             confirmed: 0,
             startDate: block.timestamp
         });
-        proOrders[_order.proId].push(orderId);
-        
-        emit CreateOrder(_order.proId, msg.sender, _order.applyAddr, _order.amount);   
-    
-        _setStage(orderId, _amounts, _periods); 
+
         orderIds.increment();
+
+        emit CreateOrder(_order.proId, msg.sender, _order.applyAddr, _order.amount);   
     }
 
 
-    function confirmOrderByB(uint _orderId, uint[] memory _amounts, uint[] memory _periods) external {
+    function setStageByB(uint _orderId, uint[] memory _amounts, uint[] memory _periods) external {
         require(orders[_orderId].applyAddr == msg.sender, "No permission.");
-        require(orders[_orderId].confirmed == 0, "The order has been confirmed.");
-        require(!(orderStages[_orderId].length == 0 && _amounts.length == 0), "Missing stages.");
-        Stage[] storage orderStagesArr = orderStages[_orderId];
-        if (orderStagesArr.length != 0) {
-            uint delayTime = orders[_orderId].startDate - block.timestamp;
-            for (uint i; i < orderStagesArr.length; i++) {
-                orderStagesArr[i].endDate += delayTime;
-            }
-            orders[_orderId].startDate = block.timestamp;
-            orders[_orderId].confirmed = 1;
-            if (orderStagesArr[0].endDate == orders[_orderId].startDate) {
-                _prePayment(_orderId);
-            }
-        } else {
-            _setStage(_orderId, _amounts, _periods); 
-            orders[_orderId].startDate = block.timestamp;
-            orders[_orderId].confirmed = 2;
-        }
+        require(orders[_orderId].confirmed != 1, "The order has been confirmed.");
+
+        _setStage(_orderId, _amounts, _periods); 
+        orders[_orderId].startDate = block.timestamp;
+        orders[_orderId].confirmed = 2;
 
         emit ConfirmOrder(_orderId, msg.sender);
     }
 
-    function confirmOrderByA(uint _orderId) external {
+    function confirmOrderByA(
+        uint _orderId, 
+        address _token, 
+        uint[] memory _amounts, 
+        uint[] memory _periods
+    ) external payable {
         uint _proId  = orders[_orderId].proId;
         require(msg.sender == demand.ownerOf(_proId), "No confirming permission.");
-        require(orders[_orderId].confirmed == 2, "No need to confirm");
+        require(orders[_orderId].confirmed == 2, "No confirming");
+        require(maxDemandOrders >= demandOrders[_order.proId].length, "Excessive number of orders.");
+        
+        if (orders[_orderId].token == address(0)) {
+            require(_order.amount == msg.value);
+        } else {
+            IERC20(_token).safeTransferFrom(msg.sender, address(this), _order.amount);
+        }
         Stage[] storage orderStagesArr = orderStages[_orderId];
         uint delayTime = orders[_orderId].startDate - block.timestamp;
         for (uint i; i < orderStagesArr.length; i++) {
@@ -123,44 +115,24 @@ contract Order is IOrder, Ownable {
         orders[_orderId].confirmed = 1;
         orders[_orderId].startDate = block.timestamp;
         if (orderStagesArr[0].endDate == orders[_orderId].startDate) {
-            _prePayment(_orderId);
+            orderStagesArr[0].confirmed = true;
+
+            emit ConfirmPrePayment(_orderId, orders[_orderId].amount);
         }
+
+        demandOrders[_order.proId].push(_orderId);
         emit ConfirmOrder(_orderId, msg.sender);
     }
 
-    // TODO:考虑阶段，是否已经确认
-    // function _modifyStage(uint _orderId, uint[] memory _amounts, uint[] memory _endDate) private {
-    //     uint _proId  = orders[_orderId].proId;
-    //     require(msg.sender == demand.ownerOf(_proId) || msg.sender == orders[_orderId].applyAddr, "No setting permission.");
-    //     require(_amounts.length == _endDate.length, "Wrong parameter lengt.");
-    //     // 时间排序
-    //     uint totalAmounts;
-    //     uint _endDate = block.timestamp;
-
-    //     for ( uint i = 0; i< _endDate.length; i++ ) {
-    //         _endDate += startDate;
-    //         Stage memory pro = Stage ({
-    //             amount: _amounts[i],
-    //             confirmed: false,
-    //             withdrawed: false,
-    //             endDate: 0
-    //         });
-    //         orderStagesArr.push(pro);
-    //         totalAmounts += _amounts[i];
-    //     }
-    //     require(totalAmounts == orders[_orderId].amount, "Wrong amount of commission.");
-    // }
-
+    // TODO:考虑阶段甲方确认后，修改后续阶段的问题
 
     //TODO: 修改所有的拿去mapping中结构体
-
-
     function confirmOrderStage(uint _orderId, uint _stageIndex) external {
         uint _proId  = orders[_orderId].proId;
         require(msg.sender == demand.ownerOf(_proId), "No confirming permission.");
         //无取款
-        require(!orderStages[_orderId][_stageIndex].withdrawed, "Aleady withdrawed");
-        require(!orderStages[_orderId][_stageIndex].confirmed, "A ");
+        require(!orderStages[_orderId][_stageIndex].withdrawed, "Already withdrawed.");
+        require(!orderStages[_orderId][_stageIndex].confirmed, " Already confirmed.");
         orderStages[_orderId][_stageIndex].confirmed = true;
     }
 
@@ -179,12 +151,13 @@ contract Order is IOrder, Ownable {
         uint _proId  = orders[_orderId].proId;
         require(demand.ownerOf(_proId) == msg.sender || orders[_orderId].applyAddr == msg.sender, "No terminate permission.");
         require(!orderStages[_orderId][_stageIndex].confirmed, "Already confirmed.");
-        Stage[] storage orderStagesArr = orderStages[_orderId];
+
         uint startDate = orders[_orderId].startDate;
         uint stageStartDate;
         uint sumAmount;
         uint sumAmountA;
-        uint sumAmountB;        
+        uint sumAmountB;  
+        Stage[] storage orderStagesArr = orderStages[_orderId];
         if (_stageIndex == 0) {
             stageStartDate = startDate;
         } else {
@@ -219,8 +192,8 @@ contract Order is IOrder, Ownable {
         }
     }
 
-    function isProOrders(uint _proId) external view virtual override  returns (bool){
-        if (proOrders[_proId].length > 0) { 
+    function isDemandOrders(uint _proId) external view virtual override  returns (bool){
+        if (demandOrders[_proId].length > 0) { 
             return true;
         } else {
             return false;
@@ -229,6 +202,10 @@ contract Order is IOrder, Ownable {
 
     function modifyMaxStages(uint8 _maxStages) external onlyOwner {
         maxStages = _maxStages;
+    }
+    
+    function modifyMaxDemandOrders(uint8 _maxDemandOrders) external onlyOwner {
+        maxDemandOrders = _maxDemandOrders;
     }
 
     function _setStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods) private {
@@ -263,13 +240,4 @@ contract Order is IOrder, Ownable {
         }
     }
 
-    function _prePayment(uint _orderId) private {
-        uint _proId = orders[_orderId].proId;
-        require(msg.sender == demand.ownerOf(_proId) || msg.sender == orders[_orderId].applyAddr, "No permission.");
-        Stage storage pro = orderStages[_orderId][0];
-        require(pro.withdrawed == false, "Aleady withdrawed");
-        _transfer(orders[_orderId].token, orders[_orderId].applyAddr, pro.amount);
-        pro.withdrawed = true;
-        return;
-    }
 }

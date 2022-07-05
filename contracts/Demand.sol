@@ -64,7 +64,7 @@ contract Demand is ERC721Enumerable, IDemand, Ownable {
 
     function modifyDemand(uint _tokenId, DemandInfo memory _demandInfo) external {
         require(msg.sender == ownerOf(_tokenId), "No root.");
-        require(!order.isProOrders(_tokenId), "Existing orders.");
+        require(!order.isDemandOrders(_tokenId), "Existing orders.");
 
         demands[_tokenId] = DemandInfo({
             title: _demandInfo.title,
@@ -77,7 +77,6 @@ contract Demand is ERC721Enumerable, IDemand, Ownable {
 
     function applyFor(uint _proId) external {
         require(msg.sender != ownerOf(_proId), "Not apply for orders yourself.");
-        require(!order.isProOrders(_proId), "Existing orders.");
         require(!applyInfo[_proId][msg.sender], "Already applied.");
 
         applyInfo[_proId][msg.sender] = true;
@@ -85,7 +84,7 @@ contract Demand is ERC721Enumerable, IDemand, Ownable {
         emit ApplyFor(_proId, msg.sender);
     }
 
-    function cancelApplyFor(uint _proId) external {
+    function cancelApply(uint _proId) external {
         require(msg.sender != ownerOf(_proId), "Not applied.");
         applyInfo[_proId][msg.sender] = false;
     }
