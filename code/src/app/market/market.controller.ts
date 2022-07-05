@@ -26,10 +26,9 @@ export class MarketController {
         // return this.marketService.createPjc(body)
     }
 
-    @Get()
-    getMarketList(): string {
-
-        return 'test' 
-  }
+    @Get('search')  //  搜索
+   		async getMarketList(){
+        return await this.marketService.test()
+    }
 
 }

@@ -5,6 +5,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MarketService = void 0;
 const common_1 = require("@nestjs/common");
@@ -17,10 +23,13 @@ const ipfsAPI = require('ipfs-api');
 const ipfs = ipfsAPI({ host: 'localhost', port: '5001', protocol: 'http' });
 const service = new upyun.Service('ipfs0', 'upchain', 'upchain123');
 const client = new upyun.Client(service);
-const { contractAddress, address } = require('../../../deployments/Project.json');
-const contractabi = require('../../../deployments/abi/Project.json');
-const abi = contractabi.abi;
+const typeorm_1 = require("@nestjs/typeorm");
+const typeorm_2 = require("typeorm");
+const Order_1 = require("../../../entities/Order");
 let MarketService = class MarketService {
+    constructor(orderRepository) {
+        this.orderRepository = orderRepository;
+    }
     getFile(files) {
         if (files.length === 0) {
             return false;
@@ -63,8 +72,8 @@ let MarketService = class MarketService {
         });
         return obj;
     }
-    getMarketList() {
-        return;
+    async test() {
+        return await this.orderRepository.query(`SELECT * FROM public."order"`);
     }
     async createPjc(body) {
         console.log(body);
@@ -87,7 +96,9 @@ let MarketService = class MarketService {
     }
 };
 MarketService = __decorate([
-    (0, common_1.Injectable)()
+    (0, common_1.Injectable)(),
+    __param(0, (0, typeorm_1.InjectRepository)(Order_1.Order)),
+    __metadata("design:paramtypes", [typeorm_2.Repository])
 ], MarketService);
 exports.MarketService = MarketService;
 //# sourceMappingURL=market.service.js.map

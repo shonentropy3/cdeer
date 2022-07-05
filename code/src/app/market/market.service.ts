@@ -10,15 +10,18 @@ const ipfsAPI = require('ipfs-api');
 const ipfs = ipfsAPI({host: 'localhost', port: '5001', protocol: 'http'});
 const service = new upyun.Service('ipfs0','upchain', 'upchain123')
 const client = new upyun.Client(service);
-import { ethers } from 'ethers';
-const { contractAddress , address} = require('../../../deployments/Project.json')
-const contractabi = require('../../../deployments/abi/Project.json')
-const abi = contractabi.abi
 
+
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Order } from '../../../entities/Order';	//引入entity
 
 @Injectable()
 export class MarketService {
-    // constructor(private readonly http: HttpService) {}
+    constructor(
+        @InjectRepository(Order)
+        private readonly orderRepository: Repository<Order>
+        ) {}
     // findOne(@Body() body: any) {
     //     // return this.usersService.findOne(body.username);
     //     console.log(body);
@@ -93,9 +96,8 @@ export class MarketService {
     }
 
 
-    getMarketList(): string{
-        
-        return
+    async test(): Promise<Order[]> {
+        return await this.orderRepository.query(`SELECT * FROM public."order"`);
     }
 
 
