@@ -6,19 +6,19 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AppModule = void 0;
+exports.MarketModule = void 0;
 const common_1 = require("@nestjs/common");
-const app_controller_1 = require("./app.controller");
-const app_service_1 = require("./app.service");
-const market_module_1 = require("./app/market/market.module");
-let AppModule = class AppModule {
+const market_controller_1 = require("./market.controller");
+const market_service_1 = require("./market.service");
+const axios_1 = require("@nestjs/axios");
+let MarketModule = class MarketModule {
 };
-AppModule = __decorate([
+MarketModule = __decorate([
     (0, common_1.Module)({
-        imports: [market_module_1.MarketModule],
-        controllers: [app_controller_1.AppController],
-        providers: [app_service_1.AppService],
+        controllers: [market_controller_1.MarketController],
+        providers: [market_service_1.MarketService],
+        imports: [axios_1.HttpModule]
     })
-], AppModule);
-exports.AppModule = AppModule;
-//# sourceMappingURL=app.module.js.map
+], MarketModule);
+exports.MarketModule = MarketModule;
+//# sourceMappingURL=market.module.js.map
