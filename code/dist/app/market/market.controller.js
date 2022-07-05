@@ -30,8 +30,8 @@ let MarketController = class MarketController {
     }
     createProject(body) {
     }
-    getMarketList() {
-        return 'test';
+    async getMarketList() {
+        return await this.marketService.test();
     }
 };
 __decorate([
@@ -50,10 +50,10 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], MarketController.prototype, "createProject", null);
 __decorate([
-    (0, common_1.Get)(),
+    (0, common_1.Get)('search'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", String)
+    __metadata("design:returntype", Promise)
 ], MarketController.prototype, "getMarketList", null);
 MarketController = __decorate([
     (0, common_1.Controller)('market'),

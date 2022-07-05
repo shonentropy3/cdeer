@@ -4,5 +4,5 @@ export declare class MarketController {
     constructor(marketService: MarketService);
     uploadFile(files: any): Promise<any>;
     createProject(body: any): void;
-    getMarketList(): string;
+    getMarketList(): Promise<import("../../entity/Order").Order[]>;
 }

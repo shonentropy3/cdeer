@@ -14,7 +14,7 @@ const client = new upyun.Client(service);
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Order } from '../../../entities/Order';	//引入entity
+import { Order } from '../../entity/Order';	//引入entity
 
 @Injectable()
 export class MarketService {

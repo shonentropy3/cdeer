@@ -3,7 +3,7 @@ import { MarketController } from './market.controller';
 import { MarketService } from './market.service';
 import {HttpModule} from '@nestjs/axios'
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Order } from '../../../entities/Order';
+import { Order } from '../../entity/Order';
 
 @Module({
   controllers: [MarketController],
