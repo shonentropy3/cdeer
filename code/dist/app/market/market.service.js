@@ -77,7 +77,7 @@ let MarketService = class MarketService {
     async test() {
         return await this.orderRepository.query(`SELECT * FROM public."order"`);
     }
-    async getPjc() {
+    async getMarketData() {
         return await this.projectRepository.query(`SELECT * FROM public."project"`);
     }
     async createPjc(body) {

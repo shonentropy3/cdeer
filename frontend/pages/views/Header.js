@@ -35,14 +35,7 @@ function Header() {    return (
                         </div>
                     </Link>
                     
-                        <div className="_li">
-                            {/* <MessageOutlined style={{ fontSize: '20px' }} /> */}
-                            <Badge count={5} size="small">
-                                <div className="notice">
-                                    
-                                </div>
-                            </Badge>
-                        </div>
+
                 </div>
                 <Link href="/views/My">
                     <div className="avt">

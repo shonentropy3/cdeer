@@ -11,7 +11,7 @@ import style from '../../styles/utils.module.scss'
 
 
 function Publish() {
-
+  const _data = require("../data/data.json")
     const [currentAccount, setCurrentAccount] = useState(null);
 
     const checkWalletIsConnected = async () => {
@@ -128,51 +128,7 @@ function Publish() {
           return <button onClick={connectWalletHandler} className='btn connect'> Connect Wallet </button>
       }
     }
-    // 角色类型
-    const team = [
-      {
-        value: 'kfgcs',
-        name: '开发工程师'
-      },
-      {
-        value: 'sjs',
-        name: '设计师'
-      },
-      {
-        value: 'cpjl',
-        name: '产品经理'
-      },
-      {
-        value: 'csgcs',
-        name: '测试工程师'
-      }]
 
-    // 项目类型
-    const demand = [{
-        value: 'web',
-        name: 'Web网站'
-      },
-      {
-        value: 'app',
-        name: 'App开发'
-      },
-      {
-        value: 'wechat',
-        name: '微信公众号'
-      },
-      {
-        value: 'applets',
-        name: '小程序'
-      },
-      {
-        value: 'html5',
-        name: 'HTML5应用'
-      },
-      {
-        value: 'other',
-        name: '其他项目'
-      }
-      ]
 
     // 角色选择(输出)
     const roleBox = () => {
@@ -180,7 +136,7 @@ function Publish() {
                 <p>选择具体角色</p>
                 <div className="result">
                   {
-                    team.map((item,index)=> <div key={index}>
+                    _data.role.map((item,index)=> <div key={index}>
                       <input type="checkbox" value={item.value}  name="role" onChange={e=>{get_tuan(e)}}/>{item.name}
                     </div> )
                   }
@@ -195,7 +151,7 @@ function Publish() {
                 <p>选择您的项目类型（可多选）</p>
                 <div className="result">
                   {
-                    demand.map((item,index)=> <div className="result" key={index}>
+                    _data.demand.map((item,index)=> <div className="result" key={index}>
                       <input type="checkbox" value={item.value} name="role" onChange={e=>{get_pjc(e)}}/>{item.name}
                     </div> )
                   }

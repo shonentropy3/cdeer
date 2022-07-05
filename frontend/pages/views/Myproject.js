@@ -5,6 +5,7 @@ import ProjectList from '../../components/ProjectList';
 import style from '../../styles/utils.module.scss'
 
 export default function Myproject() {
+    const _data = require("../data/data.json")
     const [visible, setVisible] = useState(false);
     const [title, setTitle] = useState('0');
     const [test, setTest] = useState('');
@@ -13,32 +14,11 @@ export default function Myproject() {
     };
     const handleMenuClick = e => {
         title = e.key
-        test = list[e.key].label
+        test = _data.list[e.key].label
         setTest(test)
 
         setTitle(title)
     }
-
-    const list = [
-        {
-          key: '0', label: '所有状态', url:'查看全部'
-        },
-        {
-          key: '1', label: '待支付', url:'查看待支付'
-        },
-        {
-          key: '2', label: '招募中', url:'查看招募中'
-        },
-        {
-          key: '3', label: '开发中', url:'查看招募中'
-        },
-        {
-          key: '4', label: '已结束', url:'查看招募中'
-        },
-        {
-          key: '5', label: '已取消', url:'查看招募中'
-        }
-      ]
 
     const menu = (
         <Menu
@@ -46,7 +26,7 @@ export default function Myproject() {
           onClick={handleMenuClick}
           defaultSelectedKeys={['0']}
           className={style.w150}
-          items={list}
+          items={_data.list}
         />
       );
 
@@ -83,7 +63,7 @@ export default function Myproject() {
                     <Dropdown overlay={menu} onVisibleChange={handleVisibleChange} visible={visible} placement="bottomRight">
                         <Typography.Link>
                         <Space>
-                            { list[title].label }
+                            { _data.list[title].label }
                             <CaretDownOutlined />
                         </Space>
                         </Typography.Link>

@@ -1,0 +1,23 @@
+{
+  "list": [
+    {"key":"0","label":"所有状态","url":"查看全部"},
+    {"key":"2","label":"招募中","url":"查看招募中"},
+    {"key":"3","label":"开发中","url":"查看招募中"},
+    {"key":"4","label":"已结束","url":"查看招募中"},
+    {"key":"5","label":"已取消","url":"查看招募中"}
+  ],
+  "role": [
+    {"value":"kfgcs","name":"开发工程师"},
+    {"value":"sjs","name":"设计师"},
+    {"value":"cpjl","name":"产品经理"},
+    {"value":"csgcs","name":"测试工程师"}
+  ],
+  "demand": [
+    {"value":"web","name":"Web网站"},
+    {"value":"app","name":"App开发"},
+    {"value":"wechat","name":"微信公众号"},
+    {"value":"applets","name":"小程序"},
+    {"value":"html5","name":"HTML5应用"},
+    {"value":"other","name":"其他项目"}
+  ]
+}

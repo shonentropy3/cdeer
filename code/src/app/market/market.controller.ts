@@ -27,11 +27,11 @@ export class MarketController {
     }
 
     @Get('getMarketData')  //  获取集市项目
-    async getProject(){
-        return await this.marketService.getPjc()
+    async getMarketData(){
+        return await this.marketService.getMarketData()
     }
 
-    @Get('search')  //  搜索
+    @Get('search')  //  测试搜索
    	async getMarketList(){
         return await this.marketService.test()
     }

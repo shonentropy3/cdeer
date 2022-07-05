@@ -106,7 +106,7 @@ export class MarketService {
     }
 
     // 获取所有项目
-    async getPjc(): Promise<Project[]> {
+    async getMarketData(): Promise<Project[]> {
         return await this.projectRepository.query(`SELECT * FROM public."project"`);
     }
 
