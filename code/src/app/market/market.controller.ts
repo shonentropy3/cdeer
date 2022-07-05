@@ -22,13 +22,18 @@ export class MarketController {
     }
 
     @Post('publish')  //  创建项目
-    createProject(@Body() body: any){
-        // return this.marketService.createPjc(body)
+    async createProject(@Body() body: any){
+        return await this.marketService.createPjc(body)
     }
 
     @Get('search')  //  搜索
-   		async getMarketList(){
+   	async getMarketList(){
         return await this.marketService.test()
+    }
+
+    @Post()
+    createCat(@Body() body: any): string {
+      return `接受到的createCatDto的数据name:${body.name}&age:${body.age}`;
     }
 
 }

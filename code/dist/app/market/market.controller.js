@@ -28,10 +28,14 @@ let MarketController = class MarketController {
             return this.marketService.pushFile(files, res);
         });
     }
-    createProject(body) {
+    async createProject(body) {
+        return await this.marketService.createPjc(body);
     }
     async getMarketList() {
         return await this.marketService.test();
+    }
+    createCat(body) {
+        return `接受到的createCatDto的数据name:${body.name}&age:${body.age}`;
     }
 };
 __decorate([
@@ -47,7 +51,7 @@ __decorate([
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], MarketController.prototype, "createProject", null);
 __decorate([
     (0, common_1.Get)('search'),
@@ -55,6 +59,13 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], MarketController.prototype, "getMarketList", null);
+__decorate([
+    (0, common_1.Post)(),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", String)
+], MarketController.prototype, "createCat", null);
 MarketController = __decorate([
     (0, common_1.Controller)('market'),
     __metadata("design:paramtypes", [market_service_1.MarketService])

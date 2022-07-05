@@ -26,9 +26,11 @@ const client = new upyun.Client(service);
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const Order_1 = require("../../entity/Order");
+const Project_1 = require("../../entity/Project");
 let MarketService = class MarketService {
-    constructor(orderRepository) {
+    constructor(orderRepository, projectRepository) {
         this.orderRepository = orderRepository;
+        this.projectRepository = projectRepository;
     }
     getFile(files) {
         if (files.length === 0) {
@@ -44,7 +46,7 @@ let MarketService = class MarketService {
                     let res = 'public/' + time;
                     ipfs.add(fs.readFileSync(res), function (err, files) {
                         if (err || typeof files == "undefined") {
-                            console.log(err);
+                            console.log('err==>', err);
                         }
                         else {
                             let obj = {
@@ -76,7 +78,7 @@ let MarketService = class MarketService {
         return await this.orderRepository.query(`SELECT * FROM public."order"`);
     }
     async createPjc(body) {
-        console.log(body);
+        return await body;
     }
     handleError(error) {
         if (error.response) {
@@ -95,10 +97,18 @@ let MarketService = class MarketService {
         }
     }
 };
+__decorate([
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], MarketService.prototype, "createPjc", null);
 MarketService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(Order_1.Order)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __param(1, (0, typeorm_1.InjectRepository)(Project_1.Project)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository])
 ], MarketService);
 exports.MarketService = MarketService;
 //# sourceMappingURL=market.service.js.map

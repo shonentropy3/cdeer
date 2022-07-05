@@ -11,11 +11,25 @@ const common_1 = require("@nestjs/common");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const market_module_1 = require("./app/market/market.module");
+const typeorm_1 = require("@nestjs/typeorm");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [market_module_1.MarketModule],
+        imports: [
+            market_module_1.MarketModule,
+            typeorm_1.TypeOrmModule.forRoot({
+                type: 'postgres',
+                host: 'localhost',
+                port: 5432,
+                username: 'postgres',
+                password: '123456',
+                database: 'test',
+                entities: [],
+                synchronize: true,
+                keepConnectionAlive: true
+            })
+        ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
     })

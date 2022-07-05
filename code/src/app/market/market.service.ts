@@ -15,12 +15,16 @@ const client = new upyun.Client(service);
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order } from '../../entity/Order';	//引入entity
+import { Project } from '../../entity/Project';	//引入entity
+
 
 @Injectable()
 export class MarketService {
     constructor(
         @InjectRepository(Order)
-        private readonly orderRepository: Repository<Order>
+        private readonly orderRepository: Repository<Order>,
+        @InjectRepository(Project)
+        private readonly projectRepository: Repository<Project>
         ) {}
     // findOne(@Body() body: any) {
     //     // return this.usersService.findOne(body.username);
@@ -50,13 +54,14 @@ export class MarketService {
             // let time = `${Date.now()}-${file.name}`
             let path = '../../../public'+'/'+ time
             // let path = 'public'+'/'+ time
+            
             let writeStream = createWriteStream(join(__dirname, path))
             writeStream.write(file.buffer , function (err) {
                 if (!err) {
                     let res = 'public/'+ time
                     ipfs.add(fs.readFileSync(res),   function (err, files) {
                         if (err || typeof files == "undefined") {
-                            console.log(err);
+                            console.log('err==>',err);
                         } else {
                             let obj = {
                                 hash: files[0].hash,
@@ -102,10 +107,10 @@ export class MarketService {
 
 
     // 创建项目
-    async createPjc(body) {
-        console.log(body);
+    async createPjc(@Body() body: any): Promise<Project[]>  {
+        // console.log(body);
 
-
+        return await body
     // let queryData = body;
     // let{proType,pro} = queryData;
     // const {ethereum} = window;
