@@ -26,12 +26,17 @@ export class MarketController {
         return await this.marketService.createPjc(body)
     }
 
+    @Get('getMarketData')  //  获取集市项目
+    async getProject(){
+        return await this.marketService.getPjc()
+    }
+
     @Get('search')  //  搜索
    	async getMarketList(){
         return await this.marketService.test()
     }
 
-    @Post()
+    @Post() //  测试
     createCat(@Body() body: any): string {
       return `接受到的createCatDto的数据name:${body.name}&age:${body.age}`;
     }

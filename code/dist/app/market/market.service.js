@@ -77,7 +77,22 @@ let MarketService = class MarketService {
     async test() {
         return await this.orderRepository.query(`SELECT * FROM public."order"`);
     }
+    async getPjc() {
+        return await this.projectRepository.query(`SELECT * FROM public."project"`);
+    }
     async createPjc(body) {
+        console.log(body);
+        const ethereum = window;
+        try {
+            if (ethereum) {
+            }
+            else {
+                console.log("Ethereum object does not exist");
+            }
+        }
+        catch (err) {
+            return err;
+        }
         return await body;
     }
     handleError(error) {

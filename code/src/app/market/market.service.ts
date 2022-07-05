@@ -16,7 +16,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order } from '../../entity/Order';	//引入entity
 import { Project } from '../../entity/Project';	//引入entity
-
+import { ethers } from 'ethers';
 
 @Injectable()
 export class MarketService {
@@ -105,43 +105,47 @@ export class MarketService {
         return await this.orderRepository.query(`SELECT * FROM public."order"`);
     }
 
+    // 获取所有项目
+    async getPjc(): Promise<Project[]> {
+        return await this.projectRepository.query(`SELECT * FROM public."project"`);
+    }
+
 
     // 创建项目
     async createPjc(@Body() body: any): Promise<Project[]>  {
-        // console.log(body);
+        console.log(body);
+        const ethereum = window;
+        try {
+            if (ethereum) {
+            //   const provider = new ethers.providers.Web3Provider(ethereum);
+            //   const signer = provider.getSigner();
+            //   const nftContract = new ethers.Contract(contractAddress.address, abi, signer);
+
+            //   //Project publishing fee
+            //   let fee = ethers.utils.parseUnits('1', 18);
+            //   let nftTxn = await nftContract.createProject({
+            //     title: pro[0].value,
+            //     budget: Number(pro[1].value),
+            //     desc: pro[3].value,
+            //     period: Number(pro[2].value)
+            //   },
+            //    {
+            //     value: fee
+            //    });
+            //   await nftTxn.wait();
+            } else {
+              console.log("Ethereum object does not exist");
+            }
+          } 
+          catch (err) {
+            return err;
+          }
 
         return await body
     // let queryData = body;
     // let{proType,pro} = queryData;
     // const {ethereum} = window;
-    // try {
-    //     if (ethereum) {
-    //       const provider = new ethers.providers.Web3Provider(ethereum);
-    //       const signer = provider.getSigner();
-    //       const nftContract = new ethers.Contract(contractAddress.address, abi, signer);
-    //       getAccountInfo.insertLabel(proType)
 
-    //       //Project publishing fee
-    //       let fee = ethers.utils.parseUnits('1', 18);
-    //       let nftTxn = await nftContract.createProject({
-    //         title: pro[0].value,
-    //         budget: Number(pro[1].value),
-    //         desc: pro[3].value,
-    //         period: Number(pro[2].value)
-    //       },
-    //        {
-    //         value: fee
-    //        });
-    //       await nftTxn.wait();
-    //     } else {
-    //       console.log("Ethereum object does not exist");
-    //     }
-  
-    //   } 
-    //   catch (err) {
-    //     ctx.response.body = _fail(err);
-    //     return;
-    //   }
     // return ctx.response.body = _succeed();
         
     }

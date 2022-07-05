@@ -10,6 +10,7 @@ export declare class MarketService {
     getFile(files: any): false | Promise<unknown>;
     pushFile(file: any, obj: any): any;
     test(): Promise<Order[]>;
+    getPjc(): Promise<Project[]>;
     createPjc(body: any): Promise<Project[]>;
     handleError(error: AxiosError): Observable<never>;
 }

@@ -31,6 +31,9 @@ let MarketController = class MarketController {
     async createProject(body) {
         return await this.marketService.createPjc(body);
     }
+    async getProject() {
+        return await this.marketService.getPjc();
+    }
     async getMarketList() {
         return await this.marketService.test();
     }
@@ -53,6 +56,12 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], MarketController.prototype, "createProject", null);
+__decorate([
+    (0, common_1.Get)('getMarketData'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], MarketController.prototype, "getProject", null);
 __decorate([
     (0, common_1.Get)('search'),
     __metadata("design:type", Function),
