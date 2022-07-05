@@ -13,6 +13,7 @@ async function get() {
     return records;
 }
 
+
 async function getLabel(proContent) {
     let records = [];
     let sql =`SELECT role,pro_type FROM project WHERE desc = '${proContent}';`;
@@ -25,6 +26,7 @@ async function getLabel(proContent) {
     return records;
 }
 
+
 async function update(table, where, data) {
     let num = 0;
     try {
@@ -33,6 +35,7 @@ async function update(table, where, data) {
         console.log('dbUtil update failed', { table, where, data }, err);
     }
 }
+
 
 async function insert(table, data) {
     let num = 0;
@@ -44,6 +47,7 @@ async function insert(table, data) {
     return num;
 }
 
+
 async function batchInsert(table, fields, datas) {
     let num = 0;
     try {
@@ -53,6 +57,7 @@ async function batchInsert(table, fields, datas) {
     }
     return num;
 }
+
 
 async function del(table, where) {
     let num = 0;
@@ -64,12 +69,14 @@ async function del(table, where) {
     return num;
 }
 
+
 async function getLastCheckBlock() {
     let settings = await get();
     JSON.stringify(settings);
     if (JSON.stringify(settings).length > 0) return Number(Object. values(settings)[0].block);
     return 0;
 }
+
 
 async function insertPro(insertDatas) {
     if (!insertDatas || insertDatas.length == 0) return 0;
@@ -89,19 +96,11 @@ async function insertPro(insertDatas) {
     return num;
 }
 
+
 async function updateLastCheckBlock(latest) {
     await update(latest);
 }
 
-async function update1(table, where, data) {
-    let num = 0;
-    try {
-        num = await db.update1(table, where, data);
-    } catch (err) {
-        logger.error('dbUtil update failed', { table, where, data }, err);
-    }
-    return num;
-}
 
 async function update(latest) {
     if (!latest) return 0;
