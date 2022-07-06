@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "hardhat/console.sol";
 import "./interface/IDemand.sol";
 
-// TODO：报名限制数量，乙方，时间久远后考虑废弃
+//TODO:报名限制数量，乙方，时间久远后考虑废弃
 contract Demand is ERC721Enumerable, IDemand, Ownable {
     uint fee = 1*10**17;
     IOrder order;
@@ -42,9 +42,9 @@ contract Demand is ERC721Enumerable, IDemand, Ownable {
     //demandId = >
     mapping(uint => DemandInfo) private demands; 
     //报名信息,demandId = > applyAddr
-    mapping(uint => mapping(address => bool)) private  applyInfo;
+    mapping(uint => mapping(address => applyInfo)) private  applyInfos;
 
-    //TODO:项目NFT名称
+    //TODO: 项目NFT名称
     constructor() ERC721("UpChain","UpChain") {
 
     }
@@ -66,7 +66,7 @@ contract Demand is ERC721Enumerable, IDemand, Ownable {
             period: _demandInfo.period
         });
         _safeMint(msg.sender, demandId);
-        applyInfo[demandId][msg.sender].isApply = true;
+        applyInfos[demandId][msg.sender].isApply = true;
         demandIds.increment();   
 
         emit CreateDemand(demandId, msg.sender, _demandInfo.title, _demandInfo.budget, 
@@ -91,33 +91,33 @@ contract Demand is ERC721Enumerable, IDemand, Ownable {
 
     function applyFor(uint _proId, uint _prePrice) external {
         require(msg.sender != ownerOf(_proId), "Not apply for orders yourself.");
-        require(!applyInfo[_proId][msg.sender].isApply, "Already applied.");
+        require(!applyInfos[_proId][msg.sender].isApply, "Already applied.");
 
-        applyInfo[_proId][msg.sender].isApply = true;
-        applyInfo[_proId][msg.sender].prePrice = _prePrice;
+        applyInfos[_proId][msg.sender].isApply = true;
+        applyInfos[_proId][msg.sender].prePrice = _prePrice;
 
         emit ApplyFor(_proId, msg.sender);
     }
 
     function cancelApply(uint _proId) external {
         require(msg.sender != ownerOf(_proId), "Not applied.");
-        applyInfo[_proId][msg.sender].isApply = false;
+        applyInfos[_proId][msg.sender].isApply = false;
 
         emit CancelApply(_proId, msg.sender);
     }
 
     function openApply(uint _proId) external {
         require(msg.sender == ownerOf(_proId), "No Root.");
-        require(!applyInfo[_proId][msg.sender].isApply, "Already opened.");
-        applyInfo[_proId][msg.sender].isApply = true;
+        require(!applyInfos[_proId][msg.sender].isApply, "Already opened.");
+        applyInfos[_proId][msg.sender].isApply = true;
 
         emit OpenApply(_proId, msg.sender);
     }
 
     function closeApply(uint _proId) external {
         require(msg.sender == ownerOf(_proId), "No Root.");
-        require(applyInfo[_proId][msg.sender].isApply, "Already closed.");
-        applyInfo[_proId][msg.sender].isApply = false;
+        require(applyInfos[_proId][msg.sender].isApply, "Already closed.");
+        applyInfos[_proId][msg.sender].isApply = false;
 
         emit CloseApply(_proId, msg.sender);
     }

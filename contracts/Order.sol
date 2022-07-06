@@ -21,12 +21,12 @@ contract Order is IOrder, Ownable {
     using Counters for Counters.Counter;
 
     event CreateOrder(uint demandId, address demander, address applyAddr, uint amount);
-    event SetStage(uint orderId, address  applyAddr, address token, uint amounts, uint periods);
+    event SetStage(uint orderId, address  applyAddr, address token, uint[] amounts, uint[] periods);
     event ConfirmOrder(uint orderId, address demander);
-    event confirmOrderStage(uint orderId, address demander, uint8 stageIndex);
-    event terminateOrder(uint orderId, address originator);
-    event terminateStage(uint orderId, address originator, uint8 stageIndex);
-    event withdraw(uint orderId, address applyAddr, uint8 stageIndex);
+    event ConfirmOrderStage(uint orderId, address demander, uint8 stageIndex);
+    event TerminateOrder(uint orderId, address originator);
+    event TerminateStage(uint orderId, address originator, uint8 stageIndex);
+    event Withdraw(uint orderId, address applyAddr, uint8 stageIndex);
 
     struct Order{
         uint demandId;
@@ -128,7 +128,7 @@ contract Order is IOrder, Ownable {
         require(!orderStages[_orderId][_stageIndex].confirmed, " Already confirmed.");
         orderStages[_orderId][_stageIndex].confirmed = true;
         
-        emit confirmOrderStage(_orderId, msg.sender, _stageIndex);
+        emit ConfirmOrderStage(_orderId, msg.sender, _stageIndex);
     }
 
     function terminateOrder(uint _orderId) external {
@@ -139,7 +139,7 @@ contract Order is IOrder, Ownable {
         delete orders[_orderId];
         delete orderStages[_orderId];
 
-        emit terminateOrder(_orderId, msg.sender);
+        emit TerminateOrder(_orderId, msg.sender);
     }
 
     function terminateStage(uint _orderId, uint8 _stageIndex) external {
@@ -169,10 +169,10 @@ contract Order is IOrder, Ownable {
         _transfer(orders[_orderId].token, IDemand(_demand).ownerOf(_demandId), sumAmountA);
         _transfer(orders[_orderId].token, orders[_orderId].applyAddr, sumAmountB);
 
-        emit terminateStage(_orderId, msg.sender, _stageIndex);
+        emit TerminateStage(_orderId, msg.sender, _stageIndex);
     }
    
-    function withdraw(uint _orderId, uint _stageIndex) external {
+    function withdraw(uint _orderId, uint8 _stageIndex) external {
         require(orders[_orderId].applyAddr == msg.sender, "No permission.");
         require(orders[_orderId].confirmed == 1, "The order is not confirmed.");
         Stage storage pro = orderStages[_orderId][_stageIndex];
@@ -188,7 +188,7 @@ contract Order is IOrder, Ownable {
             pro.withdrawed = true;
         }
 
-        emit withdraw(_orderId, msg.sender, _stageIndex);
+        emit Withdraw(_orderId, msg.sender, _stageIndex);
 
     }
 

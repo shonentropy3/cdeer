@@ -8,7 +8,7 @@ let owner;
 let demandAddr;
 let orderAddr = '';
 let zeroAddr = ethers.constants.AddressZero;
-let myToken;
+let myTokenAddr;
 
 const testHash = `QmSsw6EcnwEiTT9c4rnAGeSENvsJMepNHmbrgi2S9bXNJr`;
 
@@ -34,8 +34,10 @@ async function init() {
     const MyERC20 = await ethers.getContractFactory("MyERC20");
     myToken = await MyERC20.deploy();
     await myToken.deployed();
-    myToken = myToken.address;
-    console.log({myToken: myToken});
+
+    myTokenAddr = myToken.address;
+    console.log({myToken: myTokenAddr});
+
   }
 
  function tokenAmount(value) {
