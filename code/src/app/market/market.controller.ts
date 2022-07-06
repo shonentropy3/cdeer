@@ -10,9 +10,9 @@ export class MarketController {
 
     @Post('upload') //  暂存文件 => 获取hash => 删除文件 => 存入数据库
     @UseInterceptors(FilesInterceptor('files'))
-    uploadFile(@UploadedFiles() files){
-
-        return new Promise ((resolve,reject)=>{
+    async uploadFile(@UploadedFiles() files: any){
+        
+        return await new Promise ((resolve,reject)=>{
             resolve(this.marketService.getFile(files))
          })
          .then((res)=>{

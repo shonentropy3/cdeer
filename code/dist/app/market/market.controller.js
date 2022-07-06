@@ -20,8 +20,8 @@ let MarketController = class MarketController {
     constructor(marketService) {
         this.marketService = marketService;
     }
-    uploadFile(files) {
-        return new Promise((resolve, reject) => {
+    async uploadFile(files) {
+        return await new Promise((resolve, reject) => {
             resolve(this.marketService.getFile(files));
         })
             .then((res) => {
@@ -47,7 +47,7 @@ __decorate([
     __param(0, (0, common_1.UploadedFiles)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], MarketController.prototype, "uploadFile", null);
 __decorate([
     (0, common_1.Post)('publish'),

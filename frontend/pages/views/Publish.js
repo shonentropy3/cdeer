@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 
 // import { createProject,getHash } from '../http/api';
 
-import { createDemand,createStorage } from '../http/api';
+import { createDemand,getHash } from '../http/api';
 
 import { Input,Form,message,Button,Upload,notification } from 'antd';
 import { UploadOutlined, WarningOutlined, InfoCircleOutlined } from '@ant-design/icons';
@@ -93,7 +93,8 @@ function Publish() {
         let data = {
           pro_content: account[3].value,
           recruiting_role: `{${tuan}}`,
-          pro_type: `{${pjc}}`
+          pro_type: `{${pjc}}`,
+          desc: account[0].value
         }
         data = JSON.stringify(data)
         let para = {"proLabel":data}
@@ -232,10 +233,6 @@ function Publish() {
       // 附件
       let [file,fileSet] = useState()
       
-      useEffect(()=>{
-        // upload()
-        console.log();
-      },[])
 
       // 上传前
       const beforeUpload = (file) => {
@@ -269,12 +266,20 @@ function Publish() {
         });
       }
 
+
+      const upload = (info) => {
+        info.onProgress()
+        var formData=new FormData();
+        formData.append('files',info.file);
+          getHash(formData).then(res=>{
+            info.onSuccess()
+          }).catch(err=>{
+            info.onError()
+          })
+      }
+
       let ulStatus = false
       const handleChange = (info) => {
-        var formData=new FormData();
-        formData.append('files',info.fileList[0]);
-        console.log(formData.get('files'));
-        // getHash(formData)
           if (info.file.status === 'done') {
             ulStatus = true
             message.success(`${info.file.name} file uploaded successfully`);
@@ -324,18 +329,6 @@ function Publish() {
                       <p>相关文档<span>(选填)</span></p>
 
                       <InfoCircleOutlined className='mr20' onClick={()=>tips()} />
-
-                        {/* <Upload 
-                          // showUploadList={false}
-                          maxCount='1'
-                          name="file"
-                          fileList={file}
-                          beforeUpload={beforeUpload}
-                          onChange={handleChange}
-                        >
-                          <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                        </Upload> */}
-
                         <Upload
                           listType="picture"
                           maxCount={1}
@@ -343,6 +336,7 @@ function Publish() {
                           fileList={file}
                           beforeUpload={beforeUpload}
                           onChange={handleChange}
+                          customRequest={upload}
                         >
                           <Button icon={<UploadOutlined />}>Upload (Max: 1)</Button>
                         </Upload>

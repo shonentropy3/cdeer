@@ -66,33 +66,26 @@ let MarketService = class MarketService {
     }
     pushFile(file, obj) {
         if (obj === false) {
+            console.log('未上传图片');
             return;
         }
         fs.unlink(obj.path, (err) => {
             if (err)
                 throw err;
         });
+        console.log(obj);
         return obj;
     }
     async test() {
-        return await this.orderRepository.query(`SELECT * FROM public."order"`);
+        let list = [1, true, "free"];
+        return list;
     }
     async getMarketData() {
         return await this.projectRepository.query(`SELECT * FROM public."project"`);
     }
     async createPjc(body) {
-        console.log(body);
-        const ethereum = window;
-        try {
-            if (ethereum) {
-            }
-            else {
-                console.log("Ethereum object does not exist");
-            }
-        }
-        catch (err) {
-            return err;
-        }
+        let jp = JSON.parse(body.proLabel);
+        console.log(jp);
         return await body;
     }
     handleError(error) {

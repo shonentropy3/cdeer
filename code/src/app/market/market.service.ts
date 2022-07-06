@@ -42,8 +42,8 @@ export class MarketService {
     //   }
 
     // 获取hash
-    getFile(files) {
-
+    getFile(files: any) {
+        
         if (files.length === 0 ) {
             return false
         }
@@ -81,9 +81,10 @@ export class MarketService {
     }
 
     // 传入数据库
-    pushFile(file,obj) {
+    pushFile(file: any,obj: any) {
         if (obj === false) {
             // return '未上传图片'
+            console.log('未上传图片');
             return
         }
 
@@ -95,14 +96,18 @@ export class MarketService {
             if (err) throw err;
             // console.log('文件已删除');
         });
-
+        console.log(obj);
+        
         // 存入数据库
         return  obj
     }
 
 
     async test(): Promise<Order[]> {
-        return await this.orderRepository.query(`SELECT * FROM public."order"`);
+        // return await this.orderRepository.query(`SELECT * FROM public."order"`);
+        let list: any[] = [1, true, "free"];
+        // list[1] = 100;
+        return list
     }
 
     // 获取所有项目
@@ -113,34 +118,16 @@ export class MarketService {
 
     // 创建项目
     async createPjc(@Body() body: any): Promise<Project[]>  {
-        console.log(body);
-        const ethereum = window;
-        try {
-            if (ethereum) {
-            //   const provider = new ethers.providers.Web3Provider(ethereum);
-            //   const signer = provider.getSigner();
-            //   const nftContract = new ethers.Contract(contractAddress.address, abi, signer);
-
-            //   //Project publishing fee
-            //   let fee = ethers.utils.parseUnits('1', 18);
-            //   let nftTxn = await nftContract.createProject({
-            //     title: pro[0].value,
-            //     budget: Number(pro[1].value),
-            //     desc: pro[3].value,
-            //     period: Number(pro[2].value)
-            //   },
-            //    {
-            //     value: fee
-            //    });
-            //   await nftTxn.wait();
-            } else {
-              console.log("Ethereum object does not exist");
-            }
-          } 
-          catch (err) {
-            return err;
-          }
-
+        let jp = JSON.parse(body.proLabel);
+        console.log(jp);
+        
+        // let nftTxn = await nftContract.createDemand({
+            // title: pro[0].value,
+            // budget: Number(pro[1].value),
+            // desc: pro[3].value,
+            // period: Number(pro[2].value)
+        //   },
+        // console.log(window);
         return await body
     // let queryData = body;
     // let{proType,pro} = queryData;
