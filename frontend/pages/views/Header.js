@@ -1,8 +1,11 @@
 import Link from 'next/link'
 // import style from '../../styles/header.module.scss'
 // import { MessageOutlined } from '@ant-design/icons';
-import { Badge } from 'antd';
-function Header() {    return (
+import { DownOutlined } from '@ant-design/icons';
+import { Dropdown, Menu, Space } from 'antd';
+
+function Header() {
+    return (
         <div className='header'>
             <div className="left">
                 <div className="logo">
@@ -26,7 +29,7 @@ function Header() {    return (
                 <div className="zone">
                     <Link href="/views/Myproject">
                         <div className="_li">
-                            我发布的项目
+                            我的项目
                         </div>
                     </Link>
                     <Link href="/views/Publish">

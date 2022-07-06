@@ -9,6 +9,14 @@ export default function Myproject() {
     const [visible, setVisible] = useState(false);
     const [title, setTitle] = useState('0');
     const [test, setTest] = useState('');
+    const [selectItem,setSelectItem] = useState('item-1')
+
+
+    const items = [
+      { label: '我发布的项目', key: 'item-1'}, // 菜单项务必填写 key
+      { label: '我开发的项目', key: 'item-2'}
+    ];
+
     const handleVisibleChange = (flag) => {
         setVisible(flag);
     };
@@ -48,17 +56,30 @@ export default function Myproject() {
         } catch (err) {
           console.log(err)
         }
-    }
+      }
 
       useEffect(()=>{
         console.log('获取当前账号登陆状态');
         connectWalletHandler()
       },[])
 
+      const toggleNav = (item) => {
+        selectItem = item.key
+        setSelectItem(selectItem)
+      }
+
     return(
+      <>
+      
         <div className={`Myproject ${style.pt5_} ${style.padding_0_20} ${style.bg1} ${style.h100vh}`}>
-            <div className={`topbar ${style.between}`}>
-                我发布的项目
+          
+            <div className={`topbar ${style.between} ${style.bgwhite} ${style.pdr10}`}>
+            <Menu 
+              items={items} 
+              mode="horizontal"
+              selectedKeys={selectItem}
+              onSelect={(item)=>toggleNav(item)}
+          />
                 <div className={style.df}>
                     <Dropdown overlay={menu} onVisibleChange={handleVisibleChange} visible={visible} placement="bottomRight">
                         <Typography.Link>
@@ -68,19 +89,25 @@ export default function Myproject() {
                         </Space>
                         </Typography.Link>
                     </Dropdown>
-                    <div className={style.btn_blue}>
+                    {/* <div className={style.btn_blue}>
                         发布新项目
-                    </div>
+                    </div> */}
                 </div>
             </div>
-            <div className={`content`}>
+            {
+              selectItem === 'item-1' ? 
+              <div className={`content`}>
                 <h1>{test}</h1>
                 <div className="list">
                     <ProjectList />
                     <ProjectList />
                 </div>
-            </div>
+              </div>
+            :
+              <div></div>
+            }
 
         </div>
+      </>
     )
 }

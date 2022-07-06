@@ -26,6 +26,14 @@ const Sport = ({router})=>{
             }
         });
     }
+
+    // 参与项目
+    const participate = () => {
+        // 参与报名接口
+        
+    }
+
+
     return(
         <div className="pjc_detail">
             <div className='container'>
@@ -37,6 +45,7 @@ const Sport = ({router})=>{
                     <div>
                         <p>招募角色: {detail.roles}</p>
                     </div>
+                    <button onClick={()=>participate()}>参加项目</button>
                     <div>
                         <p>金额 ¥{detail.price}</p>
                         <p>类型  {detail.typeText}</p>
