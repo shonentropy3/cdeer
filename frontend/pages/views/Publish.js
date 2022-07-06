@@ -329,6 +329,7 @@ function Publish() {
                       <p>相关文档<span>(选填)</span></p>
 
                       <InfoCircleOutlined className='mr20' onClick={()=>tips()} />
+                      
                         <Upload
                           listType="picture"
                           maxCount={1}

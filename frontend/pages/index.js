@@ -204,57 +204,10 @@ export default function Home() {
   }
 
   // ============常量==>
-  // 角色data
-  const role = [{
-    value: null,
-    name: '全部'
-  },
-  {
-    value: 'kfgcs',
-    name: '开发工程师'
-  },
-  {
-    value: 'sjs',
-    name: '设计师'
-  },
-  {
-    value: 'cpjl',
-    name: '产品经理'
-  },
-  {
-    value: 'csgcs',
-    name: '测试工程师'
-  }]
-  // 项目类型data
-  const pjc = [{
-    value: null,
-    name: '全部'
-  },
-  {
-    value: 'web',
-    name: 'Web网站'
-  },
-  {
-    value: 'app',
-    name: 'App开发'
-  },
-  {
-    value: 'wechat',
-    name: '微信公众号'
-  },
-  {
-    value: 'applets',
-    name: '小程序'
-  },
-  {
-    value: 'html5',
-    name: 'HTML5应用'
-  },
-  {
-    value: 'other',
-    name: '其他项目'
-  }
-  ]
+  const _data = require('./data/data.json')
+  const role = _data.market_role
+  const pjc = _data.pjc
+
   // ============变量==>
   // 发布订单数
   let[tokens,Set_tokens] = useState(0)

@@ -1,0 +1,21 @@
+.ord_detail{
+    width: 100%;
+    min-height: 100vh;
+    background-color: #f0f2f5;
+    padding: 100px 20% 0;
+    .container{
+        background-color: white;
+        box-shadow: 0 1px 3px rgb(0 0 0 / 20%);
+        border-radius: 3px;
+        .top{
+            // height: 50px;
+            font-size: 18px;
+            box-sizing: border-box;
+            padding: 10px 25px;
+            border-bottom: 1px solid rgb(230, 230, 230);
+        }
+        .content{
+            min-height: 500px;
+        }
+    }
+}

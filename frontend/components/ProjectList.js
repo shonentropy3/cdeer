@@ -1,12 +1,13 @@
 import { useEffect } from "react"
-
+import Link from 'next/link'
+import Router from "next/router";
 
 function ProjectList(obj) {
 
 
-    useEffect(()=>{
-        
-    },[])
+    const goDetail = id => {
+        Router.push({pathname:'/views/Ord_detail',search: id})
+    }
     
     return(
         <div className="ProjectList">
@@ -49,7 +50,9 @@ function ProjectList(obj) {
                 {/* {
                     this.obj.status === '招募中' ? <button>编辑项目</button> : ''
                 } */}
-                <button>查看项目状态</button>
+
+                
+                <button onClick={()=>{goDetail()}}>查看项目状态</button>
 
             </div>
         </div>
