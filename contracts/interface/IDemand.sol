@@ -9,6 +9,4 @@ interface IDemand is IERC721 {
 
     function setOrder(address) external;
 
-
-
 }

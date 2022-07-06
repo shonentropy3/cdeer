@@ -16,7 +16,7 @@ contract Demand is ERC721Enumerable, IDemand, Ownable {
             string indexed desc, string attachment, uint period); 
     event  ApplyFor(uint indexed _proId, address indexed user);
 
-    uint fee = 1;
+    uint fee = 1*10**9;
 
     struct DemandInfo{
         string title;
@@ -89,14 +89,14 @@ contract Demand is ERC721Enumerable, IDemand, Ownable {
         applyInfo[_proId][msg.sender] = false;
     }
 
-    function openApplyFor(uint _proId) external {
-        require(msg.sender != ownerOf(_proId), "No Root.");
+    function openApply(uint _proId) external {
+        require(msg.sender == ownerOf(_proId), "No Root.");
         require(!applyInfo[_proId][msg.sender], "Already opened.");
         applyInfo[_proId][msg.sender] = true;
     }
 
-    function closeApplyFor(uint _proId) external {
-        require(msg.sender != ownerOf(_proId), "No Root.");
+    function closeApply(uint _proId) external {
+        require(msg.sender == ownerOf(_proId), "No Root.");
         require(applyInfo[_proId][msg.sender], "Already closed.");
         applyInfo[_proId][msg.sender] = false;
     }
