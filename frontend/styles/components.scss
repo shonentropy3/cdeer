@@ -1,3 +1,4 @@
+// myproject/list
 .ProjectList{
     background-color: white;
     padding: 0 20px;
@@ -66,3 +67,49 @@
         }
     }
 }
+// myproject/list/project
+.RegistrationList{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid rgb(211, 211, 211);
+    border-radius: 3px;
+    margin: 20px;
+    margin-bottom: 0;
+    box-sizing: border-box;
+    padding: 0 20px;
+    height: 100px;
+    .left{
+
+    }
+    .right{
+        width: 300px;
+        box-sizing: content-box;
+        padding: 25px 0;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        border-left: 2px solid rgb(240, 240, 240);
+        
+        button{
+            width: 90px;
+            border: none;
+            border-radius: 5px;
+            padding: 3px 0;
+            cursor: pointer;
+            font-size: 12px;
+            &:first-child{
+                color: rgb(213, 45, 45);
+                border: 1px solid rgb(213, 45, 45);
+                background-color: white;
+            }
+            &:last-child{
+                color: white;
+                background-color: rgb(0, 142, 251);
+                border: 1px solid rgb(150, 150, 150);
+            }
+        }
+    }
+}
+

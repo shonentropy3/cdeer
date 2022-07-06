@@ -1,4 +1,5 @@
 import { useEffect } from "react"
+import RegistrationList from '../../components/RegistrationList'
 
 export default function OrderDetail(oid) {
 
@@ -20,7 +21,9 @@ export default function OrderDetail(oid) {
                 </div>
                 <div className="content">
 
-                    <div className="box"></div>
+                    <RegistrationList />
+                    <RegistrationList />
+                    <RegistrationList />
                 </div>
             </div>
         </div>
