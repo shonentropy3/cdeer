@@ -9,14 +9,21 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "hardhat/console.sol";
 import "./interface/IDemand.sol";
 
+// TODO：报名限制数量，乙方，时间久远后考虑废弃
 contract Demand is ERC721Enumerable, IDemand, Ownable {
-    using Counters for Counters.Counter;
-    //TODO: 必要函数添加event
-    event CreateDemand(uint indexed demandId, address indexed  demander, string title, uint budget, 
-            string indexed desc, string attachment, uint period); 
-    event  ApplyFor(uint indexed _proId, address indexed user);
+    uint fee = 1*10**17;
+    IOrder order;
 
-    uint fee = 1*10**9;
+    using Counters for Counters.Counter;
+ 
+    event CreateDemand(uint indexed demandId, address indexed  demander, string title, uint budget, 
+        string indexed desc, string attachment, uint period);
+    event ModifyDemand(uint indexed demandId, address indexed demander, string title, uint budget, 
+        string desc, string attachment, uint period); 
+    event  ApplyFor(uint indexed _proId, address indexed applyAddr);
+    event  CancelApply(uint proId, address indexed demander);
+    event  OpenApply(uint proId, address indexed demander);
+    event  CloseApply(uint proId, address indexed demander);
 
     struct DemandInfo{
         string title;
@@ -26,16 +33,20 @@ contract Demand is ERC721Enumerable, IDemand, Ownable {
         uint period;
     }
 
+    struct applyInfo{
+        bool isApply;
+        uint prePrice;
+    }
+
     Counters.Counter private demandIds;
     //demandId = >
     mapping(uint => DemandInfo) private demands; 
     //报名信息,demandId = > applyAddr
     mapping(uint => mapping(address => bool)) private  applyInfo;
 
-    IOrder order;
-
     //TODO:项目NFT名称
-    constructor() ERC721("u","e") {
+    constructor() ERC721("UpChain","UpChain") {
+
     }
 
     function setOrder(address _order) external  virtual override onlyOwner {
@@ -55,50 +66,60 @@ contract Demand is ERC721Enumerable, IDemand, Ownable {
             period: _demandInfo.period
         });
         _safeMint(msg.sender, demandId);
-        applyInfo[demandId][msg.sender] = true;
+        applyInfo[demandId][msg.sender].isApply = true;
         demandIds.increment();   
 
         emit CreateDemand(demandId, msg.sender, _demandInfo.title, _demandInfo.budget, 
             _demandInfo.desc, _demandInfo.attachment, _demandInfo.period);
     }
 
-    function modifyDemand(uint _tokenId, DemandInfo memory _demandInfo) external {
-        require(msg.sender == ownerOf(_tokenId), "No root.");
-        require(!order.isDemandOrders(_tokenId), "Existing orders.");
+    function modifyDemand(uint _demandId, DemandInfo memory _demandInfo) external {
+        require(msg.sender == ownerOf(_demandId), "No root.");
+        require(!order.isDemandOrders(_demandId), "Existing orders.");
 
-        demands[_tokenId] = DemandInfo({
+        demands[_demandId] = DemandInfo({
             title: _demandInfo.title,
             budget: _demandInfo.budget,
             desc: _demandInfo.desc,
             attachment: _demandInfo.attachment,
             period: _demandInfo.period
         });
+
+        emit ModifyDemand(_demandId, msg.sender, _demandInfo.title, _demandInfo.budget, 
+            _demandInfo.desc, _demandInfo.attachment, _demandInfo.period);
     }
 
-    function applyFor(uint _proId) external {
+    function applyFor(uint _proId, uint _prePrice) external {
         require(msg.sender != ownerOf(_proId), "Not apply for orders yourself.");
-        require(!applyInfo[_proId][msg.sender], "Already applied.");
+        require(!applyInfo[_proId][msg.sender].isApply, "Already applied.");
 
-        applyInfo[_proId][msg.sender] = true;
+        applyInfo[_proId][msg.sender].isApply = true;
+        applyInfo[_proId][msg.sender].prePrice = _prePrice;
 
         emit ApplyFor(_proId, msg.sender);
     }
 
     function cancelApply(uint _proId) external {
         require(msg.sender != ownerOf(_proId), "Not applied.");
-        applyInfo[_proId][msg.sender] = false;
+        applyInfo[_proId][msg.sender].isApply = false;
+
+        emit CancelApply(_proId, msg.sender);
     }
 
     function openApply(uint _proId) external {
         require(msg.sender == ownerOf(_proId), "No Root.");
-        require(!applyInfo[_proId][msg.sender], "Already opened.");
-        applyInfo[_proId][msg.sender] = true;
+        require(!applyInfo[_proId][msg.sender].isApply, "Already opened.");
+        applyInfo[_proId][msg.sender].isApply = true;
+
+        emit OpenApply(_proId, msg.sender);
     }
 
     function closeApply(uint _proId) external {
         require(msg.sender == ownerOf(_proId), "No Root.");
-        require(applyInfo[_proId][msg.sender], "Already closed.");
-        applyInfo[_proId][msg.sender] = false;
+        require(applyInfo[_proId][msg.sender].isApply, "Already closed.");
+        applyInfo[_proId][msg.sender].isApply = false;
+
+        emit CloseApply(_proId, msg.sender);
     }
 
     function modifyFee(uint _fee) external onlyOwner {

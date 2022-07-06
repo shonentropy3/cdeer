@@ -11,19 +11,22 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import '@uniswap/lib/contracts/libraries/TransferHelper.sol';
 import "hardhat/console.sol";
 
+// TODO:考虑阶段甲方确认后，修改后续阶段的问题
 contract Order is IOrder, Ownable {
     uint8 private maxDemandOrders = 12;
     uint8 private maxStages = 12;
     address private _demand;
 
     using SafeERC20 for IERC20;
-    //TODO: 添加uint安全校验
     using Counters for Counters.Counter;
-// TODO：报名限制数量，乙方，时间久远后考虑废弃
-    //TODO:缺少数量
-    event CreateOrder(uint demandId, address user, address applyAddr, uint amount);
-    event ConfirmOrder(uint orderId, address user);
-    event ConfirmPrePayment(uint orderId, uint amount);
+
+    event CreateOrder(uint demandId, address demander, address applyAddr, uint amount);
+    event SetStage(uint orderId, address  applyAddr, address token, uint amounts, uint periods);
+    event ConfirmOrder(uint orderId, address demander);
+    event confirmOrderStage(uint orderId, address demander, uint8 stageIndex);
+    event terminateOrder(uint orderId, address originator);
+    event terminateStage(uint orderId, address originator, uint8 stageIndex);
+    event withdraw(uint orderId, address applyAddr, uint8 stageIndex);
 
     struct Order{
         uint demandId;
@@ -44,7 +47,6 @@ contract Order is IOrder, Ownable {
 
     Counters.Counter private orderIds;
 
-    // TODO：减数据，全部提款
     // orderId  = > 
     mapping(uint => Order) private orders;
     // demandId = > orderId
@@ -55,7 +57,7 @@ contract Order is IOrder, Ownable {
     constructor(address demand_) {
         _demand = demand_;
     }
-    // TODO: 报名时乙方填入报价
+
     function createOrder(
         Order memory _order
     ) external {
@@ -77,8 +79,7 @@ contract Order is IOrder, Ownable {
         emit CreateOrder(_order.demandId, msg.sender, _order.applyAddr, _order.amount);   
     }
 
-
-    function setStageByB(uint _orderId, address _token, uint[] memory _amounts, uint[] memory _periods) external {
+    function setStage(uint _orderId, address _token, uint[] memory _amounts, uint[] memory _periods) external {
         require(orders[_orderId].applyAddr == msg.sender, "No permission.");
         require(orders[_orderId].confirmed != 1, "The order has been confirmed.");
 
@@ -87,7 +88,7 @@ contract Order is IOrder, Ownable {
         orders[_orderId].startDate = block.timestamp;
         orders[_orderId].confirmed = 2;
 
-        emit ConfirmOrder(_orderId, msg.sender);
+        emit SetStage(_orderId, msg.sender, _token, _amounts, _periods);
     }
 
     function confirmOrder(
@@ -113,26 +114,22 @@ contract Order is IOrder, Ownable {
         orders[_orderId].startDate = block.timestamp;
         if (orderStagesArr[0].endDate == orders[_orderId].startDate) {
             orderStagesArr[0].confirmed = true;
-
-            emit ConfirmPrePayment(_orderId, orders[_orderId].amount);
         }
 
         demandOrders[_demandId].push(_orderId);
+
         emit ConfirmOrder(_orderId, msg.sender);
     }
 
-    // TODO:考虑阶段甲方确认后，修改后续阶段的问题
-
-    //TODO: 修改所有的拿去mapping中结构体
-    function confirmOrderStage(uint _orderId, uint _stageIndex) external {
+    function confirmOrderStage(uint _orderId, uint8 _stageIndex) external {
         uint _demandId  = orders[_orderId].demandId;
         require(msg.sender == IDemand(_demand).ownerOf(_demandId), "No confirming permission.");
-        //无取款
         require(!orderStages[_orderId][_stageIndex].withdrawed, "Already withdrawed.");
         require(!orderStages[_orderId][_stageIndex].confirmed, " Already confirmed.");
         orderStages[_orderId][_stageIndex].confirmed = true;
+        
+        emit confirmOrderStage(_orderId, msg.sender, _stageIndex);
     }
-
 
     function terminateOrder(uint _orderId) external {
         uint _demandId  = orders[_orderId].demandId;
@@ -141,9 +138,11 @@ contract Order is IOrder, Ownable {
         
         delete orders[_orderId];
         delete orderStages[_orderId];
+
+        emit terminateOrder(_orderId, msg.sender);
     }
 
-    function terminateStage(uint _orderId, uint _stageIndex) external {
+    function terminateStage(uint _orderId, uint8 _stageIndex) external {
         uint _demandId  = orders[_orderId].demandId;
         require(IDemand(_demand).ownerOf(_demandId) == msg.sender || orders[_orderId].applyAddr == msg.sender, "No terminate permission.");
         require(!orderStages[_orderId][_stageIndex].confirmed, "Already confirmed.");
@@ -169,9 +168,11 @@ contract Order is IOrder, Ownable {
         sumAmountA = sumAmount - sumAmountB;
         _transfer(orders[_orderId].token, IDemand(_demand).ownerOf(_demandId), sumAmountA);
         _transfer(orders[_orderId].token, orders[_orderId].applyAddr, sumAmountB);
+
+        emit terminateStage(_orderId, msg.sender, _stageIndex);
     }
    
-    function withdrawByB(uint _orderId, uint _stageIndex) external {
+    function withdraw(uint _orderId, uint _stageIndex) external {
         require(orders[_orderId].applyAddr == msg.sender, "No permission.");
         require(orders[_orderId].confirmed == 1, "The order is not confirmed.");
         Stage storage pro = orderStages[_orderId][_stageIndex];
@@ -186,6 +187,9 @@ contract Order is IOrder, Ownable {
             _transfer(orders[_orderId].token, msg.sender, pro.amount);
             pro.withdrawed = true;
         }
+
+        emit withdraw(_orderId, msg.sender, _stageIndex);
+
     }
 
     function isDemandOrders(uint _demandId) external view virtual override  returns (bool){
@@ -211,7 +215,6 @@ contract Order is IOrder, Ownable {
         require(maxStages >= _amounts.length, "Wrong parameter length.");
 
         Stage[] storage orderStagesArr = orderStages[_orderId];
-        // 时间排序
         uint totalAmounts;
         uint _endDate = block.timestamp;
         for ( uint i = 0; i< _periods.length; i++ ) {
