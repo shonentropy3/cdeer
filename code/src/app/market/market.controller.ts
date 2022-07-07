@@ -31,6 +31,11 @@ export class MarketController {
         return await this.marketService.getMarketData()
     }
 
+    @Post('projectDetail')
+    async projectDetail(@Body() body: any){
+        return await this.marketService.getProjectDetail(body)
+    }
+
     @Get('search')  //  测试搜索
    	async getMarketList(){
         return await this.marketService.test()

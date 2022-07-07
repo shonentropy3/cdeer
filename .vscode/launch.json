@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug TS File",
+            "type": "pwa-node",
+            "request": "launch",
+            "args": [
+                "${relativeFile}"
+            ],
+            "trace": true,
+            "cwd": "${workspaceRoot}",
+            "runtimeArgs": ["-r", "ts-node/register"],
+            "protocol": "inspector"
+        }
+    ]
+}

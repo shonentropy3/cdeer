@@ -1,31 +1,28 @@
 import {withRouter} from 'next/router'
 import { useEffect, useState } from "react"
+import { getProjectDetail } from '../http/api';
+
 // import {
 //     //截取查询参数的hook
     
 //   } from 'react-router-dom';
 const Sport = ({router})=>{
-    let data = ''
     let oid = ''
     let [detail,detailSet] = useState({})
     useEffect(()=>{
         oid = location.search
         oid = oid.replace('?','')
         
-        data = require("../testData/mock.json")
-        data = data.data
-        getDetail()
+        getProjectDetail({id: oid})
+        .then(res=>{
+            console.log(res);
+            detail = res[0]
+            detailSet({...detail})
+        })
+        .catch(err=>{
+            console.log(err);
+        })
     },[])
-
-    const getDetail = () => {
-
-        data.forEach(ele => {
-            if (ele.id == oid) {
-                detail = ele
-                detailSet({...detail})
-            }
-        });
-    }
 
     // 参与项目
     const participate = () => {
@@ -40,21 +37,21 @@ const Sport = ({router})=>{
                 <div className='top'>
                     <div>
                         <h1>{detail.name}</h1>
-                        <p>No.{detail.id}</p>
+                        <p>No.{detail.token_id}</p>
                     </div>
                     <div>
-                        <p>招募角色: {detail.roles}</p>
+                        <p>招募角色: {detail.role}</p>
                     </div>
                     <button onClick={()=>participate()}>参加项目</button>
                     <div>
-                        <p>金额 ¥{detail.price}</p>
-                        <p>类型  {detail.typeText}</p>
-                        <p>周期  {detail.duration}</p>
-                        <p>报名人数  {detail.applyCount}</p>
+                        <p>金额 ¥{detail.budget}</p>
+                        <p>类型  {detail.pro_type}</p>
+                        <p>周期  {detail.period}</p>
+                        <p>报名人数  xx</p>
                     </div>
                 </div>
                 <div className='content'>
-                        项目描述:   {detail.description}
+                        项目描述:   {detail.content}
                 </div>
             </div>
         </div>

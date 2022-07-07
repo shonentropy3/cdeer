@@ -11,6 +11,7 @@ export declare class MarketService {
     pushFile(file: any, obj: any): any;
     test(): Promise<Order[]>;
     getMarketData(): Promise<Project[]>;
+    getProjectDetail(body: any): Promise<Project[]>;
     createPjc(body: any): Promise<Project[]>;
     handleError(error: AxiosError): Observable<never>;
 }
