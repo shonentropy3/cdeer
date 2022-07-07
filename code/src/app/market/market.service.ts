@@ -115,12 +115,15 @@ export class MarketService {
         return await this.projectRepository.query(`SELECT * FROM public."project"`);
     }
 
+    // 获取项目详情
+    async getProjectDetail(@Body() body: any): Promise<Project[]> {
+        return await this.projectRepository.query(`SELECT * FROM public.project WHERE token_id = '${body.id}'`);
+    }
 
     // 创建项目
     async createPjc(@Body() body: any): Promise<Project[]>  {
         let jp = JSON.parse(body.proLabel);
         console.log(jp);
-        
         // let nftTxn = await nftContract.createDemand({
             // title: pro[0].value,
             // budget: Number(pro[1].value),

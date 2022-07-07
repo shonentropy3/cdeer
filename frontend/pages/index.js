@@ -3,6 +3,7 @@ import contract from '../contracts/deployments/abi/CodeMarket.json';
 import address from '../contracts/deployments/CodeMarket.json';
 import { useEffect, useState, } from 'react';
 import Router from "next/router";
+import Link from "next/link"
 import Head from 'next/head'
 import Image from 'next/image'
 import { Spin,BackTop,Divider } from 'antd';
@@ -97,31 +98,33 @@ export default function Home() {
         //         //     <div>创建时间：{item.create_time}</div>
         //         // </div>
         //     );
-        return sql.data.map(
+        return data.detail.map(
+          // return sql.data.map(
           (item, index) => 
-          <div className={`li ${style.item_container}`} key={index} onClick={()=>goDetail(item.id)}>
+          <Link href={{pathname:'/views/Pro_detail',search: item.token_id}} target='_blank' key={index}>
+          <div className={`li ${style.item_container}`}>
               <div className={style.item_img}>
-                <img src={item.cover} alt="" />
+                {/* <img src={item.cover} alt="" /> */}
               </div>
               <div className={`${style.item_content} ${style.ml20}`}>
                   <div className={style.between}>
                       <p>
-                        NO.{item.id}
+                        NO.{item.token_id}
                         <span className={style.ml10}>{item.name}</span>
                       </p>
-                      <span className={style.color_red}>¥{item.price}</span>
+                      <span className={style.color_red}>¥{item.budget}</span>
                   </div>
                   <div>
                       <div className={style.flex_start}>
                         <div className={style.mr30}>
-                          招募: {item.roles}
+                          招募: {item.role}
                         </div>
                         <div className={style.mr30}>
-                          类型: {item.typeText}
+                          类型: {item.pro_type}
                         </div>
                         <div>
                           {/* 周期: {item.period} */}
-                          周期: {item.duration}天
+                          周期: {item.period}天
                         </div>
                       </div>
                   </div>
@@ -132,19 +135,11 @@ export default function Home() {
                   </div>
               </div>
           </div>
+          </Link>
       );
     }
   }
-  
-  
 
-  const goDetail = (id) => {
-    // Router.push({pathname:'/views/Pro_detail',query:{id: id}})
-    // let newId = {
-    //   id: id
-    // }
-    Router.push({pathname:'/views/Pro_detail',search: id})
-  }
 
   const tokensAmount = async () => {
     try {
@@ -173,6 +168,7 @@ export default function Home() {
     data.detail = res
     data.status = 1
     Set_data({...data})
+    console.log('data==>',data);
   }
 
   let checkRole = (val) => {

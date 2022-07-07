@@ -83,6 +83,9 @@ let MarketService = class MarketService {
     async getMarketData() {
         return await this.projectRepository.query(`SELECT * FROM public."project"`);
     }
+    async getProjectDetail(body) {
+        return await this.projectRepository.query(`SELECT * FROM public.project WHERE token_id = '${body.id}'`);
+    }
     async createPjc(body) {
         let jp = JSON.parse(body.proLabel);
         console.log(jp);
@@ -105,6 +108,12 @@ let MarketService = class MarketService {
         }
     }
 };
+__decorate([
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], MarketService.prototype, "getProjectDetail", null);
 __decorate([
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),

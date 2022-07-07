@@ -29,3 +29,13 @@ export const getHash = (data) => {
     }
 );
 }
+
+export const getProjectDetail = (data) => {
+    return serviceAxios({
+        // url: "/upchain/getProject",
+        url: "/market/projectDetail",
+        method: "post",
+        data,
+    }
+);
+}
