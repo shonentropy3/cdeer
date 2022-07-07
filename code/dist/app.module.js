@@ -12,23 +12,34 @@ const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const market_module_1 = require("./app/market/market.module");
 const typeorm_1 = require("@nestjs/typeorm");
+const config_1 = require("@nestjs/config");
+const config_2 = require("./config");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
             market_module_1.MarketModule,
-            typeorm_1.TypeOrmModule.forRoot({
-                type: 'postgres',
-                host: 'localhost',
-                port: 5432,
-                username: 'postgres',
-                password: '123456',
-                database: 'test',
-                entities: [],
-                synchronize: true,
-                keepConnectionAlive: true
-            })
+            config_1.ConfigModule.forRoot({
+                load: [config_2.default],
+            }),
+            typeorm_1.TypeOrmModule.forRootAsync({
+                imports: [config_1.ConfigModule],
+                useFactory: async (config) => {
+                    return {
+                        type: 'postgres',
+                        host: config.get('POSTGRES_HOST'),
+                        port: config.get('POSTGRES_PORT'),
+                        database: config.get('POSTGRES_DATABASE'),
+                        username: config.get('POSTGRES_USER'),
+                        password: config.get('POSTGRES_PASSWORD'),
+                        entities: [],
+                        synchronize: true,
+                        keepConnectionAlive: true
+                    };
+                },
+                inject: [config_1.ConfigService],
+            }),
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
