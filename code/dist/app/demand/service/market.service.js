@@ -83,7 +83,7 @@ let MarketService = class MarketService {
     async getMarketData() {
         return await this.projectRepository.query(`SELECT * FROM public."project"`);
     }
-    async createPjc(body) {
+    async createDemand(body) {
         let jp = JSON.parse(body.proLabel);
         console.log(jp);
         return await body;
@@ -110,7 +110,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
-], MarketService.prototype, "createPjc", null);
+], MarketService.prototype, "createDemand", null);
 MarketService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(Order_1.Order)),

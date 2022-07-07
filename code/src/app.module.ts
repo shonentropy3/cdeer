@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { MarketModule } from './app/market/market.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule,ConfigService } from '@nestjs/config';
+import { TaskModule } from './app/task/task.module';
 import configuration from './config';
 
 @Module({
@@ -30,6 +31,7 @@ import configuration from './config';
       },
       inject: [ConfigService],
     }),
+    TaskModule,
   ],
   controllers: [AppController],
   providers: [AppService],

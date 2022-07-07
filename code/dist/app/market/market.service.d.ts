@@ -12,6 +12,6 @@ export declare class MarketService {
     test(): Promise<Order[]>;
     getMarketData(): Promise<Project[]>;
     getProjectDetail(body: any): Promise<Project[]>;
-    createPjc(body: any): Promise<Project[]>;
+    createDemand(body: any): Promise<Project[]>;
     handleError(error: AxiosError): Observable<never>;
 }

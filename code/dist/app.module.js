@@ -13,6 +13,7 @@ const app_service_1 = require("./app.service");
 const market_module_1 = require("./app/market/market.module");
 const typeorm_1 = require("@nestjs/typeorm");
 const config_1 = require("@nestjs/config");
+const task_module_1 = require("./app/task/task.module");
 const config_2 = require("./config");
 let AppModule = class AppModule {
 };
@@ -40,6 +41,7 @@ AppModule = __decorate([
                 },
                 inject: [config_1.ConfigService],
             }),
+            task_module_1.TaskModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

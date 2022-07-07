@@ -6,9 +6,13 @@ import { createDemand,getHash } from '../http/api';
 
 import { Input,Form,message,Button,Upload,notification } from 'antd';
 import { UploadOutlined, WarningOutlined, InfoCircleOutlined } from '@ant-design/icons';
-import axios from 'axios';
 import style from '../../styles/utils.module.scss'
+import Demand from '../../controller/demand';
+import axios from 'axios';
 
+
+// const demand = require('../../../deployments/abi/Demand.json')
+// const demandAddr = require('../../../deployments/Demand.json')
 
 function Publish() {
   const _data = require("../data/data.json")
@@ -51,6 +55,7 @@ function Publish() {
           console.log(err)
         }
     }
+
 
 
     const mintNftHandler = async () => {
@@ -113,9 +118,17 @@ function Publish() {
 //         });
         
 
-        createDemand(para,account)
+        // createDemand(para,account)
 
+        // console.log("ethereum===>", ethereum);
+        //   if (typeof window.ethereum !== 'undefined') {
+        //       let addr=await ethereum.request({ method: 'eth_requestAccounts' });//授权连接钱包
+        //       console.log('用户钱包地址:',addr[0]);
+        //   }else{
+        //       console.log('未安装钱包插件！');
+        //   }
 
+        Demand(para,account)
     }
 
 
@@ -124,9 +137,8 @@ function Publish() {
     const buttonModel = () => {
       if (currentAccount) {
         return <button onClick={mintNftHandler} className='btn login'> Mint NFT </button>
-      }
-      if (!currentAccount) {
-          return <button onClick={connectWalletHandler} className='btn connect'> Connect Wallet </button>
+      } else {
+        return <button onClick={connectWalletHandler} className='btn connect'> Connect Wallet </button>
       }
     }
 

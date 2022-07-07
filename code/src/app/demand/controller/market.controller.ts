@@ -23,7 +23,7 @@ export class MarketController {
 
     @Post('publish')  //  创建项目
     async createProject(@Body() body: any){
-        return await this.marketService.createPjc(body)
+        return await this.marketService.createDemand(body)
     }
 
     @Get('getMarketData')  //  获取集市项目

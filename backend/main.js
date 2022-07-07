@@ -19,7 +19,7 @@ function run() {
     app.listen(process.env.PORT);
     logger.info(`App listening on ${process.env.PORT}`);
     // 定时任务
-    // cronJob();
+    cronJob();
 }
 
 run();

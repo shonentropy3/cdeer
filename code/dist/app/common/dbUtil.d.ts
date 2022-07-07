@@ -1,0 +1,11 @@
+declare const db: any;
+declare const logger: any;
+declare function get(): Promise<any[]>;
+declare function getLabel(proContent: any): Promise<any[]>;
+declare function insert(table: any, data: any): Promise<number>;
+declare function batchInsert(table: any, fields: any, datas: any): Promise<number>;
+declare function del(table: any, where: any): Promise<number>;
+declare function getLastCheckBlock(): Promise<number>;
+declare function insertPro(insertDatas: any): Promise<any>;
+declare function updateLastCheckBlock(latest: any): Promise<void>;
+declare function update(latest: any): Promise<number>;

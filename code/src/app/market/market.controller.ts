@@ -8,7 +8,7 @@ import { MarketService } from './market.service';
 export class MarketController {
     constructor(private readonly marketService: MarketService){}
 
-    @Post('upload') //  暂存文件 => 获取hash => 删除文件 => 存入数据库
+    @Post('upload') //   TODO===存入数据库
     @UseInterceptors(FilesInterceptor('files'))
     async uploadFile(@UploadedFiles() files: any){
         
@@ -21,9 +21,9 @@ export class MarketController {
          
     }
 
-    @Post('publish')  //  创建项目
+    @Post('publish')  //  创建项目 TODO===
     async createProject(@Body() body: any){
-        return await this.marketService.createPjc(body)
+        return await this.marketService.createDemand(body)
     }
 
     @Get('getMarketData')  //  获取集市项目

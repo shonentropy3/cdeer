@@ -12,7 +12,11 @@ export const getMarketData = (data) => {
 }
 
 export const createDemand = (data) => {
+
     return serviceAxios({
+
+
+        
         url: "/market/publish",
         // url: "/upchain/createDemand",
         method: "post",
@@ -22,6 +26,7 @@ export const createDemand = (data) => {
 }
 
 export const getHash = (data) => {
+    
     return serviceAxios({
         url: "/market/upload",
         method: "post",

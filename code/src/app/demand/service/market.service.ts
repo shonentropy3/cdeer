@@ -117,7 +117,7 @@ export class MarketService {
 
 
     // 创建项目
-    async createPjc(@Body() body: any): Promise<Project[]>  {
+    async createDemand(@Body() body: any): Promise<Project[]>  {
         let jp = JSON.parse(body.proLabel);
         console.log(jp);
         

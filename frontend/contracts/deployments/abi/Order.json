@@ -5,7 +5,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "_demand",
+          "name": "demand_",
           "type": "address"
         }
       ],
@@ -18,13 +18,13 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "_orderId",
+          "name": "orderId",
           "type": "uint256"
         },
         {
           "indexed": false,
           "internalType": "address",
-          "name": "user",
+          "name": "demander",
           "type": "address"
         }
       ],
@@ -37,13 +37,38 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "proId",
+          "name": "orderId",
           "type": "uint256"
         },
         {
           "indexed": false,
           "internalType": "address",
-          "name": "user",
+          "name": "demander",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint8",
+          "name": "stageIndex",
+          "type": "uint8"
+        }
+      ],
+      "name": "ConfirmOrderStage",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "demandId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "demander",
           "type": "address"
         },
         {
@@ -82,6 +107,112 @@
       "type": "event"
     },
     {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "orderId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "applyAddr",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256[]",
+          "name": "amounts",
+          "type": "uint256[]"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256[]",
+          "name": "periods",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "SetStage",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "orderId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "originator",
+          "type": "address"
+        }
+      ],
+      "name": "TerminateOrder",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "orderId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "originator",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint8",
+          "name": "stageIndex",
+          "type": "uint8"
+        }
+      ],
+      "name": "TerminateStage",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "orderId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "applyAddr",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint8",
+          "name": "stageIndex",
+          "type": "uint8"
+        }
+      ],
+      "name": "Withdraw",
+      "type": "event"
+    },
+    {
       "inputs": [
         {
           "internalType": "uint256",
@@ -89,9 +220,9 @@
           "type": "uint256"
         }
       ],
-      "name": "confirmOrderByA",
+      "name": "confirmOrder",
       "outputs": [],
-      "stateMutability": "nonpayable",
+      "stateMutability": "payable",
       "type": "function"
     },
     {
@@ -102,32 +233,9 @@
           "type": "uint256"
         },
         {
-          "internalType": "uint256[]",
-          "name": "_amounts",
-          "type": "uint256[]"
-        },
-        {
-          "internalType": "uint256[]",
-          "name": "_periods",
-          "type": "uint256[]"
-        }
-      ],
-      "name": "confirmOrderByB",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_orderId",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
+          "internalType": "uint8",
           "name": "_stageIndex",
-          "type": "uint256"
+          "type": "uint8"
         }
       ],
       "name": "confirmOrderStage",
@@ -138,15 +246,10 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
-          "name": "_proId",
-          "type": "uint256"
-        },
-        {
           "components": [
             {
               "internalType": "uint256",
-              "name": "proId",
+              "name": "demandId",
               "type": "uint256"
             },
             {
@@ -178,33 +281,18 @@
           "internalType": "struct Order.Order",
           "name": "_order",
           "type": "tuple"
-        },
-        {
-          "internalType": "address",
-          "name": "_token",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256[]",
-          "name": "_amounts",
-          "type": "uint256[]"
-        },
-        {
-          "internalType": "uint256[]",
-          "name": "_periods",
-          "type": "uint256[]"
         }
       ],
       "name": "createOrder",
       "outputs": [],
-      "stateMutability": "payable",
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_proId",
+          "name": "_demandId",
           "type": "uint256"
         }
       ],
@@ -217,6 +305,19 @@
         }
       ],
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint8",
+          "name": "_maxDemandOrders",
+          "type": "uint8"
+        }
+      ],
+      "name": "modifyMaxDemandOrders",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -258,6 +359,34 @@
           "internalType": "uint256",
           "name": "_orderId",
           "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_token",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "_amounts",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "_periods",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "setStage",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_orderId",
+          "type": "uint256"
         }
       ],
       "name": "terminateOrder",
@@ -273,9 +402,9 @@
           "type": "uint256"
         },
         {
-          "internalType": "uint256",
+          "internalType": "uint8",
           "name": "_stageIndex",
-          "type": "uint256"
+          "type": "uint8"
         }
       ],
       "name": "terminateStage",
@@ -304,12 +433,12 @@
           "type": "uint256"
         },
         {
-          "internalType": "uint256",
+          "internalType": "uint8",
           "name": "_stageIndex",
-          "type": "uint256"
+          "type": "uint8"
         }
       ],
-      "name": "withdrawByB",
+      "name": "withdraw",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

@@ -18,7 +18,7 @@
         {
           "indexed": true,
           "internalType": "address",
-          "name": "user",
+          "name": "applyAddr",
           "type": "address"
         }
       ],
@@ -79,6 +79,44 @@
       "anonymous": false,
       "inputs": [
         {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "proId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "demander",
+          "type": "address"
+        }
+      ],
+      "name": "CancelApply",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "proId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "demander",
+          "type": "address"
+        }
+      ],
+      "name": "CloseApply",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
           "indexed": true,
           "internalType": "uint256",
           "name": "demandId",
@@ -122,6 +160,74 @@
         }
       ],
       "name": "CreateDemand",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "demandId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "demander",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "budget",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "desc",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "attachment",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "period",
+          "type": "uint256"
+        }
+      ],
+      "name": "ModifyDemand",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "proId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "demander",
+          "type": "address"
+        }
+      ],
+      "name": "OpenApply",
       "type": "event"
     },
     {
@@ -173,6 +279,11 @@
         {
           "internalType": "uint256",
           "name": "_proId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_prePrice",
           "type": "uint256"
         }
       ],
@@ -226,7 +337,7 @@
           "type": "uint256"
         }
       ],
-      "name": "cancelApplyFor",
+      "name": "cancelApply",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -239,7 +350,7 @@
           "type": "uint256"
         }
       ],
-      "name": "closeApplyFor",
+      "name": "closeApply",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -331,7 +442,7 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_tokenId",
+          "name": "_demandId",
           "type": "uint256"
         },
         {
@@ -396,6 +507,19 @@
         }
       ],
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_proId",
+          "type": "uint256"
+        }
+      ],
+      "name": "openApply",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {

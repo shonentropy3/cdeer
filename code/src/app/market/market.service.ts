@@ -3,20 +3,23 @@ import { BadRequestException, Body, HttpException, HttpStatus, Injectable, NotFo
 import { AxiosError } from 'axios';
 import { createWriteStream } from 'fs';
 import { join } from 'path/posix';
-import { map, Observable, tap, throwError } from 'rxjs';
-const fs  = require('fs');
-var upyun = require("upyun")
-const ipfsAPI = require('ipfs-api');
-const ipfs = ipfsAPI({host: 'localhost', port: '5001', protocol: 'http'});
-const service = new upyun.Service('ipfs0','upchain', 'upchain123')
-const client = new upyun.Client(service);
-
+import { from, map, Observable, tap, throwError } from 'rxjs';
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order } from '../../entity/Order';	//引入entity
 import { Project } from '../../entity/Project';	//引入entity
 import { ethers } from 'ethers';
+
+const fs  = require('fs');
+var upyun = require("upyun")
+const ipfsAPI = require('ipfs-api');
+const ipfs = ipfsAPI({host: 'localhost', port: '5001', protocol: 'http'});
+const service = new upyun.Service('ipfs0','upchain', 'upchain123')
+const client = new upyun.Client(service);
+const demand = require('../../../deployments/abi/Demand.json')
+const demandAddr = require('../../../deployments/Demand.json')
+
 
 @Injectable()
 export class MarketService {
@@ -40,6 +43,7 @@ export class MarketService {
     //         map((res) => res.data)
     //       );
     //   }
+    
 
     // 获取hash
     getFile(files: any) {
@@ -120,23 +124,16 @@ export class MarketService {
         return await this.projectRepository.query(`SELECT * FROM public.project WHERE token_id = '${body.id}'`);
     }
 
-    // 创建项目
-    async createPjc(@Body() body: any): Promise<Project[]>  {
-        let jp = JSON.parse(body.proLabel);
-        console.log(jp);
-        // let nftTxn = await nftContract.createDemand({
-            // title: pro[0].value,
-            // budget: Number(pro[1].value),
-            // desc: pro[3].value,
-            // period: Number(pro[2].value)
-        //   },
-        // console.log(window);
-        return await body
-    // let queryData = body;
-    // let{proType,pro} = queryData;
-    // const {ethereum} = window;
+    // 创建需求
+    async createDemand(@Body() body: any): Promise<Project[]>  {
+        console.log('window==>',window);
+        
 
-    // return ctx.response.body = _succeed();
+        let jp = JSON.parse(body.proLabel);
+
+
+
+        return await body
         
     }
 

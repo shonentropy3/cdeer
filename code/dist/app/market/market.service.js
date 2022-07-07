@@ -17,16 +17,18 @@ const common_1 = require("@nestjs/common");
 const fs_1 = require("fs");
 const posix_1 = require("path/posix");
 const rxjs_1 = require("rxjs");
+const typeorm_1 = require("@nestjs/typeorm");
+const typeorm_2 = require("typeorm");
+const Order_1 = require("../../entity/Order");
+const Project_1 = require("../../entity/Project");
 const fs = require('fs');
 var upyun = require("upyun");
 const ipfsAPI = require('ipfs-api');
 const ipfs = ipfsAPI({ host: 'localhost', port: '5001', protocol: 'http' });
 const service = new upyun.Service('ipfs0', 'upchain', 'upchain123');
 const client = new upyun.Client(service);
-const typeorm_1 = require("@nestjs/typeorm");
-const typeorm_2 = require("typeorm");
-const Order_1 = require("../../entity/Order");
-const Project_1 = require("../../entity/Project");
+const demand = require('../../../deployments/abi/Demand.json');
+const demandAddr = require('../../../deployments/Demand.json');
 let MarketService = class MarketService {
     constructor(orderRepository, projectRepository) {
         this.orderRepository = orderRepository;
@@ -86,9 +88,9 @@ let MarketService = class MarketService {
     async getProjectDetail(body) {
         return await this.projectRepository.query(`SELECT * FROM public.project WHERE token_id = '${body.id}'`);
     }
-    async createPjc(body) {
+    async createDemand(body) {
+        console.log('window==>', window);
         let jp = JSON.parse(body.proLabel);
-        console.log(jp);
         return await body;
     }
     handleError(error) {
@@ -119,7 +121,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
-], MarketService.prototype, "createPjc", null);
+], MarketService.prototype, "createDemand", null);
 MarketService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(Order_1.Order)),

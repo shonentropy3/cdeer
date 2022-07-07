@@ -29,7 +29,7 @@ let MarketController = class MarketController {
         });
     }
     async createProject(body) {
-        return await this.marketService.createPjc(body);
+        return await this.marketService.createDemand(body);
     }
     async getMarketData() {
         return await this.marketService.getMarketData();
