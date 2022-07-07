@@ -231,18 +231,16 @@ function Publish() {
       // 项目类型
       let [pjc,Set_pjc] = useState([])
       // 附件
-      let [file,fileSet] = useState()
-      
+      let [form_Data,form_DataSet] = useState()
 
       // 上传前
-      const beforeUpload = (file) => {
-        // console.log(file);
-        const isLt2M = file.size / 1024 / 1024 < 20;
-      
+      const beforeUpload = (info) => {
+        const isLt2M = info.file.size / 1024 / 1024 < 20;
         if (!isLt2M) {
           message.error('Must smaller than 20MB!');
+          return false
         }
-        return isLt2M;
+        return true
       };
       
       // 上传提醒
@@ -259,7 +257,7 @@ function Publish() {
           icon: (
             <WarningOutlined
               style={{
-                color: 'white',
+                color: 'white'
               }}
             />
           ),
@@ -267,21 +265,22 @@ function Publish() {
       }
 
 
-      const upload = (info) => {
+      const upload = async(info) => {
         info.onProgress()
         var formData=new FormData();
         formData.append('files',info.file);
-          getHash(formData).then(res=>{
-            info.onSuccess()
-          }).catch(err=>{
-            info.onError()
-          })
+        form_Data = formData
+        form_DataSet(form_Data)
+        return await new Promise ((resolve,reject)=>{
+          resolve(beforeUpload(info))
+       })
+       .then((res)=>{
+          res ? info.onSuccess() : info.onError()
+       })
       }
 
-      let ulStatus = false
       const handleChange = (info) => {
           if (info.file.status === 'done') {
-            ulStatus = true
             message.success(`${info.file.name} file uploaded successfully`);
           } else if (info.file.status === 'error') {
             message.error(`${info.file.name} file upload failed.`);
@@ -334,8 +333,6 @@ function Publish() {
                           listType="picture"
                           maxCount={1}
                           name="file"
-                          fileList={file}
-                          beforeUpload={beforeUpload}
                           onChange={handleChange}
                           customRequest={upload}
                         >

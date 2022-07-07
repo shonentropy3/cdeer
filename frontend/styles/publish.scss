@@ -128,20 +128,21 @@
             background-color: rgb(6, 169, 234);
         }
     }
-    .ant-notification-notice-message{
-        color: white;
-    }
-    .ant-notification-notice{
-        background-color: #bd362f;
-        opacity: 0.8;
-        box-shadow: 0 0 8px 2px rgb(200, 200, 200);
-        transition: opacity 0.3s,box-shadow 0.3s;
-        &:hover{
-            opacity: 1;
-            box-shadow: 0 0 8px 2px rgb(101, 101, 101);
-        }
+    
+    
+}
+.ant-notification-notice-message{
+    color: white;
+}
+.ant-notification-notice{
+    background-color: #bd362f;
+    opacity: 0.8;
+    box-shadow: 0 0 8px 2px rgb(200, 200, 200);
+    transition: opacity 0.3s,box-shadow 0.3s;
+    &:hover{
+        opacity: 1;
+        box-shadow: 0 0 8px 2px rgb(101, 101, 101);
     }
 }
-
 
 
