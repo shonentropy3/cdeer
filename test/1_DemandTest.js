@@ -98,11 +98,11 @@ describe("Demand", function() {
             7.2 已经关闭不再关闭
     */
     it("applyFor", async function(){
-        await demand.connect(accounts[2]).applyFor(0);
+        await demand.connect(accounts[2]).applyFor(0, tokenAmount("1000"));
         await demand.connect(accounts[2]).cancelApply(0);
         await demand.connect(accounts[1]).closeApply(0);
         await demand.connect(accounts[1]).openApply(0);
-        await demand.connect(accounts[2]).applyFor(0);
+        await demand.connect(accounts[2]).applyFor(0, tokenAmount("1000"));
     });
 
     it("modifyFee", async function(){
@@ -122,7 +122,7 @@ describe("Order", function() {
                 period: 1
             },
             {
-                value: tokenAmount("0.1")
+                value: tokenAmount("1")
             });
       });
 
@@ -155,8 +155,8 @@ describe("Order", function() {
             2.5 订单初始时间改为乙方确认时间，并且每阶段结束时间要延后
                 延后时间 = 乙方确认时间 - 甲方确认时间
     */
-    it("setStageByB", async function() {
-        await order.connect(accounts[2]).setStageByB(
+    it("setStage", async function() {
+        await order.connect(accounts[2]).setStage(
             0,
             zeroAddr,
             [tokenAmount("997"),tokenAmount("1"),tokenAmount("2")],
@@ -219,11 +219,11 @@ describe("Order", function() {
             b. 打款之后要设置已经提款，包括该阶段之后的阶段
             c. 该阶段之前的阶段，若未提款，乙方单独自行提款
     */
-    it("terminateStage", async function() {
-        await order.connect(accounts[1]).terminateStage(0,0);
-        console.log({A: await accounts[1].getBalance("latest")});
-        console.log({B: await accounts[2].getBalance("latest")});
-        });
+    // it("terminateStage", async function() {
+    //     await order.connect(accounts[1]).terminateStage(0,0);
+    //     console.log({A: await accounts[1].getBalance("latest")});
+    //     console.log({B: await accounts[2].getBalance("latest")});
+    //     });
 
     /*
     7. 乙方提款 withdrawByB
@@ -233,8 +233,9 @@ describe("Order", function() {
             a. 甲方确认该阶段可以提款
             b. 甲方确认该订单后未终止该阶段，且现在时间已经超过该阶段终止时间的后七天，允许提款
     */
-    it("withdrawByB", async function() {
-        await order.connect(accounts[2]).withdrawByB(0,0);
+    it("withdraw", async function() {
+        await order.connect(accounts[1]).confirmOrderStage(0,0);
+        await order.connect(accounts[2]).withdraw(0,0);
         console.log({A: await accounts[1].getBalance("latest")});
         console.log({B: await accounts[2].getBalance("latest")});
         });
@@ -259,7 +260,7 @@ describe("Order", function() {
         expect(active).to.equal(true);
         console.log({A: await accounts[1].getBalance("latest")});
         console.log({B: await accounts[2].getBalance("latest")});
-        });
+    });
     
     /*
     9. 管理员
@@ -275,5 +276,65 @@ describe("Order", function() {
         //     [1657013307, 1657099707, 1657186107]
         //     );
         });
+});
 
+
+describe("test amount", function() {
+    before(async function () {
+        await init();
+        //甲方发布需求
+        await demand.connect(accounts[1]).createDemand(
+            { 
+                title: "test",
+                desc: testHash,
+                attachment: testHash,
+                budget: tokenAmount("5000"),
+                period: 1
+            },
+            {
+                value: tokenAmount("0.1")
+            });
+        //乙方报名
+        await demand.connect(accounts[2]).applyFor(0, tokenAmount("5000"));  
+      });
+    //甲方创建订单
+    it("createOrder", async function() {
+        await order.connect(accounts[1]).createOrder(
+            {
+                demandId: 0,
+                applyAddr: accounts[2].address,
+                token: zeroAddr,
+                amount: tokenAmount("5000"),
+                confirmed: 0,
+                startDate: 0
+            });
+    });
+    //乙方设置阶段
+    it("setStage", async function() {
+        await order.connect(accounts[2]).setStage(
+            0,
+            zeroAddr,
+            [tokenAmount("3000"),tokenAmount("1000"),tokenAmount("1000")],
+            [1657013307, 1657099707, 1657186107]
+            );
+    });
+    //甲方确认订单
+    it("confirmOrder", async function() {
+        await order.connect(accounts[1]).confirmOrder(0,
+            {
+                value: tokenAmount("1000")
+            });
+        console.log({B: await accounts[2].getBalance("latest")});
+    });
+    //甲方确认阶段
+    it("confirmOrderStage", async function() {
+        await order.connect(accounts[1]).confirmOrderStage(0,1);
+    });
+    //乙方进行提款
+    it("withdraw", async function() {
+        await order.connect(accounts[1]).confirmOrderStage(0,0);
+        await order.connect(accounts[2]).withdraw(0,0);
+        console.log({A: await accounts[1].getBalance("latest")});
+        console.log({B: await accounts[2].getBalance("latest")});
+    });
 });

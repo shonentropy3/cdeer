@@ -163,6 +163,7 @@ contract Order is IOrder, Ownable {
         sumAmountB += orderStagesArr[_stageIndex].amount * (block.timestamp - stageStartDate) / (60*60*24*period);
         for (_stageIndex; _stageIndex < orderStagesArr.length; _stageIndex++) {
             sumAmount += orderStagesArr[_stageIndex].amount;
+            orderStagesArr[_stageIndex].confirmed == true;
             orderStagesArr[_stageIndex].withdrawed == true;
         }
         sumAmountA = sumAmount - sumAmountB;
