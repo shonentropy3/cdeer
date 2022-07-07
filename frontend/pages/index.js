@@ -101,7 +101,7 @@ export default function Home() {
         return data.detail.map(
           // return sql.data.map(
           (item, index) => 
-          <Link href={{pathname:'/views/Pro_detail',search: item.token_id}} target='_blank' key={index}>
+          <Link href={{pathname:'/views/Pro_detail',search: item.token_id}} target="_blank" key={index}>
           <div className={`li ${style.item_container}`}>
               <div className={style.item_img}>
                 {/* <img src={item.cover} alt="" /> */}

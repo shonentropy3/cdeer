@@ -1,6 +1,7 @@
 import {withRouter} from 'next/router'
 import { useEffect, useState } from "react"
 import { getProjectDetail } from '../http/api';
+import NavigationBar from "../../components/NavigationBar";
 
 // import {
 //     //截取查询参数的hook
@@ -33,6 +34,8 @@ const Sport = ({router})=>{
 
     return(
         <div className="pjc_detail">
+            <NavigationBar />
+
             <div className='container'>
                 <div className='top'>
                     <div>
