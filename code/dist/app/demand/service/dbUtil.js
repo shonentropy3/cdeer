@@ -62,18 +62,6 @@ dbutils = __decorate([
     __metadata("design:paramtypes", [typeorm_2.Repository])
 ], dbutils);
 exports.dbutils = dbutils;
-async function _get() {
-    let records = [];
-    let sql = `SELECT block FROM block_log WHERE id = 1;`;
-    try {
-        records = await this.blockLogRepository.query(sql);
-    }
-    catch (err) {
-        console.log('dbUtil get failed', { sql }, err);
-    }
-    return records;
-}
-exports.default = _get;
 async function batchInsert(table, fields, datas) {
     let num = 0;
     try {
@@ -93,6 +81,13 @@ async function del(table, where) {
         console.log('dbUtil del failed', { table, where }, err);
     }
     return num;
+}
+async function getLastCheckBlock() {
+    let settings = await get();
+    JSON.stringify(settings);
+    if (JSON.stringify(settings).length > 0)
+        return Number(Object.values(settings)[0].block);
+    return 0;
 }
 async function insertPro(insertDatas) {
     if (!insertDatas || insertDatas.length == 0)
@@ -128,10 +123,14 @@ async function update(latest) {
     return num;
 }
 module.exports = {
+    get,
+    insert,
     batchInsert,
     del,
+    getLastCheckBlock,
     insertPro,
     updateLastCheckBlock,
     update,
+    getLabel,
 };
 //# sourceMappingURL=dbUtil.js.map

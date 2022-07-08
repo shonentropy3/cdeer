@@ -63,7 +63,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], MarketController.prototype, "getMarketData", null);
 __decorate([
-    (0, common_1.Get)('search'),
+    (0, common_1.Get)('xxx'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
@@ -76,7 +76,7 @@ __decorate([
     __metadata("design:returntype", String)
 ], MarketController.prototype, "createCat", null);
 MarketController = __decorate([
-    (0, common_1.Controller)('market'),
+    (0, common_1.Controller)('xx'),
     __metadata("design:paramtypes", [market_service_1.MarketService])
 ], MarketController);
 exports.MarketController = MarketController;

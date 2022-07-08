@@ -13,7 +13,7 @@ const client = new upyun.Client(service);
 
 
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository,getRepository } from 'typeorm';
 import { Order } from '../entity/Order';	//引入entity
 import { Project } from '../entity/Project';	//引入entity
 import { ethers } from 'ethers';
@@ -105,9 +105,10 @@ export class MarketService {
 
     async test(): Promise<Order[]> {
         // return await this.orderRepository.query(`SELECT * FROM public."order"`);
-        let list: any[] = [1, true, "free"];
-        // list[1] = 100;
-        return list
+        const qb = await getRepository(Project).createQueryBuilder('token_id')
+        .where('project.token_id = 9' )
+  
+        return 
     }
 
     // 获取所有项目

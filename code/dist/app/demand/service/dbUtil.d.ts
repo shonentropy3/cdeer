@@ -7,4 +7,3 @@ export declare class dbutils {
     getLabel(proContent: any): Promise<any[]>;
     insert(table: any, keys: any, values: any): Promise<void>;
 }
-export default function _get(): Promise<any[]>;

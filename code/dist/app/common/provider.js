@@ -1,7 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const { ethers } = require('ethers');
-const PROVIDER_URL = process.env.PROVIDER_URL;
-let rpcProvider = new ethers.providers.JsonRpcProvider(PROVIDER_URL);
-module.exports = {
-    rpcProvider
-};
+let rpcProvider = new ethers.providers.JsonRpcProvider("giraffe negative bird riot glare wild clarify rate fox deny omit mouse");
 //# sourceMappingURL=provider.js.map

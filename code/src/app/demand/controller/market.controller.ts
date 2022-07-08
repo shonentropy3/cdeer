@@ -4,7 +4,7 @@ import { MarketService } from '../service/market.service';
 
 
 
-@Controller('market')
+@Controller('xx')
 export class MarketController {
     constructor(private readonly marketService: MarketService){}
 
@@ -31,7 +31,7 @@ export class MarketController {
         return await this.marketService.getMarketData()
     }
 
-    @Get('search')  //  测试搜索
+    @Get('xxx')  //  测试搜索
    	async getMarketList(){
         return await this.marketService.test()
     }

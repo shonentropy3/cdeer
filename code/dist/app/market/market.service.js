@@ -79,8 +79,9 @@ let MarketService = class MarketService {
         return obj;
     }
     async test() {
-        let list = [1, true, "free"];
-        return list;
+        const qb = await (0, typeorm_2.getRepository)(Project_1.Project).createQueryBuilder('token_id')
+            .where('project.token_id = 9');
+        return;
     }
     async getMarketData() {
         return await this.projectRepository.query(`SELECT * FROM public."project"`);

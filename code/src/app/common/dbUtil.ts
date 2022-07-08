@@ -1,31 +1,85 @@
 const db = require('./postgresql');
 const logger = require('./logger');
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ConstructorFragment } from 'ethers/lib/utils';
+import { Repository } from 'typeorm';
 // import db from './postgresql'
+import { BlockLog } from '../demand/entity/BlockLog';
 
 
-async function get() {
+@Injectable()
+export class dbutils {
+    constructor(
+        @InjectRepository(BlockLog)
+        private readonly blockLogRepository: Repository<BlockLog>
+    ){}
+
+    async get() {
+        let records = [];
+        let sql = `SELECT block FROM block_log WHERE id = 1;`
+        try {
+            records = await this.blockLogRepository.query(sql)
+        } catch (err) {
+            console.log('dbUtil get failed', { sql }, err);
+        }
+        return records;
+    }
+
+    async getLabel(proContent: any) {
+        let records = [];
+        let sql =`SELECT role,pro_type FROM project WHERE desc = '${proContent}';`;
+        try {
+            records = await this.blockLogRepository.query(sql)
+        } catch (err) {
+            console.log('dbUtil get failed', { sql }, err);
+        }
+        return records;
+    }
+    
+    async insert(table, keys, values) {
+        let sql = `INSERT INTO public.${table}(${keys}) VALUES (${values});`
+        try {
+           let num = await this.blockLogRepository.query(sql)
+        } catch (err) {
+            console.log('dbUtil insert failed', { sql }, err);
+        }
+        return ;
+    }
+    
+}
+// async function get() {
+//     let records = [];
+//     let sql =`SELECT block FROM block_log WHERE id = 1;`;
+//     try {
+//         records = await db.get(sql);
+//     } catch (err) {
+//         console.log('dbUtil get failed', { sql }, err);
+//     }
+//     return records;
+// }
+export default async function _get() {
     let records = [];
-    let sql =`SELECT block FROM block_log WHERE id = 1;`;
+    let sql = `SELECT block FROM block_log WHERE id = 1;`
     try {
-        records = await db.get(sql);
+        records = await this.blockLogRepository.query(sql)
     } catch (err) {
         console.log('dbUtil get failed', { sql }, err);
     }
     return records;
 }
 
-
-async function getLabel(proContent: any) {
-    let records = [];
-    let sql =`SELECT role,pro_type FROM project WHERE desc = '${proContent}';`;
-    console.log(sql)
-    try {
-        records = await db.get(sql);
-    } catch (err) {
-        console.log('dbUtil get failed', { sql }, err);
-    }
-    return records;
-}
+// async function getLabel(proContent: any) {
+//     let records = [];
+//     let sql =`SELECT role,pro_type FROM project WHERE desc = '${proContent}';`;
+//     console.log(sql)
+//     try {
+//         records = await db.get(sql);
+//     } catch (err) {
+//         console.log('dbUtil get failed', { sql }, err);
+//     }
+//     return records;
+// }
 
 
 // async function update(table, where, data) {
@@ -38,15 +92,15 @@ async function getLabel(proContent: any) {
 // }
 
 
-async function insert(table, data) {
-    let num = 0;
-    try {
-        num = await db.insert(table, data);
-    } catch (err) {
-        console.log('dbUtil insert failed', { table, data }, err);
-    }
-    return num;
-}
+// async function insert(table, data) {
+//     let num = 0;
+//     try {
+//         num = await db.insert(table, data);
+//     } catch (err) {
+//         console.log('dbUtil insert failed', { table, data }, err);
+//     }
+//     return num;
+// }
 
 
 async function batchInsert(table, fields, datas) {
@@ -71,12 +125,12 @@ async function del(table, where) {
 }
 
 
-async function getLastCheckBlock() {
-    let settings = await get();
-    JSON.stringify(settings);
-    if (JSON.stringify(settings).length > 0) return Number(Object. values(settings)[0].block);
-    return 0;
-}
+// async function getLastCheckBlock() {
+//     let settings = await get();
+//     JSON.stringify(settings);
+//     if (JSON.stringify(settings).length > 0) return Number(Object. values(settings)[0].block);
+//     return 0;
+// }
 
 
 async function insertPro(insertDatas) {
@@ -119,14 +173,14 @@ async function update(latest) {
 
 
 module.exports = {
-    get,
+    // get,
     // update,
-    insert,
+    // insert,
     batchInsert,
     del,
-    getLastCheckBlock,
+    // getLastCheckBlock,
     insertPro,
     updateLastCheckBlock,
     update,
-    getLabel,
+    // getLabel,
 };

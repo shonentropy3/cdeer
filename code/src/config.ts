@@ -3,5 +3,7 @@ export default () => ({
     port: Number(process.env.POSTGRES_PORT),
     database: process.env.POSTGRES_DATABASE,
     username: process.env.POSTGRES_USER,
-    password: process.env.POSTGRES_PASSWORD
+    password: process.env.POSTGRES_PASSWORD,
+    MNEMONIC: process.env.MNEMONIC,
+    PROVIDER_URL: process.env.PROVIDER_URL
   });

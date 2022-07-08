@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, Interval, Timeout } from '@nestjs/schedule';
-import insertLog from '../demand/service/insertLogTask'
+// import insertLog from '../demand/service/insertLogTask'
 @Injectable()
 export class TaskService {
     private readonly logger = new Logger(TaskService.name);
@@ -10,20 +10,20 @@ export class TaskService {
   //   this.logger.debug('Called when the second is 45');
   // }
 
-  // @Interval(10000)  //每隔10秒执行一次
-  // handleInterval() {
-  //   this.logger.debug('Called every 10 seconds');
-  // }
+  @Interval(5000)  //每隔10秒执行一次
+  handleInterval() {
+    this.logger.debug('Called every 10 seconds');
+  }
 
   init() {
-    global.lock_get_logs = 0;
+    // global.lock_get_logs = 0;
     console.log('初始化啦');
   }
 
   @Timeout(5000)  //5秒只执行一次
   handleTimeout() {
     this.init()
-    insertLog()
+    // insertLog()
     
     // this.logger.debug('Called once after 5 seconds');
   }

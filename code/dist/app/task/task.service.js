@@ -13,20 +13,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TaskService = void 0;
 const common_1 = require("@nestjs/common");
 const schedule_1 = require("@nestjs/schedule");
-const insertLogTask_1 = require("../demand/service/insertLogTask");
 let TaskService = TaskService_1 = class TaskService {
     constructor() {
         this.logger = new common_1.Logger(TaskService_1.name);
     }
+    handleInterval() {
+        this.logger.debug('Called every 10 seconds');
+    }
     init() {
-        global.lock_get_logs = 0;
         console.log('初始化啦');
     }
     handleTimeout() {
         this.init();
-        (0, insertLogTask_1.default)();
     }
 };
+__decorate([
+    (0, schedule_1.Interval)(5000),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], TaskService.prototype, "handleInterval", null);
 __decorate([
     (0, schedule_1.Timeout)(5000),
     __metadata("design:type", Function),

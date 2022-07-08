@@ -4,5 +4,7 @@ declare const _default: () => {
     database: string;
     username: string;
     password: string;
+    MNEMONIC: string;
+    PROVIDER_URL: string;
 };
 export default _default;
