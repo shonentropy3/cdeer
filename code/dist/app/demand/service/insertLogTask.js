@@ -3,13 +3,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 require("../../common/provider");
 require("../../common/dbUtil");
 require("hardhat");
-const init = () => {
-    global.lock_get_logs = 0;
-};
+const USDR_ADDR = require('../../../../deployments/Demand.json');
+const provider_1 = require("../../common/provider");
 async function insertLog() {
-    const USDR_ADDR = require('../../../deployments/Demand.json');
     const _insertLog = async () => {
-        let latest = await rpcProvider.getBlockNumber();
+        let latest = await provider_1.default.getBlockNumber();
         let last_check_block = await getLastCheckBlock();
         if (last_check_block >= latest)
             return;
@@ -24,7 +22,7 @@ async function insertLog() {
             fromBlock,
             toBlock
         };
-        let logs = await rpcProvider.getLogs(filter);
+        let logs = await provider_1.default.getLogs(filter);
         const CreatProjectEvent = new ethers.utils.Interface(["event CreateProject(address indexed user, uint256 indexed tokenId, string title, uint256 budget, string desc, uint256 period)"]);
         if (logs.length > 0) {
             let txs = logs.map(ele => {

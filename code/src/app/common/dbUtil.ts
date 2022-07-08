@@ -1,5 +1,6 @@
 const db = require('./postgresql');
 const logger = require('./logger');
+// import db from './postgresql'
 
 
 async function get() {
@@ -14,7 +15,7 @@ async function get() {
 }
 
 
-async function getLabel(proContent) {
+async function getLabel(proContent: any) {
     let records = [];
     let sql =`SELECT role,pro_type FROM project WHERE desc = '${proContent}';`;
     console.log(sql)

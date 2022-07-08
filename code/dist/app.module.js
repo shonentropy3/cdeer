@@ -14,13 +14,13 @@ const market_module_1 = require("./app/market/market.module");
 const typeorm_1 = require("@nestjs/typeorm");
 const config_1 = require("@nestjs/config");
 const task_module_1 = require("./app/task/task.module");
+const schedule_1 = require("@nestjs/schedule");
 const config_2 = require("./config");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            market_module_1.MarketModule,
             config_1.ConfigModule.forRoot({
                 load: [config_2.default],
             }),
@@ -41,6 +41,8 @@ AppModule = __decorate([
                 },
                 inject: [config_1.ConfigService],
             }),
+            schedule_1.ScheduleModule.forRoot(),
+            market_module_1.MarketModule,
             task_module_1.TaskModule,
         ],
         controllers: [app_controller_1.AppController],

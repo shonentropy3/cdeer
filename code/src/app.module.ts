@@ -5,12 +5,13 @@ import { MarketModule } from './app/market/market.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule,ConfigService } from '@nestjs/config';
 import { TaskModule } from './app/task/task.module';
+import { ScheduleModule } from '@nestjs/schedule';
 import configuration from './config';
+
+
 
 @Module({
   imports: [ 
-    MarketModule,
-
     ConfigModule.forRoot({
       load: [configuration],
     }),
@@ -31,6 +32,9 @@ import configuration from './config';
       },
       inject: [ConfigService],
     }),
+    ScheduleModule.forRoot(),
+    
+    MarketModule,
     TaskModule,
   ],
   controllers: [AppController],

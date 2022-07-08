@@ -1,15 +1,15 @@
 import '../../common/provider'
 import '../../common/dbUtil'
 import "hardhat"
+const USDR_ADDR = require('../../../../deployments/Demand.json');
+// const { rpcProvider } = require('../../common/provider');
+import rpcProvider from '../../common/provider';
 
 
-const init = () => {
-  global.lock_get_logs = 0;
-}
 
 export default async function insertLog() {
 
-    const USDR_ADDR = require('../../../deployments/Demand.json');
+    // const USDR_ADDR = require('../../../deployments/Demand.json');
 
     const _insertLog = async () => {
       let latest = await rpcProvider.getBlockNumber();
