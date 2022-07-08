@@ -3,12 +3,11 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { MarketService } from './market.service';
 
 
-
 @Controller('market')
 export class MarketController {
     constructor(private readonly marketService: MarketService){}
 
-    @Post('upload') //   TODO===存入数据库
+    @Post('upload') //   上传文件
     @UseInterceptors(FilesInterceptor('files'))
     async uploadFile(@UploadedFiles() files: any){
         
@@ -21,7 +20,7 @@ export class MarketController {
          
     }
 
-    @Post('publish')  //  创建项目 TODO===
+    @Post('publish')  //  创建项目
     async createProject(@Body() body: any){
         return await this.marketService.createDemand(body)
     }
@@ -31,15 +30,11 @@ export class MarketController {
         return await this.marketService.getMarketData()
     }
 
-    @Post('projectDetail')
+    @Post('projectDetail')  //  获取项目详情
     async projectDetail(@Body() body: any){
         return await this.marketService.getProjectDetail(body)
     }
 
-    @Get('search')  //  测试搜索
-   	async getMarketList(){
-        return await this.marketService.test()
-    }
 
     @Post() //  测试
     createCat(@Body() body: any): string {

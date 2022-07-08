@@ -19,7 +19,6 @@ const posix_1 = require("path/posix");
 const rxjs_1 = require("rxjs");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
-const Order_1 = require("../../entity/Order");
 const Project_1 = require("../../entity/Project");
 const fs = require('fs');
 var upyun = require("upyun");
@@ -30,8 +29,7 @@ const client = new upyun.Client(service);
 const demand = require('../../../deployments/abi/Demand.json');
 const demandAddr = require('../../../deployments/Demand.json');
 let MarketService = class MarketService {
-    constructor(orderRepository, projectRepository) {
-        this.orderRepository = orderRepository;
+    constructor(projectRepository) {
         this.projectRepository = projectRepository;
     }
     getFile(files) {
@@ -78,11 +76,6 @@ let MarketService = class MarketService {
         console.log(obj);
         return obj;
     }
-    async test() {
-        const qb = await (0, typeorm_2.getRepository)(Project_1.Project).createQueryBuilder('token_id')
-            .where('project.token_id = 9');
-        return;
-    }
     async getMarketData() {
         return await this.projectRepository.query(`SELECT * FROM public."project"`);
     }
@@ -125,10 +118,8 @@ __decorate([
 ], MarketService.prototype, "createDemand", null);
 MarketService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, typeorm_1.InjectRepository)(Order_1.Order)),
-    __param(1, (0, typeorm_1.InjectRepository)(Project_1.Project)),
-    __metadata("design:paramtypes", [typeorm_2.Repository,
-        typeorm_2.Repository])
+    __param(0, (0, typeorm_1.InjectRepository)(Project_1.Project)),
+    __metadata("design:paramtypes", [typeorm_2.Repository])
 ], MarketService);
 exports.MarketService = MarketService;
 //# sourceMappingURL=market.service.js.map

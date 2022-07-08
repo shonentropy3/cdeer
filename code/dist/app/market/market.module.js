@@ -12,7 +12,6 @@ const market_controller_1 = require("./market.controller");
 const market_service_1 = require("./market.service");
 const axios_1 = require("@nestjs/axios");
 const typeorm_1 = require("@nestjs/typeorm");
-const Order_1 = require("../../entity/Order");
 const Project_1 = require("../../entity/Project");
 let MarketModule = class MarketModule {
 };
@@ -22,7 +21,7 @@ MarketModule = __decorate([
         providers: [market_service_1.MarketService],
         imports: [
             axios_1.HttpModule,
-            typeorm_1.TypeOrmModule.forFeature([Order_1.Order, Project_1.Project])
+            typeorm_1.TypeOrmModule.forFeature([Project_1.Project]),
         ]
     })
 ], MarketModule);

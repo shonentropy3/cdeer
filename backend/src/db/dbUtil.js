@@ -87,7 +87,12 @@ async function insertPro(insertDatas) {
     // insert into project(user_address,token_id,title,budget,desc) VALUES ${insertDatas};
     // `;
     let sql = `
-    UPDATE project SET user_address = temp.user_address,token_id = temp.token_id,title = temp.title,budget = temp.budget,update_time = now()
+    UPDATE project 
+    SET user_address = temp.user_address,
+        token_id = temp.token_id,
+        title = temp.title,
+        budget = temp.budget,
+        update_time = now()
     from (values ${value}) as temp (user_address,token_id,title,budget,desc) where project.desc=temp.requirements; 
     `;
     console.log(sql)

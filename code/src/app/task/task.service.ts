@@ -14,17 +14,15 @@ export class TaskService {
       private readonly blockLogRepository: Repository<BlockLog>,
       ) {}
       private readonly logger = new Logger(TaskService.name)
+
       // @Cron('45 * * * * *')  // 每隔45秒执行一次
-  // handleCron() {
-  //   this.logger.debug('Called when the second is 45');
-  // }
+      // handleCron() {
+      //   this.logger.debug('Called when the second is 45');
+      // }
 
 _insertLog = async () => {
     let latest = await rpcProvider.getBlockNumber();
     let last_check_block = await this.blockLogRepository.query(`SELECT block FROM block_log WHERE id = 0;`);
-
-    
-
     if (last_check_block >= latest) return; //区块已监听过了
     last_check_block = Math.max(last_check_block, (latest - 100)); //最多往前100区块
     let fromBlock = last_check_block + 1;
@@ -59,14 +57,22 @@ _insertLog = async () => {
         }
         // let result = await insertPro(value.substring(0,(value.length-1))); 
         let params = value.substring(0,(value.length-1))
-        let result = await this.blockLogRepository.query(`UPDATE project SET user_address = temp.user_address,token_id = temp.token_id,title = temp.title,budget = temp.budget,update_time = now()
+        let result = await this.blockLogRepository.query(`
+        UPDATE project 
+        SET user_address = temp.user_address,
+        token_id = temp.token_id,
+        title = temp.title,
+        budget = temp.budget,
+        update_time = now()
         from (values ${params}) as temp (user_address,token_id,title,budget,desc) where project.desc=temp.requirements; 
-        `)
+        `)  
 
         if (-1 != result) {
             // await updateLastCheckBlock(latest);   
             await this.blockLogRepository.query(`UPDATE block_log SET block = ${latest} WHERE id = 1;`)
         }
+    }else{
+      console.log(logs.length);
     }
   }
 

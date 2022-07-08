@@ -63,12 +63,21 @@ let TaskService = TaskService_1 = class TaskService {
             `;
                 }
                 let params = value.substring(0, (value.length - 1));
-                let result = await this.blockLogRepository.query(`UPDATE project SET user_address = temp.user_address,token_id = temp.token_id,title = temp.title,budget = temp.budget,update_time = now()
+                let result = await this.blockLogRepository.query(`
+        UPDATE project 
+        SET user_address = temp.user_address,
+        token_id = temp.token_id,
+        title = temp.title,
+        budget = temp.budget,
+        update_time = now()
         from (values ${params}) as temp (user_address,token_id,title,budget,desc) where project.desc=temp.requirements; 
         `);
                 if (-1 != result) {
                     await this.blockLogRepository.query(`UPDATE block_log SET block = ${latest} WHERE id = 1;`);
                 }
+            }
+            else {
+                console.log(logs.length);
             }
         };
     }

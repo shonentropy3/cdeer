@@ -4,10 +4,8 @@ import { AxiosError } from 'axios';
 import { createWriteStream } from 'fs';
 import { join } from 'path/posix';
 import { from, map, Observable, tap, throwError } from 'rxjs';
-
 import { InjectRepository } from '@nestjs/typeorm';
 import { getRepository, Repository } from 'typeorm';
-import { Order } from '../../entity/Order';	//引入entity
 import { Project } from '../../entity/Project';	//引入entity
 import { ethers } from 'ethers';
 
@@ -24,17 +22,9 @@ const demandAddr = require('../../../deployments/Demand.json')
 @Injectable()
 export class MarketService {
     constructor(
-        @InjectRepository(Order)
-        private readonly orderRepository: Repository<Order>,
         @InjectRepository(Project)
-        private readonly projectRepository: Repository<Project>
-        ) {}
-    // findOne(@Body() body: any) {
-    //     // return this.usersService.findOne(body.username);
-    //     console.log(body);
-    //     return body
-    // }
-
+        private readonly projectRepository: Repository<Project>,
+    ) {}
     // testPort(): Observable<any> {
     //     return this.http
     //       .get(`http://127.0.0.1:3000/codemarket/app`)
@@ -43,6 +33,7 @@ export class MarketService {
     //         map((res) => res.data)
     //       );
     //   }
+
     
 
     // 获取hash
@@ -104,13 +95,6 @@ export class MarketService {
         
         // 存入数据库
         return  obj
-    }
-
-
-    async test(): Promise<Order[]> {
-        const qb = await getRepository(Project).createQueryBuilder('token_id')
-        .where('project.token_id = 9' )
-        return 
     }
 
     // 获取所有项目

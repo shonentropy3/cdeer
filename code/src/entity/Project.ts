@@ -1,9 +1,7 @@
 import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
 
-@Index("content", ["content"], {})
+@Index("project_demand_id_key", ["demandId"], { unique: true })
 @Index("project_pkey", ["id"], { unique: true })
-@Index("token_id", ["tokenId"], {})
-@Index("project_token_id_key", ["tokenId"], { unique: true })
 @Index("user_address", ["userAddress"], {})
 @Entity("project", { schema: "public" })
 export class Project {
@@ -13,8 +11,8 @@ export class Project {
   @Column("character", { name: "user_address", nullable: true, length: 22 })
   userAddress: string | null;
 
-  @Column("bigint", { name: "token_id", nullable: true, unique: true })
-  tokenId: string | null;
+  @Column("bigint", { name: "demand_id", nullable: true, unique: true })
+  demandId: string | null;
 
   @Column("character varying", { name: "title", length: 256 })
   title: string;
@@ -34,8 +32,11 @@ export class Project {
   @Column("character varying", { name: "content", length: 32 })
   content: string;
 
-  @Column("smallint", { name: "pro_status", default: () => "1" })
-  proStatus: number;
+  @Column("character varying", { name: "attachment", length: 32 })
+  attachment: string;
+
+  @Column("smallint", { name: "status", default: () => "1" })
+  status: number;
 
   @Column("date", {
     name: "create_time",

@@ -22,9 +22,9 @@ __decorate([
     __metadata("design:type", String)
 ], Project.prototype, "userAddress", void 0);
 __decorate([
-    (0, typeorm_1.Column)("bigint", { name: "token_id", nullable: true, unique: true }),
+    (0, typeorm_1.Column)("bigint", { name: "demand_id", nullable: true, unique: true }),
     __metadata("design:type", String)
-], Project.prototype, "tokenId", void 0);
+], Project.prototype, "demandId", void 0);
 __decorate([
     (0, typeorm_1.Column)("character varying", { name: "title", length: 256 }),
     __metadata("design:type", String)
@@ -50,9 +50,13 @@ __decorate([
     __metadata("design:type", String)
 ], Project.prototype, "content", void 0);
 __decorate([
-    (0, typeorm_1.Column)("smallint", { name: "pro_status", default: () => "1" }),
+    (0, typeorm_1.Column)("character varying", { name: "attachment", length: 32 }),
+    __metadata("design:type", String)
+], Project.prototype, "attachment", void 0);
+__decorate([
+    (0, typeorm_1.Column)("smallint", { name: "status", default: () => "1" }),
     __metadata("design:type", Number)
-], Project.prototype, "proStatus", void 0);
+], Project.prototype, "status", void 0);
 __decorate([
     (0, typeorm_1.Column)("date", {
         name: "create_time",
@@ -70,10 +74,8 @@ __decorate([
     __metadata("design:type", String)
 ], Project.prototype, "updateTime", void 0);
 Project = __decorate([
-    (0, typeorm_1.Index)("content", ["content"], {}),
+    (0, typeorm_1.Index)("project_demand_id_key", ["demandId"], { unique: true }),
     (0, typeorm_1.Index)("project_pkey", ["id"], { unique: true }),
-    (0, typeorm_1.Index)("token_id", ["tokenId"], {}),
-    (0, typeorm_1.Index)("project_token_id_key", ["tokenId"], { unique: true }),
     (0, typeorm_1.Index)("user_address", ["userAddress"], {}),
     (0, typeorm_1.Entity)("project", { schema: "public" })
 ], Project);
