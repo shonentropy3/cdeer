@@ -13,6 +13,22 @@ async function main() {
     owner = accounts[0];
     const demand = new ethers.Contract(demandJson.address, abi, owner);
     await demand.connect(owner).setOrder(orderJson.address);
+
+    for (let i = 0; i < 4; i++) {
+      //创建需求
+      await demand.connect(accounts[3]).createDemand(
+        { 
+            title: "test",
+            desc: "account[0].value",
+            attachment: "attachment",
+            budget: ethers.utils.parseEther("5"),
+            period: 123423
+        },
+        {
+            value: ethers.utils.parseEther("1"),
+        });
+    }
+
   }
 
   main()
