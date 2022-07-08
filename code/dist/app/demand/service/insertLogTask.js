@@ -4,6 +4,11 @@ require("../../common/provider");
 require("../../common/dbUtil");
 require("hardhat");
 const USDR_ADDR = require('../../../../deployments/Demand.json');
-require("../../common/provider");
-const { ethers } = require('ethers');
+async function insertLog() {
+    if (global.lock_get_logs)
+        return;
+    global.lock_get_logs = 1;
+    global.lock_get_logs = 0;
+}
+exports.default = insertLog;
 //# sourceMappingURL=insertLogTask.js.map
