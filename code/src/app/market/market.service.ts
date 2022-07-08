@@ -131,10 +131,8 @@ export class MarketService {
 
         let jp = JSON.parse(body.proLabel);
 
-
-
         return await body
-        
+
     }
 
 
