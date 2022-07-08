@@ -68,7 +68,7 @@ contract Demand is ERC721Enumerable, IDemand, Ownable {
         _safeMint(msg.sender, demandId);
         applyInfos[demandId][msg.sender].isApply = true;
         demandIds.increment();   
-
+        console.log("demandId", demandId);
         emit CreateDemand(demandId, msg.sender, _demandInfo.title, _demandInfo.budget, 
             _demandInfo.desc, _demandInfo.attachment, _demandInfo.period);
     }

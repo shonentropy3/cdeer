@@ -1,5 +1,5 @@
 import demand from '../../deployments/abi/Demand.json'
-import demandAddr from '../../deployments/dev/Demand.json'
+import demandAddr from '../contracts/deployments/Demand.json'
 import { ethers } from 'ethers'
 
 
