@@ -83,6 +83,10 @@ let MarketService = class MarketService {
         return await this.projectRepository.query(`SELECT * FROM public.project WHERE token_id = '${body.id}'`);
     }
     async createDemand(body) {
+<<<<<<< HEAD
+=======
+        console.log('window==>', window);
+>>>>>>> b9dbac7d0606aa924ea93439f88b1c5037db3785
         let jp = JSON.parse(body.proLabel);
         return await body;
     }

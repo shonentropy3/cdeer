@@ -37,7 +37,7 @@ async function insertLog() {
             let txs = logs.map(ele => {
                 let decodedData = CreatProjectEvent.parseLog(ele);
                 return {
-                    msgSenderAdddress: decodedData.args.msgSenderAdddress,
+                    msgSenderAdddress: decodedData.args.user,
                     tokenId: decodedData.args.tokenId,
                     title: decodedData.args.title,
                     budget: decodedData.args.budget,

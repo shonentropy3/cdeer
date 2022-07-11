@@ -1,4 +1,5 @@
 import { Repository } from 'typeorm';
+import 'ethers';
 import { BlockLog } from '../../entity/BlockLog';
 import { Project } from '../../entity/Project';
 export declare class TaskService {

@@ -10,14 +10,14 @@ import "hardhat/console.sol";
 import "./interface/IDemand.sol";
 
 //TODO:报名限制数量，乙方，时间久远后考虑废弃
-contract Demand is ERC721Enumerable, IDemand, Ownable {
+contract Demand is ERC721, IDemand, Ownable {
     uint fee = 1*10**17;
     IOrder order;
 
     using Counters for Counters.Counter;
  
     event CreateDemand(uint indexed demandId, address indexed  demander, string title, uint budget, 
-        string indexed desc, string attachment, uint period);
+        string desc, string attachment, uint period);
     event ModifyDemand(uint indexed demandId, address indexed demander, string title, uint budget, 
         string desc, string attachment, uint period); 
     event  ApplyFor(uint indexed _proId, address indexed applyAddr);

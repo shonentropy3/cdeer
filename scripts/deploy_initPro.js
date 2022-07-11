@@ -19,7 +19,7 @@ async function main() {
       await demand.connect(accounts[3]).createDemand(
         { 
             title: "test",
-            desc: "account[0].value",
+            desc: "desc",
             attachment: "attachment",
             budget: ethers.utils.parseEther("5"),
             period: 123423
