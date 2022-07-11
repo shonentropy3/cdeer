@@ -6,6 +6,6 @@ export const getMarketDB = () => {
 }
 
 export const getProjectDB = params => {
-    let sql = `SELECT * FROM public.project WHERE token_id = '${params}'`
+    let sql = `SELECT * FROM public.project WHERE pro_id = '${params}'`
     return sql
 }
