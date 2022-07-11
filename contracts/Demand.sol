@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 import "./interface/IOrder.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "hardhat/console.sol";
 import "./interface/IDemand.sol";
 
@@ -20,22 +20,22 @@ contract Demand is ERC721, IDemand, Ownable {
         string desc, string attachment, uint period);
     event ModifyDemand(uint indexed demandId, address indexed demander, string title, uint budget, 
         string desc, string attachment, uint period); 
-    event  ApplyFor(uint indexed _proId, address indexed applyAddr);
-    event  CancelApply(uint proId, address indexed demander);
-    event  OpenApply(uint proId, address indexed demander);
-    event  CloseApply(uint proId, address indexed demander);
+    event ApplyFor(uint indexed demandId, address indexed applyAddr,uint previewPrice);
+    event CancelApply(uint proId, address indexed demander);
+    event ModifyApplySwitch(uint proId, address indexed demander, bool);
 
-    struct DemandInfo{
+    struct DemandInfo {
         string title;
         string desc;
         string attachment;
         uint budget;
         uint period;
+        bool applySwitch;
     }
 
-    struct applyInfo{
+    struct applyInfo {
         bool isApply;
-        uint prePrice;
+        uint previewPrice;
     }
 
     Counters.Counter private demandIds;
@@ -63,10 +63,10 @@ contract Demand is ERC721, IDemand, Ownable {
             budget: _demandInfo.budget,
             desc: _demandInfo.desc,
             attachment: _demandInfo.attachment,
-            period: _demandInfo.period
+            period: _demandInfo.period,
+            applySwitch: false
         });
         _safeMint(msg.sender, demandId);
-        applyInfos[demandId][msg.sender].isApply = true;
         demandIds.increment();   
         console.log("demandId", demandId);
         emit CreateDemand(demandId, msg.sender, _demandInfo.title, _demandInfo.budget, 
@@ -89,37 +89,29 @@ contract Demand is ERC721, IDemand, Ownable {
             _demandInfo.desc, _demandInfo.attachment, _demandInfo.period);
     }
 
-    function applyFor(uint _proId, uint _prePrice) external {
-        require(msg.sender != ownerOf(_proId), "Not apply for orders yourself.");
-        require(!applyInfos[_proId][msg.sender].isApply, "Already applied.");
+    function applyFor(uint _demandId, uint _previewPrice) external {
+        require(msg.sender != ownerOf(_demandId), "Not apply for orders yourself.");
+        require(!applyInfos[_demandId][msg.sender].isApply, "Already applied.");
 
-        applyInfos[_proId][msg.sender].isApply = true;
-        applyInfos[_proId][msg.sender].prePrice = _prePrice;
+        applyInfos[_demandId][msg.sender].isApply = true;
+        applyInfos[_demandId][msg.sender].previewPrice = _previewPrice;
 
-        emit ApplyFor(_proId, msg.sender);
+        emit ApplyFor(_demandId, msg.sender, _previewPrice);
     }
 
-    function cancelApply(uint _proId) external {
-        require(msg.sender != ownerOf(_proId), "Not applied.");
-        applyInfos[_proId][msg.sender].isApply = false;
+    function cancelApply(uint _demandId) external {
+        require(msg.sender != ownerOf(_demandId), "Not applied.");
+        applyInfos[_demandId][msg.sender].isApply = false;
 
-        emit CancelApply(_proId, msg.sender);
+        emit CancelApply(_demandId, msg.sender);
     }
 
-    function openApply(uint _proId) external {
-        require(msg.sender == ownerOf(_proId), "No Root.");
-        require(!applyInfos[_proId][msg.sender].isApply, "Already opened.");
-        applyInfos[_proId][msg.sender].isApply = true;
+    function modifyApplySwitch(uint _demandId, bool _switch) external {
+        require(msg.sender == ownerOf(_demandId), "No Root.");
+        require(demands[_demandId].applySwitch != _switch, "It is the current state.");
+        demands[_demandId].applySwitch = _switch;
 
-        emit OpenApply(_proId, msg.sender);
-    }
-
-    function closeApply(uint _proId) external {
-        require(msg.sender == ownerOf(_proId), "No Root.");
-        require(applyInfos[_proId][msg.sender].isApply, "Already closed.");
-        applyInfos[_proId][msg.sender].isApply = false;
-
-        emit CloseApply(_proId, msg.sender);
+        emit ModifyApplySwitch(_demandId, msg.sender, _switch);
     }
 
     function modifyFee(uint _fee) external onlyOwner {

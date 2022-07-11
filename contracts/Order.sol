@@ -13,6 +13,10 @@ import "hardhat/console.sol";
 
 // TODO:考虑阶段甲方确认后，修改后续阶段的问题
 contract Order is IOrder, Ownable {
+    uint8 constant private checkedB = 1;
+    uint8 constant private checkedA = 2;
+    uint8 constant private confirmedIs = 1;
+    uint8 constant private confirmedNo = 2;
     uint8 private maxDemandOrders = 12;
     uint8 private maxStages = 12;
     address private _demand;
@@ -28,19 +32,19 @@ contract Order is IOrder, Ownable {
     event TerminateStage(uint orderId, address originator, uint8 stageIndex);
     event Withdraw(uint orderId, address applyAddr, uint8 stageIndex);
 
-    struct Order{
+    struct Order {
         uint demandId;
         address applyAddr;
         address token;
         uint amount;
-        uint8 confirmed;
+        uint8 checked;
         uint startDate;
     }
 
     //交付阶段
     struct Stage {
         uint amount;
-        bool confirmed;
+        uint8 confirmed;
         bool withdrawed;
         uint endDate;  
     }
@@ -71,7 +75,7 @@ contract Order is IOrder, Ownable {
             applyAddr: _order.applyAddr,
             token: address(0),
             amount: _order.amount,
-            confirmed: 0,
+            checked: 0,
             startDate: block.timestamp
         });
         orderIds.increment();
@@ -81,22 +85,20 @@ contract Order is IOrder, Ownable {
 
     function setStage(uint _orderId, address _token, uint[] memory _amounts, uint[] memory _periods) external {
         require(orders[_orderId].applyAddr == msg.sender, "No permission.");
-        require(orders[_orderId].confirmed != 1, "The order has been confirmed.");
+        require(orders[_orderId].checked != checkedA, "The order has been checked by A.");
 
         _setStage(_orderId, _amounts, _periods); 
         orders[_orderId].token = _token;
         orders[_orderId].startDate = block.timestamp;
-        orders[_orderId].confirmed = 2;
+        orders[_orderId].checked = checkedB;
 
         emit SetStage(_orderId, msg.sender, _token, _amounts, _periods);
     }
 
-    function confirmOrder(
-        uint _orderId
-    ) external payable {
+    function confirmOrder(uint _orderId) external payable {
         uint _demandId  = orders[_orderId].demandId;
         require(msg.sender == IDemand(_demand).ownerOf(_demandId), "No confirming permission.");
-        require(orders[_orderId].confirmed == 2, "Non-confirmation stage.");
+        require(orders[_orderId].checked == checkedB, "No checked by B.");
         require(maxDemandOrders >= demandOrders[_demandId].length, "Excessive number of orders.");
         
         address _token = orders[_orderId].token;
@@ -110,10 +112,10 @@ contract Order is IOrder, Ownable {
         for (uint i; i < orderStagesArr.length; i++) {
             orderStagesArr[i].endDate += delayTime;
         }
-        orders[_orderId].confirmed = 1;
+        orders[_orderId].checked = checkedA;
         orders[_orderId].startDate = block.timestamp;
         if (orderStagesArr[0].endDate == orders[_orderId].startDate) {
-            orderStagesArr[0].confirmed = true;
+            orderStagesArr[0].confirmed = confirmedIs;
         }
 
         demandOrders[_demandId].push(_orderId);
@@ -125,8 +127,13 @@ contract Order is IOrder, Ownable {
         uint _demandId  = orders[_orderId].demandId;
         require(msg.sender == IDemand(_demand).ownerOf(_demandId), "No confirming permission.");
         require(!orderStages[_orderId][_stageIndex].withdrawed, "Already withdrawed.");
-        require(!orderStages[_orderId][_stageIndex].confirmed, " Already confirmed.");
-        orderStages[_orderId][_stageIndex].confirmed = true;
+        require(orderStages[_orderId][_stageIndex].confirmed == 0, " Already confirmed.");
+        if (_stageIndex == 0){
+            orderStages[_orderId][_stageIndex].confirmed = confirmedIs; 
+        } else {
+            require(orderStages[_orderId][_stageIndex-1].confirmed == confirmedIs, "The previous stage was not confirmed");
+            orderStages[_orderId][_stageIndex].confirmed = confirmedIs; 
+        }
         
         emit ConfirmOrderStage(_orderId, msg.sender, _stageIndex);
     }
@@ -134,7 +141,7 @@ contract Order is IOrder, Ownable {
     function terminateOrder(uint _orderId) external {
         uint _demandId  = orders[_orderId].demandId;
         require(IDemand(_demand).ownerOf(_demandId) == msg.sender || orders[_orderId].applyAddr == msg.sender, "No terminate permission.");
-        require(orders[_orderId].confirmed != 1, "The order has been confirmed.");
+        require(orders[_orderId].checked != checkedA, "The order has been checked by A.");
         
         delete orders[_orderId];
         delete orderStages[_orderId];
@@ -145,7 +152,7 @@ contract Order is IOrder, Ownable {
     function terminateStage(uint _orderId, uint8 _stageIndex) external {
         uint _demandId  = orders[_orderId].demandId;
         require(IDemand(_demand).ownerOf(_demandId) == msg.sender || orders[_orderId].applyAddr == msg.sender, "No terminate permission.");
-        require(!orderStages[_orderId][_stageIndex].confirmed, "Already confirmed.");
+        require(orderStages[_orderId][_stageIndex].confirmed != confirmedIs, "Already confirmed.");
 
         uint startDate = orders[_orderId].startDate;
         uint stageStartDate;
@@ -160,10 +167,10 @@ contract Order is IOrder, Ownable {
         }
         require(block.timestamp > stageStartDate && block.timestamp < orderStagesArr[_stageIndex].endDate, "Out stage.");        
         uint period = orderStagesArr[_stageIndex].endDate - stageStartDate;
-        sumAmountB += orderStagesArr[_stageIndex].amount * (block.timestamp - stageStartDate) / (60*60*24*period);
+        sumAmountB += orderStagesArr[_stageIndex].amount * (block.timestamp - stageStartDate) / period;
         for (_stageIndex; _stageIndex < orderStagesArr.length; _stageIndex++) {
             sumAmount += orderStagesArr[_stageIndex].amount;
-            orderStagesArr[_stageIndex].confirmed == true;
+            orderStagesArr[_stageIndex].confirmed == confirmedNo;
             orderStagesArr[_stageIndex].withdrawed == true;
         }
         sumAmountA = sumAmount - sumAmountB;
@@ -175,22 +182,16 @@ contract Order is IOrder, Ownable {
    
     function withdraw(uint _orderId, uint8 _stageIndex) external {
         require(orders[_orderId].applyAddr == msg.sender, "No permission.");
-        require(orders[_orderId].confirmed == 1, "The order is not confirmed.");
+        require(orders[_orderId].checked == checkedA, "The order is not checked by A.");
         Stage storage pro = orderStages[_orderId][_stageIndex];
-        //无取款
-        require(pro.withdrawed == false, "Aleady withdrawed");
-        if (pro.confirmed ) {
-            _transfer(orders[_orderId].token, msg.sender, pro.amount);
-            pro.withdrawed = true;
-            return;
-        }
-        if (pro.confirmed || pro.endDate + 7*24*60*60 < block.timestamp) {
+        require(!pro.withdrawed, "Aleady withdrawed");
+
+        if (pro.confirmed == confirmedIs || pro.endDate + 7*24*60*60 < block.timestamp) {
             _transfer(orders[_orderId].token, msg.sender, pro.amount);
             pro.withdrawed = true;
         }
 
         emit Withdraw(_orderId, msg.sender, _stageIndex);
-
     }
 
     function isDemandOrders(uint _demandId) external view virtual override  returns (bool){
@@ -222,7 +223,7 @@ contract Order is IOrder, Ownable {
             _endDate += _periods[i];
             Stage memory pro = Stage ({
                 amount: _amounts[i],
-                confirmed: false,
+                confirmed: 0,
                 withdrawed: false,
                 endDate: _endDate
             });
