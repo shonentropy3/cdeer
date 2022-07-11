@@ -3,6 +3,7 @@ import { Cron, Interval, Timeout } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 const { ethers } = require('ethers');
+import 'ethers'
 const rpcProvider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
 const USDR_ADDR = require('../../../deployments/Demand.json');
 import { BlockLog } from '../../entity/BlockLog';	//引入entity
@@ -40,16 +41,19 @@ _insertLog = async () => {
         toBlock
     }
     const logs = await rpcProvider.getLogs(filter);
-    const CreateDemand = new ethers.utils.Interface(["event CreateDemand(uint256 indexed demandId, address indexed  demander, string title, uint256 budget, string indexed desc, string attachment, uint256 period)"]);
+    const CreateDemand = new ethers.utils.Interface(["event CreateDemand(uint256 indexed demandId, address indexed demander, string title, uint256 budget, string indexed desc, string attachment, uint256 )"]);
 
     
     if (logs.length > 0) {
-        let txs = logs.map(ele => {
+      
+        let txs = logs.map((ele :any,i:any) => {
+
             let decodedData = CreateDemand.parseLog(ele);
-            console.log(decodedData.args);
-            
+
+            console.log("before=====>",decodedData);
+
             return {
-                demander: decodedData.args.demander,
+                demander:    decodedData.args.demander,
                 demandId: decodedData.args.demandId,
                 title: decodedData.args.title,
                 budget: decodedData.args.budget,
@@ -66,12 +70,12 @@ _insertLog = async () => {
         // let result = await insertPro(value.substring(0,(value.length-1))); 
         let params = value.substring(0,(value.length-1))
 
-        // let sql = `UPDATE project SET user_address = temp.demander,demand_id = temp.demand_id,title = temp.title,budget = temp.budget,update_time = now()
-        // from (values ${params}) as temp (demander,demand_id,title,budget,desc) where project.desc=temp.requirements; 
+        // let sql = `UPDATE project SET user_address = temp.demander,pro_id = temp.pro_id,title = temp.title,budget = temp.budget,update_time = now()
+        // from (values ${params}) as temp (demander,demandId,title,budget,desc) where project.content=temp.requirements; 
         // `
         let sql = `UPDATE project 
-        SET user_address = temp.user_address, demand_id = temp.demand_id, title = temp.title,budget = temp.budget,update_time = now()
-        from (values ('demander', 2343, 'title', 324, 'desc')) as temp (user_address,demand_id,title,budget,content) where project.content=temp.content;
+        SET user_address = temp.user_address, pro_id = temp.pro_id, title = temp.title,budget = temp.budget,update_time = now()
+        from (values ('demander', 2343, 'title', 324, 'desc')) as temp (user_address,pro_id,title,budget,content) where project.content=temp.content;
         `
 
 
@@ -88,7 +92,7 @@ _insertLog = async () => {
 
   @Interval(3000)  //每隔3秒执行一次
   handleInterval() {
-    this._insertLog()
+    // this._insertLog()
   }
 
   init() {
@@ -99,6 +103,7 @@ _insertLog = async () => {
   @Timeout(20)  //5秒只执行一次
   handleTimeout() {
     this.init()
+    this._insertLog()
     
     // this.logger.debug('Called once after 5 seconds');
   }
