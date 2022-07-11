@@ -24,13 +24,13 @@ contract Order is IOrder, Ownable {
     using SafeERC20 for IERC20;
     using Counters for Counters.Counter;
 
-    event CreateOrder(uint demandId, address demander, address applyAddr, uint amount);
-    event SetStage(uint orderId, address  applyAddr, address token, uint[] amounts, uint[] periods);
-    event ConfirmOrder(uint orderId, address demander);
-    event ConfirmOrderStage(uint orderId, address demander, uint8 stageIndex);
-    event TerminateOrder(uint orderId, address originator);
-    event TerminateStage(uint orderId, address originator, uint8 stageIndex);
-    event Withdraw(uint orderId, address applyAddr, uint8 stageIndex);
+    event CreateOrder(uint indexed demandId, address indexed demandAddr, address applyAddr, uint amount);
+    event SetStage(uint indexed orderId, address  applyAddr, address token, uint[] amounts, uint[] periods);
+    event ConfirmOrder(uint orderId, address indexed demandAddr);
+    event ConfirmOrderStage(uint indexed orderId, address demandAddr, uint8 stageIndex);
+    event TerminateOrder(uint indexed orderId, address originatorAddr);
+    event TerminateStage(uint indexed orderId, address originatorAddr, uint8 stageIndex);
+    event Withdraw(uint indexed orderId, address applyAddr, uint8 stageIndex);
 
     struct Order {
         uint demandId;
@@ -62,9 +62,7 @@ contract Order is IOrder, Ownable {
         _demand = demand_;
     }
 
-    function createOrder(
-        Order memory _order
-    ) external {
+    function createOrder(Order memory _order) external {
         require(msg.sender == IDemand(_demand).ownerOf(_order.demandId), "No create permission.");
         require(address(0) != _order.applyAddr, "ApplyAddr is zero address.");
         require(maxDemandOrders >= demandOrders[_order.demandId].length, "Excessive number of orders.");
@@ -194,7 +192,7 @@ contract Order is IOrder, Ownable {
         emit Withdraw(_orderId, msg.sender, _stageIndex);
     }
 
-    function isDemandOrders(uint _demandId) external view virtual override  returns (bool){
+    function hasDemandOrders(uint _demandId) external view virtual override  returns (bool){
         if (demandOrders[_demandId].length > 0) { 
             return true;
         } else {

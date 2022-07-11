@@ -243,7 +243,7 @@ describe("Order", function() {
     /*
     8. 作为外部接口，订单是否已经接单 isConfirmOrders
     */
-    it("isDemandOrders", async function() {
+    it("hasDemandOrders", async function() {
 
         // await order.connect(accounts[2]).setStageByB(
         //     0,
@@ -256,7 +256,7 @@ describe("Order", function() {
         console.log({A: await accounts[1].getBalance("latest")});
         console.log({B: await accounts[2].getBalance("latest")});
         
-        let active = await order.connect(accounts[1]).isDemandOrders(0);
+        let active = await order.connect(accounts[1]).hasDemandOrders(0);
         expect(active).to.equal(true);
         console.log({A: await accounts[1].getBalance("latest")});
         console.log({B: await accounts[2].getBalance("latest")});

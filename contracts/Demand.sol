@@ -16,13 +16,13 @@ contract Demand is ERC721, IDemand, Ownable {
 
     using Counters for Counters.Counter;
  
-    event CreateDemand(uint indexed demandId, address indexed  demander, string title, uint budget, 
+    event CreateDemand(uint indexed demandId, address indexed demandAddr, string title, uint budget, 
         string desc, string attachment, uint period);
-    event ModifyDemand(uint indexed demandId, address indexed demander, string title, uint budget, 
+    event ModifyDemand(uint indexed demandId, address demandAddr, string title, uint budget, 
         string desc, string attachment, uint period); 
     event ApplyFor(uint indexed demandId, address indexed applyAddr,uint previewPrice);
-    event CancelApply(uint proId, address indexed demander);
-    event ModifyApplySwitch(uint proId, address indexed demander, bool);
+    event CancelApply(uint indexed demandId, address demandAddr);
+    event ModifyApplySwitch(uint indexed demandId, address demandAddr, bool);
 
     struct DemandInfo {
         string title;
@@ -75,7 +75,7 @@ contract Demand is ERC721, IDemand, Ownable {
 
     function modifyDemand(uint _demandId, DemandInfo memory _demandInfo) external {
         require(msg.sender == ownerOf(_demandId), "No root.");
-        require(!order.isDemandOrders(_demandId), "Existing orders.");
+        require(!order.hasDemandOrders(_demandId), "Existing orders.");
 
         demands[_demandId] = DemandInfo({
             title: _demandInfo.title,
@@ -91,7 +91,6 @@ contract Demand is ERC721, IDemand, Ownable {
 
     function applyFor(uint _demandId, uint _previewPrice) external {
         require(msg.sender != ownerOf(_demandId), "Not apply for orders yourself.");
-        require(!applyInfos[_demandId][msg.sender].isApply, "Already applied.");
 
         applyInfos[_demandId][msg.sender].isApply = true;
         applyInfos[_demandId][msg.sender].previewPrice = _previewPrice;
