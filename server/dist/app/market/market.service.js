@@ -26,8 +26,8 @@ const ipfsAPI = require('ipfs-api');
 const ipfs = ipfsAPI({ host: 'localhost', port: '5001', protocol: 'http' });
 const service = new upyun.Service('ipfs0', 'upchain', 'upchain123');
 const client = new upyun.Client(service);
-const demand = require('../../../deployments/abi/Demand.json');
-const demandAddr = require('../../../deployments/Demand.json');
+const dbutils_1 = require("../db/dbutils");
+const dbutils_2 = require("../db/dbutils");
 let MarketService = class MarketService {
     constructor(projectRepository) {
         this.projectRepository = projectRepository;
@@ -77,10 +77,10 @@ let MarketService = class MarketService {
         return obj;
     }
     async getMarketData() {
-        return await this.projectRepository.query(`SELECT * FROM public."project"`);
+        return await this.projectRepository.query((0, dbutils_1.getMarketDB)());
     }
     async getProjectDetail(body) {
-        return await this.projectRepository.query(`SELECT * FROM public.project WHERE token_id = '${body.id}'`);
+        return await this.projectRepository.query((0, dbutils_2.getProjectDB)(body.id));
     }
     async createDemand(body) {
         let jp = JSON.parse(body.proLabel);

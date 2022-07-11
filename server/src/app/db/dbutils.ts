@@ -1,10 +1,11 @@
-import { Select } from "./postgresql";
 
-export const Insert = () => {
-    let sql =`SELECT role,pro_type FROM project WHERE desc = 'xx';`;
+
+export const getMarketDB = () => {
+    let sql = `SELECT * FROM public."project"`
     return sql
 }
 
-export const last_check_block = () => {
-    return Select('block','block_log','id = 0')
+export const getProjectDB = params => {
+    let sql = `SELECT * FROM public.project WHERE token_id = '${params}'`
+    return sql
 }

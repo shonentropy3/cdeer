@@ -5,18 +5,19 @@ import { createWriteStream } from 'fs';
 import { join } from 'path/posix';
 import { from, map, Observable, tap, throwError } from 'rxjs';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getRepository, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Project } from '../../entity/Project';	//引入entity
-import { ethers } from 'ethers';
 
+// ipfs/upyun
 const fs  = require('fs');
 var upyun = require("upyun")
 const ipfsAPI = require('ipfs-api');
 const ipfs = ipfsAPI({host: 'localhost', port: '5001', protocol: 'http'});
 const service = new upyun.Service('ipfs0','upchain', 'upchain123')
 const client = new upyun.Client(service);
-const demand = require('../../../deployments/abi/Demand.json')
-const demandAddr = require('../../../deployments/Demand.json')
+// dbUtils
+import { getMarketDB } from '../db/dbutils';
+import { getProjectDB } from '../db/dbutils';
 
 
 @Injectable()
@@ -36,7 +37,7 @@ export class MarketService {
 
     
 
-    // 获取hash
+    // getHash
     getFile(files: any) {
         
         if (files.length === 0 ) {
@@ -99,12 +100,12 @@ export class MarketService {
 
     // 获取所有项目
     async getMarketData(): Promise<Project[]> {
-        return await this.projectRepository.query(`SELECT * FROM public."project"`);
+        return await this.projectRepository.query(getMarketDB());
     }
 
     // 获取项目详情
     async getProjectDetail(@Body() body: any): Promise<Project[]> {
-        return await this.projectRepository.query(`SELECT * FROM public.project WHERE token_id = '${body.id}'`);
+        return await this.projectRepository.query(getProjectDB(body.id));
     }
 
     // 创建需求

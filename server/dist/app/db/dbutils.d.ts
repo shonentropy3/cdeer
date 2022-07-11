@@ -1,2 +1,2 @@
-export declare const Insert: () => string;
-export declare const last_check_block: () => string;
+export declare const getMarketDB: () => string;
+export declare const getProjectDB: (params: any) => string;
