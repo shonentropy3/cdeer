@@ -109,7 +109,6 @@ export class MarketService {
 
     // 创建需求
     async createDemand(@Body() body: any): Promise<Project[]>  {
-        console.log('window==>',window);
         
 
         let jp = JSON.parse(body.proLabel);

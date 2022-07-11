@@ -11,6 +11,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   controllers: [TaskController],
   imports: [
     TypeOrmModule.forFeature([Project,Order,BlockLog])
+    
   ]
 })
 export class TaskModule {}

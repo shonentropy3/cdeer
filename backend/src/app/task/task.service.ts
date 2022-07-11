@@ -7,6 +7,8 @@ const rpcProvider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545"
 const USDR_ADDR = require('../../../deployments/Demand.json');
 import { BlockLog } from '../../entity/BlockLog';	//引入entity
 import { Project } from '../../entity/Project';	//引入entity
+import { Insert } from '../dbutils/dbutils';
+
 
 @Injectable()
 export class TaskService {
@@ -18,15 +20,11 @@ export class TaskService {
       ) {}
       private readonly logger = new Logger(TaskService.name)
 
-      // @Cron('45 * * * * *')  // 每隔45秒执行一次
-      // handleCron() {
-      //   this.logger.debug('Called when the second is 45');
-      // }
-
 _insertLog = async () => {
     let latest = await rpcProvider.getBlockNumber();
     let last_check_block = await this.blockLogRepository.query(`SELECT block FROM block_log WHERE id = 0;`);
     let logBlock = last_check_block[0].block;
+    
     if (logBlock >= latest) return; //区块已监听过了
     logBlock = Math.max(logBlock, (latest - 100)); //最多往前100区块
     let fromBlock = logBlock + 1;
@@ -40,13 +38,16 @@ _insertLog = async () => {
         toBlock
     }
     const logs = await rpcProvider.getLogs(filter);
+    
     const CreateDemand = new ethers.utils.Interface(["event CreateDemand(uint256 indexed demandId, address indexed  demander, string title, uint256 budget, string indexed desc, string attachment, uint256 period)"]);
-
     
     if (logs.length > 0) {
+      
+
+
         let txs = logs.map(ele => {
             let decodedData = CreateDemand.parseLog(ele);
-            console.log(decodedData.args);
+            
             
             return {
                 demander: decodedData.args.demander,
@@ -63,6 +64,8 @@ _insertLog = async () => {
             ('${v.demander}',${v.demandId},'${v.title}',${v.budget},'${v.desc}'),
             `
         }
+        console.log(value);
+        
         // let result = await insertPro(value.substring(0,(value.length-1))); 
         let params = value.substring(0,(value.length-1))
 
@@ -78,7 +81,6 @@ _insertLog = async () => {
         let result = await this.projectRepository.query(sql)
         console.log(result);
         if (-1 != result) {
-            // await updateLastCheckBlock(latest);   
             await this.projectRepository.query(`UPDATE block_log SET block = ${latest} WHERE id = 1;`)
         }
     }else{
@@ -88,7 +90,7 @@ _insertLog = async () => {
 
   @Interval(3000)  //每隔3秒执行一次
   handleInterval() {
-    this._insertLog()
+    // this._insertLog()
   }
 
   init() {
@@ -99,7 +101,8 @@ _insertLog = async () => {
   @Timeout(20)  //5秒只执行一次
   handleTimeout() {
     this.init()
-    
+    this._insertLog()
+    Insert()
     // this.logger.debug('Called once after 5 seconds');
   }
 
