@@ -10,7 +10,7 @@ import "hardhat/console.sol";
 import "./interface/IDemand.sol";
 
 //TODO:报名限制数量，乙方，时间久远后考虑废弃
-contract Demand is ERC721Enumerable, IDemand, Ownable {
+contract Demand is ERC721, IDemand, Ownable {
     uint fee = 1*10**17;
     IOrder order;
 

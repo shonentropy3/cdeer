@@ -67,22 +67,27 @@ _insertLog = async () => {
             `
         }
         // let result = await insertPro(value.substring(0,(value.length-1))); 
-        let params = value.substring(0,(value.length-1))
-
-        // let sql = `UPDATE project SET user_address = temp.demander,pro_id = temp.pro_id,title = temp.title,budget = temp.budget,update_time = now()
-        // from (values ${params}) as temp (demander,demandId,title,budget,desc) where project.content=temp.requirements; 
+        let params = value.substring(0,(value.lastIndexOf(',')))
+        // let sql = `UPDATE project 
+        // SET user_address = temp.user_address, pro_id = temp.demandId, title = temp.title, budget = temp.budget, update_time = now()
+        // from (values ('demander', 2343, 'title', 324, 'desc')) as temp (user_address, demandId,title, budget,content) where project.content=temp.content;
         // `
+
         let sql = `UPDATE project 
         SET user_address = temp.user_address, pro_id = temp.demandId, title = temp.title, budget = temp.budget, update_time = now()
-        from (values ('demander', 2343, 'title', 324, 'desc')) as temp (user_address, demandId,title, budget,content) where project.content=temp.content;
+        from (values ${params}) as temp (user_address, demandId,title, budget,content) where project.content=temp.content;
         `
-
-        console.log("before=====>",sql);
-        let result = await this.projectRepository.query(sql)
-        console.log(result);
-        if (-1 != result) {
-            // await updateLastCheckBlock(latest);   
-            await this.projectRepository.query(`UPDATE block_log SET block = ${latest} WHERE id = 1;`)
+        console.log(sql);
+        
+        try {
+          let result = await this.projectRepository.query(sql)
+          console.log(result[1]);
+          if (-1 != result[1]) {
+              // await updateLastCheckBlock(latest);   
+              await this.blockLogRepository.query(`UPDATE block_log SET block = ${latest} WHERE id = 0;`)
+          }
+        } catch (error) {
+          console.log(error);
         }
     }else{
       console.log(logs.length);

@@ -67,16 +67,21 @@ let TaskService = TaskService_1 = class TaskService {
             ('${v.demander}',${v.demandId},'${v.title}',${v.budget},'${v.desc}'),
             `;
                 }
-                let params = value.substring(0, (value.length - 1));
+                let params = value.substring(0, (value.lastIndexOf(',')));
                 let sql = `UPDATE project 
         SET user_address = temp.user_address, pro_id = temp.demandId, title = temp.title, budget = temp.budget, update_time = now()
-        from (values ('demander', 2343, 'title', 324, 'desc')) as temp (user_address, demandId,title, budget,content) where project.content=temp.content;
+        from (values ${params}) as temp (user_address, demandId,title, budget,content) where project.content=temp.content;
         `;
-                console.log("before=====>", sql);
-                let result = await this.projectRepository.query(sql);
-                console.log(result);
-                if (-1 != result) {
-                    await this.projectRepository.query(`UPDATE block_log SET block = ${latest} WHERE id = 1;`);
+                console.log(sql);
+                try {
+                    let result = await this.projectRepository.query(sql);
+                    console.log(result[1]);
+                    if (-1 != result[1]) {
+                        await this.blockLogRepository.query(`UPDATE block_log SET block = ${latest} WHERE id = 0;`);
+                    }
+                }
+                catch (error) {
+                    console.log(error);
                 }
             }
             else {
