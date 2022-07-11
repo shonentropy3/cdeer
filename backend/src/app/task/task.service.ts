@@ -8,7 +8,7 @@ const rpcProvider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545"
 const USDR_ADDR = require('../../../deployments/Demand.json');
 import { BlockLog } from '../../entity/BlockLog';	//引入entity
 import { Project } from '../../entity/Project';	//引入entity
-import { Insert } from '../dbutils/dbutils';
+import { last_check_block } from '../db/dbutils';
 
 
 @Injectable()
@@ -23,8 +23,11 @@ export class TaskService {
 
 _insertLog = async () => {
     let latest = await rpcProvider.getBlockNumber();
-    let last_check_block = await this.blockLogRepository.query(`SELECT block FROM block_log WHERE id = 0;`);
-    let logBlock = last_check_block[0].block;
+    let last = await this.blockLogRepository.query(last_check_block());
+    console.log(last);
+    
+
+    let logBlock = last[0].block;
     
     if (logBlock >= latest) return; //区块已监听过了
     logBlock = Math.max(logBlock, (latest - 100)); //最多往前100区块
@@ -110,8 +113,11 @@ _insertLog = async () => {
   handleTimeout() {
     this.init()
     this._insertLog()
-    Insert()
 
+    
+    // let op = this.projectRepository.query(sql)
+    // console.log(op);
+    
     // this.logger.debug('Called once after 5 seconds');
   }
 

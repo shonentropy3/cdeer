@@ -24,7 +24,7 @@ const rpcProvider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545"
 const USDR_ADDR = require('../../../deployments/Demand.json');
 const BlockLog_1 = require("../../entity/BlockLog");
 const Project_1 = require("../../entity/Project");
-const dbutils_1 = require("../dbutils/dbutils");
+const dbutils_1 = require("../db/dbutils");
 let TaskService = TaskService_1 = class TaskService {
     constructor(projectRepository, blockLogRepository) {
         this.projectRepository = projectRepository;
@@ -32,8 +32,9 @@ let TaskService = TaskService_1 = class TaskService {
         this.logger = new common_1.Logger(TaskService_1.name);
         this._insertLog = async () => {
             let latest = await rpcProvider.getBlockNumber();
-            let last_check_block = await this.blockLogRepository.query(`SELECT block FROM block_log WHERE id = 0;`);
-            let logBlock = last_check_block[0].block;
+            let last = await this.blockLogRepository.query((0, dbutils_1.last_check_block)());
+            console.log(last);
+            let logBlock = last[0].block;
             if (logBlock >= latest)
                 return;
             logBlock = Math.max(logBlock, (latest - 100));
@@ -99,7 +100,6 @@ let TaskService = TaskService_1 = class TaskService {
     handleTimeout() {
         this.init();
         this._insertLog();
-        (0, dbutils_1.Insert)();
     }
 };
 __decorate([
