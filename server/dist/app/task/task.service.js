@@ -49,13 +49,13 @@ let TaskService = TaskService_1 = class TaskService {
                 toBlock
             };
             const logs = await rpcProvider.getLogs(filter);
-            const CreateDemand = new ethers.utils.Interface(["event CreateDemand(uint256 indexed demandId, address indexed demander, string title, uint256 budget, string desc, string attachment, uint256 )"]);
+            const CreateDemand = new ethers.utils.Interface(["event CreateDemand(uint256 indexed demandId, address indexed demandAddr, string title, uint256 budget, string desc, string attachment, uint256 )"]);
             if (logs.length > 0) {
                 let txs = logs.map((ele) => {
                     let decodedData = CreateDemand.parseLog(ele);
                     return {
                         demandId: decodedData.args[0].toString(),
-                        demander: decodedData.args[1],
+                        demandAddr: decodedData.args[1],
                         title: decodedData.args[2],
                         budget: decodedData.args[3].toString(),
                         desc: decodedData.args[4],
@@ -66,7 +66,7 @@ let TaskService = TaskService_1 = class TaskService {
                 let value = ``;
                 for (const v of txs) {
                     value += `
-            ('${v.demander}',${v.demandId},'${v.title}',${v.budget},'${v.desc}'),
+            ('${v.demandAddr}',${v.demandId},'${v.title}',${v.budget},'${v.desc}'),
             `;
                 }
                 console.log(value);
