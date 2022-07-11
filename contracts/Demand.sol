@@ -17,7 +17,7 @@ contract Demand is ERC721Enumerable, IDemand, Ownable {
     using Counters for Counters.Counter;
  
     event CreateDemand(uint indexed demandId, address indexed  demander, string title, uint budget, 
-        string indexed desc, string attachment, uint period);
+        string desc, string attachment, uint period);
     event ModifyDemand(uint indexed demandId, address indexed demander, string title, uint budget, 
         string desc, string attachment, uint period); 
     event  ApplyFor(uint indexed _proId, address indexed applyAddr);

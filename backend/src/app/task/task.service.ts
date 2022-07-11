@@ -41,27 +41,26 @@ _insertLog = async () => {
         toBlock
     }
     const logs = await rpcProvider.getLogs(filter);
-    const CreateDemand = new ethers.utils.Interface(["event CreateDemand(uint256 indexed demandId, address indexed demander, string title, uint256 budget, string indexed desc, string attachment, uint256 )"]);
+    const CreateDemand = new ethers.utils.Interface(["event CreateDemand(uint256 indexed demandId, address indexed demander, string title, uint256 budget, string desc, string attachment, uint256 )"]);
 
     
     if (logs.length > 0) {
       
-        let txs = logs.map((ele :any,i:any) => {
-
+        let txs = logs.map((ele: any) => {
             let decodedData = CreateDemand.parseLog(ele);
 
-            console.log("before=====>",decodedData);
-
             return {
-                demander:    decodedData.args.demander,
-                demandId: decodedData.args.demandId,
-                title: decodedData.args.title,
-                budget: decodedData.args.budget,
-                desc: decodedData.args.desc,
-                period: decodedData.args.period,
+                demandId: decodedData.args[0].toString(),
+                demander: decodedData.args[1],
+                title: decodedData.args[2],
+                budget: decodedData.args[3].toString(),
+                desc: decodedData.args[4],
+                attachment: decodedData.args[5],
+                period: decodedData.args[6].toString(),
             }
         });
         let value = ``;
+
         for (const v of txs) {
             value += `
             ('${v.demander}',${v.demandId},'${v.title}',${v.budget},'${v.desc}'),
@@ -74,11 +73,11 @@ _insertLog = async () => {
         // from (values ${params}) as temp (demander,demandId,title,budget,desc) where project.content=temp.requirements; 
         // `
         let sql = `UPDATE project 
-        SET user_address = temp.user_address, pro_id = temp.pro_id, title = temp.title,budget = temp.budget,update_time = now()
-        from (values ('demander', 2343, 'title', 324, 'desc')) as temp (user_address,pro_id,title,budget,content) where project.content=temp.content;
+        SET user_address = temp.user_address, pro_id = temp.demandId, title = temp.title, budget = temp.budget, update_time = now()
+        from (values ('demander', 2343, 'title', 324, 'desc')) as temp (user_address, demandId,title, budget,content) where project.content=temp.content;
         `
 
-
+        console.log("before=====>",sql);
         let result = await this.projectRepository.query(sql)
         console.log(result);
         if (-1 != result) {
