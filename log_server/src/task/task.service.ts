@@ -69,6 +69,7 @@ export class TaskService {
                 }
                 let params = value.substring(0,(value.lastIndexOf(',')))
                 let sql = updateProject(params)
+                
                 try {
                   let result = await this.projectRepository.query(sql)
                   console.log(result[1]);
@@ -88,6 +89,8 @@ export class TaskService {
     @Interval(5000)  //每隔3秒执行一次
     handleInterval() {
         this._insertLog()
+        console.log('zxl');
+        
     }
 
     @Timeout(1000)

@@ -3,11 +3,8 @@ import { useEffect, useState } from "react"
 import { getProjectDetail } from '../http/api';
 import NavigationBar from "../../components/NavigationBar";
 
-// import {
-//     //截取查询参数的hook
-    
-//   } from 'react-router-dom';
-const Sport = ({router})=>{
+
+export default function ProjectDetail() {
     let oid = ''
     let [detail,detailSet] = useState({})
     useEffect(()=>{
@@ -40,7 +37,7 @@ const Sport = ({router})=>{
                 <div className='top'>
                     <div>
                         <h1>{detail.name}</h1>
-                        <p>No.{detail.token_id}</p>
+                        <p>No.{detail.id}</p>
                     </div>
                     <div>
                         <p>招募角色: {detail.role}</p>
@@ -60,4 +57,3 @@ const Sport = ({router})=>{
         </div>
     )
 }
-export default withRouter(Sport)

@@ -101,7 +101,7 @@ export default function Home() {
         return data.detail.map(
           // return sql.data.map(
           (item, index) => 
-          <Link href={{pathname:'/views/Pro_detail',search: item.token_id}} target="_blank" key={index}>
+          <Link href={{pathname:'/views/Pro_detail',search: item.id}} target="_blank" key={index}>
           <div className={`li ${style.item_container}`}>
               <div className={style.item_img}>
                 {/* <img src={item.cover} alt="" /> */}
@@ -109,7 +109,7 @@ export default function Home() {
               <div className={`${style.item_content} ${style.ml20}`}>
                   <div className={style.between}>
                       <p>
-                        NO.{item.token_id}
+                        NO.{item.id}
                         <span className={style.ml10}>{item.name}</span>
                       </p>
                       <span className={style.color_red}>¥{item.budget}</span>

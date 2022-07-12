@@ -90,6 +90,7 @@ let TaskService = TaskService_1 = class TaskService {
     }
     handleInterval() {
         this._insertLog();
+        console.log('zxl');
     }
     async handleTimeout() {
     }
