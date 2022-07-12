@@ -116,12 +116,14 @@ export class MarketService {
             insert into project(title,budget,period,"content",role,pro_type) 
             VALUES (${jp.title},${jp.budget},${jp.period},${jp.pro_content},${jp.recruiting_role},${jp.pro_type});
         `;
+        console.log(sql);
+        
         let result = await this.projectRepository.query(sql)
         .then(res=>{
             console.log('res==>成功');
         })
         .catch(err => {
-            console.log('err=>错误',);
+            console.log('err=>错误', err);
         })
         console.log(result);
         

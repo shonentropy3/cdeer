@@ -97,39 +97,38 @@ function Publish() {
        
         let data = {
           pro_content: account[3].value,
-          recruiting_role: `{${tuan}}`,
-          pro_type: `{${pjc}}`,
+          recruiting_role: `'{${tuan}}'`,
+          pro_type: `'{${pjc}}'`,
           title: account[0].value,
-          period: account[2].value,
+          period: Number(account[2].value),
           budget: account[1].value,
         }
+        let hash = ''
+        if (form_Data) {
+          await getHash(form_Data)
+            .then((res) => {
+              hash = res
+            })
+            .catch(err => {
+              console.log(err);
+              return err
+            })
+        }
+        data.hash = hash
         data = JSON.stringify(data)
         let para = {"proLabel":data}
 
+        await Demand(para,account)
+        // 2、创建项目
+          console.log(para,account);
+          createDemand(para,account)
+            .then(res => {
+              console.log(res);
+            })
+            .catch(err => {
+              console.log(err);
+            })
 
-        if (form_Data) {
-          console.log(form_Data);
-          data.attachment = form_Data
-          console.log(data);
-        }
-//         // 1、hash存入数据库
-//         getHash(formData)
-//         .then((response) => {
-
-//           console.log(response);
-          // 2、创建项目
-            console.log(para,account);
-              createDemand(para,account)
-                .then(res => {
-                  console.log(res);
-                })
-                .catch(err => {
-                  console.log(err);
-                })
-//         })
-//         .catch((error) => {
-//           console.log(error);
-//         });
         
 
         // createDemand(para,account)
@@ -142,7 +141,7 @@ function Publish() {
         //       console.log('未安装钱包插件！');
         //   }
 
-        Demand(para,account)
+
     }
 
 
