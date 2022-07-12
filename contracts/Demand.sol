@@ -19,7 +19,8 @@ contract Demand is ERC721, IDemand, Ownable {
     event CreateDemand(uint indexed demandId, address indexed demandAddr, string title, uint budget, 
         string desc, string attachment, uint period);
     event ModifyDemand(uint indexed demandId, address demandAddr, string title, uint budget, 
-        string desc, string attachment, uint period); 
+        string desc, string attachment, uint period);
+    event DeleteDemand(uint indexed demandId, address demandAddr) 
     event ApplyFor(uint indexed demandId, address indexed applyAddr,uint previewPrice);
     event CancelApply(uint indexed demandId, address demandAddr);
     event ModifyApplySwitch(uint indexed demandId, address demandAddr, bool);
@@ -88,6 +89,16 @@ contract Demand is ERC721, IDemand, Ownable {
 
         emit ModifyDemand(_demandId, msg.sender, _demandInfo.title, _demandInfo.budget, 
             _demandInfo.desc, _demandInfo.attachment, _demandInfo.period);
+    }
+
+    function deleteDemand(uint _demandId) external {
+        require(msg.sender == ownerOf(_demandId), "No root.");
+        require(!order.hasDemandOrders(_demandId), "Existing orders.");
+
+        delete demands[_demandId];
+        _burn(_demandId);
+
+        emit DeleteDemand(uint _demandId, address msg.sender)
     }
 
     function applyFor(uint _demandId, uint _previewPrice) external {

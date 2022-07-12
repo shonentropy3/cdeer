@@ -10,14 +10,12 @@ export class MarketController {
     @Post('upload') //   上传文件
     @UseInterceptors(FilesInterceptor('files'))
     async uploadFile(@UploadedFiles() files: any){
-        
         return await new Promise ((resolve,reject)=>{
             resolve(this.marketService.getFile(files))
          })
          .then((res)=>{
             return this.marketService.pushFile(files,res)
          })
-         
     }
 
     @Post('publish')  //  创建项目
@@ -28,6 +26,11 @@ export class MarketController {
     @Post('modifyDemand')  //  修改需求
     async modifyDemand(@Body() body: any){
         return await this.marketService.modifyDemand(body)
+    }
+
+    @Post('deleteDemand')  //  删除需求
+    async deleteDemand(@Body() body: any){
+        return await this.marketService.deleteDemand(body)
     }
 
     @Get('getMarketData')  //  获取集市项目

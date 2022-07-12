@@ -33,6 +33,17 @@ export const modifyDemand = (data) => {
 );
 }
 
+export const deleteDemand = (data) => {
+
+    return serviceAxios({
+        url: "/market/deleteDemand",
+        // url: "/upchain/createDemand",
+        method: "post",
+        data,
+    }
+);
+}
+
 export const getHash = (data) => {
     
     return serviceAxios({

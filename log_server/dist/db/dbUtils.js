@@ -15,6 +15,7 @@ const getLastBlock = () => {
     return sql;
 };
 exports.getLastBlock = getLastBlock;
+
 const getModifyDemandLastBlock = () => {
     let obj = {
         table: 'block_log',
@@ -25,6 +26,7 @@ const getModifyDemandLastBlock = () => {
     return sql;
 };
 exports.getModifyDemandLastBlock = getModifyDemandLastBlock;
+
 const updateProject = params => {
     let sql = `UPDATE project 
     SET user_address = temp.user_address, pro_id = temp.demandId, title = temp.title, budget = temp.budget, 
@@ -34,6 +36,7 @@ const updateProject = params => {
     return sql;
 };
 exports.updateProject = updateProject;
+
 const updateBlock = params => {
     let sql = `UPDATE block_log SET block = ${params.last} WHERE id = ${params.id};`;
     return sql;

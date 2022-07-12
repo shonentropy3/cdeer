@@ -5,6 +5,7 @@ export declare class MarketController {
     uploadFile(files: any): Promise<any>;
     createProject(body: any): Promise<import("../../entity/Project").Project[]>;
     modifyDemand(body: any): Promise<import("../../entity/Project").Project[]>;
+    deleteDemand(body: any): Promise<import("../../entity/Project").Project[]>;
     getMarketData(): Promise<import("../../entity/Project").Project[]>;
     projectDetail(body: any): Promise<import("../../entity/Project").Project[]>;
     getMyPjcData(body: any): Promise<any>;
