@@ -2,8 +2,9 @@ import { useEffect } from "react"
 import Link from 'next/link'
 import Router from "next/router";
 import { message, Popconfirm } from 'antd';
-import DeletDemand from '../controller/deletDemand';
+// import DeletDemand from '../controller/deletDemand';
 import ModifyDemand from '../controller/modifyDemand';
+import { modifyDemand } from '../pages/http/api';
 
 function ProjectList(obj) {
 
@@ -12,7 +13,7 @@ function ProjectList(obj) {
         Router.push({pathname:'/views/Ord_detail',search: id})
     }
         // 修改需求
-    const modifyD = (e) => {
+    const modifyDemandFun = async(e) => {
         await ModifyDemand(demandId,account)
         console.log(e);
         message.success('Click on Yes');
@@ -26,14 +27,12 @@ function ProjectList(obj) {
           })
     };
 
-    const confirm = (e) => {
-        await DeletDemand(para,account)
-
-        // 删除项目
-        console.log(e);
-        message.success('Click on Yes');
-
-    };
+    // const confirm = (e) => {
+    //     await DeletDemand(para,account)
+    //     // 删除项目
+    //     console.log(e);
+    //     message.success('Click on Yes');
+    // };
       
     const popLayer = () => {
         return <div className="popLayer">
@@ -41,10 +40,6 @@ function ProjectList(obj) {
                 
             </div>
         </div>
-    }
-
-    const modify = () => {
-
     }
     
     return(
@@ -91,16 +86,23 @@ function ProjectList(obj) {
 
                 
                 <button onClick={()=>{goDetail()}}>查看项目状态</button>
-
-                <button onClick={()=>{goDetail()}}>修改项目</button>
                 <Popconfirm
+                    title="Are you sure to modify this task?"
+                    onConfirm={modifyDemandFun}
+                    okText="Yes"
+                    cancelText="No"
+                >
+                    <button>修改需求</button>
+                </Popconfirm>
+
+                {/* <Popconfirm
                     title="Are you sure to delete this task?"
                     onConfirm={confirm}
                     okText="Yes"
                     cancelText="No"
                 >
                     <button>删除项目</button>
-                </Popconfirm>
+                </Popconfirm> */}
                 
             </div>
         </div>

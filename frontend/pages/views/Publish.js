@@ -131,7 +131,7 @@ function Publish() {
 
         
 
-        // createDemand(para,account)
+        createDemand(para,account)
 
         // console.log("ethereum===>", ethereum);
         //   if (typeof window.ethereum !== 'undefined') {

@@ -5,7 +5,6 @@ import { ethers } from 'ethers'
 
 export default async function ModifyDemand(demandId,account) {
     try {
-          
         if (window.ethereum !== 'undefined') {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
