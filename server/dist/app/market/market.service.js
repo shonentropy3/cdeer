@@ -93,7 +93,7 @@ let MarketService = class MarketService {
         let jp = JSON.parse(body.proLabel);
         console.log(jp);
         let sql = `					 
-            insert into project(user_address,title,budget,period,"content",role,pro_type) 
+            insert into project(user_address,title,budget,period,"content",role,pro_type, status = 2) 
             VALUES (${jp.u_address},${jp.title},${jp.budget},${jp.period},${jp.pro_content},${jp.recruiting_role},${jp.pro_type});
         `;
         console.log(sql);
@@ -111,10 +111,27 @@ let MarketService = class MarketService {
         let jp = JSON.parse(body.proLabel);
         console.log(jp);
         let sql = `					 
-                insert into project(title,budget,period,"content",role,pro_type) 
+                insert into project(title,budget,period,"content",role,pro_type, status = 3) 
                 VALUES (${jp.title},${jp.budget},${jp.period},${jp.pro_content},${jp.recruiting_role},${jp.pro_type});
             `;
         console.log(sql);
+        let result = await this.projectRepository.query(sql)
+            .then(res => {
+            console.log('res==>成功');
+        })
+            .catch(err => {
+            console.log('err=>错误', err);
+        });
+        console.log(result);
+        return await body;
+    }
+    async deleteDemand(body) {
+        let jp = JSON.parse(body.proLabel);
+        console.log(jp);
+        let demandId;
+        let sql = `
+                UPDATE project SET status = 0  WHERE id = ${demandId};
+            `;
         let result = await this.projectRepository.query(sql)
             .then(res => {
             console.log('res==>成功');
@@ -160,6 +177,12 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], MarketService.prototype, "modifyDemand", null);
+__decorate([
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], MarketService.prototype, "deleteDemand", null);
 MarketService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(Project_1.Project)),

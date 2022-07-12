@@ -2,9 +2,9 @@ import { useEffect } from "react"
 import Link from 'next/link'
 import Router from "next/router";
 import { message, Popconfirm } from 'antd';
-// import DeletDemand from '../controller/deletDemand';
 import ModifyDemand from '../controller/modifyDemand';
 import { modifyDemand } from '../pages/http/api';
+import { deleteDemand } from '../pages/http/api';
 
 function ProjectList(obj) {
 
@@ -27,12 +27,19 @@ function ProjectList(obj) {
           })
     };
 
-    // const confirm = (e) => {
-    //     await DeletDemand(para,account)
-    //     // 删除项目
-    //     console.log(e);
-    //     message.success('Click on Yes');
-    // };
+    const deletDemand = async(e) => {
+        // 删除项目
+        console.log(e);
+        message.success('Click on Yes');
+        //TODO: 校验是否是本人
+        deleteDemand(demandId,account)
+        .then(res => {
+          console.log(res);
+        })
+        .catch(err => {
+          console.log(err);
+        })
+    };
       
     const popLayer = () => {
         return <div className="popLayer">
@@ -95,14 +102,14 @@ function ProjectList(obj) {
                     <button>修改需求</button>
                 </Popconfirm>
 
-                {/* <Popconfirm
+                <Popconfirm
                     title="Are you sure to delete this task?"
-                    onConfirm={confirm}
+                    onConfirm={deletDemand}
                     okText="Yes"
                     cancelText="No"
                 >
                     <button>删除项目</button>
-                </Popconfirm> */}
+                </Popconfirm>
                 
             </div>
         </div>

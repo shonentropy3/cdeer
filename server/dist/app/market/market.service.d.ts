@@ -11,5 +11,6 @@ export declare class MarketService {
     getProjectDetail(body: any): Promise<Project[]>;
     createDemand(body: any): Promise<Project[]>;
     modifyDemand(body: any): Promise<Project[]>;
+    deleteDemand(body: any): Promise<Project[]>;
     handleError(error: AxiosError): Observable<never>;
 }
