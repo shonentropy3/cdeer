@@ -72,7 +72,6 @@ let TaskService = TaskService_1 = class TaskService {
                 }
                 let params = value.substring(0, (value.lastIndexOf(',')));
                 let sql = (0, dbUtils_2.updateProject)(params);
-                console.log(sql);
                 try {
                     let result = await this.projectRepository.query(sql);
                     console.log(result[1]);
@@ -90,13 +89,13 @@ let TaskService = TaskService_1 = class TaskService {
         };
     }
     handleInterval() {
+        this._insertLog();
     }
     async handleTimeout() {
-        this._insertLog();
     }
 };
 __decorate([
-    (0, schedule_1.Interval)(1000),
+    (0, schedule_1.Interval)(5000),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)

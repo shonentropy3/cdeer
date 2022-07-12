@@ -32,7 +32,6 @@ export class TaskService {
             let latest = await rpcProvider.getBlockNumber();
             let last = await this.blockLogRepository.query(getLastBlock());
             let logBlock = last[0].block;
-            
             if (logBlock >= latest) return; //区块已监听过了
             logBlock = Math.max(logBlock, (latest - 100)); //最多往前100区块
             let fromBlock = logBlock + 1;
@@ -47,8 +46,6 @@ export class TaskService {
             }
             const logs = await rpcProvider.getLogs(filter);
             const CreateDemand = new ethers.utils.Interface(["event CreateDemand(uint256 indexed demandId, address indexed demander, string title, uint256 budget, string desc, string attachment, uint256 )"]);
-        
-            
             if (logs.length > 0) {
                 
                 let txs = logs.map((ele: any) => {
@@ -71,12 +68,7 @@ export class TaskService {
                     `
                 }
                 let params = value.substring(0,(value.lastIndexOf(',')))
-
-        
                 let sql = updateProject(params)
-        
-                console.log(sql);
-                
                 try {
                   let result = await this.projectRepository.query(sql)
                   console.log(result[1]);
@@ -93,13 +85,13 @@ export class TaskService {
     }
 
 
-    @Interval(1000)  //每隔3秒执行一次
+    @Interval(5000)  //每隔3秒执行一次
     handleInterval() {
-        
+        this._insertLog()
     }
 
     @Timeout(1000)
     async handleTimeout() {
-        this._insertLog()
+
     }
 }

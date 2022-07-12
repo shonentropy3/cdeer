@@ -99,19 +99,33 @@ function Publish() {
           pro_content: account[3].value,
           recruiting_role: `{${tuan}}`,
           pro_type: `{${pjc}}`,
-          desc: account[0].value
+          title: account[0].value,
+          period: account[2].value,
+          budget: account[1].value,
         }
         data = JSON.stringify(data)
         let para = {"proLabel":data}
 
+
+        if (form_Data) {
+          console.log(form_Data);
+          data.attachment = form_Data
+          console.log(data);
+        }
 //         // 1、hash存入数据库
 //         getHash(formData)
 //         .then((response) => {
 
 //           console.log(response);
-//           // 2、创建项目
-//           createProject(para,account)
-
+          // 2、创建项目
+            console.log(para,account);
+              createDemand(para,account)
+                .then(res => {
+                  console.log(res);
+                })
+                .catch(err => {
+                  console.log(err);
+                })
 //         })
 //         .catch((error) => {
 //           console.log(error);

@@ -22,9 +22,9 @@
           "type": "uint256"
         },
         {
-          "indexed": false,
+          "indexed": true,
           "internalType": "address",
-          "name": "demander",
+          "name": "demandAddr",
           "type": "address"
         }
       ],
@@ -35,7 +35,7 @@
       "anonymous": false,
       "inputs": [
         {
-          "indexed": false,
+          "indexed": true,
           "internalType": "uint256",
           "name": "orderId",
           "type": "uint256"
@@ -43,7 +43,7 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "demander",
+          "name": "demandAddr",
           "type": "address"
         },
         {
@@ -60,15 +60,15 @@
       "anonymous": false,
       "inputs": [
         {
-          "indexed": false,
+          "indexed": true,
           "internalType": "uint256",
           "name": "demandId",
           "type": "uint256"
         },
         {
-          "indexed": false,
+          "indexed": true,
           "internalType": "address",
-          "name": "demander",
+          "name": "demandAddr",
           "type": "address"
         },
         {
@@ -110,7 +110,7 @@
       "anonymous": false,
       "inputs": [
         {
-          "indexed": false,
+          "indexed": true,
           "internalType": "uint256",
           "name": "orderId",
           "type": "uint256"
@@ -147,7 +147,7 @@
       "anonymous": false,
       "inputs": [
         {
-          "indexed": false,
+          "indexed": true,
           "internalType": "uint256",
           "name": "orderId",
           "type": "uint256"
@@ -155,7 +155,7 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "originator",
+          "name": "originatorAddr",
           "type": "address"
         }
       ],
@@ -166,7 +166,7 @@
       "anonymous": false,
       "inputs": [
         {
-          "indexed": false,
+          "indexed": true,
           "internalType": "uint256",
           "name": "orderId",
           "type": "uint256"
@@ -174,7 +174,7 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "originator",
+          "name": "originatorAddr",
           "type": "address"
         },
         {
@@ -191,7 +191,7 @@
       "anonymous": false,
       "inputs": [
         {
-          "indexed": false,
+          "indexed": true,
           "internalType": "uint256",
           "name": "orderId",
           "type": "uint256"
@@ -269,7 +269,7 @@
             },
             {
               "internalType": "uint8",
-              "name": "confirmed",
+              "name": "checked",
               "type": "uint8"
             },
             {
@@ -296,7 +296,7 @@
           "type": "uint256"
         }
       ],
-      "name": "isDemandOrders",
+      "name": "hasDemandOrders",
       "outputs": [
         {
           "internalType": "bool",

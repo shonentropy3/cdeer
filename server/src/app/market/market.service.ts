@@ -110,10 +110,21 @@ export class MarketService {
 
     // 创建需求
     async createDemand(@Body() body: any): Promise<Project[]>  {
-        
-
         let jp = JSON.parse(body.proLabel);
-
+        console.log(jp);
+        let sql = `					 
+            insert into project(title,budget,period,"content",role,pro_type) 
+            VALUES (${jp.title},${jp.budget},${jp.period},${jp.pro_content},${jp.recruiting_role},${jp.pro_type});
+        `;
+        let result = await this.projectRepository.query(sql)
+        .then(res=>{
+            console.log('res==>成功');
+        })
+        .catch(err => {
+            console.log('err=>错误',);
+        })
+        console.log(result);
+        
         return await body
 
     }

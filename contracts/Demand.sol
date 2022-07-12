@@ -82,7 +82,8 @@ contract Demand is ERC721, IDemand, Ownable {
             budget: _demandInfo.budget,
             desc: _demandInfo.desc,
             attachment: _demandInfo.attachment,
-            period: _demandInfo.period
+            period: _demandInfo.period,
+            applySwitch: false
         });
 
         emit ModifyDemand(_demandId, msg.sender, _demandInfo.title, _demandInfo.budget, 

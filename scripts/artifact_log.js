@@ -21,11 +21,14 @@ async function writeAbiAddr(artifacts, addr, name, network){
   //写入react前端
   const deploymentPathDeploy = path.resolve(__dirname, `../frontend/contracts/deployments/${name}.json`);
   await writeFile(deploymentPathDeploy, JSON.stringify(deployments, null, 2));
-  //写入node后端
-  const deploymentPathDeploy_node = path.resolve(__dirname, `../backend/deployments/${name}.json`);
+  //写入server后端
+  const deploymentPathDeploy_node = path.resolve(__dirname, `../server/deployments/${name}.json`);
   await writeFile(deploymentPathDeploy_node, JSON.stringify(deployments, null, 2));
   await writeLog(deployments, name, network);
-
+  //写入log_server后端
+  const deploymentPathDeploy_log_server = path.resolve(__dirname, `../log_server/deployments/${name}.json`);
+  await writeFile(deploymentPathDeploy_log_server, JSON.stringify(deployments, null, 2));
+  await writeLog(deployments, name, network);
 
   const abis = {};
   abis["contractName"] = artifacts.contractName;
@@ -33,9 +36,12 @@ async function writeAbiAddr(artifacts, addr, name, network){
   // 写入hardhat项目
   const deploymentPath = path.resolve(__dirname, `../deployments/abi/${abis["contractName"]}.json`);
   await writeFile(deploymentPath, JSON.stringify(abis, null, 2));
-  // 写入node后端
-  const deploymentPath_node = path.resolve(__dirname, `../backend/deployments/abi/${abis["contractName"]}.json`);
+  // 写入server后端
+  const deploymentPath_node = path.resolve(__dirname, `../server/deployments/abi/${abis["contractName"]}.json`);
   await writeFile(deploymentPath_node, JSON.stringify(abis, null, 2));
+  // 写入log_server后端
+  const deploymentPath_log_server = path.resolve(__dirname, `../log_server/deployments/abi/${abis["contractName"]}.json`);
+  await writeFile(deploymentPath_log_server, JSON.stringify(abis, null, 2));
   // 写入react前端
   const deploymentPathReact = path.resolve(__dirname, `../frontend/contracts/deployments/abi/${abis["contractName"]}.json`);
   await writeFile(deploymentPathReact, JSON.stringify(abis, null, 2));

@@ -12,7 +12,7 @@
         {
           "indexed": true,
           "internalType": "uint256",
-          "name": "_proId",
+          "name": "demandId",
           "type": "uint256"
         },
         {
@@ -20,6 +20,12 @@
           "internalType": "address",
           "name": "applyAddr",
           "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "previewPrice",
+          "type": "uint256"
         }
       ],
       "name": "ApplyFor",
@@ -79,38 +85,19 @@
       "anonymous": false,
       "inputs": [
         {
-          "indexed": false,
+          "indexed": true,
           "internalType": "uint256",
-          "name": "proId",
+          "name": "demandId",
           "type": "uint256"
         },
         {
-          "indexed": true,
+          "indexed": false,
           "internalType": "address",
-          "name": "demander",
+          "name": "demandAddr",
           "type": "address"
         }
       ],
       "name": "CancelApply",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "proId",
-          "type": "uint256"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "demander",
-          "type": "address"
-        }
-      ],
-      "name": "CloseApply",
       "type": "event"
     },
     {
@@ -125,7 +112,7 @@
         {
           "indexed": true,
           "internalType": "address",
-          "name": "demander",
+          "name": "demandAddr",
           "type": "address"
         },
         {
@@ -172,9 +159,34 @@
           "type": "uint256"
         },
         {
-          "indexed": true,
+          "indexed": false,
           "internalType": "address",
-          "name": "demander",
+          "name": "demandAddr",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "name": "ModifyApplySwitch",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "demandId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "demandAddr",
           "type": "address"
         },
         {
@@ -209,25 +221,6 @@
         }
       ],
       "name": "ModifyDemand",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "proId",
-          "type": "uint256"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "demander",
-          "type": "address"
-        }
-      ],
-      "name": "OpenApply",
       "type": "event"
     },
     {
@@ -278,12 +271,12 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_proId",
+          "name": "_demandId",
           "type": "uint256"
         },
         {
           "internalType": "uint256",
-          "name": "_prePrice",
+          "name": "_previewPrice",
           "type": "uint256"
         }
       ],
@@ -333,24 +326,11 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_proId",
+          "name": "_demandId",
           "type": "uint256"
         }
       ],
       "name": "cancelApply",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_proId",
-          "type": "uint256"
-        }
-      ],
-      "name": "closeApply",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -383,6 +363,11 @@
               "internalType": "uint256",
               "name": "period",
               "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "applySwitch",
+              "type": "bool"
             }
           ],
           "internalType": "struct Demand.DemandInfo",
@@ -446,6 +431,24 @@
           "type": "uint256"
         },
         {
+          "internalType": "bool",
+          "name": "_switch",
+          "type": "bool"
+        }
+      ],
+      "name": "modifyApplySwitch",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_demandId",
+          "type": "uint256"
+        },
+        {
           "components": [
             {
               "internalType": "string",
@@ -471,6 +474,11 @@
               "internalType": "uint256",
               "name": "period",
               "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "applySwitch",
+              "type": "bool"
             }
           ],
           "internalType": "struct Demand.DemandInfo",
@@ -507,19 +515,6 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_proId",
-          "type": "uint256"
-        }
-      ],
-      "name": "openApply",
-      "outputs": [],
-      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -679,49 +674,6 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "index",
-          "type": "uint256"
-        }
-      ],
-      "name": "tokenByIndex",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "owner",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "index",
-          "type": "uint256"
-        }
-      ],
-      "name": "tokenOfOwnerByIndex",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
           "name": "tokenId",
           "type": "uint256"
         }
@@ -732,19 +684,6 @@
           "internalType": "string",
           "name": "",
           "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "totalSupply",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
         }
       ],
       "stateMutability": "view",
