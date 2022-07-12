@@ -1,9 +1,10 @@
 import { HomeOutlined, UserOutlined } from '@ant-design/icons';
 import { Breadcrumb } from 'antd';
-import Link from "next/link";
+import { useRouter } from 'next/router'
 import { useEffect } from 'react';
 
 export default function NavigationBar(params) {
+    const router = useRouter()
     useEffect(()=>{
         console.log(params);
     },[])
@@ -11,14 +12,14 @@ export default function NavigationBar(params) {
         <div className="NavigationBar">
             <Breadcrumb>
                 <Breadcrumb.Item >
-                <HomeOutlined />
+                    <HomeOutlined />
                 </Breadcrumb.Item>
-                <Link href="/">
-                <Breadcrumb.Item href="">
-                {/* <UserOutlined /> */}
-                <span>找项目</span>
+
+                <Breadcrumb.Item onClick={() => router.back()}>
+                    {/* <UserOutlined /> */}
+                    <span>找项目</span>
                 </Breadcrumb.Item>
-                </Link>
+                
                 <Breadcrumb.Item>
                     项目详情
                 </Breadcrumb.Item>

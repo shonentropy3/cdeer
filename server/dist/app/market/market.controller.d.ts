@@ -7,5 +7,6 @@ export declare class MarketController {
     modifyDemand(body: any): Promise<import("../../entity/Project").Project[]>;
     getMarketData(): Promise<import("../../entity/Project").Project[]>;
     projectDetail(body: any): Promise<import("../../entity/Project").Project[]>;
+    getMyPjcData(body: any): Promise<any>;
     createCat(body: any): string;
 }

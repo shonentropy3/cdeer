@@ -40,6 +40,10 @@ export class MarketController {
         return await this.marketService.getProjectDetail(body)
     }
 
+    @Post('getMyPjcData')  //  获取个人项目
+    async getMyPjcData(@Body() body: any){
+        return await this.marketService.getMyPjcData(body)
+    }
 
     @Post() //  测试
     createCat(@Body() body: any): string {

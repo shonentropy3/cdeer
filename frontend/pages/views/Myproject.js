@@ -3,6 +3,7 @@ import { Dropdown, Menu, Space, Typography } from 'antd';
 import { useEffect, useState } from 'react';
 import ProjectList from '../../components/ProjectList';
 import style from '../../styles/utils.module.scss'
+import { getMyPjcData } from '../http/api';
 
 export default function Myproject() {
     const _data = require("../data/data.json")
@@ -10,7 +11,7 @@ export default function Myproject() {
     const [title, setTitle] = useState('0');
     const [test, setTest] = useState('');
     const [selectItem,setSelectItem] = useState('item-1')
-
+    let [pjcList,setPjcList] = useState([])
 
     const items = [
       { label: '我发布的项目', key: 'item-1'}, // 菜单项务必填写 key
@@ -39,22 +40,21 @@ export default function Myproject() {
       );
 
       // 账号
-      const [currentAccount, setCurrentAccount] = useState(null);
 
       const connectWalletHandler = async () => {
       
         const { ethereum } = window;
-    
         if (!ethereum) {
           alert("Please install Metamask!");
         }
-    
         try {
           const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
           console.log("Found an account! Address: ", accounts[0]);
-          setCurrentAccount(accounts[0]);
+          pjcList = await getMyPjcData({hash:accounts[0]})
+          setPjcList([...pjcList])
+          console.log(pjcList);
         } catch (err) {
-          console.log(err)
+          alert('请登录')
         }
       }
 
@@ -79,7 +79,7 @@ export default function Myproject() {
               mode="horizontal"
               selectedKeys={selectItem}
               onSelect={(item)=>toggleNav(item)}
-          />
+            />
                 <div className={style.df}>
                     <Dropdown overlay={menu} onVisibleChange={handleVisibleChange} visible={visible} placement="bottomRight">
                         <Typography.Link>
@@ -99,8 +99,9 @@ export default function Myproject() {
               <div className={`content`}>
                 <h1>{test}</h1>
                 <div className="list">
-                    <ProjectList />
-                    <ProjectList />
+                    {
+                      pjcList.map((ele,index) => <ProjectList data={ele} key={index} />)
+                    }
                 </div>
               </div>
             :

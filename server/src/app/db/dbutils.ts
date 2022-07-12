@@ -9,3 +9,8 @@ export const getProjectDB = params => {
     let sql = `SELECT * FROM public.project WHERE id = '${params}'`
     return sql
 }
+
+export const getMyPjcDB = params => {
+    let sql = `SELECT * FROM public.project WHERE user_address = '${params}'`
+    return sql
+}

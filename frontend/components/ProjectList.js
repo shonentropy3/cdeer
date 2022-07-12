@@ -1,17 +1,20 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import Link from 'next/link'
 import Router from "next/router";
 import { message, Popconfirm } from 'antd';
 // import DeletDemand from '../controller/deletDemand';
 import ModifyDemand from '../controller/modifyDemand';
 import { modifyDemand } from '../pages/http/api';
+import Modify from "./Modify";
 
-function ProjectList(obj) {
-
-
+function ProjectList(props) {
+    const {data} = props
     const goDetail = id => {
         Router.push({pathname:'/views/Ord_detail',search: id})
     }
+    let [maskStatus,setMaskStatus] = useState(false)
+
+
         // 修改需求
     const modifyDemandFun = async(e) => {
         await ModifyDemand(demandId,account)
@@ -27,36 +30,41 @@ function ProjectList(obj) {
           })
     };
 
-    // const confirm = (e) => {
-    //     await DeletDemand(para,account)
-    //     // 删除项目
-    //     console.log(e);
-    //     message.success('Click on Yes');
-    // };
-      
-    const popLayer = () => {
-        return <div className="popLayer">
-            <div className="panel">
-                
-            </div>
-        </div>
-    }
+    const confirm = (e) => {
+        // await DeletDemand(para,account)
+        // 删除项目
+        console.log(e);
+        message.success('Click on Yes');
+    };
     
+    const toggleMask = () => {
+        maskStatus = !maskStatus
+        setMaskStatus(maskStatus)
+    }
+
+
     return(
+        <>
+        {
+            maskStatus ? 
+            <div className="Mask">
+                <Modify data={data.user_address} setParent={setMaskStatus} />
+            </div>
+            :
+            ''
+        }
         <div className="ProjectList">
             <div className="top">
                 <p className="title">
-                    NO.1000 图书管理系统
-                    {/* { this.obj.oid } */}
-                    {/* { this.obj.title } */}
+                    NO.{data.id} {data.title}
                 </p>
                 <div className="state">
                     <div>
-                        报名数 5
-                        {/* {this.obj.apllyCount} */}
+                        {/* 报名数  */}
+                        {/* ====== */}
                     </div>
                     <div>
-                        招募中
+                        {/* 招募中 */}
                         {/* { this.obj.status } */}
                     </div>
                 </div>
@@ -67,13 +75,10 @@ function ProjectList(obj) {
                 </div>
                 <div className="rules">
                     <div className="rule">
-                        <p><span>APP开发</span><span>开发团队</span></p>
-                        {/* {this.obj.pjcType} */}
+                        <p><span>{data.pro_type}</span><span>{data.role}</span></p>
                     </div>
                     <div className="rule">
-                        <span>金额 ¥40,000</span><div className="line"></div><span>周期 30天</span><div className="line"></div>
-                        {/* { this.obj.price } */}
-                        {/* { this.obj.p } */}
+                        <span>金额 ¥{data.budget}</span><div className="line"></div><span>周期 {data.period}天</span><div className="line"></div>
                     </div>
 
                 </div>
@@ -86,26 +91,20 @@ function ProjectList(obj) {
 
                 
                 <button onClick={()=>{goDetail()}}>查看项目状态</button>
-                <Popconfirm
-                    title="Are you sure to modify this task?"
-                    onConfirm={modifyDemandFun}
-                    okText="Yes"
-                    cancelText="No"
-                >
-                    <button>修改需求</button>
-                </Popconfirm>
+                <button onClick={() => {toggleMask()}}>修改需求</button>
 
-                {/* <Popconfirm
+                <Popconfirm
                     title="Are you sure to delete this task?"
                     onConfirm={confirm}
                     okText="Yes"
                     cancelText="No"
                 >
                     <button>删除项目</button>
-                </Popconfirm> */}
+                </Popconfirm>
                 
             </div>
         </div>
+        </>
     )
 }
 

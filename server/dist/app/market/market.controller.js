@@ -40,6 +40,9 @@ let MarketController = class MarketController {
     async projectDetail(body) {
         return await this.marketService.getProjectDetail(body);
     }
+    async getMyPjcData(body) {
+        return await this.marketService.getMyPjcData(body);
+    }
     createCat(body) {
         return `接受到的createCatDto的数据name:${body.name}&age:${body.age}`;
     }
@@ -79,6 +82,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], MarketController.prototype, "projectDetail", null);
+__decorate([
+    (0, common_1.Post)('getMyPjcData'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], MarketController.prototype, "getMyPjcData", null);
 __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),

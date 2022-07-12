@@ -28,6 +28,7 @@ const service = new upyun.Service('ipfs0', 'upchain', 'upchain123');
 const client = new upyun.Client(service);
 const dbutils_1 = require("../db/dbutils");
 const dbutils_2 = require("../db/dbutils");
+const dbutils_3 = require("../db/dbutils");
 let MarketService = class MarketService {
     constructor(projectRepository) {
         this.projectRepository = projectRepository;
@@ -125,6 +126,9 @@ let MarketService = class MarketService {
         console.log(result);
         return await body;
     }
+    async getMyPjcData(body) {
+        return await this.projectRepository.query((0, dbutils_3.getMyPjcDB)(body.hash));
+    }
     handleError(error) {
         if (error.response) {
             if (error.response.status === common_1.HttpStatus.NOT_FOUND) {
@@ -160,6 +164,12 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], MarketService.prototype, "modifyDemand", null);
+__decorate([
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], MarketService.prototype, "getMyPjcData", null);
 MarketService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(Project_1.Project)),

@@ -18,6 +18,7 @@ const client = new upyun.Client(service);
 // dbUtils
 import { getMarketDB } from '../db/dbutils';
 import { getProjectDB } from '../db/dbutils';
+import { getMyPjcDB } from '../db/dbutils';
 
 
 @Injectable()
@@ -129,7 +130,7 @@ export class MarketService {
     }
 
         // 修改需求
-        async modifyDemand(@Body() body: any): Promise<Project[]>  {
+    async modifyDemand(@Body() body: any): Promise<Project[]>  {
             let jp = JSON.parse(body.proLabel);
             console.log(jp);
             let sql = `					 
@@ -150,6 +151,11 @@ export class MarketService {
             return await body
         }
 
+    //  查看个人项目
+    async getMyPjcData(@Body() body: any) {
+        // console.log(body);
+        return await this.projectRepository.query(getMyPjcDB(body.hash));
+    } 
 // AxiosErrorTip
     handleError(error: AxiosError) {
         if (error.response) {

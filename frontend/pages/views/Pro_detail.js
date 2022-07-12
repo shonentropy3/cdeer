@@ -28,7 +28,6 @@ export default function ProjectDetail() {
         
     }
 
-
     return(
         <div className="pjc_detail">
             <NavigationBar />

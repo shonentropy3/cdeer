@@ -52,3 +52,14 @@ export const getProjectDetail = (data) => {
     }
 );
 }
+
+
+export const getMyPjcData = (data) => {
+    return serviceAxios({
+        // url: "/upchain/getProject",
+        url: "/market/getMyPjcData",
+        method: "post",
+        data,
+    }
+);
+}
