@@ -50,7 +50,6 @@ export class MarketService {
             // let time = `${Date.now()}-${file.name}`
             let path = '../../../public'+'/'+ time
             // let path = 'public'+'/'+ time
-            
             let writeStream = createWriteStream(join(__dirname, path))
             writeStream.write(file.buffer , function (err) {
                 if (!err) {
@@ -79,23 +78,21 @@ export class MarketService {
     // 传入数据库
     pushFile(file: any,obj: any) {
         if (obj === false) {
-            // return '未上传图片'
             console.log('未上传图片');
             return
         }
-
         // 上传upyun
-        // client.putFile(obj.hash, file[0].buffer)
-
-        // 删除文件
+        client.putFile(obj.hash, file[0].buffer)
+        .then(res => {
+            console.log('res===>',res);
+        })
+        .catch(err => {
+            console.log('err===>',err);
+        })
         fs.unlink(obj.path, (err) => {
             if (err) throw err;
-            // console.log('文件已删除');
         });
-        console.log(obj);
-        
-        // 存入数据库
-        return  obj
+        return obj.hash
     }
 
     // 获取所有项目
@@ -105,7 +102,8 @@ export class MarketService {
 
     // 获取项目详情
     async getProjectDetail(@Body() body: any): Promise<Project[]> {
-        return await this.projectRepository.query(getProjectDB(body.id));
+        let id = Number(body.id)
+        return await this.projectRepository.query(getProjectDB(id));
     }
 
     // 创建需求
@@ -113,8 +111,8 @@ export class MarketService {
         let jp = JSON.parse(body.proLabel);
         console.log(jp);
         let sql = `					 
-            insert into project(title,budget,period,"content",role,pro_type) 
-            VALUES (${jp.title},${jp.budget},${jp.period},${jp.pro_content},${jp.recruiting_role},${jp.pro_type});
+            insert into project(user_address,title,budget,period,"content",role,pro_type) 
+            VALUES (${jp.u_address},${jp.title},${jp.budget},${jp.period},${jp.pro_content},${jp.recruiting_role},${jp.pro_type});
         `;
         console.log(sql);
         

@@ -69,25 +69,32 @@ let MarketService = class MarketService {
             console.log('未上传图片');
             return;
         }
+        client.putFile(obj.hash, file[0].buffer)
+            .then(res => {
+            console.log('res===>', res);
+        })
+            .catch(err => {
+            console.log('err===>', err);
+        });
         fs.unlink(obj.path, (err) => {
             if (err)
                 throw err;
         });
-        console.log(obj);
-        return obj;
+        return obj.hash;
     }
     async getMarketData() {
         return await this.projectRepository.query((0, dbutils_1.getMarketDB)());
     }
     async getProjectDetail(body) {
-        return await this.projectRepository.query((0, dbutils_2.getProjectDB)(body.id));
+        let id = Number(body.id);
+        return await this.projectRepository.query((0, dbutils_2.getProjectDB)(id));
     }
     async createDemand(body) {
         let jp = JSON.parse(body.proLabel);
         console.log(jp);
         let sql = `					 
-            insert into project(title,budget,period,"content",role,pro_type) 
-            VALUES (${jp.title},${jp.budget},${jp.period},${jp.pro_content},${jp.recruiting_role},${jp.pro_type});
+            insert into project(user_address,title,budget,period,"content",role,pro_type) 
+            VALUES (${jp.u_address},${jp.title},${jp.budget},${jp.period},${jp.pro_content},${jp.recruiting_role},${jp.pro_type});
         `;
         console.log(sql);
         let result = await this.projectRepository.query(sql)

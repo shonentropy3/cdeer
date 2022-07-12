@@ -33,7 +33,8 @@ function Publish() {
         if (accounts.length !== 0) {
           const account = accounts[0];
           console.log("Found an authorized account: ", account);
-          setCurrentAccount(account);
+          currentAccount = account 
+          setCurrentAccount(currentAccount);
         } else {
           console.log("No authorized account found");
         }
@@ -102,6 +103,7 @@ function Publish() {
           title: account[0].value,
           period: Number(account[2].value),
           budget: account[1].value,
+          u_address: `'${currentAccount}'`
         }
         let hash = ''
         if (form_Data) {
@@ -117,21 +119,27 @@ function Publish() {
         data.hash = hash
         data = JSON.stringify(data)
         let para = {"proLabel":data}
-
+        let tradeStatus = true
+        // 交易
         await Demand(para,account)
+        .then(res => {
+          if (res) {
+            console.log('交易失败');
+            tradeStatus = false
+          }
+        })
         // 2、创建项目
-          // console.log(para,account);
-          // createDemand(para,account)
-          //   .then(res => {
-          //     console.log(res);
-          //   })
-          //   .catch(err => {
-          //     console.log(err);
-          //   })
-
-        
-
-        createDemand(para,account)
+        if (tradeStatus) {
+          console.log('交易完成==>',para,account);
+          createDemand(para,account)
+            .then(res => {
+              console.log(res);
+            })
+            .catch(err => {
+              console.log(err);
+            })
+        }
+        // createDemand(para,account)
 
         // console.log("ethereum===>", ethereum);
         //   if (typeof window.ethereum !== 'undefined') {
