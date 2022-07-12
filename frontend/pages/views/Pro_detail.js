@@ -35,7 +35,7 @@ export default function ProjectDetail() {
             <div className='container'>
                 <div className='top'>
                     <div>
-                        <h1>{detail.name}</h1>
+                        <h1>{detail.title}</h1>
                         <p>No.{detail.id}</p>
                     </div>
                     <div>

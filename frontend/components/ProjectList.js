@@ -19,42 +19,39 @@ function ProjectList(props) {
 
 
         // 修改需求
-    const modifyDemandFun = async(e) => {
-        await ModifyDemand(demandId,account)
-        console.log(e);
-        message.success('Click on Yes');
-        // 2、修改需求
-        modifyDemand(demandId,account)
-          .then(res => {
-            console.log(res);
-          })
-          .catch(err => {
-            console.log(err);
-          })
-    };
+    // const modifyDemandFun = async(e) => {
+    //     await ModifyDemand(demandId,account)
+    //     console.log(e);
+    //     message.success('Click on Yes');
+    //     // 2、修改需求
+    //     modifyDemand(demandId,account)
+    //       .then(res => {
+    //         console.log(res);
+    //       })
+    //       .catch(err => {
+    //         console.log(err);
+    //       })
+    // };
 
 
     const deletDemand = async(e) => {
         // 删除项目
-        console.log(e);
         message.success('Click on Yes');
+        console.log(data.user_address);
+        let obj = {
+            id: data.id,
+            address: data.user_address
+        }
         //TODO: 校验是否是本人
-        deleteDemand(demandId,account)
+        deleteDemand({data: obj})
         .then(res => {
-          console.log(res);
+          window.location.reload()
         })
         .catch(err => {
           console.log(err);
         })
     };
       
-    const popLayer = () => {
-        return <div className="popLayer">
-            <div className="panel">
-                
-            </div>
-        </div>
-    }
     
     const toggleMask = () => {
         maskStatus = !maskStatus
@@ -62,12 +59,13 @@ function ProjectList(props) {
     }
 
 
+
     return(
         <>
         {
             maskStatus ? 
             <div className="Mask">
-                <Modify data={data.user_address} setParent={setMaskStatus} />
+                <Modify data={data.user_address} setParent={setMaskStatus} detail={data} />
             </div>
             :
             ''

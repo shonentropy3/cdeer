@@ -97,12 +97,12 @@ function Publish() {
         Set_account([...account])
        
         let data = {
-          pro_content: account[3].value,
+          pro_content: `'${account[3].value}'`,
           recruiting_role: `'{${tuan}}'`,
           pro_type: `'{${pjc}}'`,
-          title: account[0].value,
+          title: `'${account[0].value}'`,
           period: Number(account[2].value),
-          budget: account[1].value,
+          budget: Number(account[1].value),
           u_address: `'${currentAccount}'`
         }
         let hash = ''

@@ -1,20 +1,25 @@
 import { Input, InputNumber, Checkbox, Button } from 'antd';
 import { useEffect, useState } from 'react';
+import ModifyDemand from '../controller/modifyDemand';
+import { modifyDemand } from '../pages/http/api';
+
 
 export default function Modify(params) {
     const { TextArea } = Input;
     const { data } = params
     const { setParent } = params
+    const { detail } = params
     const _data = require("../pages/data/data.json")
 
     let [role,setRole] = useState([])
     let [pjc,setPjc] = useState([])
+    let [hui,setHui] = useState(false)
     let [input,setInput] = useState([
-        {title: '项目名称', type: String, value: ''},
-        {title: '项目预算', type: Number, value: ''},
-        {title: '项目周期', type: Number, value: ''}
+        {title: '项目名称', type: String, value: detail.title},
+        {title: '项目预算', type: Number, value: Number(detail.budget)},
+        {title: '项目周期', type: Number, value: detail.period}
     ])
-    let [text,setText] = useState('')
+    let [text,setText] = useState(detail.content)
     const onChange = (t,e,i) => {
         if (i === 'role') {
             if (t.target.checked) {
@@ -62,7 +67,7 @@ export default function Modify(params) {
         setText(text)
     }
 
-    const modify = () => {
+    const modify = async() => {
         let r = '';
         let p = '';
         role.forEach(e => {
@@ -82,13 +87,56 @@ export default function Modify(params) {
             recruiting_role: r,
             pro_type: p
         }
+
+
+        let tradeStatus = true
+        await ModifyDemand(obj)
+        .then(res => {
+          if (res) {
+            console.log('交易失败');
+            tradeStatus = false
+          }
+        })
+
+
+        
+        if (tradeStatus) {
+            console.log('交易完成==>');
+            modifyDemand()
+              .then(res => {
+                console.log(res);
+              })
+              .catch(err => {
+                console.log(err);
+              })
+          }
         console.log(input);
         console.log(obj);
     }
 
+    const initCheck = async() => {
+        await _data.role.forEach(ele => {
+            detail.role.forEach(e => {
+                 if (ele.value === e) {
+                    ele.status = true
+                }
+            })
+        })
+        await _data.demand.forEach(ele => {
+            detail.pro_type.forEach(e => {
+                if (ele.value === e) {
+                    ele.status = true
+                }
+            })
+        })
+    }
+
     useEffect(()=>{
-        console.log(params);
+        initCheck()
+        hui = true
+        setHui(hui)
     },[])
+
 
     return(
         <div className="Modify">
@@ -99,27 +147,27 @@ export default function Modify(params) {
                         <p>{ele.title}:</p>
                         {
                             ele.type === String ? 
-                                <Input onChange={(e) => inner(e,ele)} />
+                                <Input defaultValue={ele.value} onChange={(e) => inner(e,ele)} />
                             :
-                                <InputNumber onChange={(e) => inner(e,ele)} defaultValue={100} />
+                                <InputNumber value={ele.value} onChange={(e) => inner(e,ele)} />
                         }
                     </div>
                 )
             }
             <div className="box">
-                <p>项目描述:</p><TextArea rows={4} onChange={(e) => textArea(e)} />
+                <p>项目描述:</p><TextArea defaultValue={text} rows={4} onChange={(e) => textArea(e)} />
             </div>
             <div className="checkbox">
                 <p>选择角色:</p>
                 {
-                    _data.role.map((e,i) => <Checkbox key={i} onChange={(event)=>onChange(event,e,'role')}>{e.name}</Checkbox>)
+                    _data.role.map((e,i) => <Checkbox key={i} checked={e.status ?  true:''} onChange={(event)=>onChange(event,e,'role')}>{e.name}</Checkbox>)
                 }
                 
             </div>
             <div className="checkbox">
                 <p>选择项目类型:</p>
                 {
-                    _data.demand.map((e,i) => <Checkbox key={i} onChange={(event)=>onChange(event,e,'pjc')}>{e.name}</Checkbox>)
+                    _data.demand.map((e,i) => <Checkbox key={i} checked={e.status ?  true:''} onChange={(event)=>onChange(event,e,'pjc')}>{e.name}</Checkbox>)
                 }
             </div>
             <div className="btn">

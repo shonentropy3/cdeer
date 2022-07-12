@@ -4,6 +4,7 @@ import { ethers } from 'ethers'
 
 
 export default async function Demand(para,account) {
+  console.log('window==>',window);
     try {
           
         if (window.ethereum !== 'undefined') {

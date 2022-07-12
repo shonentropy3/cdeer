@@ -11,6 +11,6 @@ export const getProjectDB = params => {
 }
 
 export const getMyPjcDB = params => {
-    let sql = `SELECT * FROM public.project WHERE user_address = '${params}'`
+    let sql = `SELECT * FROM public.project WHERE user_address = '${params}' and status != 0 `
     return sql
 }

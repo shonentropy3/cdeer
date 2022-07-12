@@ -94,8 +94,8 @@ let MarketService = class MarketService {
         let jp = JSON.parse(body.proLabel);
         console.log(jp);
         let sql = `					 
-            insert into project(user_address,title,budget,period,"content",role,pro_type, status = 2) 
-            VALUES (${jp.u_address},${jp.title},${jp.budget},${jp.period},${jp.pro_content},${jp.recruiting_role},${jp.pro_type});
+            insert into project(user_address,title,budget,period,"content",role,pro_type, status) 
+            VALUES (${jp.u_address},${jp.title},${jp.budget},${jp.period},${jp.pro_content},${jp.recruiting_role},${jp.pro_type},2);
         `;
         console.log(sql);
         let result = await this.projectRepository.query(sql)
@@ -112,7 +112,7 @@ let MarketService = class MarketService {
         let jp = JSON.parse(body.proLabel);
         console.log(jp);
         let sql = `					 
-                insert into project(title,budget,period,"content",role,pro_type, status = 3) 
+                update project(title,budget,period,"content",role,pro_type, status = 3) 
                 VALUES (${jp.title},${jp.budget},${jp.period},${jp.pro_content},${jp.recruiting_role},${jp.pro_type});
             `;
         console.log(sql);
@@ -130,11 +130,9 @@ let MarketService = class MarketService {
         return await this.projectRepository.query((0, dbutils_3.getMyPjcDB)(body.hash));
     }
     async deleteDemand(body) {
-        let jp = JSON.parse(body.proLabel);
-        console.log(jp);
-        let demandId;
+        let data = body.data;
         let sql = `
-                UPDATE project SET status = 0  WHERE id = ${demandId};
+                UPDATE project SET status = 0  WHERE id = ${data.id};
             `;
         let result = await this.projectRepository.query(sql)
             .then(res => {
