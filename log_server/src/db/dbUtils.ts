@@ -19,15 +19,26 @@ export const getLastBlock = () => {
     return sql
 }
 
+export const getModifyDemandLastBlock = () => {
+    let obj = {
+        table: 'block_log',
+        keys: 'block',
+        conditions: 'id = 1'
+    }
+    let sql = `SELECT ${obj.keys} FROM ${obj.table} WHERE ${obj.conditions};`
+    return sql
+}
+
 export const updateProject = params => {
     let sql = `UPDATE project 
-    SET user_address = temp.user_address, pro_id = temp.demandId, title = temp.title, budget = temp.budget, update_time = now()
-    from (values ${params}) as temp (user_address, demandId,title, budget,content) where project.content=temp.content;
+    SET user_address = temp.user_address, pro_id = temp.demandId, title = temp.title, budget = temp.budget, 
+    status = ${params.statusId},update_time = now() from (values ${params.value}) as temp (
+    user_address, demandId,title, budget,content) where project.content=temp.content;
     `
     return sql
 }
 
 export const updateBlock = params => {
-    let sql = `UPDATE block_log SET block = ${params} WHERE id = 0;`
+    let sql = `UPDATE block_log SET block = ${params.last} WHERE id = ${params.id};`
     return sql 
 }

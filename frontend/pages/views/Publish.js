@@ -120,14 +120,14 @@ function Publish() {
 
         await Demand(para,account)
         // 2、创建项目
-          console.log(para,account);
-          createDemand(para,account)
-            .then(res => {
-              console.log(res);
-            })
-            .catch(err => {
-              console.log(err);
-            })
+          // console.log(para,account);
+          // createDemand(para,account)
+          //   .then(res => {
+          //     console.log(res);
+          //   })
+          //   .catch(err => {
+          //     console.log(err);
+          //   })
 
         
 

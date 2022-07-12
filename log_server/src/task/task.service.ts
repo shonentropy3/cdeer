@@ -11,7 +11,7 @@ const USDR_ADDR = require('../../deployments/Demand.json');
 // db
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { getLastBlock } from 'src/db/dbUtils';
+import { getLastBlock,getModifyDemandLastBlock } from 'src/db/dbUtils';
 import { updateProject } from 'src/db/dbUtils';
 import { updateBlock } from 'src/db/dbUtils';
 
@@ -45,7 +45,7 @@ export class TaskService {
                 toBlock
             }
             const logs = await rpcProvider.getLogs(filter);
-            const CreateDemand = new ethers.utils.Interface(["event CreateDemand(uint256 indexed demandId, address indexed demander, string title, uint256 budget, string desc, string attachment, uint256 )"]);
+            const CreateDemand = new ethers.utils.Interface(["event CreateDemand(uint256 indexed demandId, address indexed demandAddr, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
             if (logs.length > 0) {
                 
                 let txs = logs.map((ele: any) => {
@@ -67,13 +67,20 @@ export class TaskService {
                     ('${v.demander}',${v.demandId},'${v.title}',${v.budget},'${v.desc}'),
                     `
                 }
-                let params = value.substring(0,(value.lastIndexOf(',')))
-                let sql = updateProject(params)
+                let sqlValue = value.substring(0,(value.lastIndexOf(',')))
+                let paramsSql = {
+                    statusId: 1,
+                    value: sqlValue
+                }
+                let sql = updateProject(paramsSql)
                 try {
                   let result = await this.projectRepository.query(sql)
-                  console.log(result[1]);
                   if (-1 != result[1]) {
                       // await updateLastCheckBlock(latest);   
+                      let params = {
+                        id: 0,
+                        latest: latest,
+                    }
                       await this.blockLogRepository.query(updateBlock(latest))
                   }
                 } catch (error) {
@@ -84,10 +91,73 @@ export class TaskService {
             }
     }
 
+    modifyDemandLog = async () => {
+        let latest = await rpcProvider.getBlockNumber();
+        let last = await this.blockLogRepository.query(getModifyDemandLastBlock());
+        let logBlock = last[0].block;
+        if (logBlock >= latest) return; //区块已监听过了
+        logBlock = Math.max(logBlock, (latest - 100)); //最多往前100区块
+        let fromBlock = logBlock + 1;
+        let toBlock = latest;
+        let filter = {
+            address: USDR_ADDR.address,
+            topics: [
+                ethers.utils.id("ModifyDemand(uint256,address,string,uint256,string,string,uint256)")
+            ],
+            fromBlock,
+            toBlock
+        }
+        const logs = await rpcProvider.getLogs(filter);
+        const CreateDemand = new ethers.utils.Interface(["event ModifyDemand(uint256 indexed demandId, address indexed demandAddr, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
+        if (logs.length > 0) {
+            let txs = logs.map((ele: any) => {
+                let decodedData = CreateDemand.parseLog(ele);
+                return {
+                    demandId: decodedData.args[0].toString(),
+                    demander: decodedData.args[1],
+                    title: decodedData.args[2],
+                    budget: decodedData.args[3].toString(),
+                    desc: decodedData.args[4],
+                    attachment: decodedData.args[5],
+                    period: decodedData.args[6].toString(),
+                }
+            });
+            let value = ``;
+            for (const v of txs) {
+                value += `
+                ('${v.demander}', ${v.demandId}, '${v.title}', ${v.budget}, '${v.desc}'),
+                `
+            }
+            let sqlValue = value.substring(0,(value.lastIndexOf(',')))
+            let paramsSql = {
+                statusId: 1,
+                value: sqlValue
+            }
+            let sql = updateProject(paramsSql)
+            try {
+              let result = await this.projectRepository.query(sql)
+              console.log(result[1]);
+              if (-1 != result[1]) {
+                  // await updateLastCheckBlock(latest);   
+                  let params = {
+                      id: 1,
+                      latest: latest,
+                  }
+                  await this.blockLogRepository.query(updateBlock(params))
+              }
+            } catch (error) {
+              console.log(error);
+            }
+        }else{
+          console.log(logs.length);
+        }
+}
+
 
     @Interval(5000)  //每隔3秒执行一次
     handleInterval() {
         this._insertLog()
+        this.modifyDemandLog()
     }
 
     @Timeout(1000)

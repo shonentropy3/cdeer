@@ -25,6 +25,17 @@ export const createDemand = (data) => {
 );
 }
 
+export const modifyDemand = (data) => {
+
+    return serviceAxios({
+        url: "/market/modifyDemand",
+        // url: "/upchain/createDemand",
+        method: "post",
+        data,
+    }
+);
+}
+
 export const getHash = (data) => {
     
     return serviceAxios({
