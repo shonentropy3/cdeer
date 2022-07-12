@@ -9,6 +9,7 @@ import { deleteDemand } from '../pages/http/api';
 function ProjectList(obj) {
 
 
+    let [demandId,Set_tuan] = useState([])
     const goDetail = id => {
         Router.push({pathname:'/views/Ord_detail',search: id})
     }
