@@ -1,12 +1,32 @@
 import { useEffect } from "react"
 import Link from 'next/link'
 import Router from "next/router";
+import { message, Popconfirm } from 'antd';
+
 
 function ProjectList(obj) {
 
 
     const goDetail = id => {
         Router.push({pathname:'/views/Ord_detail',search: id})
+    }
+
+    const confirm = (e) => {
+        // 删除项目
+        console.log(e);
+        message.success('Click on Yes');
+    };
+      
+    const popLayer = () => {
+        return <div className="popLayer">
+            <div className="panel">
+                
+            </div>
+        </div>
+    }
+
+    const modify = () => {
+
     }
     
     return(
@@ -54,6 +74,16 @@ function ProjectList(obj) {
                 
                 <button onClick={()=>{goDetail()}}>查看项目状态</button>
 
+                <button onClick={()=>{goDetail()}}>修改项目</button>
+                <Popconfirm
+                    title="Are you sure to delete this task?"
+                    onConfirm={confirm}
+                    okText="Yes"
+                    cancelText="No"
+                >
+                    <button>删除项目</button>
+                </Popconfirm>
+                
             </div>
         </div>
     )
