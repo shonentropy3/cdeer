@@ -107,6 +107,24 @@ let MarketService = class MarketService {
         console.log(result);
         return await body;
     }
+    async modifyDemand(body) {
+        let jp = JSON.parse(body.proLabel);
+        console.log(jp);
+        let sql = `					 
+                insert into project(title,budget,period,"content",role,pro_type) 
+                VALUES (${jp.title},${jp.budget},${jp.period},${jp.pro_content},${jp.recruiting_role},${jp.pro_type});
+            `;
+        console.log(sql);
+        let result = await this.projectRepository.query(sql)
+            .then(res => {
+            console.log('res==>成功');
+        })
+            .catch(err => {
+            console.log('err=>错误', err);
+        });
+        console.log(result);
+        return await body;
+    }
     handleError(error) {
         if (error.response) {
             if (error.response.status === common_1.HttpStatus.NOT_FOUND) {
@@ -136,6 +154,12 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], MarketService.prototype, "createDemand", null);
+__decorate([
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], MarketService.prototype, "modifyDemand", null);
 MarketService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(Project_1.Project)),

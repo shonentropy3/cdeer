@@ -8,6 +8,7 @@ export declare class TaskService {
     constructor(projectRepository: Repository<Project>, blockLogRepository: Repository<BlockLog>);
     private readonly logger;
     _insertLog: () => Promise<void>;
+    modifyDemandLog: () => Promise<void>;
     handleInterval(): void;
     handleTimeout(): Promise<void>;
 }

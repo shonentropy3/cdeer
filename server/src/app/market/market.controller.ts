@@ -25,6 +25,11 @@ export class MarketController {
         return await this.marketService.createDemand(body)
     }
 
+    @Post('modifyDemand')  //  修改需求
+    async modifyDemand(@Body() body: any){
+        return await this.marketService.modifyDemand(body)
+    }
+
     @Get('getMarketData')  //  获取集市项目
     async getMarketData(){
         return await this.marketService.getMarketData()

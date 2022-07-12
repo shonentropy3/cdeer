@@ -2,7 +2,8 @@ import { useEffect } from "react"
 import Link from 'next/link'
 import Router from "next/router";
 import { message, Popconfirm } from 'antd';
-
+import DeletDemand from '../controller/deletDemand';
+import ModifyDemand from '../controller/modifyDemand';
 
 function ProjectList(obj) {
 
@@ -10,11 +11,28 @@ function ProjectList(obj) {
     const goDetail = id => {
         Router.push({pathname:'/views/Ord_detail',search: id})
     }
+        // 修改需求
+    const modifyD = (e) => {
+        await ModifyDemand(demandId,account)
+        console.log(e);
+        message.success('Click on Yes');
+        // 2、修改需求
+        modifyDemand(demandId,account)
+          .then(res => {
+            console.log(res);
+          })
+          .catch(err => {
+            console.log(err);
+          })
+    };
 
     const confirm = (e) => {
+        await DeletDemand(para,account)
+
         // 删除项目
         console.log(e);
         message.success('Click on Yes');
+
     };
       
     const popLayer = () => {
