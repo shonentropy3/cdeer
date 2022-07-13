@@ -84,14 +84,6 @@ function Publish() {
             document.documentElement.scrollTop = 0;
             return
         }
-        // 校验三:项目周期校验
-        if ((Number(account[2].value) <= 0 ) || ((account[2].value.indexOf('.') <= -1) === false)) {
-            account[2].status = 'error'
-            account[2].help = '请输入大于0的正整数'
-            Set_account([...account])
-            document.documentElement.scrollTop = 0;
-            return
-        }
         // 校验四:预防xss攻击
         account[0].value = account[0].value.replace(/<|>|\//g,"")
         Set_account([...account])
