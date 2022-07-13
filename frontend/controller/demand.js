@@ -11,16 +11,13 @@ export default async function Demand(para) {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
         const demandContract = new ethers.Contract(demandAddr.address, demand.abi, signer);
-        let fee = ethers.utils.parseEther("7")
         const data = JSON.parse(para.proLabel)
-        console.log('==>',data); 
-      
           await demandContract.createDemand(
             { 
                 title: data.title,
                 desc: data.pro_content,
                 attachment: data.hash,
-                budget: fee,
+                budget: data.budget,
                 period: data.period
             },
             {
