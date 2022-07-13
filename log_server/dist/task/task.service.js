@@ -76,6 +76,7 @@ let TaskService = TaskService_1 = class TaskService {
                     value: sqlValue
                 };
                 let sql = (0, dbUtils_2.updateProject)(paramsSql);
+                console.log(sql);
                 try {
                     let result = await this.projectRepository.query(sql);
                     if (-1 != result[1]) {
@@ -83,7 +84,7 @@ let TaskService = TaskService_1 = class TaskService {
                             id: 0,
                             latest: latest,
                         };
-                        await this.blockLogRepository.query((0, dbUtils_3.updateBlock)(latest));
+                        await this.blockLogRepository.query((0, dbUtils_3.updateBlock)(params));
                     }
                 }
                 catch (error) {
@@ -112,6 +113,7 @@ let TaskService = TaskService_1 = class TaskService {
                 toBlock
             };
             const logs = await rpcProvider.getLogs(filter);
+            console.log(logs);
             const CreateDemand = new ethers.utils.Interface(["event ModifyDemand(uint256 indexed demandId, address indexed demandAddr, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
             if (logs.length > 0) {
                 let txs = logs.map((ele) => {
@@ -138,9 +140,9 @@ let TaskService = TaskService_1 = class TaskService {
                     value: sqlValue
                 };
                 let sql = (0, dbUtils_2.updateProject)(paramsSql);
+                console.log('sql=>', sql);
                 try {
                     let result = await this.projectRepository.query(sql);
-                    console.log(result[1]);
                     if (-1 != result[1]) {
                         let params = {
                             id: 1,
@@ -159,10 +161,9 @@ let TaskService = TaskService_1 = class TaskService {
         };
     }
     handleInterval() {
-        this._insertLog();
-        this.modifyDemandLog();
     }
     async handleTimeout() {
+        this._insertLog();
     }
 };
 __decorate([

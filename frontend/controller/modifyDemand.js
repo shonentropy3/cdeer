@@ -11,13 +11,14 @@ export default async function ModifyDemand(account) {
         const demandContract = new ethers.Contract(demandAddr.address, demand.abi, signer);
         let fee = ethers.utils.parseEther("9")
         console.log('account==>',account);
-          await demandContract.modifyDemand(account.u_address,
+          await demandContract.modifyDemand(12,
             { 
                 title: "modifyDemand",
                 budget: fee,
-                desc: account.pro_content,
-                attachment: '',
-                period: account.period
+                desc: "desc",
+                attachment: 'attachment',
+                period: account.period,
+                applySwitch: false
             });
         } else {
           console.log("Ethereum object does not exist");
