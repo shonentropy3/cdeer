@@ -117,7 +117,7 @@ export default function Modify(params) {
         console.log(obj);
     }
 
-    const initCheck = () => {
+    const initCheck = async() => {
 
         pjc = detail.pro_type
         role = detail.role
@@ -143,19 +143,20 @@ export default function Modify(params) {
         setParent(false)
     }
 
-
+ 
     useEffect(()=>{
         initCheck()
-        hui = true
-        setHui(hui)
+        
     },[])
+
+    
 
 
     return(
         <div className="Modify">
             {
                 input.map((ele,index) => 
-                    <div className="box" key={index}>
+                    <div className={`box`} key={index}>
                         <p>{ele.title}:</p>
                         {
                             ele.type === String ? 
@@ -179,7 +180,12 @@ export default function Modify(params) {
             <div className="checkbox">
                 <p>选择项目类型:</p>
                 {
-                    _data.demand.map((e,i) => <Checkbox key={i} checked={e.status ?  true:''} onChange={(event)=>onChange(event,e,'pjc')}>{e.name}</Checkbox>)
+                    _data.demand.map((e,i) => 
+                        e.status ? 
+                        <Checkbox key={i} defaultChecked={true} onChange={(event)=>onChange(event,e,'pjc')}>{e.name}</Checkbox>
+                        :
+                        <Checkbox key={i} onChange={(event)=>onChange(event,e,'pjc')}>{e.name}</Checkbox>
+                    )
                 }
             </div>
             <div className="btn">
