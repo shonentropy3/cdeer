@@ -54,7 +54,6 @@ export class TaskService {
                     let decodedData = CreateDemand.parseLog(ele);
                     return {
                         demandId: decodedData.args[0].toString(),
-                        demander: decodedData.args[1],
                         title: decodedData.args[2],
                         budget: decodedData.args[3].toString(),
                         desc: decodedData.args[4],
@@ -66,7 +65,7 @@ export class TaskService {
         
                 for (const v of txs) {
                     value += `
-                    ('${v.demander}',${v.demandId},'${v.title}',${v.budget},'${v.desc}'),
+                    (${v.demandId}, '${v.title}',${v.budget},'${v.desc}'),
                     `
                 }
                 let sqlValue = value.substring(0,(value.lastIndexOf(',')))
@@ -120,7 +119,6 @@ export class TaskService {
                 let decodedData = CreateDemand.parseLog(ele);
                 return {
                     demandId: decodedData.args[0].toString(),
-                    demander: decodedData.args[1],
                     title: decodedData.args[2],
                     budget: decodedData.args[3].toString(),
                     desc: decodedData.args[4],
@@ -131,7 +129,7 @@ export class TaskService {
             let value = ``;
             for (const v of txs) {
                 value += `
-                ('${v.demander}', ${v.demandId}, '${v.title}', ${v.budget}, '${v.desc}'),
+                (${v.demandId}, '${v.title}', ${v.budget}, '${v.desc}'),
                 `
             }
             let sqlValue = value.substring(0,(value.lastIndexOf(',')))
@@ -163,12 +161,13 @@ export class TaskService {
 
     @Interval(5000)  //每隔3秒执行一次
     handleInterval() {
-        // this.modifyDemandLog()
+        
     }
 
     @Timeout(1000)
     async handleTimeout() {
         this._insertLog()
+        this.modifyDemandLog()
 
     }
 }

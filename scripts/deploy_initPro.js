@@ -29,6 +29,19 @@ async function main() {
         });
     }
 
+
+    let fee = ethers.utils.parseEther("9")
+    // await demand.connect(accounts[3]).modifyDemand(0,
+    //   { 
+    //       title: "test",
+    //       desc: "desc",
+    //       attachment: "attachment",
+    //       budget: ethers.utils.parseEther("100"),
+    //       period: 123423
+    //   });
+
+      await demand.connect(accounts[3]).deleteDemand(1);
+
   }
 
   main()

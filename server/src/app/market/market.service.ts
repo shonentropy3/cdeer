@@ -131,11 +131,13 @@ export class MarketService {
 
         // 修改需求
     async modifyDemand(@Body() body: any): Promise<Project[]>  {
+        console.log("=======");
+        
             let jp = JSON.parse(body.proLabel);
             console.log(jp);
             let sql = `					 
                 update project(title,budget,period,"content",role,pro_type, status = 3) 
-                VALUES (${jp.title},${jp.budget},${jp.period},${jp.pro_content},${jp.recruiting_role},${jp.pro_type});
+                VALUES ('${jp.title}',${jp.budget},${jp.period},'${jp.pro_content}',${jp.recruiting_role},${jp.pro_type});
             `;
             console.log(sql);
             

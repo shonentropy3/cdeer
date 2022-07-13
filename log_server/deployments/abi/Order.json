@@ -300,7 +300,7 @@
       "outputs": [
         {
           "internalType": "bool",
-          "name": "",
+          "name": "hasDemandOrders_",
           "type": "bool"
         }
       ],
