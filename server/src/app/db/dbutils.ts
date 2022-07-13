@@ -1,7 +1,7 @@
 
 
 export const getMarketDB = () => {
-    let sql = `SELECT * FROM public."project"`
+    let sql = `SELECT * FROM public."project" WHERE status != 0 `
     return sql
 }
 
