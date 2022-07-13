@@ -13,16 +13,19 @@ export default function Modify(params) {
 
     let [role,setRole] = useState([])
     let [pjc,setPjc] = useState([])
-    let [hui,setHui] = useState(false)
+    let [roleList,setRolelist] = useState([])
+    let [pjcList,setPjclist] = useState([])
     let [input,setInput] = useState([
         {title: '项目名称', type: String, value: detail.title},
         {title: '项目预算', type: Number, value: Number(detail.budget)},
         {title: '项目周期', type: Number, value: detail.period}
     ])
     let [text,setText] = useState(detail.content)
-    const onChange = (t,e,i) => {
+    const onChange = (t,e,i,index) => {
         
         if (i === 'role') {
+            roleList[index] = !roleList[index]
+            setRolelist([...roleList])
             if (t.target.checked) {
                 role.push(e.value)
             }else{
@@ -34,6 +37,8 @@ export default function Modify(params) {
             }
             setRole([...role])
         }else{
+            pjcList[index] = !pjcList[index]
+            setPjclist([...pjcList])
             if (t.target.checked) {
                 pjc.push(e.value)
             }else{
@@ -119,24 +124,38 @@ export default function Modify(params) {
 
     const initCheck = async() => {
 
+        
+
         pjc = detail.pro_type
         role = detail.role
         setPjc([...pjc])
         setRole([...role])
         _data.role.forEach(ele => {
+            let flag = false
             detail.role.forEach(e => {
                  if (ele.value === e) {
                     ele.status = true
+                    flag = true
+                    return
                 }
             })
+            flag ? roleList.push(true):roleList.push(false)
+            
         })
         _data.demand.forEach(ele => {
+            let flag = false
             detail.pro_type.forEach(e => {
                 if (ele.value === e) {
                     ele.status = true
+                    flag = true
+                    return
                 }
             })
+            flag ? pjcList.push(true):pjcList.push(false)
         })
+        setRolelist([...roleList])
+        setPjclist([...pjcList])
+        console.log(roleList);
     }
 
     const cancel = () => {
@@ -173,18 +192,14 @@ export default function Modify(params) {
             <div className="checkbox">
                 <p>选择角色:</p>
                 {
-                    _data.role.map((e,i) => <Checkbox key={i} checked={e.status ?  true:''} onChange={(event)=>onChange(event,e,'role')}>{e.name}</Checkbox>)
+                    _data.role.map((e,i) => <Checkbox key={i} checked={roleList[i]} onChange={(event)=>onChange(event,e,'role',i)}>{e.name}</Checkbox>)
                 }
                 
             </div>
             <div className="checkbox">
                 <p>选择项目类型:</p>
                 {
-                    _data.demand.map((e,i) => 
-                        e.status ? 
-                        <Checkbox key={i} defaultChecked={true} onChange={(event)=>onChange(event,e,'pjc')}>{e.name}</Checkbox>
-                        :
-                        <Checkbox key={i} onChange={(event)=>onChange(event,e,'pjc')}>{e.name}</Checkbox>
+                    _data.demand.map((e,i) => <Checkbox key={i} checked={pjcList[i]} onChange={(event)=>onChange(event,e,'pjc')}>{e.name}</Checkbox>
                     )
                 }
             </div>
