@@ -2,6 +2,7 @@ import {withRouter} from 'next/router'
 import { useEffect, useState } from "react"
 import { getProjectDetail } from '../http/api';
 import NavigationBar from "../../components/NavigationBar";
+import { translatedPjc, translatedRole } from '../utils/translated';
 
 
 export default function ProjectDetail() {
@@ -13,7 +14,10 @@ export default function ProjectDetail() {
         
         getProjectDetail({id: oid})
         .then(res=>{
-            console.log(res);
+            Array.from(res).forEach((e,i) => {
+                res[i].role = translatedRole(e.role)
+                res[i].pro_type = translatedPjc(e.pro_type)
+            })
             detail = res[0]
             detailSet({...detail})
         })

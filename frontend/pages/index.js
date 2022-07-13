@@ -9,6 +9,8 @@ import Image from 'next/image'
 import { Spin,BackTop,Divider } from 'antd';
 import { getMarketData } from './http/api';
 import style from '../styles/utils.module.scss'
+import { translatedPjc, translatedRole } from './utils/translated';
+
 
 const contractAddress = address;
 const abi = contract.abi;
@@ -89,7 +91,6 @@ export default function Home() {
     }
   }
 
-
   const tokensAmount = async () => {
     try {
       const { ethereum } = window;
@@ -113,10 +114,24 @@ export default function Home() {
 
   // 获取页面数据
   const marketData = async()=>{
-    const res = await getMarketData()
-    data.detail = res
-    data.status = 1
+    await getMarketData()
+    .then(res => {
+      Array.from(res).forEach((e,i) => {
+        res[i].role = translatedRole(e.role)
+        res[i].pro_type = translatedPjc(e.pro_type)
+      })
+      data.detail = res
+      data.status = 1
+    })
+    .catch(err => {
+      data.status = 1
+    })
+
+
     Set_data({...data})
+
+
+    
     console.log('data==>',data);
   }
 
@@ -169,14 +184,9 @@ export default function Home() {
   // 项目类型check
   let [pjcC,Set_pjcC] = useState(null)
 
-  let [sql,sqlSet] = useState({})
-  
   useEffect(() => {
       checkWalletIsConnected();
       marketData()
-      sql = require('./testData/mock.json')
-      sqlSet({...sql})
-      console.log('sql==>',sql);
     }, [])
   
 

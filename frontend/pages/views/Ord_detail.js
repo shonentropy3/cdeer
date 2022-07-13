@@ -4,6 +4,8 @@ import style from '../../styles/utils.module.scss'
 import { Menu } from 'antd';
 import NavigationBar from "../../components/NavigationBar";
 import { getProjectDetail } from "../http/api";
+import { translatedPjc, translatedRole } from '../utils/translated'
+
 
 export default function OrderDetail(oid) {
 
@@ -32,6 +34,10 @@ export default function OrderDetail(oid) {
         oid = oid.replace('?','')
         getProjectDetail({id:oid})
         .then(res => {
+            Array.from(res).forEach((e,i) => {
+                res[i].role = translatedRole(e.role)
+                res[i].pro_type = translatedPjc(e.pro_type)
+              })
             data = res[0]
             setData({...data})
             console.log(data);

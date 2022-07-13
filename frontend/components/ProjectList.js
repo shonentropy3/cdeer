@@ -10,28 +10,10 @@ import { deleteDemand } from '../pages/http/api';
 function ProjectList(props) {
     const {data} = props
 
-
-    let [demandId,Set_tuan] = useState([])
     const goDetail = () => {
         Router.push({pathname:'/views/Ord_detail',search: data.id})
     }
     let [maskStatus,setMaskStatus] = useState(false)
-
-
-        // 修改需求
-    // const modifyDemandFun = async(e) => {
-    //     await ModifyDemand(demandId,account)
-    //     console.log(e);
-    //     message.success('Click on Yes');
-    //     // 2、修改需求
-    //     modifyDemand(demandId,account)
-    //       .then(res => {
-    //         console.log(res);
-    //       })
-    //       .catch(err => {
-    //         console.log(err);
-    //       })
-    // };
 
 
     const deletDemand = async(e) => {
