@@ -12,7 +12,7 @@ import "./interface/IDemand.sol";
 //TODO:报名限制数量，乙方，时间久远后考虑废弃
 contract Demand is ERC721, IDemand, Ownable {
     uint fee = 1*10**17;
-    IOrder order;
+    address _order;
 
     using Counters for Counters.Counter;
  
@@ -20,8 +20,8 @@ contract Demand is ERC721, IDemand, Ownable {
         string desc, string attachment, uint period);
     event ModifyDemand(uint indexed demandId, address demandAddr, string title, uint budget, 
         string desc, string attachment, uint period);
-    event DeleteDemand(uint indexed demandId, address demandAddr) 
-    event ApplyFor(uint indexed demandId, address indexed applyAddr,uint previewPrice);
+    event DeleteDemand(uint indexed demandId, address demandAddr);
+    event ApplyFor(uint indexed demandId, address indexed applyAddr, uint previewPrice);
     event CancelApply(uint indexed demandId, address demandAddr);
     event ModifyApplySwitch(uint indexed demandId, address demandAddr, bool);
 
@@ -50,9 +50,9 @@ contract Demand is ERC721, IDemand, Ownable {
 
     }
 
-    function setOrder(address _order) external  virtual override onlyOwner {
+    function setOrder(address order_) external  virtual override onlyOwner {
         require(_order != address(0), "The parameter is zero address.");
-        order  = IOrder(_order);    
+        _order = order_;    
     }
 
     function createDemand(DemandInfo memory _demandInfo) external payable {
@@ -76,16 +76,28 @@ contract Demand is ERC721, IDemand, Ownable {
 
     function modifyDemand(uint _demandId, DemandInfo memory _demandInfo) external {
         require(msg.sender == ownerOf(_demandId), "No root.");
-        require(!order.hasDemandOrders(_demandId), "Existing orders.");
+        // require(!IOrder(_order).hasDemandOrders(_demandId), "Existing orders.");
 
-        demands[_demandId] = DemandInfo({
-            title: _demandInfo.title,
-            budget: _demandInfo.budget,
-            desc: _demandInfo.desc,
-            attachment: _demandInfo.attachment,
-            period: _demandInfo.period,
-            applySwitch: false
-        });
+        bool result = IOrder(_order).hasDemandOrders(_demandId);
+        console.log(result, "result======");
+
+        DemandInfo storage modifyDemand = demands[_demandId];
+        modifyDemand.title = _demandInfo.title;
+        modifyDemand.budget = _demandInfo.budget;
+        modifyDemand.desc = _demandInfo.desc;
+        modifyDemand.attachment = _demandInfo.attachment;
+        modifyDemand.period = _demandInfo.period;
+        modifyDemand.applySwitch = false;
+
+
+        // demands[_demandId] = DemandInfo({
+        //     title: _demandInfo.title,
+        //     budget: _demandInfo.budget,
+        //     desc: _demandInfo.desc,
+        //     attachment: _demandInfo.attachment,
+        //     period: _demandInfo.period,
+        //     applySwitch: false
+        // });
 
         emit ModifyDemand(_demandId, msg.sender, _demandInfo.title, _demandInfo.budget, 
             _demandInfo.desc, _demandInfo.attachment, _demandInfo.period);
@@ -93,12 +105,12 @@ contract Demand is ERC721, IDemand, Ownable {
 
     function deleteDemand(uint _demandId) external {
         require(msg.sender == ownerOf(_demandId), "No root.");
-        require(!order.hasDemandOrders(_demandId), "Existing orders.");
+        require(!IOrder(_order).hasDemandOrders(_demandId), "Existing orders.");
 
         delete demands[_demandId];
         _burn(_demandId);
 
-        emit DeleteDemand(uint _demandId, address msg.sender)
+        emit DeleteDemand(_demandId, msg.sender);
     }
 
     function applyFor(uint _demandId, uint _previewPrice) external {

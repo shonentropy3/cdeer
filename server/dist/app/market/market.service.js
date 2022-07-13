@@ -109,11 +109,12 @@ let MarketService = class MarketService {
         return await body;
     }
     async modifyDemand(body) {
+        console.log("=======");
         let jp = JSON.parse(body.proLabel);
         console.log(jp);
         let sql = `					 
                 update project(title,budget,period,"content",role,pro_type, status = 3) 
-                VALUES (${jp.title},${jp.budget},${jp.period},${jp.pro_content},${jp.recruiting_role},${jp.pro_type});
+                VALUES ('${jp.title}',${jp.budget},${jp.period},'${jp.pro_content}',${jp.recruiting_role},${jp.pro_type});
             `;
         console.log(sql);
         let result = await this.projectRepository.query(sql)

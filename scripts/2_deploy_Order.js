@@ -25,6 +25,8 @@ async function main() {
     let artifactT21 = await artifacts.readArtifact("Order");
     await writeAbiAddr(artifactT21, contract.address, "Order", network.name);
 
+    let result = await contract.hasDemandOrders(0);
+    console.log(result);
 }
 
 main()

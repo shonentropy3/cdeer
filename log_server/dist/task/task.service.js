@@ -56,7 +56,6 @@ let TaskService = TaskService_1 = class TaskService {
                     let decodedData = CreateDemand.parseLog(ele);
                     return {
                         demandId: decodedData.args[0].toString(),
-                        demander: decodedData.args[1],
                         title: decodedData.args[2],
                         budget: decodedData.args[3].toString(),
                         desc: decodedData.args[4],
@@ -67,7 +66,7 @@ let TaskService = TaskService_1 = class TaskService {
                 let value = ``;
                 for (const v of txs) {
                     value += `
-                    ('${v.demander}',${v.demandId},'${v.title}',${v.budget},'${v.desc}'),
+                    (${v.demandId}, '${v.title}',${v.budget},'${v.desc}'),
                     `;
                 }
                 let sqlValue = value.substring(0, (value.lastIndexOf(',')));
@@ -120,7 +119,6 @@ let TaskService = TaskService_1 = class TaskService {
                     let decodedData = CreateDemand.parseLog(ele);
                     return {
                         demandId: decodedData.args[0].toString(),
-                        demander: decodedData.args[1],
                         title: decodedData.args[2],
                         budget: decodedData.args[3].toString(),
                         desc: decodedData.args[4],
@@ -131,7 +129,7 @@ let TaskService = TaskService_1 = class TaskService {
                 let value = ``;
                 for (const v of txs) {
                     value += `
-                ('${v.demander}', ${v.demandId}, '${v.title}', ${v.budget}, '${v.desc}'),
+                (${v.demandId}, '${v.title}', ${v.budget}, '${v.desc}'),
                 `;
                 }
                 let sqlValue = value.substring(0, (value.lastIndexOf(',')));
@@ -164,6 +162,7 @@ let TaskService = TaskService_1 = class TaskService {
     }
     async handleTimeout() {
         this._insertLog();
+        this.modifyDemandLog();
     }
 };
 __decorate([

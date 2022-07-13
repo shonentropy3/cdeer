@@ -163,6 +163,25 @@
           "internalType": "address",
           "name": "demandAddr",
           "type": "address"
+        }
+      ],
+      "name": "DeleteDemand",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "demandId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "demandAddr",
+          "type": "address"
         },
         {
           "indexed": false,
@@ -378,6 +397,19 @@
       "name": "createDemand",
       "outputs": [],
       "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_demandId",
+          "type": "uint256"
+        }
+      ],
+      "name": "deleteDemand",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -629,7 +661,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "_order",
+          "name": "order_",
           "type": "address"
         }
       ],

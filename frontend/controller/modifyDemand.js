@@ -11,12 +11,12 @@ export default async function ModifyDemand(account) {
         const demandContract = new ethers.Contract(demandAddr.address, demand.abi, signer);
         let fee = ethers.utils.parseEther("9")
         console.log('account==>',account);
-          await demandContract.modifyDemand(12,
+          await demandContract.modifyDemand(33,
             { 
-                title: "modifyDemand",
+                title: account.title,
                 budget: fee,
-                desc: "desc",
-                attachment: 'attachment',
+                desc: account.pro_content,
+                attachment: "attachment",
                 period: account.period,
                 applySwitch: false
             });

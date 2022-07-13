@@ -92,13 +92,11 @@ export default function Modify(params) {
         let tradeStatus = true
         await ModifyDemand(obj)
         .then(res => {
-          if (res) {
-            console.log('交易失败');
-            tradeStatus = false
-          }
+          console.log('res==>',res);
         })
-
-
+        .catch(err => {
+            console.log('err==>',err);
+        })
         
         if (tradeStatus) {
             console.log('交易完成==>');
@@ -140,7 +138,6 @@ export default function Modify(params) {
 
     return(
         <div className="Modify">
-
             {
                 input.map((ele,index) => 
                     <div className="box" key={index}>

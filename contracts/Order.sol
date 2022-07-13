@@ -192,11 +192,13 @@ contract Order is IOrder, Ownable {
         emit Withdraw(_orderId, msg.sender, _stageIndex);
     }
 
-    function hasDemandOrders(uint _demandId) external view virtual override  returns (bool){
-        if (demandOrders[_demandId].length > 0) { 
-            return true;
+    function hasDemandOrders(uint _demandId) external view override  returns (bool hasDemandOrders_){
+        uint[] memory ordersLength;
+        ordersLength = demandOrders[_demandId];
+        if (ordersLength.length > 0) { 
+            hasDemandOrders_ = true;
         } else {
-            return false;
+            hasDemandOrders_ = false;
         } 
     }
 
