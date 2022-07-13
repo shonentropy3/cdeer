@@ -4,10 +4,16 @@ import { useRouter } from 'next/router'
 import { useEffect } from 'react';
 
 export default function NavigationBar(params) {
-    const router = useRouter()
+
+    const { data } = params;
+    const router = useRouter();
     useEffect(()=>{
-        console.log(params);
+        console.log(data);
     },[])
+    const goWhere = (url) => {
+        router.push(url)
+    }
+
     return(
         <div className="NavigationBar">
             <Breadcrumb>
@@ -15,14 +21,15 @@ export default function NavigationBar(params) {
                     <HomeOutlined />
                 </Breadcrumb.Item>
 
-                <Breadcrumb.Item onClick={() => router.back()}>
-                    {/* <UserOutlined /> */}
-                    <span>找项目</span>
-                </Breadcrumb.Item>
-                
-                <Breadcrumb.Item>
-                    项目详情
-                </Breadcrumb.Item>
+                {
+                    data.map((e,i) => 
+                        <Breadcrumb.Item key={i} className="cur" onClick={() => goWhere(e.url)}>
+                            {/* <UserOutlined /> */}
+                            <span>{e.label}</span>
+                        </Breadcrumb.Item>
+                    )
+                }
+
             </Breadcrumb>
         </div>
     )

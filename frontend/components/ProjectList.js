@@ -12,8 +12,8 @@ function ProjectList(props) {
 
 
     let [demandId,Set_tuan] = useState([])
-    const goDetail = id => {
-        Router.push({pathname:'/views/Ord_detail',search: id})
+    const goDetail = () => {
+        Router.push({pathname:'/views/Ord_detail',search: data.id})
     }
     let [maskStatus,setMaskStatus] = useState(false)
 

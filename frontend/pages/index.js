@@ -47,57 +47,6 @@ export default function Home() {
         // return "Error:"+error;
     }
     if (data.status === 1) {
-      // let res = data.detail
-      // res.forEach(e => {
-      //   // let i = e.budget.indexOf('.')
-      //   // e.budget = e.budget.slice(i,8)
-      //   console.log(typeof(e.budget));
-      // });
-      // console.log(res);
-        // return data.detail.map(
-        //         (item, index) => 
-        //         <div className={`li ${style.item_container}`} key={index} onClick={()=>goDetail(index)}>
-        //             <div className={style.item_img}>
-
-        //             </div>
-        //             <div className={`${style.item_content} ${style.ml20}`}>
-        //                 <div className={style.between}>
-        //                     <p>
-        //                       NO.{item.token_id}{item.title}
-        //                       <span className={style.ml10}>Android 图片增强效果开发</span>
-        //                     </p>
-        //                     <span className={style.color_red}>¥{item.budget}</span>
-        //                 </div>
-        //                 <div>
-        //                     <div className={style.flex_start}>
-        //                       <div className={style.mr30}>
-        //                         招募: {item.role}
-        //                       </div>
-        //                       <div className={style.mr30}>
-        //                         类型: {item.pro_type}
-        //                       </div>
-        //                       <div>
-        //                         {/* 周期: {item.period} */}
-        //                         周期: 7天
-        //                       </div>
-        //                     </div>
-        //                 </div>
-        //                 <div>
-        //                   {item.create_time}
-        //                   <Divider type="vertical" />
-
-        //                 </div>
-        //             </div>
-        //         </div>
-        //         // <div key={index} className="li" >
-        //         //     <div>创建地址：{item.user_adddress}</div>
-        //         //     <div>NFT-ID：{item.token_id}</div>
-        //         //     <div>标题：{item.title}</div>
-        //         //     <div>价格：{item.budget}</div>
-        //         //     <div>项目内容：{item.content}</div>
-        //         //     <div>创建时间：{item.create_time}</div>
-        //         // </div>
-        //     );
         return data.detail.map(
           // return sql.data.map(
           (item, index) => 

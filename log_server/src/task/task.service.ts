@@ -31,6 +31,8 @@ export class TaskService {
     _insertLog = async () => {
             let latest = await rpcProvider.getBlockNumber();
             let last = await this.blockLogRepository.query(getLastBlock());
+            console.log();
+            
             let logBlock = last[0].block;
             if (logBlock >= latest) return; //区块已监听过了
             logBlock = Math.max(logBlock, (latest - 100)); //最多往前100区块

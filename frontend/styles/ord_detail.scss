@@ -11,11 +11,16 @@
             // height: 50px;
             font-size: 18px;
             box-sizing: border-box;
-            padding: 10px 25px;
+            padding: 0 30px;
             border-bottom: 1px solid rgb(230, 230, 230);
         }
         .content{
             min-height: 500px;
+            box-sizing: border-box;
+            padding: 20px;
+            p{
+                margin-bottom: 10px;
+            }
         }
     }
 }

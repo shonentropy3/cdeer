@@ -28,9 +28,14 @@ export default function ProjectDetail() {
         
     }
 
+    const navbar = [
+        { label: '找项目', url: '/'},
+        { label: '项目详情', url: ''}
+    ]
+
     return(
         <div className="pjc_detail">
-            <NavigationBar />
+            <NavigationBar data={navbar} />
 
             <div className='container'>
                 <div className='top'>
