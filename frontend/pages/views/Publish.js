@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 
 import { createDemand,getHash } from '../http/api';
 
-import { Input,Form,message,Button,Upload,notification } from 'antd';
+import { Input, Form, message, Button, Upload, notification, InputNumber } from 'antd';
 import { UploadOutlined, WarningOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import style from '../../styles/utils.module.scss'
 import Demand from '../../controller/demand';
@@ -196,8 +196,8 @@ function Publish() {
       )
     }
     // 输入绑定
-    let get_account = (e,i) =>{
-        account[i].value = e.target.value;
+    let get_account = (e,i,j) =>{
+        j ? account[i].value = e : account[i].value = e.target.value;
         account[i].help = ''
         account[i].status = ''
         Set_account([...account])
@@ -339,9 +339,13 @@ function Publish() {
                                             validateStatus={item.status}
                                             help={item.help}
                                             >
-                                            {/* <Input placeholder="unavailable choice" id="error" /> */}
-                                        
-                                            <Input status={item.status} className={`${'data'+index}`} min="0" type={ index > 0 ? "number" : "text"} onChange={(e)=>{get_account(e,index)}} />
+                                            {
+                                              index > 0 ?  
+                                              <InputNumber status={item.status} className={`${'data'+index}`} min={1} onChange={(e)=>{get_account(e,index,'num')}} />
+                                              : 
+                                              <Input status={item.status} className={`${'data'+index}`} onChange={(e)=>{get_account(e,index)}} />
+                                            }
+                                            
                                             {index === 1 ? '元' : ''}
                                             {index === 2 ? '天' : ''}
                                         </Form.Item>
