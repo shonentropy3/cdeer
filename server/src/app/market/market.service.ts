@@ -117,16 +117,18 @@ export class MarketService {
         `;
         console.log(sql);
         
-        let result = await this.projectRepository.query(sql)
+        return await this.projectRepository.query(sql)
         .then(res=>{
             console.log('res==>成功');
+            let obj = {
+                code: 200
+            }
+            return obj
         })
         .catch(err => {
             console.log('err=>错误', err);
+            return err
         })
-        console.log(result);
-        
-        return await body
     }
 
         // 修改需求

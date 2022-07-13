@@ -127,10 +127,19 @@ function Publish() {
           createDemand(para)
             .then(res => {
               console.log(res);
-              router.push('/')
+              if (res.code == '200') {
+                message.success('创建成功');
+                setTimeout(() => {
+                  router.push('/')
+                }, 500);
+              }else{
+                message.error('连接超时');
+              }
+              
             })
             .catch(err => {
               console.log(err);
+              message.error('创建失败');
             })
         }
         // createDemand(para,account)
