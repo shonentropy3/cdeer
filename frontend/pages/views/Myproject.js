@@ -109,12 +109,19 @@ export default function Myproject() {
                 <h1>{test}</h1>
                 <div className="list">
                     {
-                      pjcList.map((ele,index) => <ProjectList data={ele} key={index} />)
+                      pjcList.map((ele,index) => <ProjectList data={ele} key={index} type="demand" />)
                     }
                 </div>
               </div>
             :
-              <div></div>
+              <div className={`content`}>
+                <h1></h1>
+                <div className="list">
+                    {
+                      pjcList.map((ele,index) => <ProjectList data={ele} key={index} type="exploitation" />)
+                    }
+                </div>
+              </div>
             }
         </div>
       </>

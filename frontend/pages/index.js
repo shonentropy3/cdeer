@@ -6,7 +6,7 @@ import Router from "next/router";
 import Link from "next/link"
 import Head from 'next/head'
 import Image from 'next/image'
-import { Spin,BackTop,Divider } from 'antd';
+import { Spin, BackTop, Divider, Empty } from 'antd';
 import { getMarketData } from './http/api';
 import style from '../styles/utils.module.scss'
 import { translatedPjc, translatedRole } from './utils/translated';
@@ -49,6 +49,9 @@ export default function Home() {
         // return "Error:"+error;
     }
     if (data.status === 1) {
+      if (data.detail.length === 0) {
+        return <Empty />
+      }
         return data.detail.map(
           // return sql.data.map(
           (item, index) => 

@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getMyPjcDB = exports.getProjectDB = exports.getMarketDB = void 0;
 const getMarketDB = () => {
-    let sql = `SELECT * FROM public."project"`;
+    let sql = `SELECT * FROM public."project" WHERE status != 0 `;
     return sql;
 };
 exports.getMarketDB = getMarketDB;
