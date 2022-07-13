@@ -7,7 +7,7 @@ const getMarketDB = () => {
 };
 exports.getMarketDB = getMarketDB;
 const getProjectDB = params => {
-    let sql = `SELECT * FROM public.project WHERE id = '${params}'`;
+    let sql = `SELECT * FROM public.project WHERE id = '${params}' and status != 0 `;
     return sql;
 };
 exports.getProjectDB = getProjectDB;

@@ -35,6 +35,7 @@ let TaskService = TaskService_1 = class TaskService {
         this._insertLog = async () => {
             let latest = await rpcProvider.getBlockNumber();
             let last = await this.blockLogRepository.query((0, dbUtils_1.getLastBlock)());
+            console.log();
             let logBlock = last[0].block;
             if (logBlock >= latest)
                 return;

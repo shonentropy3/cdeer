@@ -103,24 +103,26 @@ export default function Modify(params) {
             modifyDemand()
               .then(res => {
                 console.log(res);
+                cancel()
               })
               .catch(err => {
                 console.log(err);
+                cancel()
               })
           }
         console.log(input);
         console.log(obj);
     }
 
-    const initCheck = async() => {
-        await _data.role.forEach(ele => {
+    const initCheck = () => {
+        _data.role.forEach(ele => {
             detail.role.forEach(e => {
                  if (ele.value === e) {
                     ele.status = true
                 }
             })
         })
-        await _data.demand.forEach(ele => {
+        _data.demand.forEach(ele => {
             detail.pro_type.forEach(e => {
                 if (ele.value === e) {
                     ele.status = true
@@ -128,6 +130,11 @@ export default function Modify(params) {
             })
         })
     }
+
+    const cancel = () => {
+        setParent(false)
+    }
+
 
     useEffect(()=>{
         initCheck()
@@ -168,7 +175,7 @@ export default function Modify(params) {
                 }
             </div>
             <div className="btn">
-                <Button danger onClick={() => setParent(false)}>取消</Button>
+                <Button danger onClick={() => cancel()}>取消</Button>
                 <Button type="primary" onClick={() => modify()}>确认</Button>
             </div>
             
