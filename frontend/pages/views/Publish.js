@@ -97,10 +97,10 @@ function Publish() {
         Set_account([...account])
        
         let data = {
-          pro_content: `'${account[3].value}'`,
+          pro_content: `${account[3].value}`,
           recruiting_role: `'{${tuan}}'`,
           pro_type: `'{${pjc}}'`,
-          title: `'${account[0].value}'`,
+          title: `${account[0].value}`,
           period: Number(account[2].value),
           budget: Number(account[1].value),
           u_address: `'${currentAccount}'`
@@ -121,7 +121,7 @@ function Publish() {
         let para = {"proLabel":data}
         let tradeStatus = true
         // 交易
-        await Demand(para,account)
+        await Demand(para)
         .then(res => {
           if (res) {
             console.log('交易失败');
@@ -131,7 +131,7 @@ function Publish() {
         // 2、创建项目
         if (tradeStatus) {
           console.log('交易完成==>',para,account);
-          createDemand(para,account)
+          createDemand(para)
             .then(res => {
               console.log(res);
             })

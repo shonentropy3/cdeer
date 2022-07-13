@@ -31,14 +31,14 @@ export const getModifyDemandLastBlock = () => {
 
 export const updateProject = params => {
     let sql = `UPDATE project 
-    SET user_address = temp.user_address, pro_id = temp.demandId, title = temp.title, budget = temp.budget, 
+    SET user_address = temp.user_address, pro_id = temp.demandId, title = temp.title, budget = temp.budget, content = temp.content, 
     status = ${params.statusId},update_time = now() from (values ${params.value}) as temp (
-    user_address, demandId,title, budget,content) where project.content=temp.content;
+    user_address, demandId, title, budget, content) where project.content=temp.content;
     `
     return sql
 }
 
 export const updateBlock = params => {
-    let sql = `UPDATE block_log SET block = ${params.last} WHERE id = ${params.id};`
+    let sql = `UPDATE block_log SET block = ${params.latest} WHERE id = ${params.id};`
     return sql 
 }

@@ -75,6 +75,8 @@ export class TaskService {
                     value: sqlValue
                 }
                 let sql = updateProject(paramsSql)
+                console.log(sql);
+                
                 try {
                   let result = await this.projectRepository.query(sql)
                   if (-1 != result[1]) {
@@ -83,7 +85,7 @@ export class TaskService {
                         id: 0,
                         latest: latest,
                     }
-                      await this.blockLogRepository.query(updateBlock(latest))
+                      await this.blockLogRepository.query(updateBlock(params))
                   }
                 } catch (error) {
                   console.log(error);
@@ -110,6 +112,8 @@ export class TaskService {
             toBlock
         }
         const logs = await rpcProvider.getLogs(filter);
+        console.log(logs);
+        
         const CreateDemand = new ethers.utils.Interface(["event ModifyDemand(uint256 indexed demandId, address indexed demandAddr, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
         if (logs.length > 0) {
             let txs = logs.map((ele: any) => {
@@ -136,9 +140,10 @@ export class TaskService {
                 value: sqlValue
             }
             let sql = updateProject(paramsSql)
+            console.log('sql=>',sql);
+            
             try {
               let result = await this.projectRepository.query(sql)
-              console.log(result[1]);
               if (-1 != result[1]) {
                   // await updateLastCheckBlock(latest);   
                   let params = {
@@ -158,12 +163,12 @@ export class TaskService {
 
     @Interval(5000)  //每隔3秒执行一次
     handleInterval() {
-        this._insertLog()
-        this.modifyDemandLog()
+        // this.modifyDemandLog()
     }
 
     @Timeout(1000)
     async handleTimeout() {
+        this._insertLog()
 
     }
 }

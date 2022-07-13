@@ -3,26 +3,25 @@ import demandAddr from '../contracts/deployments/Demand.json'
 import { ethers } from 'ethers'
 
 
-export default async function Demand(para,account) {
+export default async function Demand(para) {
   console.log('window==>',window);
     try {
           
         if (window.ethereum !== 'undefined') {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
-          console.log('signer==>',signer);
         const demandContract = new ethers.Contract(demandAddr.address, demand.abi, signer);
-          //create demand fee
-          let fee = ethers.utils.parseEther("7")
-
-          console.log("fee=======>",fee);
+        let fee = ethers.utils.parseEther("7")
+        const data = JSON.parse(para.proLabel)
+        console.log('==>',data); 
+      
           await demandContract.createDemand(
             { 
-                title: "test",
-                desc: account[0].value,
-                attachment: "attachment",
+                title: data.title,
+                desc: data.pro_content,
+                attachment: data.hash,
                 budget: fee,
-                period: 123423
+                period: data.period
             },
             {
                 value: fee
