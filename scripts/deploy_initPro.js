@@ -29,18 +29,6 @@ async function main() {
             value: ethers.utils.parseEther("1"),
         });
     }
-
-
-    let fee = ethers.utils.parseEther("9")
-    await demand.connect(accounts[3]).modifyDemand(1,
-      { 
-          title: "test2222",
-          desc: "desc",
-          attachment: "attachment",
-          budget: ethers.utils.parseEther("100"),
-          period: 123423
-      });
-
   }
 
   main()

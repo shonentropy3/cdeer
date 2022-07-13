@@ -9,13 +9,12 @@ export default async function ModifyDemand(account) {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
         const demandContract = new ethers.Contract(demandAddr.address, demand.abi, signer);
-        let fee = ethers.utils.parseEther("9")
-          await demandContract.modifyDemand(8,
+          await demandContract.modifyDemand(account.pro_id,
             { 
                 title: account.title,
-                budget: fee,
+                budget: ethers.utils.parseEther(`${account.budget}`),
                 desc: account.pro_content,
-                attachment: "attachment",
+                attachment: account.attachment,
                 period: account.period,
                 applySwitch: false
             });

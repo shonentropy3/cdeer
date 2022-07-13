@@ -118,6 +118,7 @@ function Publish() {
         .then(res => {
           if (res) {
             console.log('交易失败');
+            console.log(res);
             tradeStatus = false
           }
         })

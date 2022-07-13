@@ -113,11 +113,11 @@ let TaskService = TaskService_1 = class TaskService {
                 toBlock
             };
             const logs = await rpcProvider.getLogs(filter);
-            console.log(logs);
-            const CreateDemand = new ethers.utils.Interface(["event ModifyDemand(uint256 indexed demandId, address indexed demandAddr, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
+            const CreateDemand = new ethers.utils.Interface(["event ModifyDemand(uint256 indexed demandId, address demandAddr, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
             if (logs.length > 0) {
                 let txs = logs.map((ele) => {
                     let decodedData = CreateDemand.parseLog(ele);
+                    console.log("--------", decodedData.args[0].toString());
                     return {
                         demandId: decodedData.args[0].toString(),
                         title: decodedData.args[2],
@@ -160,10 +160,10 @@ let TaskService = TaskService_1 = class TaskService {
         };
     }
     handleInterval() {
-    }
-    async handleTimeout() {
         this._insertLog();
         this.modifyDemandLog();
+    }
+    async handleTimeout() {
     }
 };
 __decorate([

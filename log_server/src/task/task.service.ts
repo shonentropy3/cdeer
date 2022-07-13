@@ -97,6 +97,8 @@ export class TaskService {
     modifyDemandLog = async () => {
         let latest = await rpcProvider.getBlockNumber();
         let last = await this.blockLogRepository.query(getModifyDemandLastBlock());
+        
+        
         let logBlock = last[0].block;
         if (logBlock >= latest) return; //区块已监听过了
         logBlock = Math.max(logBlock, (latest - 100)); //最多往前100区块
@@ -111,12 +113,11 @@ export class TaskService {
             toBlock
         }
         const logs = await rpcProvider.getLogs(filter);
-        console.log(logs);
-        
-        const CreateDemand = new ethers.utils.Interface(["event ModifyDemand(uint256 indexed demandId, address indexed demandAddr, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
+        const CreateDemand = new ethers.utils.Interface(["event ModifyDemand(uint256 indexed demandId, address demandAddr, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
         if (logs.length > 0) {
             let txs = logs.map((ele: any) => {
                 let decodedData = CreateDemand.parseLog(ele);
+                        console.log("--------",decodedData.args[0].toString());
                 return {
                     demandId: decodedData.args[0].toString(),
                     title: decodedData.args[2],
@@ -161,13 +162,13 @@ export class TaskService {
 
     @Interval(5000)  //每隔3秒执行一次
     handleInterval() {
-        
+              this._insertLog()
+        this.modifyDemandLog()  
     }
 
     @Timeout(1000)
     async handleTimeout() {
-        this._insertLog()
-        this.modifyDemandLog()
+
 
     }
 }

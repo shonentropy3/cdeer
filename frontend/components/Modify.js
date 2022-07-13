@@ -21,6 +21,7 @@ export default function Modify(params) {
     ])
     let [text,setText] = useState(detail.content)
     const onChange = (t,e,i) => {
+        
         if (i === 'role') {
             if (t.target.checked) {
                 role.push(e.value)
@@ -85,10 +86,12 @@ export default function Modify(params) {
             period: input[2].value,
             pro_content: text,
             recruiting_role: r,
-            pro_type: p
+            pro_type: p,
+            pro_id: detail.pro_id,
+            attachment: detail.attachment
         }
 
-
+        console.log("obj===>",obj);
         let tradeStatus = true
         await ModifyDemand(obj)
         .then(res => {
@@ -100,7 +103,7 @@ export default function Modify(params) {
         
         if (tradeStatus) {
             console.log('交易完成==>');
-            modifyDemand()
+            modifyDemand({proLabel: JSON.stringify(obj)})
               .then(res => {
                 console.log(res);
                 cancel()
@@ -115,6 +118,11 @@ export default function Modify(params) {
     }
 
     const initCheck = () => {
+
+        pjc = detail.pro_type
+        role = detail.role
+        setPjc([...pjc])
+        setRole([...role])
         _data.role.forEach(ele => {
             detail.role.forEach(e => {
                  if (ele.value === e) {
