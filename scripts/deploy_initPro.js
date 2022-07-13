@@ -1,7 +1,7 @@
 const { ethers } = require("hardhat");
 const hre = require("hardhat");
 const demandJson = require('../deployments/dev/Demand.json');
-const orderJson = require('../deployments/dev/Demand.json');
+const orderJson = require('../deployments/dev/Order.json');
 const { abi } = require('../deployments/abi/Demand.json');
 
 let accounts = [];
@@ -12,6 +12,7 @@ async function main() {
     accounts = await ethers.getSigners();
     owner = accounts[0];
     const demand = new ethers.Contract(demandJson.address, abi, owner);
+    console.log("orderJson.address------", orderJson.address);
     await demand.connect(owner).setOrder(orderJson.address);
 
     for (let i = 0; i < 4; i++) {
@@ -31,16 +32,14 @@ async function main() {
 
 
     let fee = ethers.utils.parseEther("9")
-    // await demand.connect(accounts[3]).modifyDemand(0,
-    //   { 
-    //       title: "test",
-    //       desc: "desc",
-    //       attachment: "attachment",
-    //       budget: ethers.utils.parseEther("100"),
-    //       period: 123423
-    //   });
-
-      await demand.connect(accounts[3]).deleteDemand(1);
+    await demand.connect(accounts[3]).modifyDemand(1,
+      { 
+          title: "test2222",
+          desc: "desc",
+          attachment: "attachment",
+          budget: ethers.utils.parseEther("100"),
+          period: 123423
+      });
 
   }
 
