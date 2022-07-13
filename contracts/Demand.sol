@@ -51,7 +51,7 @@ contract Demand is ERC721, IDemand, Ownable {
     }
 
     function setOrder(address order_) external  virtual override onlyOwner {
-        require(_order != address(0), "The parameter is zero address.");
+        require(order_ != address(0), "The parameter is zero address.");
         _order = order_;    
     }
 
@@ -76,28 +76,14 @@ contract Demand is ERC721, IDemand, Ownable {
 
     function modifyDemand(uint _demandId, DemandInfo memory _demandInfo) external {
         require(msg.sender == ownerOf(_demandId), "No root.");
-        // require(!IOrder(_order).hasDemandOrders(_demandId), "Existing orders.");
+        require(!IOrder(_order).hasDemandOrders(_demandId), "Existing orders.");
 
-        bool result = IOrder(_order).hasDemandOrders(_demandId);
-        console.log(result, "result======");
-
-        DemandInfo storage modifyDemand = demands[_demandId];
-        modifyDemand.title = _demandInfo.title;
-        modifyDemand.budget = _demandInfo.budget;
-        modifyDemand.desc = _demandInfo.desc;
-        modifyDemand.attachment = _demandInfo.attachment;
-        modifyDemand.period = _demandInfo.period;
-        modifyDemand.applySwitch = false;
-
-
-        // demands[_demandId] = DemandInfo({
-        //     title: _demandInfo.title,
-        //     budget: _demandInfo.budget,
-        //     desc: _demandInfo.desc,
-        //     attachment: _demandInfo.attachment,
-        //     period: _demandInfo.period,
-        //     applySwitch: false
-        // });
+        demands[_demandId].title = _demandInfo.title;
+        demands[_demandId].budget = _demandInfo.budget;
+        demands[_demandId].desc = _demandInfo.desc;
+        demands[_demandId].attachment = _demandInfo.attachment;
+        demands[_demandId].period = _demandInfo.period;
+        demands[_demandId].applySwitch = false;
 
         emit ModifyDemand(_demandId, msg.sender, _demandInfo.title, _demandInfo.budget, 
             _demandInfo.desc, _demandInfo.attachment, _demandInfo.period);
