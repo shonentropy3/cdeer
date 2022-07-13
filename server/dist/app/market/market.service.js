@@ -111,10 +111,9 @@ let MarketService = class MarketService {
     async modifyDemand(body) {
         console.log("=======");
         let jp = JSON.parse(body.proLabel);
-        console.log(jp);
         let sql = `					 
-                update project(title,budget,period,"content",role,pro_type, status = 3) 
-                VALUES ('${jp.title}',${jp.budget},${jp.period},'${jp.pro_content}',${jp.recruiting_role},${jp.pro_type});
+                update project(title,budget,period,"content",role,pro_type, status) 
+                VALUES ('${jp.title}', ${jp.budget}, ${jp.period}, '${jp.pro_content}', ${jp.recruiting_role}, ${jp.pro_type}, 3);
             `;
         console.log(sql);
         let result = await this.projectRepository.query(sql)
