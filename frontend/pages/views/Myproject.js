@@ -55,8 +55,8 @@ export default function Myproject() {
           getMyPjcData({hash:accounts[0]})
           .then(res => {
               Array.from(res).forEach((e,i) => {
-                res[i].role = translatedRole(e.role)
-                res[i].pro_type = translatedPjc(e.pro_type)
+                res[i].roleNew = translatedRole(e.role)
+                res[i].pro_typeNew = translatedPjc(e.pro_type)
               })
               pjcList = res;
               setPjcList([...pjcList])

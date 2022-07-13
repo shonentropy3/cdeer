@@ -2,10 +2,7 @@ import { ethers } from 'ethers';
 import contract from '../contracts/deployments/abi/CodeMarket.json';
 import address from '../contracts/deployments/CodeMarket.json';
 import { useEffect, useState, } from 'react';
-import Router from "next/router";
 import Link from "next/link"
-import Head from 'next/head'
-import Image from 'next/image'
 import { Spin, BackTop, Divider, Empty } from 'antd';
 import { getMarketData } from './http/api';
 import style from '../styles/utils.module.scss'

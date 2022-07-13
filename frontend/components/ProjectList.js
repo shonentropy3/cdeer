@@ -79,7 +79,7 @@ function ProjectList(props) {
                 </div>
                 <div className="rules">
                     <div className="rule">
-                        <p><span>{data.pro_type}</span><span>{data.role}</span></p>
+                        <p><span>{data.pro_typeNew}</span><span>{data.roleNew}</span></p>
                     </div>
                     <div className="rule">
                         <span>金额 ¥{data.budget}</span><div className="line"></div><span>周期 {data.period}天</span><div className="line"></div>

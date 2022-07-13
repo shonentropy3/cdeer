@@ -6,9 +6,8 @@ import { createDemand,getHash } from '../http/api';
 
 import { Input, Form, message, Button, Upload, notification, InputNumber } from 'antd';
 import { UploadOutlined, WarningOutlined, InfoCircleOutlined } from '@ant-design/icons';
-import style from '../../styles/utils.module.scss'
 import Demand from '../../controller/demand';
-import axios from 'axios';
+import { useRouter } from 'next/router'
 
 
 // const demand = require('../../../deployments/abi/Demand.json')
@@ -16,7 +15,8 @@ import axios from 'axios';
 
 function Publish() {
   const _data = require("../data/data.json")
-    const [currentAccount, setCurrentAccount] = useState(null);
+  const router = useRouter();
+  const [currentAccount, setCurrentAccount] = useState(null);
 
     const checkWalletIsConnected = async () => {
         const { ethereum } = window;
@@ -84,14 +84,7 @@ function Publish() {
             document.documentElement.scrollTop = 0;
             return
         }
-        // 校验三:项目周期校验
-        if ((Number(account[2].value) <= 0 ) || ((account[2].value.indexOf('.') <= -1) === false)) {
-            account[2].status = 'error'
-            account[2].help = '请输入大于0的正整数'
-            Set_account([...account])
-            document.documentElement.scrollTop = 0;
-            return
-        }
+
         // 校验四:预防xss攻击
         account[0].value = account[0].value.replace(/<|>|\//g,"")
         Set_account([...account])
@@ -134,6 +127,7 @@ function Publish() {
           createDemand(para)
             .then(res => {
               console.log(res);
+              router.push('/')
             })
             .catch(err => {
               console.log(err);

@@ -94,8 +94,8 @@ let MarketService = class MarketService {
         let jp = JSON.parse(body.proLabel);
         console.log(jp);
         let sql = `					 
-            insert into project(user_address,title,budget,period,"content",role,pro_type, status) 
-            VALUES (${jp.u_address},'${jp.title}',${jp.budget},${jp.period},'${jp.pro_content}',${jp.recruiting_role},${jp.pro_type},2);
+            insert into project(user_address,title,budget,period,"content",role,pro_type, status, attachment) 
+            VALUES (${jp.u_address},'${jp.title}',${jp.budget},${jp.period},'${jp.pro_content}',${jp.recruiting_role},${jp.pro_type},2,'${jp.hash}');
         `;
         console.log(sql);
         let result = await this.projectRepository.query(sql)
