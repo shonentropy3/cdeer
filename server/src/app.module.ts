@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { MarketModule } from './app/market/market.module';
+import { MarketModule } from './app/module/market';
 // 配置文件
 import configuration from './config';
 import { ConfigModule,ConfigService } from '@nestjs/config';

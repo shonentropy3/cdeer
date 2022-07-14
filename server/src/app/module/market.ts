@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { MarketController } from './market.controller';
-import { MarketService } from './market.service';
+import { MarketController } from '../controller/market';
+import { MarketService } from '../service/market';
 import {HttpModule} from '@nestjs/axios'
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Project } from '../../entity/Project';
+import { Project } from '../db/entity/Project';
 
 
 @Module({

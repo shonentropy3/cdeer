@@ -6,7 +6,7 @@ import { join } from 'path/posix';
 import { from, map, Observable, tap, throwError } from 'rxjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Project } from '../../entity/Project';	//引入entity
+import { Project } from '../db/entity/Project';	//引入entity
 
 // ipfs/upyun
 const fs  = require('fs');
@@ -16,9 +16,9 @@ const ipfs = ipfsAPI({host: 'localhost', port: '5001', protocol: 'http'});
 const service = new upyun.Service('ipfs0','upchain', 'upchain123')
 const client = new upyun.Client(service);
 // dbUtils
-import { getMarketDB } from '../db/dbutils';
-import { getProjectDB } from '../db/dbutils';
-import { getMyPjcDB } from '../db/dbutils';
+import { getMarketDB } from '../db/sql/market';
+import { getProjectDB } from '../db/sql/market';
+import { getMyPjcDB } from '../db/sql/market';
 
 
 @Injectable()

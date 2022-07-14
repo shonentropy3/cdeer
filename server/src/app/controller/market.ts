@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { MarketService } from './market.service';
+import { MarketService } from '../service/market';
 
 
 @Controller('market')
