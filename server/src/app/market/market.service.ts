@@ -49,12 +49,12 @@ export class MarketService {
             const file = files[0]
             let time = `${Date.now()}-${file.originalname}`
             // let time = `${Date.now()}-${file.name}`
-            let path = '../../../public'+'/'+ time
-            // let path = 'public'+'/'+ time
+            let path = '../../../cache_area'+'/'+ time
+            // let path = 'cache_area'+'/'+ time
             let writeStream = createWriteStream(join(__dirname, path))
             writeStream.write(file.buffer , function (err) {
                 if (!err) {
-                    let res = 'public/'+ time
+                    let res = 'cache_area/'+ time
                     ipfs.add(fs.readFileSync(res),   function (err, files) {
                         if (err || typeof files == "undefined") {
                             console.log('err==>',err);
