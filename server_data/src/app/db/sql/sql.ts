@@ -1,14 +1,3 @@
-
-
-const { ethers } = require('ethers');
-import 'ethers'
-// import { async } from "rxjs";
-const rpcProvider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
-const USDR_ADDR = require('../../deployments/Demand.json');
-
-
-
-
 export const getLastBlock = () => {
     let obj = {
         table: 'block_log',

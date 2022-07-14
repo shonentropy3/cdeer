@@ -1,19 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, Interval, Timeout } from '@nestjs/schedule';
-// entity
 import { Project } from 'src/app/db/entity/Project';
 import { BlockLog } from 'src/app/db/entity/BlockLog';
-// ethers
-const { ethers } = require('ethers');
-import 'ethers'
-const rpcProvider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
-const USDR_ADDR = require('../../deployments/Demand.json');
-// db
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { getLastBlock,getModifyDemandLastBlock } from 'src/app/db/sql/dbUtils';
-import { updateProject } from 'src/app/db/sql/dbUtils';
-import { updateBlock } from 'src/app/db/sql/dbUtils';
+import { getLastBlock,getModifyDemandLastBlock } from 'src/app/db/sql/sql';
+import { updateProject } from 'src/app/db/sql/sql';
+import { updateBlock } from 'src/app/db/sql/sql';
+import 'ethers'
+
+const { ethers } = require('ethers');
+const rpcProvider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
+const USDR_ADDR = require('../../deployments/Demand.json');
 
 
 @Injectable()
@@ -24,18 +22,13 @@ export class TaskService {
         @InjectRepository(BlockLog)
         private readonly blockLogRepository: Repository<BlockLog>
     ) {}
-    private readonly logger = new Logger(TaskService.name)
 
-
-
-    _insertLog = async () => {
+    insertCreateDemand = async () => {
             let latest = await rpcProvider.getBlockNumber();
             let last = await this.blockLogRepository.query(getLastBlock());
-            console.log();
-            
             let logBlock = last[0].block;
-            if (logBlock >= latest) return; //区块已监听过了
-            logBlock = Math.max(logBlock, (latest - 100)); //最多往前100区块
+            if (logBlock >= latest) return; // 区块已监听过了
+            logBlock = Math.max(logBlock, (latest - 100)); // 最多往前100区块
             let fromBlock = logBlock + 1;
             let toBlock = latest;
             let filter = {
@@ -49,7 +42,6 @@ export class TaskService {
             const logs = await rpcProvider.getLogs(filter);
             const CreateDemand = new ethers.utils.Interface(["event CreateDemand(uint256 indexed demandId, address indexed demandAddr, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
             if (logs.length > 0) {
-                
                 let txs = logs.map((ele: any) => {
                     let decodedData = CreateDemand.parseLog(ele);
                     return {
@@ -62,7 +54,6 @@ export class TaskService {
                     }
                 });
                 let value = ``;
-        
                 for (const v of txs) {
                     value += `
                     (${v.demandId}, '${v.title}',${v.budget},'${v.desc}'),
@@ -74,12 +65,9 @@ export class TaskService {
                     value: sqlValue
                 }
                 let sql = updateProject(paramsSql)
-                console.log(sql);
-                
                 try {
                   let result = await this.projectRepository.query(sql)
                   if (-1 != result[1]) {
-                      // await updateLastCheckBlock(latest);   
                       let params = {
                         id: 0,
                         latest: latest,
@@ -97,8 +85,6 @@ export class TaskService {
     modifyDemandLog = async () => {
         let latest = await rpcProvider.getBlockNumber();
         let last = await this.blockLogRepository.query(getModifyDemandLastBlock());
-        
-        
         let logBlock = last[0].block;
         if (logBlock >= latest) return; //区块已监听过了
         logBlock = Math.max(logBlock, (latest - 100)); //最多往前100区块
@@ -117,7 +103,6 @@ export class TaskService {
         if (logs.length > 0) {
             let txs = logs.map((ele: any) => {
                 let decodedData = CreateDemand.parseLog(ele);
-                        console.log("--------",decodedData.args[0].toString());
                 return {
                     demandId: decodedData.args[0].toString(),
                     title: decodedData.args[2],
@@ -130,7 +115,7 @@ export class TaskService {
             let value = ``;
             for (const v of txs) {
                 value += `
-                (${v.demandId}, '${v.title}', ${v.budget}, '${v.desc}'),
+                    (${v.demandId}, '${v.title}', ${v.budget}, '${v.desc}'),
                 `
             }
             let sqlValue = value.substring(0,(value.lastIndexOf(',')))
@@ -139,12 +124,9 @@ export class TaskService {
                 value: sqlValue
             }
             let sql = updateProject(paramsSql)
-            console.log('sql=>',sql);
-            
             try {
               let result = await this.projectRepository.query(sql)
               if (-1 != result[1]) {
-                  // await updateLastCheckBlock(latest);   
                   let params = {
                       id: 1,
                       latest: latest,
@@ -162,13 +144,12 @@ export class TaskService {
 
     @Interval(5000)  //每隔3秒执行一次
     handleInterval() {
-              this._insertLog()
+        this.insertCreateDemand()
         this.modifyDemandLog()  
     }
 
     @Timeout(1000)
     async handleTimeout() {
-
 
     }
 }
