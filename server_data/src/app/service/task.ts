@@ -2,13 +2,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron, Interval, Timeout } from '@nestjs/schedule';
 import { Project } from 'src/app/db/entity/Project';
 import { BlockLog } from 'src/app/db/entity/BlockLog';
-import 'ethers'
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { getLastBlock,getModifyDemandLastBlock } from 'src/app/db/sql/dbUtils';
-import { updateProject } from 'src/app/db/sql/dbUtils';
-import { updateBlock } from 'src/app/db/sql/dbUtils';
-
+import { getLastBlock,getModifyDemandLastBlock } from 'src/app/db/sql/sql';
+import { updateProject } from 'src/app/db/sql/sql';
+import { updateBlock } from 'src/app/db/sql/sql';
 const { ethers } = require('ethers');
 const rpcProvider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
 const USDR_ADDR = require('../../../deployments/Demand.json');
@@ -29,8 +27,8 @@ export class TaskService {
             let latest = await rpcProvider.getBlockNumber();
             let last = await this.blockLogRepository.query(getLastBlock());
             let logBlock = last[0].block;
-            if (logBlock >= latest) return; //区块已监听过了
-            logBlock = Math.max(logBlock, (latest - 100)); //最多往前100区块
+            if (logBlock >= latest) return; // 区块已监听过了
+            logBlock = Math.max(logBlock, (latest - 100)); // 最多往前100区块
             let fromBlock = logBlock + 1;
             let toBlock = latest;
             let filter = {
@@ -70,7 +68,6 @@ export class TaskService {
                 try {
                   let result = await this.projectRepository.query(sql)
                   if (-1 != result[1]) {
-                      // await updateLastCheckBlock(latest);   
                       let params = {
                         id: 0,
                         latest: latest,
@@ -118,7 +115,7 @@ export class TaskService {
             let value = ``;
             for (const v of txs) {
                 value += `
-                (${v.demandId}, '${v.title}', ${v.budget}, '${v.desc}'),
+                    (${v.demandId}, '${v.title}', ${v.budget}, '${v.desc}'),
                 `
             }
             let sqlValue = value.substring(0,(value.lastIndexOf(',')))
@@ -130,7 +127,6 @@ export class TaskService {
             try {
               let result = await this.projectRepository.query(sql)
               if (-1 != result[1]) {
-                  // await updateLastCheckBlock(latest);   
                   let params = {
                       id: 1,
                       latest: latest,
@@ -153,7 +149,6 @@ export class TaskService {
 
     @Timeout(1000)
     async handleTimeout() {
-
 
     }
 }
