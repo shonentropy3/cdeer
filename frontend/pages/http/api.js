@@ -1,10 +1,10 @@
 import serviceAxios from "./index";
 
 
-export const getMarketData = (data) => {
+export const getDemand = (data) => {
     return serviceAxios({
         // url: "/upchain/getProject",
-        url: "/market/getMarketData",
+        url: "/market/getDemand",
         method: "get",
         data,
     }
@@ -14,7 +14,7 @@ export const getMarketData = (data) => {
 export const createDemand = (data) => {
 
     return serviceAxios({
-        url: "/market/publish",
+        url: "/market/createDemand",
         // url: "/upchain/createDemand",
         method: "post",
         data,
@@ -47,17 +47,17 @@ export const deleteDemand = (data) => {
 export const getHash = (data) => {
     
     return serviceAxios({
-        url: "/market/upload",
+        url: "/common/upload",
         method: "post",
         data,
     }
 );
 }
 
-export const getProjectDetail = (data) => {
+export const getDemandInfo = (data) => {
     return serviceAxios({
         // url: "/upchain/getProject",
-        url: "/market/projectDetail",
+        url: "/market/getDemandInfo",
         method: "post",
         data,
     }
@@ -65,10 +65,10 @@ export const getProjectDetail = (data) => {
 }
 
 
-export const getMyPjcData = (data) => {
+export const getMyDemand = (data) => {
     return serviceAxios({
         // url: "/upchain/getProject",
-        url: "/market/getMyPjcData",
+        url: "/user/getMyDemand",
         method: "post",
         data,
     }

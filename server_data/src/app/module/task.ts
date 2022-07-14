@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { TaskController } from './task.controller';
-import { TaskService } from './task.service';
-import { Project } from 'src/entity/Project';
-import { BlockLog } from 'src/entity/BlockLog';
+import { TaskController } from '../controller/task';
+import { TaskService } from '../service/task';
+import { Project } from 'src/app/db/entity/Project';
+import { BlockLog } from 'src/app/db/entity/BlockLog';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({

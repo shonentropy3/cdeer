@@ -4,7 +4,7 @@ import address from '../contracts/deployments/CodeMarket.json';
 import { useEffect, useState, } from 'react';
 import Link from "next/link"
 import { Spin, BackTop, Divider, Empty } from 'antd';
-import { getMarketData } from './http/api';
+import { getDemand } from './http/api';
 import style from '../styles/utils.module.scss'
 import { translatedPjc, translatedRole } from './utils/translated';
 
@@ -114,7 +114,7 @@ export default function Home() {
 
   // 获取页面数据
   const marketData = async()=>{
-    await getMarketData()
+    await getDemand()
     .then(res => {
       Array.from(res).forEach((e,i) => {
         res[i].role = translatedRole(e.role)

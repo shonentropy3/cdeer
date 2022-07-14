@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { MarketModule } from './app/module/market';
+import { DemandModule } from './app/module/demand';
 // 配置文件
 import configuration from './config';
 import { ConfigModule,ConfigService } from '@nestjs/config';
@@ -29,8 +29,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       },
       inject: [ConfigService],
     }),
-    
-    MarketModule,
+    DemandModule,
   ],
   controllers: [AppController],
   providers: [AppService],

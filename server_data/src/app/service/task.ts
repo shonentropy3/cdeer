@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, Interval, Timeout } from '@nestjs/schedule';
 // entity
-import { Project } from 'src/entity/Project';
-import { BlockLog } from 'src/entity/BlockLog';
+import { Project } from 'src/app/db/entity/Project';
+import { BlockLog } from 'src/app/db/entity/BlockLog';
 // ethers
 const { ethers } = require('ethers');
 import 'ethers'
@@ -11,9 +11,9 @@ const USDR_ADDR = require('../../deployments/Demand.json');
 // db
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { getLastBlock,getModifyDemandLastBlock } from 'src/db/dbUtils';
-import { updateProject } from 'src/db/dbUtils';
-import { updateBlock } from 'src/db/dbUtils';
+import { getLastBlock,getModifyDemandLastBlock } from 'src/app/db/sql/dbUtils';
+import { updateProject } from 'src/app/db/sql/dbUtils';
+import { updateBlock } from 'src/app/db/sql/dbUtils';
 
 
 @Injectable()
