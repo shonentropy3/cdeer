@@ -41,14 +41,13 @@ export default function Modify(params) {
             setPjclist([...pjcList])
             if (t.target.checked) {
                 pjc.push(e.value)
-                console.log('+++');
+
             }else{
                 pjc.forEach((ele,i) => {
                     if (ele === e.value) {
                         pjc.splice(i,1)
                     }
                 })
-                console.log('---');
             }
             setPjc([...pjc])
         }
