@@ -98,7 +98,6 @@ export default function Modify(params) {
             pro_id: detail.pro_id,
             attachment: detail.attachment
         }
-
         console.log("obj===>",obj);
         obj = JSON.stringify(obj)
         let tradeStatus = true

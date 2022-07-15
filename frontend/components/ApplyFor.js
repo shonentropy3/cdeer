@@ -14,14 +14,23 @@ export default function Attend(props) {
         setCount(count);
     }
 
-    const submit = () => {
+    //报名申请
+    const submit = async() => {
         let obj = {
-            count: count,
-            pro_id: pro_id
+            demandId: pro_id,
+            previewPrice: count,
         }
-        console.log(obj);
 
-
+        obj = JSON.stringify(obj)
+        // 上链
+        await ApplyFor(obj)
+        .then(res => {
+            console.log('res==>',res);
+        })
+        .catch(err => {
+            console.log('err==>',err);
+            console.log('交易失败==>');
+        })
 
         // 入库
         createApply(obj)
@@ -32,6 +41,9 @@ export default function Attend(props) {
             console.log(err);
         })
         return
+        
+        
+
         setParent(false)
     }
 

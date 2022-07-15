@@ -3,7 +3,9 @@ import { useEffect, useState } from "react"
 import { getDemandInfo } from '../http/api';
 import NavigationBar from "../../components/NavigationBar";
 import { translatedPjc, translatedRole } from '../utils/translated';
-import ApplyFor from '../../components/ApplyFor';
+import Attend from '../../components/ApplyFor';
+import { ApplyFor } from '../../controller/ApplyFor';
+
 export default function ProjectDetail() {
     let oid = ''
     let [detail,detailSet] = useState({})
@@ -32,11 +34,28 @@ export default function ProjectDetail() {
             console.log(err);
         })
     },[])
-
-    const toggleMask = () => {
+    
+    // 报名开关
+    const toggleMask = async() => {
         maskStatus = !maskStatus
         setMaskStatus(maskStatus)
+
+        let obj = {
+            demandId: detail.demandId,
+            previewPrice: previewPrice,
+        }
+        obj = JSON.stringify(obj)
+        await ModifyApplySwitch(obj)
+        .then(res => {
+            console.log('res==>',res);
+        })
+        .catch(err => {
+            console.log('err==>',err);
+            console.log('交易失败==>');
+        })
     }
+
+
 
 
 
@@ -45,7 +64,7 @@ export default function ProjectDetail() {
             {
                 maskStatus ? 
                 <div className="Mask">
-                    <ApplyFor setParent={setMaskStatus} pro_id={detail.pro_id} />
+                    <Attend setParent={setMaskStatus} pro_id={detail.pro_id} />
                 </div>
                 :
                 ''
