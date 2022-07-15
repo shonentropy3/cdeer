@@ -7,6 +7,11 @@
     left: 0;
     z-index: 999;
     background-color: rgba(0, 0, 0, 0.571);
+    .box{
+        .ant-input-number{
+            width: 200px;
+        }
+    }
 }
 
 .Attend{

@@ -90,7 +90,10 @@ export default function ProjectDetail() {
                         </div>
                     </div>
                     <div className='content'>
-                            项目描述:   {detail.content}
+                        {
+                            detail.attachment.length > 0 ? <p>项目附件: {detail.attachment}</p> : ''
+                        }
+                        <p>项目描述: {detail.content}</p>
                     </div>
                 </div>
             </div>
