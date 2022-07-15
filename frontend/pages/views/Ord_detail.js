@@ -29,6 +29,7 @@ export default function OrderDetail(oid) {
         setSelectItem(selectItem)
     }
 
+    //修改报名
     const modifyApplySwitch = () => {
         let obj = {
             demandId: detail.demandId,

@@ -14,6 +14,7 @@ export default function Attend(props) {
         setCount(count);
     }
 
+    //报名申请
     const submit = () => {
         let obj = {
             demandId: pro_id,

@@ -34,7 +34,8 @@ export default function ProjectDetail() {
             console.log(err);
         })
     },[])
-
+    
+    // 报名开关
     const toggleMask = () => {
         maskStatus = !maskStatus
         setMaskStatus(maskStatus)
@@ -44,7 +45,7 @@ export default function ProjectDetail() {
             previewPrice: previewPrice,
         }
         obj = JSON.stringify(obj)
-        await ApplyFor(obj)
+        await ModifyApplySwitch(obj)
         .then(res => {
             console.log('res==>',res);
         })
