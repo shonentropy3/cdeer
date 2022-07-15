@@ -13,6 +13,19 @@ export default function Attend(props) {
 
     const submit = () => {
         setParent(false)
+        let obj = {
+            demandId: detail.demandId,
+            previewPrice: previewPrice,
+        }
+        obj = JSON.stringify(obj)
+        await ApplyFor(obj)
+        .then(res => {
+            console.log('res==>',res);
+        })
+        .catch(err => {
+            console.log('err==>',err);
+            console.log('交易失败==>');
+        })
     }
 
     useEffect(() => {

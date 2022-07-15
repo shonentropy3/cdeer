@@ -5,7 +5,7 @@ import { Menu, Switch } from 'antd';
 import NavigationBar from "../../components/NavigationBar";
 import { getDemandInfo } from "../http/api";
 import { translatedPjc, translatedRole } from '../utils/translated'
-
+import { ModifyApplySwitch } from '../../controller/ApplyFor';
 
 export default function OrderDetail(oid) {
 
@@ -27,6 +27,21 @@ export default function OrderDetail(oid) {
     const toggleNav = (item) => {
         selectItem = item.key
         setSelectItem(selectItem)
+    }
+
+    const modifyApplySwitch = () => {
+        let obj = {
+            demandId: detail.demandId,
+            buttonSwitch: buttonSwitch,
+        }
+        await ModifyApplySwitch(obj)
+        .then(res => {
+            console.log('res==>',res);
+        })
+        .catch(err => {
+            console.log('err==>',err);
+            console.log('交易失败==>');
+        })
     }
 
     useEffect(()=>{
@@ -64,7 +79,7 @@ export default function OrderDetail(oid) {
                 />
                 <div className="switch">
                     报名开关
-                    <Switch loading={false} defaultChecked />
+                    <Switch loading={false} defaultChecked onClick={() => modifyApplySwitch()} />
                 </div>
             </div>
             {

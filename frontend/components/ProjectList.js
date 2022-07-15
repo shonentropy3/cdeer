@@ -6,6 +6,7 @@ import ModifyDemand from '../controller/modifyDemand';
 import { modifyDemand } from '../pages/http/api';
 import Modify from "./Modify";
 import { deleteDemand } from '../pages/http/api';
+import { CancelApply } from '../controller/ApplyFor';
 
 function ProjectList(props) {
     const {data} = props
@@ -36,7 +37,16 @@ function ProjectList(props) {
     };
 
     const deletExploitation = () => {
+
         // TODO: 取消报名   
+        await CancelApply(obj)
+        .then(res => {
+        console.log('res==>',res);
+        })
+        .catch(err => {
+            console.log('err==>',err);
+            console.log('交易失败==>');
+        })
     }
       
     
@@ -44,6 +54,8 @@ function ProjectList(props) {
         maskStatus = !maskStatus
         setMaskStatus(maskStatus)
     }
+
+
 
 
 
