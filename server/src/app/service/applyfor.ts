@@ -20,6 +20,26 @@ export class ApplyforService {
         return await this.applyInfoRepository.query(sql)
     }
 
+    async getApply(@Body() body: any): Promise<ApplyInfo[]> {
+        let sql = `SELECT * FROM apply_info WHERE apply_addr = '${body.id}' `
+        console.log('=======',sql);
+        
+        return await this.applyInfoRepository.query(sql)
+        .then(res =>{
+            let obj = {
+                code: 200,
+                data: res
+            }
+            return obj
+        })
+        .catch(err => {
+            console.log('getDemand err =>', err)
+            return err
+        });
+    }
+    
+
+
     // async cancel(@Body() body: any): Promise<ApplyInfo[]> {
     //     let bodyData = JSON.parse(body.proLabel)
     //     // let

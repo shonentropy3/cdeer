@@ -12,6 +12,11 @@ export class ApplyforController {
         return await this.applyforService.apply(body)
     }
 
+    @Post('getApply')  // 展示列表
+    async getApply(@Body() body: any){
+        return await this.applyforService.getApply(body)
+    }
+
     @Post('cancelApply')  // 取消报名
     async cancelApply(@Body() body: any){
         // return await this.applyforService.cancel(body)

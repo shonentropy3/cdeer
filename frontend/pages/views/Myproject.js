@@ -3,7 +3,7 @@ import { Dropdown, Menu, Space, Typography } from 'antd';
 import { useEffect, useState } from 'react';
 import ProjectList from '../../components/ProjectList';
 import style from '../../styles/utils.module.scss'
-import { getMyDemand } from '../http/api';
+import { getMyDemand,getApplyinfo } from '../http/api';
 import { translatedPjc, translatedRole } from '../utils/translated'
 
 
@@ -60,6 +60,14 @@ export default function Myproject() {
               })
               pjcList = res;
               setPjcList([...pjcList])
+          })
+          
+          getApplyinfo({id:accounts[0]})
+          .then(res => {
+            console.log(res);
+          })
+          .catch(err => {
+            console.log(err);
           })
 
         } catch (err) {

@@ -86,6 +86,16 @@ export const applyFor = (data) => {
 );
 }
 
+export const getApplyinfo = (data) => {
+    return serviceAxios({
+        // url: "/upchain/getProject",
+        url: "/applyFor/getApply",
+        method: "post",
+        data,
+    }
+);
+}
+
 //取消报名
 export const cancelApply = (data) => {
     return serviceAxios({

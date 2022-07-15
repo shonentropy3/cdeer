@@ -30,6 +30,7 @@ export default function Attend(props) {
             console.log('res==>',res);
             obj = JSON.parse(obj)
             obj.hash = res.hash;
+            // 这里的地址用的是后端传来的,和前端拿到的有大小写的区别,下周记得改成前端拿
             obj.applyAddr = res.applyAddr;
             obj = JSON.stringify(obj)
             tradeStatus = true
