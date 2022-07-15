@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import { getDemandInfo } from '../http/api';
 import NavigationBar from "../../components/NavigationBar";
 import { translatedPjc, translatedRole } from '../utils/translated';
-import Attend from '../../components/Attend';
+import Attend from '../../components/ApplyFor';
 
 export default function ProjectDetail() {
     let oid = ''
