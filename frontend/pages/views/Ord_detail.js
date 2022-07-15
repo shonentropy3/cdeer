@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import RegistrationList from '../../components/RegistrationList'
 import style from '../../styles/utils.module.scss'
-import { Menu } from 'antd';
+import { Menu, Switch } from 'antd';
 import NavigationBar from "../../components/NavigationBar";
 import { getProjectDetail } from "../http/api";
 import { translatedPjc, translatedRole } from '../utils/translated'
@@ -61,6 +61,10 @@ export default function OrderDetail(oid) {
                 selectedKeys={selectItem}
                 onSelect={(item)=>toggleNav(item)}
                 />
+                <div className="switch">
+                    报名开关
+                    <Switch loading={false} defaultChecked />
+                </div>
             </div>
             {
                 selectItem === 'item-1' ? 

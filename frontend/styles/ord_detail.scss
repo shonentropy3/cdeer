@@ -3,6 +3,11 @@
     min-height: 100vh;
     background-color: #f0f2f5;
     padding: 100px 20% 0;
+    .topbar{
+        .switch{
+            display: flex;
+        }
+    }
     .container{
         background-color: white;
         box-shadow: 0 1px 3px rgb(0 0 0 / 20%);
@@ -18,6 +23,7 @@
             min-height: 500px;
             box-sizing: border-box;
             padding: 20px;
+            position: relative;
             p{
                 margin-bottom: 10px;
             }
