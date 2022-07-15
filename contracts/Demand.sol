@@ -61,9 +61,9 @@ contract Demand is ERC721, IDemand, Ownable {
         uint demandId = demandIds.current();        
         demands[demandId] = DemandInfo({
             title: _demandInfo.title,
-            budget: _demandInfo.budget,
             desc: _demandInfo.desc,
             attachment: _demandInfo.attachment,
+            budget: _demandInfo.budget,            
             period: _demandInfo.period,
             applySwitch: false
         });

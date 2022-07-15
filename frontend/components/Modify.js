@@ -86,7 +86,9 @@ export default function Modify(params) {
         })
         r = `{${r.substring(0,r.lastIndexOf(','))}}`
         p = `{${p.substring(0,p.lastIndexOf(','))}}`
-        const obj = {
+        console.log("period-----",input[2].value);
+        console.log("budget+++++++",input[1].value);
+        let obj = {
             u_address: data,
             title: input[0].value,
             budget: input[1].value,
@@ -99,6 +101,7 @@ export default function Modify(params) {
         }
 
         console.log("obj===>",obj);
+        obj = JSON.stringify(obj)
         let tradeStatus = true
         await ModifyDemand(obj)
         .then(res => {
@@ -106,11 +109,12 @@ export default function Modify(params) {
         })
         .catch(err => {
             console.log('err==>',err);
+            console.log('交易失败==>');
         })
         
         if (tradeStatus) {
             console.log('交易完成==>');
-            modifyDemand({proLabel: JSON.stringify(obj)})
+            modifyDemand({proLabel: obj})
               .then(res => {
                 console.log(res);
                 cancel()
