@@ -1,22 +1,25 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { CloseCircleTwoTone } from '@ant-design/icons';
 import { InputNumber, Button } from 'antd';
 
 
 export default function Attend(props) {
     
-    const { setParent } = props
+    const { setParent } = props;
+    const { pro_id } = props
+    let [count,setCount] = useState(null);
 
-    const onChange = () => {
-        
+    const onChange = (e) => {
+        count = e;
+        setCount(count);
     }
 
     const submit = () => {
-        setParent(false)
         let obj = {
-            demandId: detail.demandId,
-            previewPrice: previewPrice,
+            demandId: pro_id,
+            previewPrice: count,
         }
+
         obj = JSON.stringify(obj)
         await ApplyFor(obj)
         .then(res => {
@@ -26,6 +29,8 @@ export default function Attend(props) {
             console.log('err==>',err);
             console.log('交易失败==>');
         })
+
+        setParent(false)
     }
 
     useEffect(() => {
