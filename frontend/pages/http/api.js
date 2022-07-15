@@ -74,3 +74,13 @@ export const getMyDemand = (data) => {
     }
 );
 }
+
+
+export const createApply = (data) => {
+    return serviceAxios({
+        url: "/applyfor/createApply",
+        method: "post",
+        data,
+    }
+);
+}

@@ -3,8 +3,7 @@ import { useEffect, useState } from "react"
 import { getDemandInfo } from '../http/api';
 import NavigationBar from "../../components/NavigationBar";
 import { translatedPjc, translatedRole } from '../utils/translated';
-import Attend from '../../components/ApplyFor';
-
+import ApplyFor from '../../components/ApplyFor';
 export default function ProjectDetail() {
     let oid = ''
     let [detail,detailSet] = useState({})
@@ -46,7 +45,7 @@ export default function ProjectDetail() {
             {
                 maskStatus ? 
                 <div className="Mask">
-                    <Attend setParent={setMaskStatus} pro_id={detail.pro_id} />
+                    <ApplyFor setParent={setMaskStatus} pro_id={detail.pro_id} />
                 </div>
                 :
                 ''

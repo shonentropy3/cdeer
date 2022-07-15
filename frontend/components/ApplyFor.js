@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { CloseCircleTwoTone } from '@ant-design/icons';
 import { InputNumber, Button } from 'antd';
-
+import { createApply } from "../pages/http/api";
 
 export default function Attend(props) {
     
@@ -21,6 +21,16 @@ export default function Attend(props) {
         }
         console.log(obj);
 
+
+
+        // 入库
+        createApply(obj)
+        .then(res => {
+            console.log(res);
+        })
+        .catch(err => {
+            console.log(err);
+        })
         return
         setParent(false)
     }

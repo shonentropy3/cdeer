@@ -6,6 +6,7 @@ import { DemandModule } from './app/module/demand';
 import configuration from './config';
 import { ConfigModule,ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ApplyforModule } from './app/module/applyfor';
 
 @Module({
   imports: [ 
@@ -30,6 +31,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       inject: [ConfigService],
     }),
     DemandModule,
+    ApplyforModule,
   ],
   controllers: [AppController],
   providers: [AppService],
