@@ -21,9 +21,7 @@ export default async function Demand(para) {
                 desc: data.pro_content,
                 attachment: data.hash,
 
-                budget: ethers.utils.parseEther(`${data.budget}`),
-                // budget: ethers.utils.parseEther(toString(data.budget)),
-                // budget: ethers.utils.parseEther("5"),
+                budget: data.budget,
                 period: data.period
 
             },

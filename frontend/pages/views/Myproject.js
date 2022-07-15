@@ -3,7 +3,7 @@ import { Dropdown, Menu, Space, Typography } from 'antd';
 import { useEffect, useState } from 'react';
 import ProjectList from '../../components/ProjectList';
 import style from '../../styles/utils.module.scss'
-import { getMyPjcData } from '../http/api';
+import { getMyDemand } from '../http/api';
 import { translatedPjc, translatedRole } from '../utils/translated'
 
 
@@ -52,7 +52,7 @@ export default function Myproject() {
         try {
           const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
           console.log("Found an account! Address: ", accounts[0]);
-          getMyPjcData({hash:accounts[0]})
+          getMyDemand({hash:accounts[0]})
           .then(res => {
               Array.from(res).forEach((e,i) => {
                 res[i].roleNew = translatedRole(e.role)

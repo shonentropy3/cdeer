@@ -1,14 +1,16 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { DemandModule } from './app/module/demand';
-// 配置文件
-import configuration from './config';
+import { TaskModule } from './app/module/task';
+import { ScheduleModule } from '@nestjs/schedule';
 import { ConfigModule,ConfigService } from '@nestjs/config';
+import configuration from './config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [ 
+  imports: [
+    TaskModule,
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       load: [configuration],
     }),
@@ -29,7 +31,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       },
       inject: [ConfigService],
     }),
-    DemandModule,
   ],
   controllers: [AppController],
   providers: [AppService],

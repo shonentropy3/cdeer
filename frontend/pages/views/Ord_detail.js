@@ -3,7 +3,7 @@ import RegistrationList from '../../components/RegistrationList'
 import style from '../../styles/utils.module.scss'
 import { Menu, Switch } from 'antd';
 import NavigationBar from "../../components/NavigationBar";
-import { getProjectDetail } from "../http/api";
+import { getDemandInfo } from "../http/api";
 import { translatedPjc, translatedRole } from '../utils/translated'
 
 
@@ -32,7 +32,7 @@ export default function OrderDetail(oid) {
     useEffect(()=>{
         oid = location.search
         oid = oid.replace('?','')
-        getProjectDetail({id:oid})
+        getDemandInfo({id:oid})
         .then(res => {
             Array.from(res).forEach((e,i) => {
                 res[i].role = translatedRole(e.role)

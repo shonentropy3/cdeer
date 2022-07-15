@@ -1,6 +1,6 @@
 import {withRouter} from 'next/router'
 import { useEffect, useState } from "react"
-import { getProjectDetail } from '../http/api';
+import { getDemandInfo } from '../http/api';
 import NavigationBar from "../../components/NavigationBar";
 import { translatedPjc, translatedRole } from '../utils/translated';
 import Attend from '../../components/Attend';
@@ -19,7 +19,7 @@ export default function ProjectDetail() {
         oid = location.search
         oid = oid.replace('?','')
         
-        getProjectDetail({id: oid})
+        getDemandInfo({id: oid})
         .then(res=>{
             Array.from(res).forEach((e,i) => {
                 res[i].role = translatedRole(e.role)
