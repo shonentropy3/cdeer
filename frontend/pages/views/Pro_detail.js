@@ -46,7 +46,7 @@ export default function ProjectDetail() {
             {
                 maskStatus ? 
                 <div className="Mask">
-                    <Attend setParent={setMaskStatus} />
+                    <Attend setParent={setMaskStatus} pro_id={detail.pro_id} />
                 </div>
                 :
                 ''

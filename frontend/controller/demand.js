@@ -4,7 +4,6 @@ import { ethers } from 'ethers'
 
 
 export default async function Demand(para) {
-  console.log('window==>',window);
     try {
           
         if (window.ethereum !== 'undefined') {
@@ -25,7 +24,6 @@ export default async function Demand(para) {
                 value: fee
             })
             .then(res => {
-              console.log('res===>',res.hash);
               return res.hash
             })
         } else {

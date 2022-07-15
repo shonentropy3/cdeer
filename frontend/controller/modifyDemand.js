@@ -11,7 +11,6 @@ export default async function ModifyDemand(account) {
         const demandContract = new ethers.Contract(demandAddr.address, demand.abi, signer);
             console.log("account.budget+++++++",account.budget);
         let data = JSON.parse(account)
-        console.log('合约============',data.pro_id);
         await demandContract.modifyDemand(data.pro_id,
           { 
               title: data.title,

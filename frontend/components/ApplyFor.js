@@ -1,17 +1,27 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { CloseCircleTwoTone } from '@ant-design/icons';
 import { InputNumber, Button } from 'antd';
 
 
 export default function Attend(props) {
     
-    const { setParent } = props
+    const { setParent } = props;
+    const { pro_id } = props
+    let [count,setCount] = useState(null);
 
-    const onChange = () => {
-        
+    const onChange = (e) => {
+        count = e;
+        setCount(count);
     }
 
     const submit = () => {
+        let obj = {
+            count: count,
+            pro_id: pro_id
+        }
+        console.log(obj);
+
+        return
         setParent(false)
     }
 
