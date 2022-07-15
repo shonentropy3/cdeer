@@ -2,8 +2,8 @@ import { useEffect, useState } from "react"
 import Link from 'next/link'
 import Router from "next/router";
 import { message, Popconfirm } from 'antd';
-import ModifyDemand from '../controller/modifyDemand';
-import { modifyDemand } from '../pages/http/api';
+
+import { cancelApply } from '../pages/http/api';
 import Modify from "./Modify";
 import { deleteDemand } from '../pages/http/api';
 import { CancelApply } from '../controller/ApplyFor';
@@ -41,12 +41,25 @@ function ProjectList(props) {
         // TODO: 取消报名   
         await CancelApply(obj)
         .then(res => {
-        console.log('res==>',res);
+            console.log('res==>',res);
         })
         .catch(err => {
             console.log('err==>',err);
             console.log('交易失败==>');
         })
+
+        if (tradeStatus) {
+            console.log('交易完成==>');
+            cancelApply({proLabel: obj})
+              .then(res => {
+                console.log(res);
+                cancel()
+              })
+              .catch(err => {
+                console.log(err);
+                cancel()
+              })
+          }
     }
       
     

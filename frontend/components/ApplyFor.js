@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { CloseCircleTwoTone } from '@ant-design/icons';
 import { InputNumber, Button } from 'antd';
-
+import { applyFor } from '../pages/http/api';
 
 export default function Attend(props) {
     
@@ -22,6 +22,7 @@ export default function Attend(props) {
         }
 
         obj = JSON.stringify(obj)
+        let tradeStatus = true
         await ApplyFor(obj)
         .then(res => {
             console.log('res==>',res);
@@ -31,6 +32,18 @@ export default function Attend(props) {
             console.log('交易失败==>');
         })
 
+        if (tradeStatus) {
+            console.log('交易完成==>');
+            applyFor({proLabel: obj})
+              .then(res => {
+                console.log(res);
+                cancel()
+              })
+              .catch(err => {
+                console.log(err);
+                cancel()
+              })
+          }
         setParent(false)
     }
 
