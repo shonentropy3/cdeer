@@ -4,20 +4,20 @@ import { ApplyforService } from '../service/applyfor';
 
 
 @Controller('applyFor')
-export class UserController {
+export class ApplyforController {
     constructor(private readonly applyforService: ApplyforService){}
 
     @Post('applyFor')  // 报名
     async applyFor(@Body() body: any){
-        // return await this.applyforService.getMyDemand(body)
+        return await this.applyforService.apply(body)
     }
 
     @Post('cancelApply')  // 取消报名
     async cancelApply(@Body() body: any){
-        // return await this.applyforService.getMyDemand(body)
+        // return await this.applyforService.cancel(body)
     }
     @Post('modifyApplySwitch')  //  报名开关
     async modifyApplySwitch(@Body() body: any){
-        // return await this.applyforService.getMyDemand(body)
+        // return await this.applyforService.applySwitch(body)
     }
 }

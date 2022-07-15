@@ -4,7 +4,7 @@ import { getDemandInfo, modifyApplySwitch } from '../http/api';
 import NavigationBar from "../../components/NavigationBar";
 import { translatedPjc, translatedRole } from '../utils/translated';
 import Attend from '../../components/ApplyFor';
-import { ApplyFor } from '../../controller/ApplyFor';
+import { ApplyFor } from '../../controller/ApplyProject';
 
 export default function ProjectDetail() {
     let oid = ''
@@ -40,32 +40,31 @@ export default function ProjectDetail() {
         maskStatus = !maskStatus
         setMaskStatus(maskStatus)
 
-        let obj = {
-            demandId: detail.demandId,
-            previewPrice: previewPrice,
-        }
-        obj = JSON.stringify(obj)
-        await ModifyApplySwitch(obj)
-        .then(res => {
-            console.log('res==>',res);
-        })
-        .catch(err => {
-            console.log('err==>',err);
-            console.log('交易失败==>');
-        })
+        // let obj = {
+        //     demandId: detail.demandId
+        // }
+        // obj = JSON.stringify(obj)
+        // await ModifyApplySwitch(obj)
+        // .then(res => {
+        //     console.log('res==>',res);
+        // })
+        // .catch(err => {
+        //     console.log('err==>',err);
+        //     console.log('交易失败==>');
+        // })
 
-        if (tradeStatus) {
-            console.log('交易完成==>');
-            modifyApplySwitch({proLabel: obj})
-              .then(res => {
-                console.log(res);
-                cancel()
-              })
-              .catch(err => {
-                console.log(err);
-                cancel()
-              })
-          }
+        // if (tradeStatus) {
+        //     console.log('交易完成==>');
+        //     modifyApplySwitch({proLabel: obj})
+        //       .then(res => {
+        //         console.log(res);
+        //         cancel()
+        //       })
+        //       .catch(err => {
+        //         console.log(err);
+        //         cancel()
+        //       })
+        //   }
 
     }
 
@@ -104,9 +103,9 @@ export default function ProjectDetail() {
                         </div>
                     </div>
                     <div className='content'>
-                        {
+                        {/* {
                             detail.attachment.length > 0 ? <p>项目附件: {detail.attachment}</p> : ''
-                        }
+                        } */}
                         <p>项目描述: {detail.content}</p>
                     </div>
                 </div>

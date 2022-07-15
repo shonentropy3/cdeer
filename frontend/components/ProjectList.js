@@ -6,7 +6,7 @@ import { message, Popconfirm } from 'antd';
 import { cancelApply } from '../pages/http/api';
 import Modify from "./Modify";
 import { deleteDemand } from '../pages/http/api';
-import { CancelApply } from '../controller/ApplyFor';
+// import { CancelApply } from '../controller/ApplyFor';
 
 function ProjectList(props) {
     const {data} = props

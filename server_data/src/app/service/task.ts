@@ -39,6 +39,7 @@ export class TaskService {
                 fromBlock,
                 toBlock
             }
+            console.log('===',filter);
             const logs = await rpcProvider.getLogs(filter);
             const CreateDemand = new ethers.utils.Interface(["event CreateDemand(uint256 indexed demandId, address indexed demandAddr, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
             if (logs.length > 0) {
