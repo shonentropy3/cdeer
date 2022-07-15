@@ -75,7 +75,7 @@ export const getMyDemand = (data) => {
 );
 }
 
-//报名
+
 export const applyFor = (data) => {
     return serviceAxios({
         // url: "/upchain/getProject",
@@ -102,9 +102,7 @@ export const modifyApplySwitch = (data) => {
     return serviceAxios({
         // url: "/upchain/getProject",
         url: "/applyFor/modifyApplySwitch",
-        method: "post",
-        data,
-    }
-);
+    });
+
 }
 

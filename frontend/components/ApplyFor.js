@@ -2,6 +2,8 @@ import { useEffect, useState } from "react"
 import { CloseCircleTwoTone } from '@ant-design/icons';
 import { InputNumber, Button } from 'antd';
 import { applyFor } from '../pages/http/api';
+import { ApplyFor } from '../controller/ApplyFor';
+
 
 export default function Attend(props) {
     
@@ -15,14 +17,16 @@ export default function Attend(props) {
     }
 
     //报名申请
-    const submit = () => {
+    const submit = async() => {
         let obj = {
             demandId: pro_id,
             previewPrice: count,
         }
 
         obj = JSON.stringify(obj)
+
         let tradeStatus = true
+
         await ApplyFor(obj)
         .then(res => {
             console.log('res==>',res);
@@ -44,6 +48,7 @@ export default function Attend(props) {
                 cancel()
               })
           }
+        return
         setParent(false)
     }
 

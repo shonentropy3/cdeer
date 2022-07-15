@@ -36,7 +36,7 @@ export default function ProjectDetail() {
     },[])
     
     // 报名开关
-    const toggleMask = () => {
+    const toggleMask = async() => {
         maskStatus = !maskStatus
         setMaskStatus(maskStatus)
 

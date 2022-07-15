@@ -36,10 +36,10 @@ function ProjectList(props) {
         })
     };
 
-    const deletExploitation = () => {
+    const deletExploitation = async() => {
 
         // TODO: 取消报名   
-        await CancelApply(obj)
+        await CancelApply()
         .then(res => {
             console.log('res==>',res);
         })
