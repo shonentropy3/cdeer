@@ -41,12 +41,14 @@ export default function Modify(params) {
             setPjclist([...pjcList])
             if (t.target.checked) {
                 pjc.push(e.value)
+                console.log('+++');
             }else{
                 pjc.forEach((ele,i) => {
                     if (ele === e.value) {
                         pjc.splice(i,1)
                     }
                 })
+                console.log('---');
             }
             setPjc([...pjc])
         }
@@ -155,7 +157,7 @@ export default function Modify(params) {
         })
         setRolelist([...roleList])
         setPjclist([...pjcList])
-        console.log(roleList);
+        console.log(pjcList);
     }
 
     const cancel = () => {
@@ -199,8 +201,7 @@ export default function Modify(params) {
             <div className="checkbox">
                 <p>选择项目类型:</p>
                 {
-                    _data.demand.map((e,i) => <Checkbox key={i} checked={pjcList[i]} onChange={(event)=>onChange(event,e,'pjc')}>{e.name}</Checkbox>
-                    )
+                    _data.demand.map((e,i) => <Checkbox key={i} checked={pjcList[i]} onChange={(event)=>onChange(event,e,'pjc',i)}>{e.name}</Checkbox>)
                 }
             </div>
             <div className="btn">
