@@ -46,10 +46,10 @@ export default function Home() {
         // return "Error:"+error;
     }
     if (data.status === 1) {
-      if (data.detail.length === 0) {
+      if (data.detail.data.length === 0) {
         return <Empty />
       }
-        return data.detail.map(
+        return data.detail.data.map(
           // return sql.data.map(
           (item, index) => 
           <Link href={{pathname:'/views/Pro_detail',search: item.id}} target="_blank" key={index}>

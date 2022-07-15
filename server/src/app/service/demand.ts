@@ -32,7 +32,8 @@ export class MarketService {
         return await this.projectRepository.query(getDemandDate())
         .then(res =>{
             let obj = {
-                code: 200
+                code: 200,
+                data: res
             }
             return obj
         })
@@ -48,7 +49,8 @@ export class MarketService {
         return await this.projectRepository.query(getDemandInfoDate(id))
         .then(res =>{
             let obj = {
-                code: 200
+                code: 200,
+                data: res
             }
             return obj
         })

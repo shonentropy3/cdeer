@@ -141,10 +141,12 @@ export class TaskService {
         }
 }
 
-    @Interval(5000)  //每隔3秒执行一次
+    @Interval(5000)  //每隔5秒执行一次
     handleInterval() {
         this.insertCreateDemand()
         this.modifyDemandLog()  
+        this.logger.debug('Called 5 seconds');
+        
     }
 
     @Timeout(1000)

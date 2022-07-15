@@ -34,11 +34,12 @@ export default function OrderDetail(oid) {
         oid = oid.replace('?','')
         getDemandInfo({id:oid})
         .then(res => {
-            Array.from(res).forEach((e,i) => {
-                res[i].role = translatedRole(e.role)
-                res[i].pro_type = translatedPjc(e.pro_type)
+            let r = res.data
+            Array.from(r).forEach((e,i) => {
+                r[i].role = translatedRole(e.role)
+                r[i].pro_type = translatedPjc(e.pro_type)
               })
-            data = res[0]
+            data = r[0]
             setData({...data})
         })
         .catch(err => {

@@ -21,11 +21,12 @@ export default function ProjectDetail() {
         
         getDemandInfo({id: oid})
         .then(res=>{
-            Array.from(res).forEach((e,i) => {
-                res[i].role = translatedRole(e.role)
-                res[i].pro_type = translatedPjc(e.pro_type)
+            let data = res.data
+            Array.from(data).forEach((e,i) => {
+                data[i].role = translatedRole(e.role)
+                data[i].pro_type = translatedPjc(e.pro_type)
             })
-            detail = res[0]
+            detail = data[0]
             detailSet({...detail})
         })
         .catch(err=>{

@@ -13,9 +13,8 @@ export default async function Demand(para) {
         const demandContract = new ethers.Contract(demandAddr.address, demand.abi, signer);
         let fee = ethers.utils.parseEther("1")
         const data = JSON.parse(para.proLabel)
-                        console.log( typeof `"${data.period}"`);
-                      toString(data.budget)
-          await demandContract.createDemand(
+          toString(data.budget)
+          return await demandContract.createDemand(
             { 
                 title: data.title,
                 desc: data.pro_content,
@@ -27,7 +26,11 @@ export default async function Demand(para) {
             },
             {
                 value: fee
-            });
+            })
+            .then(res => {
+              console.log('res===>',res.hash);
+              return res.hash
+            })
         } else {
           console.log("Ethereum object does not exist");
         }

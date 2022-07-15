@@ -4,7 +4,7 @@ import serviceAxios from "./index";
 export const getDemand = (data) => {
     return serviceAxios({
         // url: "/upchain/getProject",
-        url: "/market/getDemand",
+        url: "/demand/getDemand",
         method: "get",
         data,
     }
@@ -14,7 +14,7 @@ export const getDemand = (data) => {
 export const createDemand = (data) => {
 
     return serviceAxios({
-        url: "/market/createDemand",
+        url: "/demand/createDemand",
         // url: "/upchain/createDemand",
         method: "post",
         data,
@@ -25,7 +25,7 @@ export const createDemand = (data) => {
 export const modifyDemand = (data) => {
 
     return serviceAxios({
-        url: "/market/modifyDemand",
+        url: "/demand/modifyDemand",
         // url: "/upchain/createDemand",
         method: "post",
         data,
@@ -36,7 +36,7 @@ export const modifyDemand = (data) => {
 export const deleteDemand = (data) => {
 
     return serviceAxios({
-        url: "/market/deleteDemand",
+        url: "/demand/deleteDemand",
         // url: "/upchain/createDemand",
         method: "post",
         data,
@@ -57,7 +57,7 @@ export const getHash = (data) => {
 export const getDemandInfo = (data) => {
     return serviceAxios({
         // url: "/upchain/getProject",
-        url: "/market/getDemandInfo",
+        url: "/demand/getDemandInfo",
         method: "post",
         data,
     }
