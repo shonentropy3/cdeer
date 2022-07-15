@@ -65,8 +65,10 @@ export class TaskService {
                     value: sqlValue
                 }
                 let sql = updateProject(paramsSql)
+                
                 try {
                   let result = await this.projectRepository.query(sql)
+                  this.logger.debug('insertCreateDemand');
                   if (-1 != result[1]) {
                       let params = {
                         id: 0,
@@ -77,8 +79,6 @@ export class TaskService {
                 } catch (error) {
                   console.log(error);
                 }
-            }else{
-              console.log(logs.length);
             }
     }
 
@@ -126,6 +126,7 @@ export class TaskService {
             let sql = updateProject(paramsSql)
             try {
               let result = await this.projectRepository.query(sql)
+              this.logger.debug('modifyDemandLog');
               if (-1 != result[1]) {
                   let params = {
                       id: 1,
@@ -136,8 +137,6 @@ export class TaskService {
             } catch (error) {
               console.log(error);
             }
-        }else{
-          console.log(logs.length);
         }
 }
 
@@ -145,7 +144,7 @@ export class TaskService {
     handleInterval() {
         this.insertCreateDemand()
         this.modifyDemandLog()  
-        this.logger.debug('Called 5 seconds');
+        // this.logger.debug('Called 5 seconds');
         
     }
 

@@ -9,15 +9,18 @@ export default async function ModifyDemand(account) {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
         const demandContract = new ethers.Contract(demandAddr.address, demand.abi, signer);
-          await demandContract.modifyDemand(account.pro_id,
-            { 
-                title: account.title,
-                budget: ethers.utils.parseEther(`${account.budget}`),
-                desc: account.pro_content,
-                attachment: account.attachment,
-                period: account.period,
-                applySwitch: false
-            });
+            console.log("account.budget+++++++",account.budget);
+        let data = JSON.parse(account)
+        console.log('合约============',data.pro_id);
+        await demandContract.modifyDemand(data.pro_id,
+          { 
+              title: data.title,
+              budget: data.budget,
+              desc: data.pro_content,
+              attachment: data.attachment,
+              period: data.period,
+              applySwitch: false
+          });
         } else {
           console.log("Ethereum object does not exist");
         }

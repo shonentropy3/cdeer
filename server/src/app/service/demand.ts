@@ -89,6 +89,8 @@ export class MarketService {
             "content" = '${bodyData.pro_content}' ,role = '${bodyData.recruiting_role}' ,pro_type = '${bodyData.pro_type}',
             attachment = '${bodyData.attachment}' ,status = 3 ,update_time = now() where pro_id = ${bodyData.pro_id};
         `;
+        console.log("modifyDemandsql------", sql);
+        
         return await this.projectRepository.query(sql)
         .then(res=>{
             let obj = {
