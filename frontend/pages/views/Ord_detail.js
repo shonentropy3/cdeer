@@ -3,9 +3,8 @@ import RegistrationList from '../../components/RegistrationList'
 import style from '../../styles/utils.module.scss'
 import { Menu, Switch } from 'antd';
 import NavigationBar from "../../components/NavigationBar";
-import { getDemandInfo } from "../http/api";
+import { getDemandInfo, modifyApplySwitch } from "../http/api";
 import { translatedPjc, translatedRole } from '../utils/translated'
-// import { ModifyApplySwitch } from '../../controller/ApplyFor';
 
 export default function OrderDetail(oid) {
 
@@ -30,18 +29,18 @@ export default function OrderDetail(oid) {
     }
 
     //修改报名
-    const modifyApplySwitch = async() => {
+    const applySwitch = async() => {
         let obj = {
             demandId: detail.demandId,
             buttonSwitch: buttonSwitch,
         }
-        await ModifyApplySwitch(obj)
+
+        modifyApplySwitch(obj)
         .then(res => {
             console.log('res==>',res);
         })
         .catch(err => {
-            console.log('err==>',err);
-            console.log('交易失败==>');
+            console.log('修改开关失败==>',err);
         })
     }
 
@@ -80,7 +79,7 @@ export default function OrderDetail(oid) {
                 />
                 <div className="switch">
                     报名开关
-                    <Switch loading={false} defaultChecked onClick={() => modifyApplySwitch()} />
+                    <Switch loading={false} defaultChecked onClick={() => applySwitch()} />
                 </div>
             </div>
             {

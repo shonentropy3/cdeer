@@ -23,6 +23,6 @@ export class ApplyforController {
     }
     @Post('modifyApplySwitch')  //  报名开关
     async modifyApplySwitch(@Body() body: any){
-        // return await this.applyforService.applySwitch(body)
+        return await this.applyforService.modifyApplySwitch(body)
     }
 }

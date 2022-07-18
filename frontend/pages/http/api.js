@@ -99,7 +99,6 @@ export const getApplyinfo = (data) => {
 //取消报名
 export const cancelApply = (data) => {
     return serviceAxios({
-        // url: "/upchain/getProject",
         url: "/applyFor/cancelApply",
         method: "post",
         data,
@@ -110,7 +109,6 @@ export const cancelApply = (data) => {
 //报名开关
 export const modifyApplySwitch = (data) => {
     return serviceAxios({
-        // url: "/upchain/getProject",
         url: "/applyFor/modifyApplySwitch",
     });
 

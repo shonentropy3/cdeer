@@ -1,6 +1,6 @@
 import {withRouter} from 'next/router'
 import { useEffect, useState } from "react"
-import { getDemandInfo, modifyApplySwitch } from '../http/api';
+import { getDemandInfo } from '../http/api';
 import NavigationBar from "../../components/NavigationBar";
 import { translatedPjc, translatedRole } from '../utils/translated';
 import Attend from '../../components/ApplyFor';
@@ -35,38 +35,7 @@ export default function ProjectDetail() {
         })
     },[])
     
-    // 报名开关
-    const toggleMask = async() => {
-        maskStatus = !maskStatus
-        setMaskStatus(maskStatus)
 
-        // let obj = {
-        //     demandId: detail.demandId
-        // }
-        // obj = JSON.stringify(obj)
-        // await ModifyApplySwitch(obj)
-        // .then(res => {
-        //     console.log('res==>',res);
-        // })
-        // .catch(err => {
-        //     console.log('err==>',err);
-        //     console.log('交易失败==>');
-        // })
-
-        // if (tradeStatus) {
-        //     console.log('交易完成==>');
-        //     modifyApplySwitch({proLabel: obj})
-        //       .then(res => {
-        //         console.log(res);
-        //         cancel()
-        //       })
-        //       .catch(err => {
-        //         console.log(err);
-        //         cancel()
-        //       })
-        //   }
-
-    }
 
 
 

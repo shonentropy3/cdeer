@@ -47,11 +47,22 @@ export class ApplyforService {
             return err
         });
     }
-    
-    // async applySwitch(@Body() body: any): Promise<ApplyInfo[]> {
-    //     let bodyData = JSON.parse(body.proLabel)
-    //     // let
-    //     // 就是从订单页跳转到增加地址页，回到订单页后地址是选中状态
-    //     return body
-    // }
+    // TODO:
+    async modifyApplySwitch(@Body() body: any): Promise<ApplyInfo[]> {
+        let bodyData = JSON.parse(body.proLabel)
+        console.log(bodyData.demandId,);
+
+        return await this.applyInfoRepository.query(delApply(body.demand_id))
+        .then(res =>{
+            let obj = {
+                code: 200,
+                data: res
+            }
+            return obj
+        })
+        .catch(err => {
+            console.log('cancel err =>', err)
+            return err
+        });
+    }
 }
