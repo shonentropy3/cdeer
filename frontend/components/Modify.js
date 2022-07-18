@@ -1,4 +1,4 @@
-import { Input, InputNumber, Checkbox, Button } from 'antd';
+import { Input, InputNumber, Checkbox, Button, message } from 'antd';
 import { useEffect, useState } from 'react';
 import ModifyDemand from '../controller/modifyDemand';
 import { modifyDemand } from '../pages/http/api';
@@ -107,19 +107,21 @@ export default function Modify(params) {
         })
         .catch(err => {
             console.log('err==>',err);
-            console.log('交易失败==>');
         })
         
         if (tradeStatus) {
-            console.log('交易完成==>');
             modifyDemand({proLabel: obj})
               .then(res => {
-                console.log(res);
                 cancel()
+                message.success('This is a success message');
+                setTimeout(() => {
+                    window.location.reload()
+                }, 500);
               })
               .catch(err => {
                 console.log(err);
                 cancel()
+                message.error('This is a success message');
               })
           }
         console.log(input);

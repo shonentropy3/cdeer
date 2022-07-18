@@ -30,7 +30,7 @@ export default function OrderDetail(oid) {
     }
 
     //修改报名
-    const modifyApplySwitch = () => {
+    const modifyApplySwitch = async() => {
         let obj = {
             demandId: detail.demandId,
             buttonSwitch: buttonSwitch,

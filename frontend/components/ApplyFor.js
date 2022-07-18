@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { CloseCircleTwoTone } from '@ant-design/icons';
 import { InputNumber, Button } from 'antd';
 import { applyFor } from '../pages/http/api';
-import { ApplyFor } from '../controller/ApplyFor';
+import ApplyProject from "../controller/ApplyProject";
 
 
 export default function Attend(props) {
@@ -22,14 +22,18 @@ export default function Attend(props) {
             demandId: pro_id,
             previewPrice: count,
         }
-
         obj = JSON.stringify(obj)
 
-        let tradeStatus = true
-
-        await ApplyFor(obj)
+        let tradeStatus = false
+        await ApplyProject(obj)
         .then(res => {
             console.log('res==>',res);
+            obj = JSON.parse(obj)
+            obj.hash = res.hash;
+            // 这里的地址用的是后端传来的,和前端拿到的有大小写的区别,下周记得改成前端拿
+            obj.applyAddr = res.applyAddr;
+            obj = JSON.stringify(obj)
+            tradeStatus = true
         })
         .catch(err => {
             console.log('err==>',err);
@@ -37,18 +41,15 @@ export default function Attend(props) {
         })
 
         if (tradeStatus) {
-            console.log('交易完成==>');
+            console.log('交易完成==>',obj);
             applyFor({proLabel: obj})
               .then(res => {
                 console.log(res);
-                cancel()
               })
               .catch(err => {
                 console.log(err);
-                cancel()
               })
           }
-        return
         setParent(false)
     }
 
