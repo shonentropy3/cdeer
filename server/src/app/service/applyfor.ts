@@ -2,6 +2,7 @@ import { Body, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ApplyInfo } from '../db/entity/ApplyInfo';	
+import { setApply, getApply, delApply } from '../db/sql/demand';
 @Injectable()
 export class ApplyforService {
     constructor(
@@ -12,17 +13,11 @@ export class ApplyforService {
 
     async apply(@Body() body: any): Promise<ApplyInfo[]> {
         let bodyData = JSON.parse(body.proLabel)
-        let sql = `					 
-            insert into apply_info("apply_addr", demand_id, preview_price) 
-            VALUES ('${bodyData.applyAddr}', ${bodyData.demandId}, ${bodyData.previewPrice});
-        `;
-        
-        return await this.applyInfoRepository.query(sql)
+        return await this.applyInfoRepository.query(setApply(bodyData))
     }
 
     async getApply(@Body() body: any): Promise<ApplyInfo[]> {
-        let sql = `SELECT * FROM apply_info WHERE apply_addr = '${body.id}' `
-        return await this.applyInfoRepository.query(sql)
+        return await this.applyInfoRepository.query(getApply(body.id))
         .then(res =>{
             let obj = {
                 code: 200,
@@ -39,8 +34,7 @@ export class ApplyforService {
 
 
     async cancel(@Body() body: any): Promise<ApplyInfo[]> {
-        let sql = `DELETE FROM apply_info WHERE demand_id = '${body.demand_id}' `
-        return await this.applyInfoRepository.query(sql)
+        return await this.applyInfoRepository.query(delApply(body.demand_id))
         .then(res =>{
             let obj = {
                 code: 200,

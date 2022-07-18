@@ -7,7 +7,7 @@ import { CommonService } from '../service/common';
 import { UserService } from '../service/user';
 import {HttpModule} from '@nestjs/axios'
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Project } from '../db/entity/Project';
+import { Demand } from '../db/entity/Demand';
 
 
 @Module({
@@ -15,7 +15,7 @@ import { Project } from '../db/entity/Project';
   providers: [MarketService, CommonService, UserService],
   imports: [
     HttpModule,
-    TypeOrmModule.forFeature([Project]),
+    TypeOrmModule.forFeature([Demand]),
   ]
 })
 export class DemandModule {}

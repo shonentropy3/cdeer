@@ -6,7 +6,7 @@ import { join } from 'path/posix';
 import { from, map, Observable, tap, throwError } from 'rxjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Project } from '../db/entity/Project';	//引入entity
+import { Demand } from '../db/entity/Demand';	//引入entity
 
 // ipfs/upyun
 const fs  = require('fs');
@@ -16,19 +16,19 @@ const ipfs = ipfsAPI({host: 'localhost', port: '5001', protocol: 'http'});
 const service = new upyun.Service('ipfs0','upchain', 'upchain123')
 const client = new upyun.Client(service);
 // dbUtils
-import { getDemandDate, getDemandInfoDate } from '../db/sql/demand';
+import { getDemandDate, getDemandInfoDate, setDemand, moDemand, delDemand } from '../db/sql/demand';
 
 
 @Injectable()
 export class MarketService {
     constructor(
-        @InjectRepository(Project)
-        private readonly projectRepository: Repository<Project>,
+        @InjectRepository(Demand)
+        private readonly demandRepository: Repository<Demand>,
     ) {}
 
     // 获取需求列表
-    async getDemand(): Promise<Project[]> {
-        return await this.projectRepository.query(getDemandDate())
+    async getDemand(): Promise<Demand[]> {
+        return await this.demandRepository.query(getDemandDate())
         .then(res =>{
             let obj = {
                 code: 200,
@@ -43,9 +43,9 @@ export class MarketService {
     }
 
     // 获取项目详情
-    async getDemandInfo(@Body() body: any): Promise<Project[]> {
+    async getDemandInfo(@Body() body: any): Promise<Demand[]> {
         let id = Number(body.id)
-        return await this.projectRepository.query(getDemandInfoDate(id))
+        return await this.demandRepository.query(getDemandInfoDate(id))
         .then(res =>{
             let obj = {
                 code: 200,
@@ -60,14 +60,10 @@ export class MarketService {
     }
 
     // 发布需求
-    async createDemand(@Body() body: any): Promise<Project[]> {
+    async createDemand(@Body() body: any): Promise<Demand[]> {
         let bodyData = JSON.parse(body.proLabel);
-        let sql = `					 
-            insert into project(user_address,title,budget,period,"content",role,pro_type, status, attachment) 
-            VALUES (${bodyData.u_address},'${bodyData.title}',${bodyData.budget},${bodyData.period},'${bodyData.pro_content}',
-            ${bodyData.recruiting_role},${bodyData.pro_type},2,'${bodyData.hash}');
-        `;
-        return await this.projectRepository.query(sql)
+        
+        return await this.demandRepository.query(setDemand(bodyData))
         .then(res => {
             let obj = {
                 code: 200
@@ -81,16 +77,9 @@ export class MarketService {
     }
 
     // 修改需求
-    async modifyDemand(@Body() body: any): Promise<Project[]>  {
+    async modifyDemand(@Body() body: any): Promise<Demand[]>  {
         let bodyData = JSON.parse(body.proLabel);
-        let sql = `					 
-            update project SET title = '${bodyData.title}', budget = ${bodyData.budget}, period = ${bodyData.budget} ,
-            "content" = '${bodyData.pro_content}' ,role = '${bodyData.recruiting_role}' ,pro_type = '${bodyData.pro_type}',
-            attachment = '${bodyData.attachment}' ,status = 3 ,update_time = now() where pro_id = ${bodyData.pro_id};
-        `;
-        console.log("modifyDemandsql------", sql);
-        
-        return await this.projectRepository.query(sql)
+        return await this.demandRepository.query(moDemand(bodyData))
         .then(res=>{
             let obj = {
                 code: 200
@@ -104,12 +93,9 @@ export class MarketService {
     }
 
     // 删除需求
-    async deleteDemand(@Body() body: any): Promise<Project[]>  {
+    async deleteDemand(@Body() body: any): Promise<Demand[]>  {
         let data = body.data
-        let sql = `
-            UPDATE project SET status = 0  WHERE id = ${data.id};
-        `;
-        return await this.projectRepository.query(sql)
+        return await this.demandRepository.query(delDemand(data))
         .then(res=>{
             let obj = {
                 code: 200

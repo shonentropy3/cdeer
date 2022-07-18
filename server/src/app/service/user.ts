@@ -6,7 +6,7 @@ import { join } from 'path/posix';
 import { from, map, Observable, tap, throwError } from 'rxjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Project } from '../db/entity/Project';	//引入entity
+import { Demand } from '../db/entity/Demand';	//引入entity
 
 // ipfs/upyun
 const fs  = require('fs');
@@ -16,24 +16,23 @@ const ipfs = ipfsAPI({host: 'localhost', port: '5001', protocol: 'http'});
 const service = new upyun.Service('ipfs0','upchain', 'upchain123')
 const client = new upyun.Client(service);
 // dbUtils
-import { getDemandDate, getDemandInfoDate } from '../db/sql/demand';
 import { getMyPjcDBa, getMyPjcDBb } from '../db/sql/demand';
 
 
 @Injectable()
 export class UserService {
     constructor(
-        @InjectRepository(Project)
-        private readonly projectRepository: Repository<Project>,
+        @InjectRepository(Demand)
+        private readonly demandRepository: Repository<Demand>,
     ) {}
 
     // 查看个人项目
     async getMyDemand(@Body() body: any) {
         // console.log(body);
         if (body.hash) {
-          return await this.projectRepository.query(getMyPjcDBa(body.hash));
+          return await this.demandRepository.query(getMyPjcDBa(body.hash));
         }else{
-          return await this.projectRepository.query(getMyPjcDBb(body.demand_id));
+          return await this.demandRepository.query(getMyPjcDBb(body.demand_id));
           
         }
         

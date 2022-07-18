@@ -4,9 +4,6 @@ import { AxiosError } from 'axios';
 import { createWriteStream } from 'fs';
 import { join } from 'path/posix';
 import { from, map, Observable, tap, throwError } from 'rxjs';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Project } from '../db/entity/Project';	//引入entity
 
 const fs  = require('fs');
 var upyun = require("upyun")
@@ -18,10 +15,6 @@ const client = new upyun.Client(service);
 
 @Injectable()
 export class CommonService {
-    constructor(
-        @InjectRepository(Project)
-        private readonly projectRepository: Repository<Project>,
-    ) {}
 
     // Get hash
     getFile(files: any) {
