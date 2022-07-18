@@ -177,20 +177,21 @@ export class TaskService {
         } catch (error) {
             console.log(error);
         }
+    }
 }
 
     @Interval(5000)  //每隔5秒执行一次
     handleInterval() {
-        // this.insertCreateDemand()
-        // this.modifyDemandLog()  
-        // this.insertApplyFor()
+        this.insertCreateDemand()
+        this.modifyDemandLog()  
+        this.insertApplyFor()
         // this.logger.debug('Called 5 seconds');
     }
 
     @Timeout(1000)
     async handleTimeout() {
-        this.insertCreateDemand()
-        this.modifyDemandLog()  
-        this.insertApplyFor()
+        // this.insertCreateDemand()
+        // this.modifyDemandLog()  
+        // this.insertApplyFor()
     }
 }

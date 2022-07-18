@@ -46,7 +46,8 @@ export default function Home() {
         // return "Error:"+error;
     }
     if (data.status === 1) {
-      if (data.detail.data.length === 0) {
+      console.log("=========", data);
+      if (data.detail.length === 0 || data.detail === " ") {
         return <Empty />
       }
         return data.detail.data.map(

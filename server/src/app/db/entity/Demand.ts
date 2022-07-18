@@ -1,7 +1,7 @@
 import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
 
-@Index("demand_demandAddr_key", ["demandAddr"], { unique: true })
-@Index("demandAddr", ["demandAddr"], {})
+@Index("demand_demandAddr_key", ["demand_addr"], { unique: true })
+@Index("demand_addr", ["demand_addr"], {})
 @Index("demand_desc", ["demandDesc"], {})
 @Index("demand_demand_desc_key", ["demandDesc"], { unique: true })
 @Index("demand_demand_id_key", ["demandId"], { unique: true })
@@ -18,12 +18,12 @@ export class Demand {
   demandId: string | null;
 
   @Column("character varying", {
-    name: "demandAddr",
+    name: "demanda_addr",
     nullable: true,
     unique: true,
     length: 64,
   })
-  demandAddr: string | null;
+  demand_addr: string | null;
 
   @Column("character varying", { name: "title", nullable: true, length: 255 })
   title: string | null;

@@ -11,7 +11,7 @@ export const getDemandInfoDate = params => {
 }
 
 export const getMyPjcDBa = params => {
-    let sql = `SELECT * FROM public.demand WHERE demandAddr = '${params}' and del != 0 `
+    let sql = `SELECT * FROM public.demand WHERE demand_addr = '${params}' and del != 0 `
     return sql
 }
 
