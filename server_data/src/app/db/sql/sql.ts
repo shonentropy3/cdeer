@@ -32,3 +32,18 @@ export const updateBlock = params => {
     let sql = `UPDATE block_log SET block = ${params.latest} WHERE id = ${params.id};`
     return sql 
 }
+
+export const getHash = use_type => {
+    let sql = `SELECT * FROM info_sync_hash WHERE use_type = ${use_type} and update = 0;`
+    return sql
+}
+
+export const updateApplyInfo = params => {
+    let sql = `
+        UPDATE apply_info 
+        SET demand_id = temp.demandId, preview_price = temp.preview_price, update_time = now() 
+        from (values ${params.value}) as temp (
+        demandId, preview_price, transHash) where apply_info.transHash= ${params.value};
+    `
+    return sql
+}
