@@ -17,7 +17,7 @@ const service = new upyun.Service('ipfs0','upchain', 'upchain123')
 const client = new upyun.Client(service);
 // dbUtils
 import { getDemandDate, getDemandInfoDate } from '../db/sql/demand';
-import { getMyPjcDB } from '../db/sql/demand';
+import { getMyPjcDBa, getMyPjcDBb } from '../db/sql/demand';
 
 
 @Injectable()
@@ -30,7 +30,13 @@ export class UserService {
     // 查看个人项目
     async getMyDemand(@Body() body: any) {
         // console.log(body);
-        return await this.projectRepository.query(getMyPjcDB(body.hash));
+        if (body.hash) {
+          return await this.projectRepository.query(getMyPjcDBa(body.hash));
+        }else{
+          return await this.projectRepository.query(getMyPjcDBb(body.demand_id));
+          
+        }
+        
     } 
 
     // AxiosErrorTip

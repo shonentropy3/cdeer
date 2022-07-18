@@ -14,6 +14,7 @@ export default function Myproject() {
     const [test, setTest] = useState('');
     const [selectItem,setSelectItem] = useState('item-1')
     let [pjcList,setPjcList] = useState([])
+    let [applyList,setApplyList] = useState([])
 
     const items = [
       { label: '我发布的项目', key: 'item-1'}, // 菜单项务必填写 key
@@ -52,7 +53,7 @@ export default function Myproject() {
         try {
           const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
           console.log("Found an account! Address: ", accounts[0]);
-          getMyDemand({hash:accounts[0]})
+          getMyDemand({hash: accounts[0]})
           .then(res => {
               Array.from(res).forEach((e,i) => {
                 res[i].roleNew = translatedRole(e.role)
@@ -64,7 +65,12 @@ export default function Myproject() {
           
           getApplyinfo({id:accounts[0]})
           .then(res => {
-            console.log(res);
+            getMyDemand({demand_id: res.data[0].demand_id})
+            .then(res => {
+              console.log('mypjc ===>',res);
+              applyList = res[0]
+              setApplyList([applyList])
+            })
           })
           .catch(err => {
             console.log(err);
@@ -74,6 +80,7 @@ export default function Myproject() {
           alert('请登录')
         }
       }
+
 
       useEffect(()=>{
         console.log('获取当前账号登陆状态');
@@ -126,7 +133,7 @@ export default function Myproject() {
                 <h1></h1>
                 <div className="list">
                     {
-                      pjcList.map((ele,index) => <ProjectList data={ele} key={index} type="exploitation" />)
+                      applyList.map((ele,index) => <ProjectList data={ele} key={index} type="exploitation" />)
                     }
                 </div>
               </div>

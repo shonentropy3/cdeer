@@ -10,6 +10,29 @@ export default function Attend(props) {
     const { setParent } = props;
     const { pro_id } = props
     let [count,setCount] = useState(null);
+    const [currentAccount, setCurrentAccount] = useState(null);
+
+    const checkWalletIsConnected = async () => {
+        const { ethereum } = window;
+    
+        if (!ethereum) {
+          console.log("Make sure you have Metamask installed!");
+          return;
+        } else {
+          console.log("Wallet exists! We're ready to go!")
+        }
+    
+        const accounts = await ethereum.request({ method: 'eth_accounts' });
+    
+        if (accounts.length !== 0) {
+          const account = accounts[0];
+          console.log("Found an authorized account: ", account);
+          currentAccount = account 
+          setCurrentAccount(currentAccount);
+        } else {
+          console.log("No authorized account found");
+        }
+    }
 
     const onChange = (e) => {
         count = e;
@@ -29,9 +52,11 @@ export default function Attend(props) {
         .then(res => {
             console.log('res==>',res);
             obj = JSON.parse(obj)
-            obj.hash = res.hash;
+            obj.hash = res.hash
             // 这里的地址用的是后端传来的,和前端拿到的有大小写的区别,下周记得改成前端拿
-            obj.applyAddr = res.applyAddr;
+            obj.applyAddr = currentAccount;
+
+            console.log('obj ====>',obj);
             obj = JSON.stringify(obj)
             tradeStatus = true
         })
@@ -55,6 +80,7 @@ export default function Attend(props) {
 
     useEffect(() => {
         console.log(  );
+        checkWalletIsConnected()
     },[])
 
     return(

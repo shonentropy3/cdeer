@@ -13,7 +13,7 @@ export class ApplyforService {
     async apply(@Body() body: any): Promise<ApplyInfo[]> {
         let bodyData = JSON.parse(body.proLabel)
         let sql = `					 
-            insert into apply_info("applyAddr", demand_id, preview_price) 
+            insert into apply_info("apply_addr", demand_id, preview_price) 
             VALUES ('${bodyData.applyAddr}', ${bodyData.demandId}, ${bodyData.previewPrice});
         `;
         
