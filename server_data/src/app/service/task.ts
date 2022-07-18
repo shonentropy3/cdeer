@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, Interval, Timeout } from '@nestjs/schedule';
-import { Project } from 'src/app/db/entity/Project';
+import { Demand } from 'src/app/db/entity/Demand';
 import { BlockLog } from 'src/app/db/entity/BlockLog';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -16,8 +16,8 @@ const USDR_ADDR = require('../../../deployments/Demand.json');
 @Injectable()
 export class TaskService {
     constructor(
-        @InjectRepository(Project)
-        private readonly projectRepository: Repository<Project>,
+        @InjectRepository(Demand)
+        private readonly demandRepository: Repository<Demand>,
         @InjectRepository(BlockLog)
         private readonly blockLogRepository: Repository<BlockLog>
     ) {}
@@ -69,7 +69,7 @@ export class TaskService {
                 let sql = updateProject(paramsSql)
                 
                 try {
-                  let result = await this.projectRepository.query(sql)
+                  let result = await this.demandRepository.query(sql)
                   this.logger.debug('insertCreateDemand');
                   if (-1 != result[1]) {
                       let params = {
@@ -130,7 +130,7 @@ export class TaskService {
             let sql = updateProject(paramsSql)
             
             try {
-              let result = await this.projectRepository.query(sql)
+              let result = await this.demandRepository.query(sql)
               this.logger.debug('insertCreateDemand');
               if (-1 != result[1]) {
                   let params = {
@@ -188,7 +188,7 @@ export class TaskService {
             }
             let sql = updateProject(paramsSql)
             try {
-              let result = await this.projectRepository.query(sql)
+              let result = await this.demandRepository.query(sql)
               this.logger.debug('modifyDemandLog');
               if (-1 != result[1]) {
                   let params = {
@@ -205,14 +205,15 @@ export class TaskService {
 
     @Interval(5000)  //每隔5秒执行一次
     handleInterval() {
-        this.insertCreateDemand()
-        this.modifyDemandLog()  
+        // this.insertCreateDemand()
+        // this.modifyDemandLog()  
         // this.logger.debug('Called 5 seconds');
         
     }
 
     @Timeout(1000)
     async handleTimeout() {
-
+        this.insertCreateDemand()
+        this.modifyDemandLog()  
     }
 }

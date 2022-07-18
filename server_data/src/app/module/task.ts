@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TaskController } from '../controller/task';
 import { TaskService } from '../service/task';
-import { Project } from 'src/app/db/entity/Project';
+import { Demand } from 'src/app/db/entity/Demand';
 import { BlockLog } from 'src/app/db/entity/BlockLog';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -9,7 +9,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   controllers: [TaskController],
   providers: [TaskService],
   imports: [
-    TypeOrmModule.forFeature([Project,BlockLog])
+    TypeOrmModule.forFeature([Demand,BlockLog])
   ]
 })
 export class TaskModule {}
