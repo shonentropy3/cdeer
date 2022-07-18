@@ -34,16 +34,25 @@ export const updateBlock = params => {
 }
 
 export const getHash = use_type => {
-    let sql = `SELECT * FROM info_sync_hash WHERE use_type = ${use_type} and update = 0;`
+    let sql = `SELECT * FROM transHash WHERE use_type = ${use_type} and update = 0;`
     return sql
 }
 
-export const updateApplyInfo = params => {
+export const updateApplyInfo = (hash, value) => {
     let sql = `
-        UPDATE apply_info 
-        SET demand_id = temp.demandId, preview_price = temp.preview_price, update_time = now() 
-        from (values ${params.value}) as temp (
-        demandId, preview_price, transHash) where apply_info.transHash= ${params.value};
+        BEGIN TRANSACTION;
+        insert into apply_info("applyAddr", demand_id, preview_price) 
+        VALUES (${value});
+        UPDATE trans_has 
+        SET is_update = 1, update_time = now() from (values ${hash}) as temp (
+        hash) where trans_has.hash=temp.hash;
+        COMMIT;
     `
     return sql
 }
+
+export const getApplyForHash = () => {
+    let sql = `SELECT hash FROM trans_hash WHERE category = 3 and is_update = 0;`
+    return sql
+}
+
