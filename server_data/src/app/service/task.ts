@@ -154,11 +154,8 @@ export class TaskService {
         let fromBlock = logBlock + 1;
         let toBlock = latest;
 
-        // 获取数据库中的hash
+        // 获取数据库中的applyForHash
         let applyForHash = await this.blockLogRepository.query(getApplyForHash());
-
-        let value = ``;
-        
         for (const v of applyForHash) {
             const log = await rpcProvider.getTransactionReceipt(applyForHash);
             console.log("获取日志result====", log)
@@ -167,20 +164,19 @@ export class TaskService {
             const demandId = decodedData.args[0].toString();
             const applyAddr = decodedData.args[1];
             const previewPrice = decodedData.args[2].toString();
-            value += `
-            (${demandId}, '${applyAddr}',${previewPrice}),
-            `
-        }
-        
-        
-        let sql = updateApplyInfo(applyForHash, value)
+            let params = {
+                demandId: demandId,
+                applyAddr: applyAddr,
+                previewPrice: previewPrice,
+                hash: v
+            }
+            let sql = updateApplyInfo(params)
         try {
             await this.applyInfoRepository.query(sql)
             this.logger.debug('insertApplyFor');
         } catch (error) {
             console.log(error);
         }
-
 }
 
     @Interval(5000)  //每隔5秒执行一次

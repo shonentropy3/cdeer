@@ -38,15 +38,23 @@ export const getHash = use_type => {
     return sql
 }
 
-export const updateApplyInfo = (hash, value) => {
+export const updateApplyInfo = (params) => {
     let sql = `
-        BEGIN TRANSACTION;
-        insert into apply_info("applyAddr", demand_id, preview_price) 
-        VALUES (${value});
-        UPDATE trans_has 
-        SET is_update = 1, update_time = now() from (values ${hash}) as temp (
-        hash) where trans_has.hash=temp.hash;
-        COMMIT;
+        if exists  (select 1 from apply_info where applyAddr = params.applyAddr and demand_id = params.demandId)
+            BEGIN TRANSACTION;
+                update apply_info set preview_price = params.previewPrice, update_time = now() 
+                where applyAddr = '${params.applyAddr}' and demand_id = params.demandId;
+                UPDATE trans_has 
+                SET is_update = 1, update_time = now() 
+                where trans_has.hash=params.hash;
+            COMMIT;
+        else
+            BEGIN TRANSACTION;
+                insert into apply_info(applyAddr, demand_id, preview_price) 
+                VALUES ('${params.applyAddr}', ${params.demandId}, ${params.previewPrice});
+                UPDATE trans_has 
+                SET is_update = 1, update_time = now() where trans_has.hash=params.hash;
+            COMMIT;
     `
     return sql
 }
