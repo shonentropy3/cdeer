@@ -3,10 +3,9 @@ import Link from 'next/link'
 import Router from "next/router";
 import { message, Popconfirm } from 'antd';
 
-import { cancelApply } from '../pages/http/api';
+import { cancelApply, deleteDemand } from '../pages/http/api';
 import Modify from "./Modify";
-import { deleteDemand } from '../pages/http/api';
-// import { CancelApply } from '../controller/ApplyFor';
+import { CancelApply } from "../controller/ApplyProject";
 
 function ProjectList(props) {
     const {data} = props
@@ -36,12 +35,17 @@ function ProjectList(props) {
         })
     };
 
-    const deletExploitation = async() => {
-
+    const deletExploitation = async(e) => {
         // TODO: 取消报名   
-        await CancelApply()
+        let tradeStatus = false
+        let obj = {
+            demandId: e
+        }
+        await CancelApply(obj)
         .then(res => {
+            
             console.log('res==>',res);
+            tradeStatus = true
         })
         .catch(err => {
             console.log('err==>',err);
@@ -50,14 +54,15 @@ function ProjectList(props) {
 
         if (tradeStatus) {
             console.log('交易完成==>');
-            cancelApply({proLabel: obj})
+            cancelApply({demand_id: e})
               .then(res => {
-                console.log(res);
-                cancel()
+                message.success('取消报名成功!');
+                setTimeout(() => {
+                    window.location.reload()
+                }, 500);
               })
               .catch(err => {
                 console.log(err);
-                cancel()
               })
           }
     }
@@ -136,7 +141,7 @@ function ProjectList(props) {
                     <>
                         <Popconfirm
                             title="Are you sure to delete this task?"
-                            onConfirm={deletExploitation}
+                            onConfirm={() => deletExploitation(data.pro_id)}
                             okText="Yes"
                             cancelText="No"
                         >

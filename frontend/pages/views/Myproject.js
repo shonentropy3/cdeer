@@ -65,12 +65,16 @@ export default function Myproject() {
           
           getApplyinfo({id:accounts[0]})
           .then(res => {
-            getMyDemand({demand_id: res.data[0].demand_id})
-            .then(res => {
-              console.log('mypjc ===>',res);
-              applyList = res[0]
-              setApplyList([applyList])
-            })
+
+            if (res.length > 0) {
+              getMyDemand({demand_id: res.data[0].demand_id})
+              .then(res => {
+                console.log('mypjc ===>',res);
+                applyList = res[0]
+                setApplyList([applyList])
+              })
+            }
+            
           })
           .catch(err => {
             console.log(err);

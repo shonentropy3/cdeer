@@ -2,9 +2,7 @@ import demand from '../../deployments/abi/Demand.json'
 import demandAddr from '../contracts/deployments/Demand.json'
 import { ethers } from 'ethers'
 
-export default async function ApplyProject(account) {
-  
-
+export const ApplyProject = async(account) => {
   try {
     
     if (window.ethereum !== 'undefined') {
@@ -33,21 +31,20 @@ export default async function ApplyProject(account) {
   }
 }
 
-// export async function CancelApply(account) {
-//   try {
-//     if (window.ethereum !== 'undefined') {
-//       const provider = new ethers.providers.Web3Provider(window.ethereum);
-//       const signer = provider.getSigner();
-//       const demandContract = new ethers.Contract(demandAddr.address, demand.abi, signer);
-//       let data = JSON.parse(account)
-//       await demandContract.cancelApply(data.demandId);
-//     } else {
-//       console.log("Ethereum object does not exist");
-//     }
-//   } catch (err) {
-//           return err;
-//   }
-// }
+export const CancelApply = async(account) => {
+  try {
+    if (window.ethereum !== 'undefined') {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const demandContract = new ethers.Contract(demandAddr.address, demand.abi, signer);
+      await demandContract.cancelApply(account.demandId);
+    } else {
+      console.log("Ethereum object does not exist");
+    }
+  } catch (err) {
+          return err;
+  }
+}
 
 // export async function ModifyApplySwitch(account) {
 //   try {
