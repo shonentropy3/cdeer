@@ -19,8 +19,6 @@ function ProjectList(props) {
 
     const deletDemand = async(e) => {
         // 删除项目
-        message.success('Click on Yes');
-        console.log(data.user_address);
         let obj = {
             id: data.id,
             address: data.user_address
@@ -43,17 +41,14 @@ function ProjectList(props) {
         }
         await CancelApply(obj)
         .then(res => {
-            
-            console.log('res==>',res);
-            tradeStatus = true
+            if (res.code) {
+              tradeStatus = false
+              message.error('交易失败!');
+            }else{
+              tradeStatus = true
+            }
         })
-        .catch(err => {
-            console.log('err==>',err);
-            console.log('交易失败==>');
-        })
-
         if (tradeStatus) {
-            console.log('交易完成==>');
             cancelApply({demand_id: e})
               .then(res => {
                 message.success('取消报名成功!');
@@ -64,18 +59,13 @@ function ProjectList(props) {
               .catch(err => {
                 console.log(err);
               })
-          }
+        }
     }
-      
     
     const toggleMask = () => {
         maskStatus = !maskStatus
         setMaskStatus(maskStatus)
     }
-
-
-
-
 
     return(
         <>

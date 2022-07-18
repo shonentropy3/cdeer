@@ -37,8 +37,11 @@ export const CancelApply = async(account) => {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
       const demandContract = new ethers.Contract(demandAddr.address, demand.abi, signer);
-      await demandContract.cancelApply(account.demandId);
-    } else {
+      return await demandContract.cancelApply(account.demandId)
+      .then(res => {
+        return res
+        })
+      } else {
       console.log("Ethereum object does not exist");
     }
   } catch (err) {

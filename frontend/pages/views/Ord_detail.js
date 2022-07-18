@@ -5,7 +5,7 @@ import { Menu, Switch } from 'antd';
 import NavigationBar from "../../components/NavigationBar";
 import { getDemandInfo } from "../http/api";
 import { translatedPjc, translatedRole } from '../utils/translated'
-import { ModifyApplySwitch } from '../../controller/ApplyFor';
+// import { ModifyApplySwitch } from '../../controller/ApplyFor';
 
 export default function OrderDetail(oid) {
 

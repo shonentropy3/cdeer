@@ -100,10 +100,18 @@ export default function Modify(params) {
         }
         console.log("obj===>",obj);
         obj = JSON.stringify(obj)
-        let tradeStatus = true
+        let tradeStatus = false
         await ModifyDemand(obj)
         .then(res => {
-          console.log('res==>',res);
+            console.log('=====',res);
+          if (res) {
+            if (res.code) {
+              tradeStatus = false
+              message.error('交易失败!');
+            }else{
+              tradeStatus = true
+            }
+          }
         })
         .catch(err => {
             console.log('err==>',err);
@@ -113,7 +121,7 @@ export default function Modify(params) {
             modifyDemand({proLabel: obj})
               .then(res => {
                 cancel()
-                message.success('This is a success message');
+                message.success('修改成功');
                 setTimeout(() => {
                     window.location.reload()
                 }, 500);
@@ -121,17 +129,12 @@ export default function Modify(params) {
               .catch(err => {
                 console.log(err);
                 cancel()
-                message.error('This is a success message');
+                message.error('修改失败');
               })
           }
-        console.log(input);
-        console.log(obj);
     }
 
     const initCheck = async() => {
-
-        
-
         pjc = detail.pro_type
         role = detail.role
         setPjc([...pjc])
@@ -146,7 +149,6 @@ export default function Modify(params) {
                 }
             })
             flag ? roleList.push(true):roleList.push(false)
-            
         })
         _data.demand.forEach(ele => {
             let flag = false
@@ -171,7 +173,6 @@ export default function Modify(params) {
  
     useEffect(()=>{
         initCheck()
-        
     },[])
 
     

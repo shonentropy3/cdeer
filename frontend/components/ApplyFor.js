@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { CloseCircleTwoTone } from '@ant-design/icons';
-import { InputNumber, Button } from 'antd';
+import { InputNumber, Button, message } from 'antd';
 import { applyFor } from '../pages/http/api';
 // import ApplyProject from "../controller/ApplyProject";
 import { ApplyProject } from "../controller/ApplyProject";
@@ -51,15 +51,18 @@ export default function Attend(props) {
         let tradeStatus = false
         await ApplyProject(obj)
         .then(res => {
-            console.log('res==>',res);
-            obj = JSON.parse(obj)
-            obj.hash = res.hash
-            // 这里的地址用的是后端传来的,和前端拿到的有大小写的区别,下周记得改成前端拿
-            obj.applyAddr = currentAccount;
-
-            console.log('obj ====>',obj);
-            obj = JSON.stringify(obj)
-            tradeStatus = true
+            if (res) {
+                if (res.code) {
+                  tradeStatus = false
+                  message.error('交易失败!');
+                }else{
+                  tradeStatus = true
+                  obj = JSON.parse(obj)
+                  obj.hash = res.hash
+                  obj.applyAddr = currentAccount;
+                  obj = JSON.stringify(obj)
+                }
+            }
         })
         .catch(err => {
             console.log('err==>',err);

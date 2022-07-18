@@ -10,7 +10,7 @@ export default async function ModifyDemand(account) {
       const signer = provider.getSigner();
       const demandContract = new ethers.Contract(demandAddr.address, demand.abi, signer);
       let data = JSON.parse(account)
-      await demandContract.modifyDemand(data.pro_id,
+      return await demandContract.modifyDemand(data.pro_id,
         { 
             title: data.title,
             budget: data.budget,
@@ -18,7 +18,10 @@ export default async function ModifyDemand(account) {
             attachment: data.attachment,
             period: data.period,
             applySwitch: false
-        });
+        })
+        .then(res => {
+          return res
+        })
     } else {
       console.log("Ethereum object does not exist");
     }

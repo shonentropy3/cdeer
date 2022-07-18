@@ -24,7 +24,7 @@ export default async function Demand(para) {
                 value: fee
             })
             .then(res => {
-              return res.hash
+              return res
             })
         } else {
           console.log("Ethereum object does not exist");

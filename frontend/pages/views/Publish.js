@@ -114,17 +114,19 @@ function Publish() {
         let para = {"proLabel":data}
         let tradeStatus = true
         // 交易
-        let trans = await Demand(para)
-        // .then(res => {
-        //   if (res) {
-        //     console.log('交易失败');
-        //     console.log(res);
-        //     tradeStatus = false
-        //   }
-        // })
+        await Demand(para)
+        .then(res => {
+          if (res) {
+            if (res.code) {
+              tradeStatus = false
+              message.error('交易失败!');
+            }else{
+              tradeStatus = true
+            }
+          }
+        })
         // 2、创建项目
         if (tradeStatus) {
-          console.log('交易完成==>',para,account);
           createDemand(para)
             .then(res => {
               console.log(res);
