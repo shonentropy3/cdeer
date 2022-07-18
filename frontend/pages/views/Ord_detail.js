@@ -53,7 +53,7 @@ export default function OrderDetail(oid) {
             let r = res.data
             Array.from(r).forEach((e,i) => {
                 r[i].role = translatedRole(e.role)
-                r[i].pro_type = translatedPjc(e.pro_type)
+                r[i].demand_type = translatedPjc(e.demand_type)
               })
             data = r[0]
             setData({...data})
@@ -97,7 +97,7 @@ export default function OrderDetail(oid) {
                         <p>金额:{data.budget}</p>
                         <p>周期:{data.period}</p>
                         <p>招募角色:{data.role}</p>
-                        <p>项目类型:{data.pro_type}</p>
+                        <p>项目类型:{data.demand_type}</p>
                         <p>项目描述:{data.content}</p>
                         
                     </div>

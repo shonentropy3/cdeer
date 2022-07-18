@@ -10,7 +10,7 @@ export default async function ModifyDemand(account) {
       const signer = provider.getSigner();
       const demandContract = new ethers.Contract(demandAddr.address, demand.abi, signer);
       let data = JSON.parse(account)
-      return await demandContract.modifyDemand(data.pro_id,
+      return await demandContract.modifyDemand(data.demand_id,
         { 
             title: data.title,
             budget: data.budget,

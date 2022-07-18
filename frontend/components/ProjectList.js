@@ -131,7 +131,7 @@ function ProjectList(props) {
                     <>
                         <Popconfirm
                             title="Are you sure to delete this task?"
-                            onConfirm={() => deletExploitation(data.pro_id)}
+                            onConfirm={() => deletExploitation(data.demand_id)}
                             okText="Yes"
                             cancelText="No"
                         >

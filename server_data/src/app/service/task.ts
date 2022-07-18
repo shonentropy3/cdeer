@@ -60,7 +60,7 @@ export class TaskService {
                 let value = ``;
                 for (const v of txs) {
                     value += `
-                    (${v.demandId}, '${v.title}',${v.budget},'${v.desc}'),
+                    (${v.demandId}, '${v.title}','${v.desc}', ${v.budget}, ${v.period}, '${v.attachment}'),
                     `
                 }
                 let sqlValue = value.substring(0,(value.lastIndexOf(',')))
@@ -119,7 +119,7 @@ export class TaskService {
             let value = ``;
             for (const v of txs) {
                 value += `
-                    (${v.demandId}, '${v.title}', ${v.budget}, '${v.desc}'),
+                    (${v.demandId}, '${v.title}','${v.desc}', ${v.budget}, ${v.period}, '${v.attachment}'),
                 `
             }
             let sqlValue = value.substring(0,(value.lastIndexOf(',')))

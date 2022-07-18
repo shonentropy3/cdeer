@@ -72,7 +72,7 @@ export default function Home() {
                           招募: {item.role}
                         </div>
                         <div className={style.mr30}>
-                          类型: {item.pro_type}
+                          类型: {item.demand_type}
                         </div>
                         <div>
                           {/* 周期: {item.period} */}
@@ -119,7 +119,7 @@ export default function Home() {
     .then(res => {
       Array.from(res).forEach((e,i) => {
         res[i].role = translatedRole(e.role)
-        res[i].pro_type = translatedPjc(e.pro_type)
+        res[i].demand_type = translatedPjc(e.demand_type)
       })
       data.detail = res
       data.status = 1

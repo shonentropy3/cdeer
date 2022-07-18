@@ -25,7 +25,7 @@ export default function ProjectDetail() {
             let data = res.data
             Array.from(data).forEach((e,i) => {
                 data[i].role = translatedRole(e.role)
-                data[i].pro_type = translatedPjc(e.pro_type)
+                data[i].demand_type = translatedPjc(e.demand_type)
             })
             detail = data[0]
             detailSet({...detail})
@@ -77,7 +77,7 @@ export default function ProjectDetail() {
             {
                 maskStatus ? 
                 <div className="Mask">
-                    <Attend setParent={setMaskStatus} pro_id={detail.pro_id} />
+                    <Attend setParent={setMaskStatus} demand_id={detail.demand_id} />
                 </div>
                 :
                 ''
@@ -97,7 +97,7 @@ export default function ProjectDetail() {
                         <button onClick={()=>toggleMask()}>参加项目</button>
                         <div>
                             <p>金额 ¥{detail.budget}</p>
-                            <p>类型  {detail.pro_type}</p>
+                            <p>类型  {detail.demand_type}</p>
                             <p>周期  {detail.period}</p>
                             <p>报名人数  xx</p>
                         </div>
