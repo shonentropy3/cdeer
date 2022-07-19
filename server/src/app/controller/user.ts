@@ -5,10 +5,15 @@ import { UserService } from '../service/user';
 
 @Controller('user')
 export class UserController {
-    constructor(private readonly marketService: UserService){}
+    constructor(private readonly userService: UserService){}
 
     @Post('getMyDemand')  //  查看已发布需求
     async getMyDemand(@Body() body: any){
-        return await this.marketService.getMyDemand(body)
+        return await this.userService.getMyDemand(body)
+    }
+
+    @Post('getMyApplylist')  //  查看已发布需求
+    async getMyApplylist(@Body() body: any){
+        return await this.userService.getMyApplylist(body)
     }
 }

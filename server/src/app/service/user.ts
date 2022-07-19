@@ -17,7 +17,7 @@ const service = new upyun.Service('ipfs0','upchain', 'upchain123')
 const client = new upyun.Client(service);
 // dbUtils
 import { getMyPjcDBa, getMyPjcDBb } from '../db/sql/demand';
-
+import { getMyApplylist } from '../db/sql/apply_info';
 
 @Injectable()
 export class UserService {
@@ -36,6 +36,10 @@ export class UserService {
           
         }
         
+    } 
+
+    async getMyApplylist(@Body() body: any) {
+      return this.demandRepository.query(getMyApplylist(body.demandId));
     } 
 
     // AxiosErrorTip

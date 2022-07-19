@@ -10,6 +10,7 @@ export default function Attend(props) {
     
     const { setParent } = props;
     const { demand_id } = props
+    const { data } = props
     let [count,setCount] = useState(null);
     const [currentAccount, setCurrentAccount] = useState(null);
 
@@ -40,14 +41,35 @@ export default function Attend(props) {
         setCount(count);
     }
 
+    // 确认合作
+    const confirm = async() => {
+      let obj = {
+        demandId: Number(data.demand_id),
+        applyAddr: data.apply_addr,
+        amount: Number(count)
+      }
+      obj = JSON.stringify(obj)
+      await Order({proLabel:obj})
+      .then(res => {
+          console.log(res);
+          setParent(false)
+      })
+      .catch(err => {
+          console.log(err);
+      })
+    }
+
     //报名申请
     const submit = async() => {
+        if (!demand_id) {
+          confirm()
+          return
+        }
         let obj = {
             demandId: demand_id,
             valuation: count,
         }
         obj = JSON.stringify(obj)
-console.log(obj);
         let tradeStatus = false
         await ApplyProject(obj)
         .then(res => {
@@ -83,7 +105,6 @@ console.log(obj);
     }
 
     useEffect(() => {
-        console.log(  );
         checkWalletIsConnected()
     },[])
 
