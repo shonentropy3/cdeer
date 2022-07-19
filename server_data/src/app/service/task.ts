@@ -9,6 +9,7 @@ import { updateProject, updateApplyInfo } from 'src/app/db/sql/sql';
 import { updateBlock } from 'src/app/db/sql/sql';
 import { ApplyInfo } from '../db/entity/ApplyInfo';
 const { ethers } = require('ethers');
+// TODO:更改配置文件
 const rpcProvider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
 const USDR_ADDR = require('../../../deployments/Demand.json');
 
@@ -159,15 +160,15 @@ export class TaskService {
         for (const v of applyForHash) {
             const log = await rpcProvider.getTransactionReceipt(applyForHash);
             console.log("获取日志result====", log)
-            const ApplyFor = new ethers.utils.Interface(["event ApplyFor(uint256 indexed demandId, address indexed applyAddr, uint256 previewPrice)"]);
+            const ApplyFor = new ethers.utils.Interface(["event ApplyFor(uint256 indexed demandId, address indexed applyAddr, uint256 valuation)"]);
             let decodedData = ApplyFor.parseLog(log);
             const demandId = decodedData.args[0].toString();
             const applyAddr = decodedData.args[1];
-            const previewPrice = decodedData.args[2].toString();
+            const valuation = decodedData.args[2].toString();
             let params = {
                 demandId: demandId,
                 applyAddr: applyAddr,
-                previewPrice: previewPrice,
+                valuation: valuation,
                 hash: v
             }
             let sql = updateApplyInfo(params)

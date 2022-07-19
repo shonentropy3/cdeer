@@ -1,6 +1,4 @@
 import { ethers } from 'ethers';
-import contract from '../contracts/deployments/abi/CodeMarket.json';
-import address from '../contracts/deployments/CodeMarket.json';
 import { useEffect, useState, } from 'react';
 import Link from "next/link"
 import { Spin, BackTop, Divider, Empty } from 'antd';
@@ -9,8 +7,6 @@ import style from '../styles/utils.module.scss'
 import { translatedPjc, translatedRole } from './utils/translated';
 
 
-const contractAddress = address;
-const abi = contract.abi;
 export default function Home() {
 
   const [currentAccount, setCurrentAccount] = useState(null);
@@ -92,21 +88,21 @@ export default function Home() {
     }
   }
 
-  const tokensAmount = async () => {
-    try {
-      const { ethereum } = window;
-      if (ethereum) {
-        const provider = new ethers.providers.Web3Provider(ethereum);
-        const signer = provider.getSigner();
-        const nftContract = new ethers.Contract(contractAddress.address, abi, signer);
-        let num = await nftContract.tokensAmount("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
-        Set_tokens(JSON.parse(num))
-      }
-     } catch (err) {
-        console.log(err);
-      }
+  // const tokensAmount = async () => {
+  //   try {
+  //     const { ethereum } = window;
+  //     if (ethereum) {
+  //       const provider = new ethers.providers.Web3Provider(ethereum);
+  //       const signer = provider.getSigner();
+  //       const nftContract = new ethers.Contract(contractAddress.address, abi, signer);
+  //       let num = await nftContract.tokensAmount("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
+  //       Set_tokens(JSON.parse(num))
+  //     }
+  //    } catch (err) {
+  //       console.log(err);
+  //     }
 
-  }
+  // }
 
   // 筛选分类
   let filter = () => {

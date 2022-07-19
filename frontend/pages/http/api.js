@@ -110,6 +110,8 @@ export const cancelApply = (data) => {
 export const modifyApplySwitch = (data) => {
     return serviceAxios({
         url: "/applyFor/modifyApplySwitch",
+        method: "post",
+        data,
     });
 
 }

@@ -1,23 +1,22 @@
 
 
 export const getDemandDate = () => {
-    let sql = `SELECT * FROM public."demand" WHERE del != 0 `
+    let sql = `SELECT * FROM public."demand" WHERE del = 0 `
     return sql
 }
 
 export const getDemandInfoDate = params => {
-    let sql = `SELECT * FROM public.demand WHERE id = '${params}' and del != 0 `
+    let sql = `SELECT * FROM public.demand WHERE id = '${params}' and del = 0 `
     return sql
 }
 
 export const getMyPjcDBa = params => {
     let sql = `SELECT * FROM public.demand WHERE demand_addr = '${params}' and del = 0 `
-    
     return sql
 }
 
 export const getMyPjcDBb = params => {
-    let sql = `SELECT * FROM public.demand WHERE demand_id = '${params}' and del != 0 `
+    let sql = `SELECT * FROM public.demand WHERE demand_id = '${params}' and del = 0 `
     return sql
 }
 
@@ -42,8 +41,8 @@ export const delDemand = params => {
 }
 
 export const setApply = params => {
-    let sql = ` insert into apply_info("apply_addr", demand_id, preview_price) 
-            VALUES ('${params.applyAddr}', ${params.demandId}, ${params.previewPrice}) `;
+    let sql = ` insert into apply_info("apply_addr", demand_id, estimated_price) 
+            VALUES ('${params.applyAddr}', ${params.demandId}, ${params.valuation}) `;
     return sql
 }
 
@@ -53,6 +52,13 @@ export const getApply = params => {
 }
 
 export const delApply = params => {
-    let sql = `DELETE FROM apply_info WHERE demand_id = '${params}' `
+    let sql = `DELETE FROM apply_info WHERE demand_id = '${params.demandId}' and apply_addr = '${params.applyAddr}'`
+    console.log(sql);
+    
+    return sql
+}
+
+export const modifyApplySwitch = params => {
+    let sql = `UPDATE demand SET apply_switch = ${params.buttonSwitch}  WHERE demand_id = '${params.demandId}'`
     return sql
 }

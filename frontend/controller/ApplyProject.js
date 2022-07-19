@@ -14,7 +14,7 @@ export const ApplyProject = async(account) => {
       console.log('=====',data);
       return await demandContract.applyFor(
         Number(data.demandId),
-        data.previewPrice
+        data.valuation
         )
         .then(res => {
           let obj = {

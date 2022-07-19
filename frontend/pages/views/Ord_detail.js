@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import RegistrationList from '../../components/RegistrationList'
 import style from '../../styles/utils.module.scss'
-import { Menu, Switch } from 'antd';
+import { Menu, message, Switch } from 'antd';
 import NavigationBar from "../../components/NavigationBar";
 import { getDemandInfo, modifyApplySwitch } from "../http/api";
 import { translatedPjc, translatedRole } from '../utils/translated'
@@ -11,6 +11,7 @@ export default function OrderDetail(oid) {
     let [data,setData] = useState({})
 
     const [selectItem,setSelectItem] = useState('item-1')
+    let [checked,setChecked] = useState(null)
 
     const items = [
         { label: '项目详情', key: 'item-1'}, // 菜单项务必填写 key
@@ -30,14 +31,23 @@ export default function OrderDetail(oid) {
 
     //修改报名
     const applySwitch = async() => {
+        let s = data.apply_switch === 1 ? 0 : 1
+        
+        checked = !checked
+        setChecked(checked)
         let obj = {
-            demandId: detail.demandId,
-            buttonSwitch: buttonSwitch,
+            demandId: data.demand_id,
+            buttonSwitch: s,
         }
-
-        modifyApplySwitch(obj)
+        console.log(obj,'=======');
+        obj = JSON.stringify(obj)
+        modifyApplySwitch({proLabel: obj})
         .then(res => {
             console.log('res==>',res);
+            message.success('修改成功')
+            setTimeout(() => {
+                window.location.reload()
+            }, 500);
         })
         .catch(err => {
             console.log('修改开关失败==>',err);
@@ -56,6 +66,8 @@ export default function OrderDetail(oid) {
               })
             data = r[0]
             setData({...data})
+            checked = data.apply_switch === 1 ? true : false
+            setChecked(checked)
         })
         .catch(err => {
             console.log(err);
@@ -79,7 +91,7 @@ export default function OrderDetail(oid) {
                 />
                 <div className="switch">
                     报名开关
-                    <Switch loading={false} defaultChecked onClick={() => applySwitch()} />
+                    <Switch loading={false} checked={checked} onClick={() => applySwitch()} />
                 </div>
             </div>
             {
