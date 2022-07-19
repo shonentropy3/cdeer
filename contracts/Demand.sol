@@ -21,7 +21,7 @@ contract Demand is ERC721, IDemand, Ownable {
     event ModifyDemand(uint indexed demandId, address demandAddr, string title, uint budget, 
         string desc, string attachment, uint period);
     event DeleteDemand(uint indexed demandId, address demandAddr);
-    event ApplyFor(uint indexed demandId, address indexed applyAddr, uint previewPrice);
+    event ApplyFor(uint indexed demandId, address indexed applyAddr, uint valuation);
     event CancelApply(uint indexed demandId, address demandAddr);
     event ModifyApplySwitch(uint indexed demandId, address demandAddr, bool);
 
@@ -36,7 +36,7 @@ contract Demand is ERC721, IDemand, Ownable {
 
     struct applyInfo {
         bool isApply;
-        uint previewPrice;
+        uint valuation;
     }
 
     Counters.Counter private demandIds;
@@ -99,13 +99,13 @@ contract Demand is ERC721, IDemand, Ownable {
         emit DeleteDemand(_demandId, msg.sender);
     }
 
-    function applyFor(uint _demandId, uint _previewPrice) external {
+    function applyFor(uint _demandId, uint _valuation) external {
         require(msg.sender != ownerOf(_demandId), "Not apply for orders yourself.");
 
         applyInfos[_demandId][msg.sender].isApply = true;
-        applyInfos[_demandId][msg.sender].previewPrice = _previewPrice;
+        applyInfos[_demandId][msg.sender].valuation = _valuation;
 
-        emit ApplyFor(_demandId, msg.sender, _previewPrice);
+        emit ApplyFor(_demandId, msg.sender, _valuation);
     }
 
     function cancelApply(uint _demandId) external {

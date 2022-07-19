@@ -43,7 +43,7 @@ export const updateApplyInfo = (params) => {
     let sql = `
         if exists  (select 1 from apply_info where applyAddr = params.applyAddr and demand_id = params.demandId)
             BEGIN TRANSACTION;
-                update apply_info set preview_price = params.previewPrice, update_time = now() 
+                update apply_info set preview_price = params.valuation, update_time = now() 
                 where applyAddr = '${params.applyAddr}' and demand_id = params.demandId;
                 UPDATE trans_has 
                 SET is_update = 1, update_time = now() 
@@ -52,7 +52,7 @@ export const updateApplyInfo = (params) => {
         else
             BEGIN TRANSACTION;
                 insert into apply_info(applyAddr, demand_id, preview_price) 
-                VALUES ('${params.applyAddr}', ${params.demandId}, ${params.previewPrice});
+                VALUES ('${params.applyAddr}', ${params.demandId}, ${params.valuation});
                 UPDATE trans_has 
                 SET is_update = 1, update_time = now() where trans_has.hash=params.hash;
             COMMIT;

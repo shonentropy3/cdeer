@@ -44,10 +44,10 @@ export default function Attend(props) {
     const submit = async() => {
         let obj = {
             demandId: demand_id,
-            previewPrice: count,
+            valuation: count,
         }
         obj = JSON.stringify(obj)
-
+console.log(obj);
         let tradeStatus = false
         await ApplyProject(obj)
         .then(res => {

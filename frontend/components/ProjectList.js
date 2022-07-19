@@ -15,7 +15,33 @@ function ProjectList(props) {
         Router.push({pathname:'/views/Ord_detail',search: data.id})
     }
     let [maskStatus,setMaskStatus] = useState(false)
+    const [currentAccount, setCurrentAccount] = useState(null);
 
+    const checkWalletIsConnected = async () => {
+        const { ethereum } = window;
+    
+        if (!ethereum) {
+          console.log("Make sure you have Metamask installed!");
+          return;
+        } else {
+          console.log("Wallet exists! We're ready to go!")
+        }
+    
+        const accounts = await ethereum.request({ method: 'eth_accounts' });
+    
+        if (accounts.length !== 0) {
+          const account = accounts[0];
+          console.log("Found an authorized account: ", account);
+          currentAccount = account 
+          setCurrentAccount(currentAccount);
+        } else {
+          console.log("No authorized account found");
+        }
+    }
+
+    useEffect(() => {
+        checkWalletIsConnected()
+    },[])
 
     const deletDemand = async(e) => {
         // 删除项目
@@ -23,7 +49,7 @@ function ProjectList(props) {
             id: data.id,
             address: data.user_address
         }
-        //TODO: 校验是否是本人
+        //TODO: 1.校验是否是本人 2.错误返回信息处理
         deleteDemand({data: obj})
         .then(res => {
           window.location.reload()
@@ -34,10 +60,10 @@ function ProjectList(props) {
     };
 
     const deletExploitation = async(e) => {
-        // TODO: 取消报名   
         let tradeStatus = false
         let obj = {
-            demandId: e
+            demandId: e,
+            applyAddr: currentAccount
         }
         await CancelApply(obj)
         .then(res => {
@@ -49,7 +75,7 @@ function ProjectList(props) {
             }
         })
         if (tradeStatus) {
-            cancelApply({demand_id: e})
+            cancelApply(obj)
               .then(res => {
                 message.success('取消报名成功!');
                 setTimeout(() => {

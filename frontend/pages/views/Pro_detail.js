@@ -35,7 +35,10 @@ export default function ProjectDetail() {
         })
     },[])
     
-
+    const toggleMask = () => {
+        maskStatus = true 
+        setMaskStatus(maskStatus)
+    }
 
 
 

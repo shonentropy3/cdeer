@@ -24,7 +24,7 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "previewPrice",
+          "name": "valuation",
           "type": "uint256"
         }
       ],

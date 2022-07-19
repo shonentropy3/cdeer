@@ -19,7 +19,7 @@ export class ApplyforController {
 
     @Post('cancelApply')  // 取消报名
     async cancelApply(@Body() body: any){
-        // return await this.applyforService.cancel(body)
+        return await this.applyforService.cancel(body)
     }
     @Post('modifyApplySwitch')  //  报名开关
     async modifyApplySwitch(@Body() body: any){
