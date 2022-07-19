@@ -41,8 +41,12 @@ export const delDemand = params => {
 }
 
 export const setApply = params => {
-    let sql = ` insert into apply_info("apply_addr", demand_id, estimated_price) 
-            VALUES ('${params.applyAddr}', ${params.demandId}, ${params.valuation}) `;
+    // let sql = ` insert into apply_info("apply_addr", demand_id, estimated_price) 
+    //         VALUES ('${params.applyAddr}', ${params.demandId}, ${params.valuation}) `;
+
+        let sql = ` insert into trans_hash("send_addr", demand_id, category, hash) 
+            VALUES ('${params.applyAddr}', ${params.demandId}, 3, '${params.hash}')`;
+            
     return sql
 }
 

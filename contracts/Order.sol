@@ -53,6 +53,9 @@ contract Order is IOrder, Ownable {
 
     // orderId  = > 
     mapping(uint => Order) private orders;
+
+    // mapping(uint => mapping(address =>uint)) pOrderIds; 
+
     // demandId = > orderId
     mapping(uint => uint[]) private demandOrders;
     // orderId = >

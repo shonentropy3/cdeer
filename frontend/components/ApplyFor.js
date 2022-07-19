@@ -47,7 +47,6 @@ export default function Attend(props) {
             valuation: count,
         }
         obj = JSON.stringify(obj)
-console.log(obj);
         let tradeStatus = false
         await ApplyProject(obj)
         .then(res => {

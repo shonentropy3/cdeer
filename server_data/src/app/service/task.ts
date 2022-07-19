@@ -148,7 +148,7 @@ export class TaskService {
     insertApplyFor = async () => {
         //获取未同步的信息
         let latest = await rpcProvider.getBlockNumber();
-        let last = await this.blockLogRepository.query(getLastBlock());
+        let last = await this.applyInfoRepository.query(getLastBlock());
         let logBlock = last[0].block;
         if (logBlock >= latest) return; // 区块已监听过了
         logBlock = Math.max(logBlock, (latest - 100)); // 最多往前100区块
@@ -156,24 +156,37 @@ export class TaskService {
         let toBlock = latest;
 
         // 获取数据库中的applyForHash
-        let applyForHash = await this.blockLogRepository.query(getApplyForHash());
+        let applyForHash = await this.applyInfoRepository.query(getApplyForHash());
+
+        
         for (const v of applyForHash) {
-            const log = await rpcProvider.getTransactionReceipt(applyForHash);
-            console.log("获取日志result====", log)
+            const log = await rpcProvider.getTransactionReceipt(v.hash);
+            // console.log("获取日志result====", log.logs[0])
             const ApplyFor = new ethers.utils.Interface(["event ApplyFor(uint256 indexed demandId, address indexed applyAddr, uint256 valuation)"]);
-            let decodedData = ApplyFor.parseLog(log);
-            const demandId = decodedData.args[0].toString();
-            const applyAddr = decodedData.args[1];
-            const valuation = decodedData.args[2].toString();
+            let decodedData = ApplyFor.parseLog(log.logs[0]);
+            // console.log("decodedData------", decodedData.args)
+            const demandId = decodedData.args.demandId.toString();
+            const applyAddr = decodedData.args.applyAddr;
+            const valuation = decodedData.args.valuation.toString();
             let params = {
                 demandId: demandId,
                 applyAddr: applyAddr,
                 valuation: valuation,
-                hash: v
+                hash: v.hash
             }
             let sql = updateApplyInfo(params)
         try {
-            await this.applyInfoRepository.query(sql)
+            let sqlBefore = await this.applyInfoRepository.query(sql.sqlBefore);
+            let sqlUpdateAI,insertAI;
+            if (sqlBefore.length > 0) {
+                sqlUpdateAI = await this.applyInfoRepository.query(sql.sqlUpdateAI);
+            } else {
+                insertAI = await this.applyInfoRepository.query(sql.insert);
+                console.log("insertAI=====", insertAI)
+            }
+            if (-1 != sqlUpdateAI[1] || -1 != insertAI[1]) {
+                await this.applyInfoRepository.query(sql.sqlUpdateTH);
+            }
             this.logger.debug('insertApplyFor');
         } catch (error) {
             console.log(error);
