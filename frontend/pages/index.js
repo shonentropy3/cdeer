@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import contract from '../contracts/deployments/abi/CodeMarket.json';
+import contract from '../contracts/deployments/abi/Demand.json';
 import address from '../contracts/deployments/CodeMarket.json';
 import { useEffect, useState, } from 'react';
 import Link from "next/link"
