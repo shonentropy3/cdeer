@@ -1,4 +1,3 @@
-import { ethers } from 'ethers';
 import { useEffect, useState, } from 'react';
 import Link from "next/link"
 import { Spin, BackTop, Divider, Empty } from 'antd';
@@ -8,29 +7,6 @@ import { translatedPjc, translatedRole } from './utils/translated';
 
 
 export default function Home() {
-
-  const [currentAccount, setCurrentAccount] = useState(null);
-
-  const checkWalletIsConnected = async () => {
-      const { ethereum } = window;
-  
-      if (!ethereum) {
-        console.log("Make sure you have Metamask installed!");
-        return;
-      } else {
-        console.log("Wallet exists! We're ready to go!")
-      }
-  
-      const accounts = await ethereum.request({ method: 'eth_accounts' });
-  
-      if (accounts.length !== 0) {
-        const account = accounts[0];
-        console.log("Found an authorized account: ", account);
-        setCurrentAccount(account);
-      } else {
-        console.log("No authorized account found");
-      }
-  }
 
   const responseDate = () => {
     if (data.status === 0) {
@@ -42,7 +18,6 @@ export default function Home() {
         // return "Error:"+error;
     }
     if (data.status === 1) {
-      console.log("=========", data);
       if (data.detail.length === 0 || data.detail === " ") {
         return <Empty />
       }
@@ -88,22 +63,6 @@ export default function Home() {
     }
   }
 
-  // const tokensAmount = async () => {
-  //   try {
-  //     const { ethereum } = window;
-  //     if (ethereum) {
-  //       const provider = new ethers.providers.Web3Provider(ethereum);
-  //       const signer = provider.getSigner();
-  //       const nftContract = new ethers.Contract(contractAddress.address, abi, signer);
-  //       let num = await nftContract.tokensAmount("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
-  //       Set_tokens(JSON.parse(num))
-  //     }
-  //    } catch (err) {
-  //       console.log(err);
-  //     }
-
-  // }
-
   // 筛选分类
   let filter = () => {
     console.log(pjcC,roleC);
@@ -123,13 +82,7 @@ export default function Home() {
     .catch(err => {
       data.status = 1
     })
-
-
     Set_data({...data})
-
-
-    
-    console.log('data==>',data);
   }
 
   let checkRole = (val) => {
@@ -182,7 +135,6 @@ export default function Home() {
   let [pjcC,Set_pjcC] = useState(null)
 
   useEffect(() => {
-      checkWalletIsConnected();
       marketData()
     }, [])
   

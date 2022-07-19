@@ -6,6 +6,7 @@ import { message, Popconfirm } from 'antd';
 import { cancelApply, deleteDemand } from '../pages/http/api';
 import Modify from "./Modify";
 import { CancelApply } from "../controller/ApplyProject";
+import { checkWalletIsConnected } from "../pages/utils/checkWalletIsConnected";
 
 function ProjectList(props) {
     const {data} = props
@@ -15,32 +16,13 @@ function ProjectList(props) {
         Router.push({pathname:'/views/Ord_detail',search: data.id})
     }
     let [maskStatus,setMaskStatus] = useState(false)
-    const [currentAccount, setCurrentAccount] = useState(null);
+    let [currentAccount, setCurrentAccount] = useState(null);
 
-    const checkWalletIsConnected = async () => {
-        const { ethereum } = window;
-    
-        if (!ethereum) {
-          console.log("Make sure you have Metamask installed!");
-          return;
-        } else {
-          console.log("Wallet exists! We're ready to go!")
-        }
-    
-        const accounts = await ethereum.request({ method: 'eth_accounts' });
-    
-        if (accounts.length !== 0) {
-          const account = accounts[0];
-          console.log("Found an authorized account: ", account);
-          currentAccount = account 
-          setCurrentAccount(currentAccount);
-        } else {
-          console.log("No authorized account found");
-        }
-    }
+
 
     useEffect(() => {
-        checkWalletIsConnected()
+        currentAccount = checkWalletIsConnected()
+        setCurrentAccount(currentAccount)
     },[])
 
     const deletDemand = async(e) => {

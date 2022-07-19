@@ -3,7 +3,7 @@ import RegistrationList from '../../components/RegistrationList'
 import style from '../../styles/utils.module.scss'
 import { Menu, message, Switch } from 'antd';
 import NavigationBar from "../../components/NavigationBar";
-import { getDemandInfo, modifyApplySwitch } from "../http/api";
+import { getDemandInfo, modifyApplySwitch, getMyApplylist } from "../http/api";
 import { translatedPjc, translatedRole } from '../utils/translated'
 
 export default function OrderDetail(oid) {
@@ -12,6 +12,7 @@ export default function OrderDetail(oid) {
 
     const [selectItem,setSelectItem] = useState('item-1')
     let [checked,setChecked] = useState(null)
+    let [applylist,setApplylist] = useState([])
 
     const items = [
         { label: '项目详情', key: 'item-1'}, // 菜单项务必填写 key
@@ -39,7 +40,6 @@ export default function OrderDetail(oid) {
             demandId: data.demand_id,
             buttonSwitch: s,
         }
-        console.log(obj,'=======');
         obj = JSON.stringify(obj)
         modifyApplySwitch({proLabel: obj})
         .then(res => {
@@ -54,10 +54,10 @@ export default function OrderDetail(oid) {
         })
     }
 
-    useEffect(()=>{
+    const init = async() => {
         oid = location.search
         oid = oid.replace('?','')
-        getDemandInfo({id:oid})
+        await getDemandInfo({id:oid})
         .then(res => {
             let r = res.data
             Array.from(r).forEach((e,i) => {
@@ -72,6 +72,20 @@ export default function OrderDetail(oid) {
         .catch(err => {
             console.log(err);
         })
+
+        // 获取报名列表
+        getMyApplylist({demandId: data.demand_id})
+        .then(res => {
+            applylist = res 
+            setApplylist([...applylist])
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    }
+
+    useEffect(()=>{
+        init()
 
     },[])
 
@@ -119,10 +133,9 @@ export default function OrderDetail(oid) {
                         {/* <p>报名列表</p> */}
                     </div>
                     <div className="content">
-
-                        <RegistrationList />
-                        <RegistrationList />
-                        <RegistrationList />
+                        {
+                            applylist.map((e,i) => <RegistrationList data={e} key={i} />)
+                        }
                     </div>
                 </div>
             }
