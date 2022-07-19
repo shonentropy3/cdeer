@@ -4,37 +4,15 @@ import { InputNumber, Button, message } from 'antd';
 import { applyFor } from '../pages/http/api';
 // import ApplyProject from "../controller/ApplyProject";
 import { ApplyProject } from "../controller/ApplyProject";
-
+import { checkWalletIsConnected } from "../pages/utils/checkWalletIsConnected";
 
 export default function Attend(props) {
     
     const { setParent } = props;
     const { demand_id } = props
     const { data } = props
+    let [currentAccount, setCurrentAccount] = useState(null);
     let [count,setCount] = useState(null);
-    const [currentAccount, setCurrentAccount] = useState(null);
-
-    const checkWalletIsConnected = async () => {
-        const { ethereum } = window;
-    
-        if (!ethereum) {
-          console.log("Make sure you have Metamask installed!");
-          return;
-        } else {
-          console.log("Wallet exists! We're ready to go!")
-        }
-    
-        const accounts = await ethereum.request({ method: 'eth_accounts' });
-    
-        if (accounts.length !== 0) {
-          const account = accounts[0];
-          console.log("Found an authorized account: ", account);
-          currentAccount = account 
-          setCurrentAccount(currentAccount);
-        } else {
-          console.log("No authorized account found");
-        }
-    }
 
     const onChange = (e) => {
         count = e;
@@ -105,18 +83,23 @@ export default function Attend(props) {
     }
 
     useEffect(() => {
-        checkWalletIsConnected()
+      currentAccount = checkWalletIsConnected()
+      setCurrentAccount(currentAccount)
     },[])
 
     return(
         <div className="Attend">
             <div className="top">
-                <h2>报名项目</h2>
+                {
+                  demand_id ? <h2>报名项目</h2> : <h2>确认合作</h2>
+                }
                 <CloseCircleTwoTone twoToneColor="#b4b4b4" className="icon" onClick={() => setParent(false)} />
             </div>
             <div className="content">
                 <div className="box">
-                    <p>估价:</p>
+                    {
+                      demand_id ? <p>估价:</p> : <p>价格:</p>
+                    }
                     <InputNumber size="large" min="1" onChange={onChange} />
                 </div>
                 <div className="box">
