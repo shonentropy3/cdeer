@@ -48,19 +48,3 @@ export const CancelApply = async(account) => {
           return err;
   }
 }
-
-// export async function ModifyApplySwitch(account) {
-//   try {
-//     if (window.ethereum !== 'undefined') {
-//       const provider = new ethers.providers.Web3Provider(window.ethereum);
-//       const signer = provider.getSigner();
-//       const demandContract = new ethers.Contract(demandAddr.address, demand.abi, signer);
-//       let data = JSON.parse(account)
-//       await demandContract.cancelApply(data.demandId, data.buttonSwitch);
-//     } else {
-//       console.log("Ethereum object does not exist");
-//     }
-//   } catch (err) {
-//           return err;
-//   }
-// }

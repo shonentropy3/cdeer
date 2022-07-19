@@ -94,8 +94,8 @@ export default function Modify(params) {
             period: input[2].value,
             pro_content: text,
             recruiting_role: r,
-            pro_type: p,
-            pro_id: detail.pro_id,
+            demand_type: p,
+            demand_id: detail.demand_id,
             attachment: detail.attachment
         }
         console.log("obj===>",obj);
@@ -135,7 +135,7 @@ export default function Modify(params) {
     }
 
     const initCheck = async() => {
-        pjc = detail.pro_type
+        pjc = detail.demand_type
         role = detail.role
         setPjc([...pjc])
         setRole([...role])
@@ -152,7 +152,7 @@ export default function Modify(params) {
         })
         _data.demand.forEach(ele => {
             let flag = false
-            detail.pro_type.forEach(e => {
+            detail.demand_type.forEach(e => {
                 if (ele.value === e) {
                     ele.status = true
                     flag = true

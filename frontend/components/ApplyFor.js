@@ -9,7 +9,7 @@ import { ApplyProject } from "../controller/ApplyProject";
 export default function Attend(props) {
     
     const { setParent } = props;
-    const { pro_id } = props
+    const { demand_id } = props
     let [count,setCount] = useState(null);
     const [currentAccount, setCurrentAccount] = useState(null);
 
@@ -43,7 +43,7 @@ export default function Attend(props) {
     //报名申请
     const submit = async() => {
         let obj = {
-            demandId: pro_id,
+            demandId: demand_id,
             previewPrice: count,
         }
         obj = JSON.stringify(obj)

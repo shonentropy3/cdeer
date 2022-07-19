@@ -92,7 +92,7 @@ function Publish() {
         let data = {
           pro_content: `${account[3].value}`,
           recruiting_role: `'{${tuan}}'`,
-          pro_type: `'{${pjc}}'`,
+          demand_type: `'{${pjc}}'`,
           title: `${account[0].value}`,
           period: Number(account[2].value),
           budget: Number(account[1].value),
