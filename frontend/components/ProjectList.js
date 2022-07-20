@@ -8,12 +8,13 @@ import Modify from "./Modify";
 import { CancelApply } from "../controller/ApplyProject";
 import { checkWalletIsConnected } from "../pages/utils/checkWalletIsConnected";
 
+
 function ProjectList(props) {
     const {data} = props
     const {type} = props
 
     const goDetail = () => {
-        Router.push({pathname:'/views/Ord_detail',search: data.demand_id})
+        Router.push({pathname:'/views/details/Order',search: data.id})
     }
     let [maskStatus,setMaskStatus] = useState(false)
     let [currentAccount, setCurrentAccount] = useState(null);
@@ -139,6 +140,9 @@ function ProjectList(props) {
                     </>
                     :
                     <>
+                        <Link href="/views/details/Project">
+                        <button>项目详情</button>
+                        </Link>
                         <Popconfirm
                             title="Are you sure to delete this task?"
                             onConfirm={() => deletExploitation(data.demand_id)}
