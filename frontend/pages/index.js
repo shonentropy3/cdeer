@@ -21,10 +21,11 @@ export default function Home() {
       if (data.detail.length === 0 || data.detail === " ") {
         return <Empty />
       }
+      console.log('=====',data.detail.data);
         return data.detail.data.map(
           // return sql.data.map(
           (item, index) => 
-          <Link href={{pathname:'/views/Pro_detail',search: item.id}} target="_blank" key={index}>
+          <Link href={{pathname:'/views/Pro_detail',search: item.demand_id}} target="_blank" key={index}>
           <div className={`li ${style.item_container}`}>
               <div className={style.item_img}>
                 {/* <img src={item.cover} alt="" /> */}

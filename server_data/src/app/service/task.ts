@@ -208,7 +208,6 @@ export class TaskService {
             let sql = cancelApplyInfo(params)
         try {
             let sqlBefore = await this.applyInfoRepository.query(sql.sqlBefore);
-            console.log(sqlBefore)
             let sqlDeletAI;
             if (sqlBefore.length > 0) {
                 sqlDeletAI = await this.applyInfoRepository.query(sql.sqlDeletAI);

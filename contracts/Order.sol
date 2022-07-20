@@ -73,7 +73,7 @@ contract Order is IOrder, Ownable {
         require(maxDemandOrders >= demandOrders[_order.demandId].length, "Excessive number of orders.");
 
         uint orderId;
-        if (applyOrderIds[_order.demandId][_order.applyAddr] = 0) {
+        if (applyOrderIds[_order.demandId][_order.applyAddr] == 0) {
             orderId = orderIds.current();
             orders[orderId] = Order({
                 demandId: _order.demandId,
@@ -84,6 +84,9 @@ contract Order is IOrder, Ownable {
                 startDate: block.timestamp
             });
             applyOrderIds[_order.demandId][_order.applyAddr] = orderId;
+
+            console.log("createOrder", orderId);
+
             orderIds.increment(); 
 
             emit CreateOrder(_order.demandId, msg.sender, _order.applyAddr, _order.amount);                     
@@ -97,6 +100,8 @@ contract Order is IOrder, Ownable {
             orders[orderId].amount = _order.amount;
             orders[orderId].checked = 0;
             orders[orderId].startDate = block.timestamp;
+
+            console.log("modifyOrder", orderId);
 
             emit ModifyOrder(_order.demandId, msg.sender, orderId, _order.applyAddr, _order.amount);  
         }

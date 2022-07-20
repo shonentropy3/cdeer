@@ -13,7 +13,7 @@ function ProjectList(props) {
     const {type} = props
 
     const goDetail = () => {
-        Router.push({pathname:'/views/Ord_detail',search: data.id})
+        Router.push({pathname:'/views/Ord_detail',search: data.demand_id})
     }
     let [maskStatus,setMaskStatus] = useState(false)
     let [currentAccount, setCurrentAccount] = useState(null);

@@ -6,7 +6,7 @@ export const getDemandDate = () => {
 }
 
 export const getDemandInfoDate = params => {
-    let sql = `SELECT * FROM public.demand WHERE id = '${params}' and del = 0 `
+    let sql = `SELECT * FROM public.demand WHERE demand_id = '${params}' and del = 0 `
     return sql
 }
 
@@ -25,6 +25,7 @@ export const setDemand = params => {
             insert into demand(demand_addr, demand_desc, role, demand_type) 
             VALUES (${params.u_address},'${params.pro_content}', ${params.recruiting_role},${params.demand_type});
         `;
+        
     return sql
 }
 
@@ -36,7 +37,7 @@ export const moDemand = params => {
 }
 
 export const delDemand = params => {
-    let sql = ` UPDATE demand SET status = 0  WHERE id = ${params.id} `;
+    let sql = ` UPDATE demand SET del = 1  WHERE id = ${params.id} `;
     return sql
 }
 

@@ -27,6 +27,8 @@ export default function ProjectDetail() {
                 data[i].role = translatedRole(e.role)
                 data[i].demand_type = translatedPjc(e.demand_type)
             })
+
+            
             detail = data[0]
             detailSet({...detail})
         })

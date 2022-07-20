@@ -93,7 +93,7 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "demandAddr",
+          "name": "applyAddr",
           "type": "address"
         }
       ],
@@ -295,7 +295,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_previewPrice",
+          "name": "_valuation",
           "type": "uint256"
         }
       ],

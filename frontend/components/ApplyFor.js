@@ -19,13 +19,19 @@ export default function Attend(props) {
         setCount(count);
     }
 
+    useEffect(() => {
+      console.log(demand_id);
+    },[])
+
     // 确认合作
+    console.log("data----", data);
     const confirm = async() => {
       let obj = {
         demandId: Number(data.demand_id),
         applyAddr: data.apply_addr,
         amount: Number(count)
       }
+
       obj = JSON.stringify(obj)
       await Order({proLabel:obj})
       .then(res => {

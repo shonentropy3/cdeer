@@ -37,7 +37,6 @@ export const deleteDemand = (data) => {
 
     return serviceAxios({
         url: "/demand/deleteDemand",
-        // url: "/upchain/createDemand",
         method: "post",
         data,
     }
