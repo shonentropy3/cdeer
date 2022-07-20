@@ -71,3 +71,29 @@ export const getApplyForHash = () => {
     return sql
 }
 
+
+export const getCancelApplyHash = () => {
+    let sql = `SELECT hash FROM trans_hash WHERE category = 5 and is_update = 0;`
+    return sql
+}
+
+export const cancelApplyInfo = (params) => {
+    let sqlBefore = `
+        select * from apply_info where apply_addr = '${params.applyAddr}' and demand_id = '${params.demandId}'
+    `
+    let sqlDeletAI = ` 
+        DELETE FROM apply_info WHERE apply_addr = '${params.applyAddr}' and demand_id = '${params.demandId}';
+    `
+    let sqlUpdateTH = ` 
+        UPDATE trans_hash SET is_update = 1, update_time = now() 
+        where trans_hash.hash= '${params.hash}';
+    `
+
+    let obj = {
+        sqlBefore: sqlBefore,
+        sqlDeletAI: sqlDeletAI,
+        sqlUpdateTH: sqlUpdateTH
+    }
+    return obj
+}
+

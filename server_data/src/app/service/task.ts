@@ -4,8 +4,8 @@ import { Demand } from 'src/app/db/entity/Demand';
 import { BlockLog } from 'src/app/db/entity/BlockLog';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { getLastBlock,getModifyDemandLastBlock, getApplyForHash} from 'src/app/db/sql/sql';
-import { updateProject, updateApplyInfo } from 'src/app/db/sql/sql';
+import { getLastBlock,getModifyDemandLastBlock, getApplyForHash, getCancelApplyHash} from 'src/app/db/sql/sql';
+import { updateProject, updateApplyInfo, cancelApplyInfo } from 'src/app/db/sql/sql';
 import { updateBlock } from 'src/app/db/sql/sql';
 import { ApplyInfo } from '../db/entity/ApplyInfo';
 const { ethers } = require('ethers');
@@ -13,7 +13,7 @@ const { ethers } = require('ethers');
 const rpcProvider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
 const USDR_ADDR = require('../../../deployments/Demand.json');
 
-// 信息同步hash表：待同步类型：1.创建需求 2.修改需求 3.报名 4.修改报名 5.删除报名
+// 信息同步hash表：待同步类型：1.创建需求 2.修改需求 3.报名 4.修改报名 5.取消报名
 
 @Injectable()
 export class TaskService {
@@ -155,10 +155,8 @@ export class TaskService {
         let fromBlock = logBlock + 1;
         let toBlock = latest;
 
-        // 获取数据库中的applyForHash
+        // 报名
         let applyForHash = await this.applyInfoRepository.query(getApplyForHash());
-
-        
         for (const v of applyForHash) {
             const log = await rpcProvider.getTransactionReceipt(v.hash);
             const ApplyFor = new ethers.utils.Interface(["event ApplyFor(uint256 indexed demandId, address indexed applyAddr, uint256 valuation)"]);
@@ -189,7 +187,41 @@ export class TaskService {
         } catch (error) {
             console.log(error);
         }
-    }
+        }
+
+        // 取消报名
+        let cancelApplyHash = await this.applyInfoRepository.query(getCancelApplyHash()); 
+        console.log(cancelApplyHash);
+        
+        for (const v of cancelApplyHash) {
+            const log = await rpcProvider.getTransactionReceipt(v.hash);
+            //TODO:重新部署合约后改demandAddr为applyAddr
+            const CancelApply = new ethers.utils.Interface(["event CancelApply(uint256 indexed demandId, address applyAddr)"]);
+            let decodedData = CancelApply.parseLog(log.logs[0]);
+            const demandId = decodedData.args.demandId.toString();
+            const applyAddr = decodedData.args.applyAddr.toLowerCase();
+            let params = {
+                demandId: demandId,
+                applyAddr: applyAddr,
+                hash: v.hash
+            }
+            let sql = cancelApplyInfo(params)
+        try {
+            let sqlBefore = await this.applyInfoRepository.query(sql.sqlBefore);
+            console.log(sqlBefore)
+            let sqlDeletAI;
+            if (sqlBefore.length > 0) {
+                sqlDeletAI = await this.applyInfoRepository.query(sql.sqlDeletAI);
+                if (-1 != sqlDeletAI[1]) {
+                await this.applyInfoRepository.query(sql.sqlUpdateTH);
+            }
+            } 
+
+            this.logger.debug('insertApplyFor');
+        } catch (error) {
+            console.log(error);
+        }
+        }
 }
 
     @Interval(5000)  //每隔5秒执行一次
