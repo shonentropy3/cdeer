@@ -74,6 +74,7 @@ export default function OrderDetail(oid) {
         })
 
         // 获取报名列表
+        console.log("获取报名列表", data);
         getMyApplylist({demandId: data.demand_id})
         .then(res => {
             applylist = res 

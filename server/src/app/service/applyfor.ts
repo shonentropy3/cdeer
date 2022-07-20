@@ -34,20 +34,37 @@ export class ApplyforService {
 
 
     async cancel(@Body() body: any): Promise<ApplyInfo[]> {
-        console.log(body);
-        
-        return await this.applyInfoRepository.query(delApply(body))
-        .then(res =>{
-            let obj = {
-                code: 200,
-                data: res
-            }
-            return obj
-        })
-        .catch(err => {
-            console.log('cancel err =>', err)
-            return err
-        });
+        let sql = delApply(body)
+        let sqlBefore = await this.applyInfoRepository.query(sql.sqlBefore);
+        console.log(sqlBefore)
+        let sqlDeletAI;
+        if (sqlBefore.length > 0) {
+            return await this.applyInfoRepository.query(sql.updateSql)
+            .then(res =>{
+                let obj = {
+                    code: 200,
+                    data: res
+                }
+                return obj
+            })
+            .catch(err => {
+                console.log('cancel err =>', err)
+                return err
+            });
+        } else {
+            return await this.applyInfoRepository.query(sql.insertSql)
+            .then(res =>{
+                let obj = {
+                    code: 200,
+                    data: res
+                }
+                return obj
+            })
+            .catch(err => {
+                console.log('cancel err =>', err)
+                return err
+            });
+        }
     }
     // TODO:需要考虑验证问题
     async modifyApplySwitch(@Body() body: any): Promise<ApplyInfo[]> {

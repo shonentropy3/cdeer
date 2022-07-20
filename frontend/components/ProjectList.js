@@ -20,10 +20,6 @@ function ProjectList(props) {
 
 
 
-    useEffect(() => {
-        currentAccount = checkWalletIsConnected()
-        setCurrentAccount(currentAccount)
-    },[])
 
     const deletDemand = async(e) => {
         // 删除项目
@@ -42,6 +38,9 @@ function ProjectList(props) {
     };
 
     const deletExploitation = async(e) => {
+        currentAccount = await checkWalletIsConnected()
+        setCurrentAccount(currentAccount)
+
         let tradeStatus = false
         let obj = {
             demandId: e,
@@ -53,12 +52,15 @@ function ProjectList(props) {
               tradeStatus = false
               message.error('交易失败!');
             }else{
-              tradeStatus = true
+              tradeStatus = true;
+              obj.hash = res.hash
             }
         })
         if (tradeStatus) {
+            console.log("quxiao=========");
             cancelApply(obj)
               .then(res => {
+                
                 message.success('取消报名成功!');
                 setTimeout(() => {
                     window.location.reload()

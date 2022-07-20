@@ -51,15 +51,29 @@ export const setApply = params => {
 }
 
 export const getApply = params => {
-    let sql = `SELECT * FROM apply_info WHERE apply_addr = '${params}' `
+    let sql = `SELECT * FROM apply_info WHERE apply_addr = '${params}'`
+
+    
     return sql
 }
 
 export const delApply = params => {
-    let sql = `DELETE FROM apply_info WHERE demand_id = '${params.demandId}' and apply_addr = '${params.applyAddr}'`
-    console.log(sql);
+    let sqlBefore = `
+        select * from trans_hash where send_addr = '${params.applyAddr}' and demand_id = '${params.demandId}' and is_update = 0 and category = 5;
+    `
+    let insertSql = `insert into trans_hash("send_addr", demand_id, category, hash) 
+        VALUES ('${params.applyAddr}', ${params.demandId}, 5, '${params.hash}');
+    `
+    let updateSql = `UPDATE trans_hash SET send_addr = '${params.applyAddr}', update_time = now() 
+        where trans_hash.hash= '${params.hash}';
+    `
+    let obj = {
+        sqlBefore: sqlBefore,
+        insertSql: insertSql,
+        updateSql: updateSql
+    }
     
-    return sql
+    return obj
 }
 
 export const modifyApplySwitch = params => {

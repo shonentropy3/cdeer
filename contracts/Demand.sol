@@ -22,7 +22,7 @@ contract Demand is ERC721, IDemand, Ownable {
         string desc, string attachment, uint period);
     event DeleteDemand(uint indexed demandId, address demandAddr);
     event ApplyFor(uint indexed demandId, address indexed applyAddr, uint valuation);
-    event CancelApply(uint indexed demandId, address demandAddr);
+    event CancelApply(uint indexed demandId, address applyAddr);
     event ModifyApplySwitch(uint indexed demandId, address demandAddr, bool);
 
     struct DemandInfo {
