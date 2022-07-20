@@ -25,6 +25,7 @@ contract Order is IOrder, Ownable {
     using Counters for Counters.Counter;
 
     event CreateOrder(uint indexed demandId, address indexed demandAddr, address applyAddr, uint amount);
+    event ModifyOrder(uint demandId, address demandAddr, uint orderId, address applyAddr, uint amount);
     event SetStage(uint indexed orderId, address  applyAddr, address token, uint[] amounts, uint[] periods);
     event ConfirmOrder(uint orderId, address indexed demandAddr);
     event ConfirmOrderStage(uint indexed orderId, address demandAddr, uint8 stageIndex);
@@ -54,7 +55,8 @@ contract Order is IOrder, Ownable {
     // orderId  = > 
     mapping(uint => Order) private orders;
 
-    // mapping(uint => mapping(address =>uint)) pOrderIds; 
+    // demandId => applyAddr => orderId
+    mapping(uint => mapping(address =>uint)) applyOrderIds; 
 
     // demandId = > orderId
     mapping(uint => uint[]) private demandOrders;
@@ -70,18 +72,34 @@ contract Order is IOrder, Ownable {
         require(address(0) != _order.applyAddr, "ApplyAddr is zero address.");
         require(maxDemandOrders >= demandOrders[_order.demandId].length, "Excessive number of orders.");
 
-        uint orderId = orderIds.current();  
-        orders[orderId] = Order({
-            demandId: _order.demandId,
-            applyAddr: _order.applyAddr,
-            token: address(0),
-            amount: _order.amount,
-            checked: 0,
-            startDate: block.timestamp
-        });
-        orderIds.increment();
+        uint orderId;
+        if (applyOrderIds[_order.demandId][_order.applyAddr] = 0) {
+            orderId = orderIds.current();
+            orders[orderId] = Order({
+                demandId: _order.demandId,
+                applyAddr: _order.applyAddr,
+                token: address(0),
+                amount: _order.amount,
+                checked: 0,
+                startDate: block.timestamp
+            });
+            applyOrderIds[_order.demandId][_order.applyAddr] = orderId;
+            orderIds.increment(); 
 
-        emit CreateOrder(_order.demandId, msg.sender, _order.applyAddr, _order.amount);   
+            emit CreateOrder(_order.demandId, msg.sender, _order.applyAddr, _order.amount);                     
+        } else {
+            require(orders[orderId].checked != 2, "The order has been confirmed.");
+
+            orderId = applyOrderIds[_order.demandId][_order.applyAddr];
+            orders[orderId].demandId = _order.demandId;
+            orders[orderId].applyAddr = _order.applyAddr;
+            orders[orderId].token = address(0);
+            orders[orderId].amount = _order.amount;
+            orders[orderId].checked = 0;
+            orders[orderId].startDate = block.timestamp;
+
+            emit ModifyOrder(_order.demandId, msg.sender, orderId, _order.applyAddr, _order.amount);  
+        }
     }
 
     function setStage(uint _orderId, address _token, uint[] memory _amounts, uint[] memory _periods) external {
