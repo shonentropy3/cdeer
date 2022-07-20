@@ -2,9 +2,9 @@ import { useEffect, useState } from "react"
 import { CloseCircleTwoTone } from '@ant-design/icons';
 import { InputNumber, Button, message } from 'antd';
 import { applyFor } from '../pages/http/api';
-// import ApplyProject from "../controller/ApplyProject";
 import { ApplyProject } from "../controller/ApplyProject";
 import { checkWalletIsConnected } from "../pages/utils/checkWalletIsConnected";
+import Order from "../controller/order";
 
 export default function Attend(props) {
     
