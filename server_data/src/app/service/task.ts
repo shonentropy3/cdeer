@@ -161,12 +161,10 @@ export class TaskService {
         
         for (const v of applyForHash) {
             const log = await rpcProvider.getTransactionReceipt(v.hash);
-            // console.log("获取日志result====", log.logs[0])
             const ApplyFor = new ethers.utils.Interface(["event ApplyFor(uint256 indexed demandId, address indexed applyAddr, uint256 valuation)"]);
             let decodedData = ApplyFor.parseLog(log.logs[0]);
-            // console.log("decodedData------", decodedData.args)
             const demandId = decodedData.args.demandId.toString();
-            const applyAddr = decodedData.args.applyAddr;
+            const applyAddr = decodedData.args.applyAddr.toLowerCase();
             const valuation = decodedData.args.valuation.toString();
             let params = {
                 demandId: demandId,

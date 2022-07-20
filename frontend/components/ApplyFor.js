@@ -49,6 +49,9 @@ export default function Attend(props) {
         }
         obj = JSON.stringify(obj)
         let tradeStatus = false
+
+        currentAccount = await checkWalletIsConnected()
+        setCurrentAccount(currentAccount)
         await ApplyProject(obj)
         .then(res => {
             if (res) {
@@ -56,6 +59,7 @@ export default function Attend(props) {
                   tradeStatus = false
                   message.error('交易失败!');
                 }else{
+                  
                   tradeStatus = true
                   obj = JSON.parse(obj)
                   obj.hash = res.hash
@@ -82,10 +86,6 @@ export default function Attend(props) {
         setParent(false)
     }
 
-    useEffect(() => {
-      currentAccount = checkWalletIsConnected()
-      setCurrentAccount(currentAccount)
-    },[])
 
     return(
         <div className="Attend">

@@ -51,7 +51,9 @@ export const setApply = params => {
 }
 
 export const getApply = params => {
-    let sql = `SELECT * FROM apply_info WHERE apply_addr = '${params}' `
+    let sql = `SELECT * FROM apply_info WHERE apply_addr = '${params}'`
+    console.log(sql);
+    
     return sql
 }
 
