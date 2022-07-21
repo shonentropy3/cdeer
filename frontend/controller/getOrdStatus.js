@@ -1,21 +1,21 @@
-import demand from '../../deployments/abi/Demand.json'
-import demandAddr from '../contracts/deployments/Demand.json'
+import orderAddr from '../contracts/deployments/Order.json'
+import order from '../../deployments/abi/Order.json'
 import { ethers } from 'ethers'
 
 
-export default async function Demand(para) {
+export default async function getOrdStatus(para) {
     try {
           
         if (window.ethereum !== 'undefined') {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
-        const demandContract = new ethers.Contract(demandAddr.address, demand.abi, signer);
-        let fee = ethers.utils.parseEther("1")
+        const orderContract = new ethers.Contract(orderAddr.address, order.abi, signer);
         const data = JSON.parse(para.proLabel)
-          return await demandContract.createDemand()
-            .then(res => {
-              return res
-            })
+        console.log('orderContract==>',orderContract.applyOrderIds);
+        return await orderContract.applyOrderIds(data.demand_id,data.apply_addr)
+          .then(res => {
+            return res
+          })
         } else {
           console.log("Ethereum object does not exist");
         }

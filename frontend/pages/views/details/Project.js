@@ -2,7 +2,7 @@ import { Steps } from 'antd';
 import { useEffect, useState } from 'react';
 import NavigationBar from "../../../components/NavigationBar";
 import Stage from '../../../components/Stage';
-
+import getOrdStatus from '../../../controller/getOrdStatus';
 
 export default function Project_detail(params) {
     const { Step } = Steps;
@@ -29,12 +29,28 @@ export default function Project_detail(params) {
         }
     }
 
-    let [stateNum,setStateNum] = useState(1);
+    const init = async() => {
+        let obj = {
+            demand_id: 10,
+            apply_addr: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266'
+        }
+        obj = JSON.stringify(obj)
+        await getOrdStatus({proLabel: obj})
+        .then(res => {
+            console.log(res);
+        })
+        .catch(err => {
+            console.log(err)
+        })
+    }
+
+    let [stateNum,setStateNum] = useState(2);
     
 
     useEffect(() => {
         // TODO:链上获取相关信息,判断当前状态
         // setStateNum
+        init()
     },[])
 
 
