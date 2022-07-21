@@ -23,8 +23,7 @@ export default function Attend(props) {
       console.log(demand_id);
     },[])
 
-    // 确认合作
-    console.log("data----", data);
+    
     const confirm = async() => {
       let obj = {
         demandId: Number(data.demand_id),

@@ -28,7 +28,7 @@ function RegistrationList(params) {
                         {data.apply_addr}
                     </div>
                     <div>
-                        预估价:{data.estimated_price}
+                        预估价:{data.price}
                     </div>
                 </div>
                 <div className="right">

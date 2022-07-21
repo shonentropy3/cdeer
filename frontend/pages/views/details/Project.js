@@ -37,7 +37,7 @@ export default function Project_detail(params) {
         obj = JSON.stringify(obj)
         await getOrdStatus({proLabel: obj})
         .then(res => {
-            console.log(res);
+            console.log('======',res.toString());
         })
         .catch(err => {
             console.log(err)

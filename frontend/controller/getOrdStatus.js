@@ -14,7 +14,7 @@ export default async function getOrdStatus(para) {
         console.log('orderContract==>',orderContract.applyOrderIds);
         // await order.connect(accounts[3]).applyOrderIds(1,accounts[3].address);
         console.log("-=-============",data.apply_addr);
-        return await orderContract.applyOrderIds(1,data.apply_addr)
+        return await orderContract.applyOrderIds(data.demand_id, data.apply_addr)
           .then(res => {
             return res
           })

@@ -1,10 +1,10 @@
 import {withRouter} from 'next/router'
 import { useEffect, useState } from "react"
-import { getDemandInfo } from '../http/api';
-import NavigationBar from "../../components/NavigationBar";
-import { translatedPjc, translatedRole } from '../utils/translated';
-import Attend from '../../components/ApplyFor';
-import { ApplyFor } from '../../controller/ApplyProject';
+import { getDemandInfo } from '../../http/api';
+import NavigationBar from "../../../components/NavigationBar";
+import { translatedPjc, translatedRole } from '../../utils/translated';
+import Attend from '../../../components/ApplyFor';
+import { ApplyFor } from '../../../controller/ApplyProject';
 
 export default function ProjectDetail() {
     let oid = ''
@@ -27,7 +27,6 @@ export default function ProjectDetail() {
                 data[i].role = translatedRole(e.role)
                 data[i].demand_type = translatedPjc(e.demand_type)
             })
-
             
             detail = data[0]
             detailSet({...detail})
