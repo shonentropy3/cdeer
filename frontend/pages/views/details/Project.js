@@ -56,6 +56,7 @@ export default function Project_detail(params) {
             console.log("res+++++++++=",res);
             // oid = res.toString()
             
+            
         })
         .catch(err => {
             console.log(err)

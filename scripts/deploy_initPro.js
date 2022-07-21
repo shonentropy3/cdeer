@@ -47,7 +47,11 @@ async function main() {
     map = await order.connect(accounts[3]).applyOrderIds(1,accounts[3].address);
     // map['0x']
     console.log(map)
-    orderIdTest = await order.connect(accounts[3]).orders(1);
+    let orderIdTest = await order.connect(accounts[3]).orders(0);
+    orderIdTest = orderIdTest[4]
+    // let checked = Array.from(orderIdTest).forEach(ele => {
+    //   console.log(ele);
+    // });
     console.log(orderIdTest);
   }
 

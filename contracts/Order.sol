@@ -53,7 +53,7 @@ contract Order is IOrder, Ownable {
     Counters.Counter private orderIds;
 
     // orderId  = > 
-    mapping(uint => Order) private orders;
+    mapping(uint => Order) public orders;
 
     // demandId => applyAddr => orderId
     mapping(uint => mapping(address =>uint)) public applyOrderIds; 
