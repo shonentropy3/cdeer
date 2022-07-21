@@ -2,7 +2,7 @@ import { Steps } from 'antd';
 import { useEffect, useState } from 'react';
 import NavigationBar from "../../../components/NavigationBar";
 import Stage from '../../../components/Stage';
-import getOrdStatus from '../../../controller/getOrdStatus';
+import {getFirstStatus,getSecondStatus} from '../../../controller/getOrdStatus'
 
 export default function Project_detail(params) {
     const { Step } = Steps;
@@ -30,18 +30,37 @@ export default function Project_detail(params) {
     }
 
     const init = async() => {
+        let oid = ''
         let obj = {
             demand_id: 9,
             apply_addr: '0x90f79bf6eb2c4f870365e785982e1f101e93b906'
         }
         obj = JSON.stringify(obj)
-        await getOrdStatus({proLabel: obj})
+        // console.log('-=======',getFirstStatus);
+        // return
+        await getFirstStatus({proLabel: obj})
         .then(res => {
-            console.log('======',res.toString());
+            oid = res.toString()
         })
         .catch(err => {
             console.log(err)
         })
+        if(oid === 0){
+            stateNum = 0;
+            setStateNum(stateNum)
+            return
+        }
+
+        await getSecondStatus(oid)
+        .then(res => {
+            console.log("res+++++++++=",res);
+            // oid = res.toString()
+            
+        })
+        .catch(err => {
+            console.log(err)
+        })
+
     }
 
     let [stateNum,setStateNum] = useState(2);
