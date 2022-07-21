@@ -44,6 +44,9 @@ async function main() {
         startDate: 123423
     });
 
+    map = await order.connect(accounts[3]).applyOrderIds(1,accounts[3].address);
+    // map['0x']
+    console.log(map)
   }
 
   main()
