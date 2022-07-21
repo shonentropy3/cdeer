@@ -13,7 +13,7 @@ export default function ProjectDetail() {
 
     const navbar = [
         { label: '找项目', url: '/'},
-        { label: '项目详情', url: ''}
+        { label: '项目详情', url: '#'}
     ]
     
     useEffect(()=>{

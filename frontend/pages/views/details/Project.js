@@ -8,7 +8,7 @@ export default function Project_detail(params) {
     const { Step } = Steps;
     const navbar = [
         { label: '我的项目', url: '/views/Myproject'},
-        { label: '项目详情', url: ''}
+        { label: '项目详情', url: '#'}
     ]
     const setpList = [
         {title: '确认开发方', des: '需求方确认开发方'},
