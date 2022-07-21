@@ -35,7 +35,6 @@ export default function Project_detail(params) {
     useEffect(() => {
         // TODO:链上获取相关信息,判断当前状态
         // setStateNum
-
     },[])
 
 
