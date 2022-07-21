@@ -31,13 +31,13 @@ export default function Project_detail(params) {
 
     const init = async() => {
         let obj = {
-            demand_id: 10,
-            apply_addr: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266'
+            demand_id: 9,
+            apply_addr: '0x90f79bf6eb2c4f870365e785982e1f101e93b906'
         }
         obj = JSON.stringify(obj)
         await getOrdStatus({proLabel: obj})
         .then(res => {
-            console.log(res);
+            console.log('======',res.toString());
         })
         .catch(err => {
             console.log(err)
