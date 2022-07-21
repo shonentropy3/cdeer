@@ -19,9 +19,6 @@ function ProjectList(props) {
     let [maskStatus,setMaskStatus] = useState(false)
     let [currentAccount, setCurrentAccount] = useState(null);
 
-
-
-
     const deletDemand = async(e) => {
         // 删除项目
         let obj = {
@@ -78,6 +75,38 @@ function ProjectList(props) {
         setMaskStatus(maskStatus)
     }
 
+    const btnList = () => {
+        // 判断是开发者还是需求方
+        if (type === "demand") {
+            // 我发布的项目
+            return <>
+                        <button onClick={()=>{goDetail()}}>查看项目状态</button>
+                        <button onClick={() => {toggleMask()}}>修改需求</button>
+                        <Popconfirm
+                            title="Are you sure to delete this task?"
+                            onConfirm={deletDemand}
+                            okText="Yes"
+                            cancelText="No" >
+                            <button>删除项目</button>
+                        </Popconfirm>
+                  </>
+        }else{
+            // 我开发的项目
+            return <>
+                        <Link href="/views/details/Project">
+                        <button>项目详情</button>
+                        </Link>
+                        <Popconfirm
+                            title="Are you sure to delete this task?"
+                            onConfirm={() => deletExploitation(data.demand_id)}
+                            okText="Yes"
+                            cancelText="No" >
+                            <button>取消报名</button>
+                        </Popconfirm>
+                  </>
+        }
+    }
+
     return(
         <>
         {
@@ -124,35 +153,7 @@ function ProjectList(props) {
                     this.obj.status === '招募中' ? <button>编辑项目</button> : ''
                 } */}
 
-                {
-                    type === "demand" ? 
-                    <>
-                        <button onClick={()=>{goDetail()}}>查看项目状态</button>
-                        <button onClick={() => {toggleMask()}}>修改需求</button>
-                        <Popconfirm
-                            title="Are you sure to delete this task?"
-                            onConfirm={deletDemand}
-                            okText="Yes"
-                            cancelText="No"
-                        >
-                            <button>删除项目</button>
-                        </Popconfirm>
-                    </>
-                    :
-                    <>
-                        <Link href="/views/details/Project">
-                        <button>项目详情</button>
-                        </Link>
-                        <Popconfirm
-                            title="Are you sure to delete this task?"
-                            onConfirm={() => deletExploitation(data.demand_id)}
-                            okText="Yes"
-                            cancelText="No"
-                        >
-                            <button>取消报名</button>
-                        </Popconfirm>
-                    </>
-                }
+                { btnList() }
                 
                 
             </div>
