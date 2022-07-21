@@ -122,3 +122,11 @@ export const getMyApplylist = (data) => {
         data,
     })
 }
+
+// export const getMyApplylist = (data) => {
+//     return serviceAxios({
+//         url: "/user/getMyApplylist",
+//         method: "post",
+//         data,
+//     })
+// }

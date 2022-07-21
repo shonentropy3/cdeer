@@ -41,6 +41,8 @@ export default function Attend(props) {
       .catch(err => {
           console.log(err);
       })
+
+
     }
 
     //报名申请
