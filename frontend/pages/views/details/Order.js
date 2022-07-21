@@ -21,7 +21,7 @@ export default function OrderDetail(oid) {
 
     const navbar = [
         { label: '我的项目', url: '/views/Myproject'},
-        { label: '项目状态', url: ''}
+        { label: '项目状态', url: '#'}
     ]
 
 

@@ -1,10 +1,10 @@
 import {withRouter} from 'next/router'
 import { useEffect, useState } from "react"
-import { getDemandInfo } from '../http/api';
-import NavigationBar from "../../components/NavigationBar";
-import { translatedPjc, translatedRole } from '../utils/translated';
-import Attend from '../../components/ApplyFor';
-import { ApplyFor } from '../../controller/ApplyProject';
+import { getDemandInfo } from '../../http/api';
+import NavigationBar from "../../../components/NavigationBar";
+import { translatedPjc, translatedRole } from '../../utils/translated';
+import Attend from '../../../components/ApplyFor';
+import { ApplyFor } from '../../../controller/ApplyProject';
 
 export default function ProjectDetail() {
     let oid = ''
@@ -13,7 +13,7 @@ export default function ProjectDetail() {
 
     const navbar = [
         { label: '找项目', url: '/'},
-        { label: '项目详情', url: ''}
+        { label: '项目详情', url: '#'}
     ]
     
     useEffect(()=>{
