@@ -9,8 +9,8 @@ export default function Stage(){
         {title: '以太坊', value: 'ethers'},
         {title: '比特', value: 'bcoin'},
     ]
-    const [period,setPeriod] = useState(15)
-    const [budget,setBudget] = useState(15)
+    const [period,setPeriod] = useState(0)
+    const [budget,setBudget] = useState(0)
     let [stageNum,setStageNum] = useState(1)
     let [stage,setStage] = useState([])
     let [token,setToken] = useState('ethers')
@@ -58,10 +58,16 @@ export default function Stage(){
 
     useEffect(() => {
         init()
+        setPeriod(15)
+        setBudget(1500)
     },[])
 
     return(
         <div className="Stage">
+            <div className="title">
+                <p>总周期: <span>{period}</span>天</p>
+                <p>总金额: <span>{budget}</span></p>
+            </div>
             <div className="navabr">
                 <div className='box'>
                     阶段数目: <InputNumber min={1} max={10} value={stageNum} onChange={changeStage} />

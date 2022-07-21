@@ -230,6 +230,20 @@
     box-sizing: border-box;
     padding: 30px;
     font-size: 20px;
+    .title{
+        display: flex;
+        padding-left: 10px;
+        margin-bottom: 20px;
+        p{
+            margin-right: 20px;
+            span{
+                background-color: rgb(158, 0, 0);
+                color: white;
+                padding: 0 10px;
+                text-align: center;
+            }
+        }
+    }
     .navabr{
         display: flex;
         align-items: center;
