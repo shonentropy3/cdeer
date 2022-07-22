@@ -17,6 +17,7 @@ export default function OrderDetail(oid) {
     const items = [
         { label: '项目详情', key: 'item-1'}, // 菜单项务必填写 key
         { label: '报名列表', key: 'item-2'}
+
     ];
 
     const navbar = [
@@ -28,6 +29,35 @@ export default function OrderDetail(oid) {
     const toggleNav = (item) => {
         selectItem = item.key
         setSelectItem(selectItem)
+    }
+
+    const panel = () => {
+        switch (selectItem) {
+            case 'item-1':
+                return  <div className='container'>
+                            <div className="content">
+                                <h1>{data.title}</h1>
+                                <p>NO.{data.id}</p>
+                                
+                                <p>金额:{data.budget}</p>
+                                <p>周期:{data.period}</p>
+                                <p>招募角色:{data.role}</p>
+                                <p>项目类型:{data.demand_type}</p>
+                                <p>项目描述:{data.content}</p>
+                                
+                            </div>
+                        </div>
+            default: 
+                return  <div className="container">
+                            <div className="top">
+                            </div>
+                            <div className="content">
+                                {
+                                    applylist.map((e,i) => <RegistrationList data={e} key={i} />)
+                                }
+                            </div>
+                        </div>
+        }
     }
 
     //修改报名
@@ -74,7 +104,6 @@ export default function OrderDetail(oid) {
         })
 
         // 获取报名列表
-        console.log("获取报名列表", data);
         getMyApplylist({demandId: data.demand_id})
         .then(res => {
             applylist = res 
@@ -109,37 +138,7 @@ export default function OrderDetail(oid) {
                     <Switch loading={false} checked={checked} onClick={() => applySwitch()} />
                 </div>
             </div>
-            {
-                selectItem === 'item-1' ? 
-
-                <div className='container'>
-                    {/* <div className="top">
-                        <p>项目详情</p>
-                    </div> */}
-                    <div className="content">
-                        <h1>{data.title}</h1>
-                        <p>NO.{data.id}</p>
-                        
-                        <p>金额:{data.budget}</p>
-                        <p>周期:{data.period}</p>
-                        <p>招募角色:{data.role}</p>
-                        <p>项目类型:{data.demand_type}</p>
-                        <p>项目描述:{data.content}</p>
-                        
-                    </div>
-                </div>
-            :
-                <div className="container">
-                    <div className="top">
-                        {/* <p>报名列表</p> */}
-                    </div>
-                    <div className="content">
-                        {
-                            applylist.map((e,i) => <RegistrationList data={e} key={i} />)
-                        }
-                    </div>
-                </div>
-            }
+            {panel()}
 
 
         </div>

@@ -2,7 +2,8 @@ import { Steps } from 'antd';
 import { useEffect, useState } from 'react';
 import NavigationBar from "../../../components/NavigationBar";
 import Stage from '../../../components/Stage';
-import {getFirstStatus,getSecondStatus} from '../../../controller/getOrdStatus'
+import getOrderStatus from '../../utils/getOrderStatus';
+import { checkWalletIsConnected } from '../../utils/checkWalletIsConnected'
 
 export default function Project_detail(params) {
     const { Step } = Steps;
@@ -16,6 +17,7 @@ export default function Project_detail(params) {
         {title: '确认阶段', des: '需求方确认阶段划分'},
         {title: '创建成功', des: '项目创建成功'},
     ]
+    let [demand_id,setDemand_id] = useState(null)
     const container = () => {
         switch (stateNum){
             case 0:
@@ -29,47 +31,22 @@ export default function Project_detail(params) {
         }
     }
 
-    const init = async() => {
-        let oid = ''
-        let obj = {
-            demand_id: 9,
-            apply_addr: '0x90f79bf6eb2c4f870365e785982e1f101e93b906'
-        }
-        obj = JSON.stringify(obj)
-        // console.log('-=======',getFirstStatus);
-        // return
-        await getFirstStatus({proLabel: obj})
-        .then(res => {
-            oid = res.toString()
-        })
-        .catch(err => {
-            console.log(err)
-        })
-        if(oid === 0){
-            stateNum = 0;
-            setStateNum(stateNum)
-            return
-        }
-
-        await getSecondStatus(oid)
-        .then(res => {
-            console.log("res+++++++++=",res);
-            // oid = res.toString()
-            
-            
-        })
-        .catch(err => {
-            console.log(err)
-        })
-
-    }
-
     let [stateNum,setStateNum] = useState(2);
     
+    const init = async() => {
+        let obj = {
+            demand_id: Number(demand_id),
+            apply_addr: `${await checkWalletIsConnected()}`
+        }
+        console.log(obj,'=====');
+        obj = JSON.stringify(obj)
+        stateNum = await getOrderStatus(obj)
+        setStateNum(stateNum)
+    }
 
     useEffect(() => {
-        // TODO:链上获取相关信息,判断当前状态
-        // setStateNum
+        demand_id = location.search.replace('?','')
+        setDemand_id(demand_id)
         init()
     },[])
 

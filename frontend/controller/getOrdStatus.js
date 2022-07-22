@@ -30,8 +30,6 @@ export const getSecondStatus =   async(para) => {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
       const orderContract = new ethers.Contract(orderAddr.address, order.abi, signer);
-      console.log("para==========",para);
-      // await order.connect(accounts[3]).orders(0);
       return await orderContract.orders(para)
         .then(res => {
           return res[4]
