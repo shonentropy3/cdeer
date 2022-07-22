@@ -1,5 +1,5 @@
 // import { PlusSquareOutlined } from '@ant-design/icons';
-import { InputNumber, Button, message } from 'antd';
+import { InputNumber, Button, message, notification } from 'antd';
 import { useEffect, useState } from 'react';
 
 
@@ -50,7 +50,12 @@ export default function Stage(){
             price += ele.price;
         })
         if (date > period || price > budget) {
-            message.error('设定值超过预设范围!');
+            // message.error('!');
+            notification['error']({
+                message: '输入值错误',
+                description:'设定值超过预设范围!',
+                style: {color: 'white'}
+              });
             return
         }
         console.log(token,stage);

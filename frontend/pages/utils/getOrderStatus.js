@@ -20,16 +20,12 @@ export default async function getOrderStatus(params)  {
     // 判断乙方是否划分好了阶段
     await getSecondStatus(oid)
     .then(res => {
-        console.log("res+++++++++=",res);
-        // oid = res.toString()
-        
-        
+        oid = res
     })
     .catch(err => {
         console.log(err)
     })
+    if (oid == 0) {
+      return 1
+    }
 }
-// 乙方是否设置阶段
-
-
-// 甲方确认阶段
