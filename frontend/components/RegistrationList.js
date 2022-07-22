@@ -1,69 +1,73 @@
 import { useState } from "react"
 import Order from "../controller/order"
-import Attend from "./ApplyFor"
-import { Button, Modal } from 'antd';
+
+import { Button, Modal, InputNumber } from 'antd';
 
 function RegistrationList(params) {
 
     const {data} = params
-    let [maskStatus,setMaskStatus] = useState(false)
-    const [isModalVisible, setIsModalVisible] = useState(false);
 
-    const showModal = () => {
-      setIsModalVisible(true);
-    };
-  
-    const handleOk = () => {
-        console.log('ok');
-      setIsModalVisible(false);
-    };
-  
-    const handleCancel = () => {
-        console.log('nono');
-      setIsModalVisible(false);
-    };
-  
-    const toggleMask = () => {
-        maskStatus = true 
-        setMaskStatus(maskStatus)
-    }
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    let [count,setCount] = useState(null);
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const onChange = (e) => {
+    count = e;
+    setCount(count);
+  }
+
+  const handleOk = async() => {
+    let obj = {
+        demandId: Number(data.task_id),
+        applyAddr: data.apply_addr,
+        amount: Number(count)
+      }
+      obj = JSON.stringify(obj)
+      await Order({proLabel:obj})
+      .then(res => {
+          console.log(res);
+          setIsModalVisible(false);
+      })
+      .catch(err => {
+          console.log(err);
+      })
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
     //  TODO:1、是否确认合作 ==> 2、展示取消订单和修改订单
     return(
         <>
-            {
-                maskStatus ? 
-                <div className="Mask">
-                    <Attend setParent={setMaskStatus} data={data} />
-                </div>
-                :
-                ''
-            }
-            
+            <Modal title="确认合作" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+                价格: <InputNumber size="large" min="1" onChange={onChange} />
+            </Modal>
             <div className="RegistrationList">
                 <div className="left">
                     <div>
-                        {/* {data.apply_addr} */}
-                        xx
+                        {data.apply_addr}
                     </div>
                     <div>
-                        {/* 预估价:{data.price} */}
-                        xx
+                        预估价:{data.price}
                     </div>
                 </div>
                 <div className="right">
                     {/* <button>不合适</button> */}
-                    <button onClick={() => toggleMask()}>确认合作</button>
+                    <button onClick={() => showModal()}>确认合作</button>
                     {/* 
                         订单状态 > 0 && 订单状态 < 3
                         <button>修改订单</button>
                         <button>取消订单</button>
                     */}
-                        <button onClick={() => showModal()}>修改订单</button>
+                        {/* <button onClick={() => showModal()}>修改订单</button>
                         <Modal title="Basic Modal" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
                             <p>Some contents...</p>
                             <p>Some contents...</p>
                             <p>Some contents...</p>
-                        </Modal>
+                        </Modal> */}
                 </div>
             </div>
         </>
