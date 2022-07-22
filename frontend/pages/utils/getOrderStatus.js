@@ -1,4 +1,3 @@
-import { applyFor } from '../../api/pages/http/api';
 // 有没有创建订单
 export const getOrderStatus = async() => {
     const { ethereum } = window;
