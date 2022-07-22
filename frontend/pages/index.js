@@ -36,7 +36,7 @@ export default function Home() {
                         NO.{item.id}
                         <span className={style.ml10}>{item.name}</span>
                       </p>
-                      <span className={style.color_red}>¥{item.budget}</span>
+                      <span className={style.color_red}>${item.budget}</span>
                   </div>
                   <div>
                       <div className={style.flex_start}>

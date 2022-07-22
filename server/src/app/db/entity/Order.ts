@@ -1,7 +1,6 @@
 import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
 
 @Index("order_pkey", ["id"], { unique: true })
-@Index("order_orderAddr_key", ["orderAddr"], { unique: true })
 @Index("order_order_id_key", ["orderId"], { unique: true })
 @Entity("order", { schema: "public" })
 export class Order {
@@ -15,9 +14,8 @@ export class Order {
   demandId: string | null;
 
   @Column("character varying", {
-    name: "orderAddr",
+    name: "order_addr",
     nullable: true,
-    unique: true,
     length: 64,
   })
   orderAddr: string | null;

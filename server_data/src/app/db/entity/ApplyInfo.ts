@@ -1,7 +1,5 @@
 import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
 
-@Index("apply_info_applyAddr_key", ["applyAddr"], { unique: true })
-@Index("apply_info_demand_id_key", ["demandId"], { unique: true })
 @Index("apply_info_pkey", ["id"], { unique: true })
 @Entity("apply_info", { schema: "public" })
 export class ApplyInfo {
@@ -9,15 +7,17 @@ export class ApplyInfo {
   id: number;
 
   @Column("character varying", {
-    name: "applyAddr",
+    name: "apply_addr",
     nullable: true,
-    unique: true,
     length: 64,
   })
   applyAddr: string | null;
 
-  @Column("bigint", { name: "demand_id", nullable: true, unique: true })
+  @Column("bigint", { name: "demand_id", nullable: true })
   demandId: string | null;
+
+  @Column("numeric", { name: "price", nullable: true })
+  price: string | null;
 
   @Column("date", {
     name: "create_time",

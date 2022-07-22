@@ -6,7 +6,7 @@ import { join } from 'path/posix';
 import { from, map, Observable, tap, throwError } from 'rxjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Demand } from '../db/entity/Demand';	//引入entity
+import { Tasks } from '../db/entity/Tasks';	//引入entity
 
 // ipfs/upyun
 const fs  = require('fs');
@@ -22,13 +22,13 @@ import { getDemandDate, getDemandInfoDate, setDemand, moDemand, delDemand } from
 @Injectable()
 export class MarketService {
     constructor(
-        @InjectRepository(Demand)
-        private readonly demandRepository: Repository<Demand>,
+        @InjectRepository(Tasks)
+        private readonly tasksRepository: Repository<Tasks>,
     ) {}
 
     // 获取需求列表
-    async getDemand(): Promise<Demand[]> {
-        return await this.demandRepository.query(getDemandDate())
+    async getDemand(): Promise<Tasks[]> {
+        return await this.tasksRepository.query(getDemandDate())
         .then(res =>{
             let obj = {
                 code: 200,
@@ -43,9 +43,9 @@ export class MarketService {
     }
 
     // 获取项目详情
-    async getDemandInfo(@Body() body: any): Promise<Demand[]> {
+    async getDemandInfo(@Body() body: any): Promise<Tasks[]> {
         let id = Number(body.id)
-        return await this.demandRepository.query(getDemandInfoDate(id))
+        return await this.tasksRepository.query(getDemandInfoDate(id))
         .then(res =>{
             let obj = {
                 code: 200,
@@ -60,10 +60,10 @@ export class MarketService {
     }
 
     // 发布需求
-    async createDemand(@Body() body: any): Promise<Demand[]> {
+    async createDemand(@Body() body: any): Promise<Tasks[]> {
         let bodyData = JSON.parse(body.proLabel);
         
-        return await this.demandRepository.query(setDemand(bodyData))
+        return await this.tasksRepository.query(setDemand(bodyData))
         .then(res => {
             let obj = {
                 code: 200
@@ -77,9 +77,9 @@ export class MarketService {
     }
 
     // 修改需求
-    async modifyDemand(@Body() body: any): Promise<Demand[]>  {
+    async modifyDemand(@Body() body: any): Promise<Tasks[]>  {
         let bodyData = JSON.parse(body.proLabel);
-        return await this.demandRepository.query(moDemand(bodyData))
+        return await this.tasksRepository.query(moDemand(bodyData))
         .then(res=>{
             let obj = {
                 code: 200
@@ -93,9 +93,9 @@ export class MarketService {
     }
 
     // 删除需求
-    async deleteDemand(@Body() body: any): Promise<Demand[]>  {
+    async deleteDemand(@Body() body: any): Promise<Tasks[]>  {
         let data = body.data
-        return await this.demandRepository.query(delDemand(data))
+        return await this.tasksRepository.query(delDemand(data))
         .then(res=>{
             let obj = {
                 code: 200

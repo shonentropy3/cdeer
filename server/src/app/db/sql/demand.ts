@@ -1,28 +1,28 @@
 
 
 export const getDemandDate = () => {
-    let sql = `SELECT * FROM public."demand" WHERE del = 0 `
+    let sql = `SELECT * FROM public."tasks" WHERE del = 0 `
     return sql
 }
 
 export const getDemandInfoDate = params => {
-    let sql = `SELECT * FROM public.demand WHERE demand_id = '${params}' and del = 0 `
+    let sql = `SELECT * FROM public.tasks WHERE demand_id = '${params}' and del = 0 `
     return sql
 }
 
 export const getMyPjcDBa = params => {
-    let sql = `SELECT * FROM public.demand WHERE demand_addr = '${params}' and del = 0 `
+    let sql = `SELECT * FROM public.tasks WHERE demand_addr = '${params}' and del = 0 `
     return sql
 }
 
 export const getMyPjcDBb = params => {
-    let sql = `SELECT * FROM public.demand WHERE demand_id = '${params}' and del = 0 `
+    let sql = `SELECT * FROM public.tasks WHERE demand_id = '${params}' and del = 0 `
     return sql
 }
 
 export const setDemand = params => {
     let sql = `
-            insert into demand(demand_addr, demand_desc, role, demand_type) 
+            insert into tasks(demand_addr, demand_desc, role, demand_type) 
             VALUES (${params.u_address},'${params.pro_content}', ${params.recruiting_role},${params.demand_type});
         `;
         
@@ -30,14 +30,14 @@ export const setDemand = params => {
 }
 
 export const moDemand = params => {
-    let sql = ` update demand SET title = '${params.title}', budget = ${params.budget}, period = ${params.period} ,
+    let sql = ` update tasks SET title = '${params.title}', budget = ${params.budget}, period = ${params.period} ,
             demand_desc = '${params.pro_content}' ,role = '${params.recruiting_role}' ,demand_type = '${params.demand_type}',
             attachment = '${params.attachment}', update_time = now() where demand_id = ${params.demand_id} `;
     return sql
 }
 
 export const delDemand = params => {
-    let sql = ` UPDATE demand SET del = 1  WHERE id = ${params.id} `;
+    let sql = ` UPDATE tasks SET del = 1  WHERE id = ${params.id} `;
     return sql
 }
 
@@ -78,6 +78,6 @@ export const delApply = params => {
 }
 
 export const modifyApplySwitch = params => {
-    let sql = `UPDATE demand SET apply_switch = ${params.buttonSwitch}  WHERE demand_id = '${params.demandId}'`
+    let sql = `UPDATE tasks SET apply_switch = ${params.buttonSwitch}  WHERE demand_id = '${params.demandId}'`
     return sql
 }

@@ -69,7 +69,7 @@ export default function ProjectDetail() {
                         </div>
                         <button onClick={()=>toggleMask()}>参加项目</button>
                         <div>
-                            <p>金额 ¥{detail.budget}</p>
+                            <p>金额 ${detail.budget}</p>
                             <p>类型  {detail.demand_type}</p>
                             <p>周期  {detail.period}</p>
                             <p>报名人数  xx</p>

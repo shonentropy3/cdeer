@@ -6,7 +6,7 @@ import { join } from 'path/posix';
 import { from, map, Observable, tap, throwError } from 'rxjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Demand } from '../db/entity/Demand';	//引入entity
+import { Tasks } from '../db/entity/Tasks';	//引入entity
 
 // ipfs/upyun
 const fs  = require('fs');
@@ -22,24 +22,24 @@ import { getMyApplylist } from '../db/sql/apply_info';
 @Injectable()
 export class UserService {
     constructor(
-        @InjectRepository(Demand)
-        private readonly demandRepository: Repository<Demand>,
+        @InjectRepository(Tasks)
+        private readonly tasksRepository: Repository<Tasks>,
     ) {}
 
     // 查看个人项目
     async getMyDemand(@Body() body: any) {
         // console.log(body);
         if (body.hash) {
-          return await this.demandRepository.query(getMyPjcDBa(body.hash));
+          return await this.tasksRepository.query(getMyPjcDBa(body.hash));
         }else{
-          return await this.demandRepository.query(getMyPjcDBb(body.demand_id));
+          return await this.tasksRepository.query(getMyPjcDBb(body.demand_id));
           
         }
         
     } 
 
     async getMyApplylist(@Body() body: any) {
-      return this.demandRepository.query(getMyApplylist(body.demandId));
+      return this.tasksRepository.query(getMyApplylist(body.demandId));
     } 
 
     // AxiosErrorTip

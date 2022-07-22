@@ -91,6 +91,7 @@ function Publish() {
         // 交易
         await Demand(para)
         .then(res => {
+          console.log('res===',res.code);
           if (res) {
             if (res.code) {
               tradeStatus = false
@@ -327,7 +328,7 @@ function Publish() {
                                               <Input status={item.status} className={`${'data'+index}`} onChange={(e)=>{get_account(e,index)}} />
                                             }
                                             
-                                            {index === 1 ? '元' : ''}
+                                            {index === 1 ? '$' : ''}
                                             {index === 2 ? '天' : ''}
                                         </Form.Item>
                                     </>
