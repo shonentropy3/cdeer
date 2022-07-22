@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import RegistrationList from '../../../components/RegistrationList'
 import style from '../../../styles/utils.module.scss'
-import { Menu, message, Switch } from 'antd';
+import { Menu, message, Switch, Empty } from 'antd';
 import NavigationBar from "../../../components/NavigationBar";
 import { getDemandInfo, modifyApplySwitch, getMyApplylist } from "../../http/api";
 import { translatedPjc, translatedRole } from '../../utils/translated'
@@ -53,7 +53,10 @@ export default function OrderDetail(oid) {
                             </div>
                             <div className="content">
                                 {
-                                    applylist.map((e,i) => <RegistrationList data={e} key={i} />)
+                                    applylist.length > 0 ? 
+                                        applylist.map((e,i) => <RegistrationList data={e} key={i} />)
+                                    :
+                                    <Empty />
                                 }
                             </div>
                         </div>
@@ -89,12 +92,10 @@ export default function OrderDetail(oid) {
         oid = oid.replace('?','')
         await getDemandInfo({id:oid})
         .then(res => {
-            let r = res.data
-            Array.from(r).forEach((e,i) => {
-                r[i].role = translatedRole(e.role)
-                r[i].demand_type = translatedPjc(e.demand_type)
-              })
-            data = r[0]
+            let r = res.data[0]
+            r.role = translatedRole(r.role)
+            r.task_type = translatedPjc(r.task_type)
+            data = r
             setData({...data})
             checked = data.apply_switch === 1 ? true : false
             setChecked(checked)
@@ -104,7 +105,7 @@ export default function OrderDetail(oid) {
         })
 
         // 获取报名列表
-        getMyApplylist({demandId: data.demand_id})
+        getMyApplylist({demandId: data.task_id})
         .then(res => {
             applylist = res 
             setApplylist([...applylist])
