@@ -11,7 +11,7 @@ import { ApplyInfo } from '../db/entity/ApplyInfo';
 const { ethers } = require('ethers');
 // TODO:更改配置文件
 const rpcProvider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
-const USDR_ADDR = require('../../../deployments/Demand.json');
+const USDR_ADDR = require('../../../deployments/Task.json');
 
 // 信息同步hash表：待同步类型：1.创建需求 2.修改需求 3.报名 4.修改报名 5.取消报名
 
@@ -45,12 +45,12 @@ export class TaskService {
                 toBlock
             }
             const logs = await rpcProvider.getLogs(filter);
-            const CreateTask = new ethers.utils.Interface(["event CreateTask(uint256 indexed demandId, address indexed maker, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
+            const CreateTask = new ethers.utils.Interface(["event CreateTask(uint256 indexed taskId, address indexed maker, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
             if (logs.length > 0) {
                 let txs = logs.map((ele: any) => {
                     let decodedData = CreateTask.parseLog(ele);
                     return {
-                        demandId: decodedData.args[0].toString(),
+                        taskId: decodedData.args[0].toString(),
                         title: decodedData.args[2],
                         budget: ethers.utils.BigNumber(decodedData.args[3].toString()).div(100),
                         desc: decodedData.args[4],
@@ -61,7 +61,7 @@ export class TaskService {
                 let value = ``;
                 for (const v of txs) {
                     value += `
-                    (${v.demandId}, '${v.title}','${v.desc}', ${v.budget}, ${v.period}, '${v.attachment}'),
+                    (${v.taskId}, '${v.title}','${v.desc}', ${v.budget}, ${v.period}, '${v.attachment}'),
                     `
                 }
                 let sqlValue = value.substring(0,(value.lastIndexOf(',')))
@@ -73,7 +73,7 @@ export class TaskService {
                 
                 try {
                   let result = await this.tasksRepository.query(sql)
-                  this.logger.debug('insertCreateDemand');
+                  this.logger.debug('insertCreateTask');
                   if (-1 != result[1]) {
                       let params = {
                         id: 0,
@@ -98,18 +98,18 @@ export class TaskService {
         let filter = {
             address: USDR_ADDR.address,
             topics: [
-                ethers.utils.id("ModifyDemand(uint256,address,string,uint256,string,string,uint256)")
+                ethers.utils.id("ModifyTask(uint256,address,string,uint256,string,string,uint256)")
             ],
             fromBlock,
             toBlock
         }
         const logs = await rpcProvider.getLogs(filter);
-        const CreateTask = new ethers.utils.Interface(["event ModifyDemand(uint256 indexed demandId, address maker, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
+        const CreateTask = new ethers.utils.Interface(["event ModifyTask(uint256 indexed taskId, address maker, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
         if (logs.length > 0) {
             let txs = logs.map((ele: any) => {
                 let decodedData = CreateTask.parseLog(ele);
                 return {
-                    demandId: decodedData.args[0].toString(),
+                    taskId: decodedData.args[0].toString(),
                     title: decodedData.args[2],
                     budget: decodedData.args[3].toString(),
                     desc: decodedData.args[4],
@@ -120,7 +120,7 @@ export class TaskService {
             let value = ``;
             for (const v of txs) {
                 value += `
-                    (${v.demandId}, '${v.title}','${v.desc}', ${v.budget}, ${v.period}, '${v.attachment}'),
+                    (${v.taskId}, '${v.title}','${v.desc}', ${v.budget}, ${v.period}, '${v.attachment}'),
                 `
             }
             let sqlValue = value.substring(0,(value.lastIndexOf(',')))
@@ -131,7 +131,7 @@ export class TaskService {
             let sql = updateProject(paramsSql)
             try {
               let result = await this.tasksRepository.query(sql)
-              this.logger.debug('modifyDemandLog');
+              this.logger.debug('modifyTaskLog');
               if (-1 != result[1]) {
                   let params = {
                       id: 1,
@@ -159,13 +159,13 @@ export class TaskService {
         let applyForHash = await this.applyInfoRepository.query(getApplyForHash());
         for (const v of applyForHash) {
             const log = await rpcProvider.getTransactionReceipt(v.hash);
-            const ApplyFor = new ethers.utils.Interface(["event ApplyFor(uint256 indexed demandId, address indexed taker, uint256 valuation)"]);
+            const ApplyFor = new ethers.utils.Interface(["event ApplyFor(uint256 indexed taskId, address indexed taker, uint256 valuation)"]);
             let decodedData = ApplyFor.parseLog(log.logs[0]);
-            const demandId = decodedData.args.demandId.toString();
+            const taskId = decodedData.args.taskId.toString();
             const taker = decodedData.args.taker.toLowerCase();
             const valuation = decodedData.args.valuation.toString();
             let params = {
-                demandId: demandId,
+                taskId: taskId,
                 applyAddr: taker,
                 valuation: ethers.utils.BigNumber(valuation).div(100),
                 hash: v.hash
@@ -195,13 +195,12 @@ export class TaskService {
         
         for (const v of cancelApplyHash) {
             const log = await rpcProvider.getTransactionReceipt(v.hash);
-            //TODO:重新部署合约后改demandAddr为applyAddr
-            const CancelApply = new ethers.utils.Interface(["event CancelApply(uint256 indexed demandId, address taker)"]);
+            const CancelApply = new ethers.utils.Interface(["event CancelApply(uint256 indexed taskId, address taker)"]);
             let decodedData = CancelApply.parseLog(log.logs[0]);
-            const demandId = decodedData.args.demandId.toString();
+            const taskId = decodedData.args.taskId.toString();
             const taker = decodedData.args.taker.toLowerCase();
             let params = {
-                demandId: demandId,
+                taskId: taskId,
                 applyAddr: taker,
                 hash: v.hash
             }

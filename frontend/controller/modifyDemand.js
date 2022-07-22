@@ -1,5 +1,5 @@
-import demand from '../../deployments/abi/Demand.json'
-import demandAddr from '../contracts/deployments/Demand.json'
+import task from '../../deployments/abi/Task.json'
+import taskAddr from '../contracts/deployments/Task.json'
 import { ethers } from 'ethers'
 
 export default async function ModifyDemand(account) {
@@ -8,9 +8,9 @@ export default async function ModifyDemand(account) {
     if (window.ethereum !== 'undefined') {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
-      const demandContract = new ethers.Contract(demandAddr.address, demand.abi, signer);
+      const taskContract = new ethers.Contract(taskAddr.address, task.abi, signer);
       let data = JSON.parse(account)
-      return await demandContract.modifyDemand(data.demand_id,
+      return await taskContract.modifyTask(data.demand_id,
         { 
             title: data.title,
             budget: data.budget,

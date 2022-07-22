@@ -5,7 +5,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "demand_",
+          "name": "task_",
           "type": "address"
         }
       ],
@@ -24,7 +24,7 @@
         {
           "indexed": true,
           "internalType": "address",
-          "name": "demandAddr",
+          "name": "maker",
           "type": "address"
         }
       ],
@@ -43,7 +43,7 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "demandAddr",
+          "name": "maker",
           "type": "address"
         },
         {
@@ -62,19 +62,19 @@
         {
           "indexed": true,
           "internalType": "uint256",
-          "name": "demandId",
+          "name": "taskId",
           "type": "uint256"
         },
         {
           "indexed": true,
           "internalType": "address",
-          "name": "demandAddr",
+          "name": "maker",
           "type": "address"
         },
         {
           "indexed": false,
           "internalType": "address",
-          "name": "applyAddr",
+          "name": "taker",
           "type": "address"
         },
         {
@@ -93,13 +93,13 @@
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "demandId",
+          "name": "taskId",
           "type": "uint256"
         },
         {
           "indexed": false,
           "internalType": "address",
-          "name": "demandAddr",
+          "name": "maker",
           "type": "address"
         },
         {
@@ -111,7 +111,7 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "applyAddr",
+          "name": "taker",
           "type": "address"
         },
         {
@@ -155,7 +155,7 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "applyAddr",
+          "name": "taker",
           "type": "address"
         },
         {
@@ -192,7 +192,7 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "originatorAddr",
+          "name": "user",
           "type": "address"
         }
       ],
@@ -211,7 +211,7 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "originatorAddr",
+          "name": "user",
           "type": "address"
         },
         {
@@ -236,7 +236,7 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "applyAddr",
+          "name": "taker",
           "type": "address"
         },
         {
@@ -310,12 +310,12 @@
           "components": [
             {
               "internalType": "uint256",
-              "name": "demandId",
+              "name": "taskId",
               "type": "uint256"
             },
             {
               "internalType": "address",
-              "name": "applyAddr",
+              "name": "taker",
               "type": "address"
             },
             {
@@ -353,32 +353,19 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_demandId",
+          "name": "_taskId",
           "type": "uint256"
         }
       ],
-      "name": "hasDemandOrders",
+      "name": "hasTaskOrders",
       "outputs": [
         {
           "internalType": "bool",
-          "name": "hasDemandOrders_",
+          "name": "hasTaskOrders_",
           "type": "bool"
         }
       ],
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint8",
-          "name": "_maxDemandOrders",
-          "type": "uint8"
-        }
-      ],
-      "name": "modifyMaxDemandOrders",
-      "outputs": [],
-      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -397,6 +384,19 @@
     {
       "inputs": [
         {
+          "internalType": "uint8",
+          "name": "_maxTaskOrders",
+          "type": "uint8"
+        }
+      ],
+      "name": "modifyMaxTaskOrders",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "uint256",
           "name": "",
           "type": "uint256"
@@ -406,12 +406,12 @@
       "outputs": [
         {
           "internalType": "uint256",
-          "name": "demandId",
+          "name": "taskId",
           "type": "uint256"
         },
         {
           "internalType": "address",
-          "name": "applyAddr",
+          "name": "taker",
           "type": "address"
         },
         {

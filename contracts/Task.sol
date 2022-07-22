@@ -40,7 +40,7 @@ contract Task is ERC721, ITask, Ownable {
         uint valuation;
     }
 
-    Counters.Counter private demandIds;
+    Counters.Counter private taskIds;
     //taskId = >
     mapping(uint => TaskInfo) private tasks; 
     //报名信息,taskId = > taker
@@ -58,8 +58,8 @@ contract Task is ERC721, ITask, Ownable {
 
     function createTask(TaskInfo memory _taskInfo) external payable {
         require(msg.value > createTaskFee, "Not enough createTaskFee.");
-        demandIds.increment();   
-        uint taskId = demandIds.current();        
+        taskIds.increment();   
+        uint taskId = taskIds.current();        
         tasks[taskId] = TaskInfo({
             title: _taskInfo.title,
             desc: _taskInfo.desc,
@@ -69,61 +69,65 @@ contract Task is ERC721, ITask, Ownable {
             applySwitch: false
         });
         _safeMint(msg.sender, taskId);
+
         console.log("taskId", taskId);
+
         emit CreateTask(taskId, msg.sender, _taskInfo.title, _taskInfo.budget, 
             _taskInfo.desc, _taskInfo.attachment, _taskInfo.period);
     }
 
-    function modifyDemand(uint _demandId, TaskInfo memory _taskInfo) external {
-        require(msg.sender == ownerOf(_demandId), "No root.");
-        require(!IOrder(_order).hasDemandOrders(_demandId), "Existing orders.");
+    function modifyTask(uint _taskId, TaskInfo memory _taskInfo) external {
+        require(msg.sender == ownerOf(_taskId), "No permission.");
+        require(!IOrder(_order).hasTaskOrders(_taskId), "Existing orders.");
 
-        tasks[_demandId].title = _taskInfo.title;
-        tasks[_demandId].budget = _taskInfo.budget;
-        tasks[_demandId].desc = _taskInfo.desc;
-        tasks[_demandId].attachment = _taskInfo.attachment;
-        tasks[_demandId].period = _taskInfo.period;
-        tasks[_demandId].applySwitch = false;
+        tasks[_taskId].title = _taskInfo.title;
+        tasks[_taskId].budget = _taskInfo.budget;
+        tasks[_taskId].desc = _taskInfo.desc;
+        tasks[_taskId].attachment = _taskInfo.attachment;
+        tasks[_taskId].period = _taskInfo.period;
+        tasks[_taskId].applySwitch = false;
 
-        emit ModifyTask(_demandId, msg.sender, _taskInfo.title, _taskInfo.budget, 
+        emit ModifyTask(_taskId, msg.sender, _taskInfo.title, _taskInfo.budget, 
             _taskInfo.desc, _taskInfo.attachment, _taskInfo.period);
     }
 
-    function deleteDemand(uint _demandId) external {
-        require(msg.sender == ownerOf(_demandId), "No root.");
-        require(!IOrder(_order).hasDemandOrders(_demandId), "Existing orders.");
+    function deleteTask(uint _taskId) external {
+        require(msg.sender == ownerOf(_taskId), "No permission.");
+        require(!IOrder(_order).hasTaskOrders(_taskId), "Existing orders.");
 
-        delete tasks[_demandId];
-        _burn(_demandId);
+        delete tasks[_taskId];
+        _burn(_taskId);
 
-        emit DeleteTask(_demandId, msg.sender);
+        emit DeleteTask(_taskId, msg.sender);
     }
 
-    function applyFor(uint _demandId, uint _valuation) external {
-        require(msg.sender != ownerOf(_demandId), "Not apply for orders yourself.");
+    function applyFor(uint _taskId, uint _valuation) external {
+        require(msg.sender != ownerOf(_taskId), "Not apply for orders yourself.");
 
-        applyInfos[_demandId][msg.sender].isApply = true;
-        applyInfos[_demandId][msg.sender].valuation = _valuation;
+        applyInfos[_taskId][msg.sender].isApply = true;
+        applyInfos[_taskId][msg.sender].valuation = _valuation;
 
-        emit ApplyFor(_demandId, msg.sender, _valuation);
+        emit ApplyFor(_taskId, msg.sender, _valuation);
     }
 
-    function cancelApply(uint _demandId) external {
-        require(msg.sender != ownerOf(_demandId), "Not applied.");
-        applyInfos[_demandId][msg.sender].isApply = false;
+    function cancelApply(uint _taskId) external {
+        require(msg.sender != ownerOf(_taskId), "Not applied.");
+        applyInfos[_taskId][msg.sender].isApply = false;
 
-        emit CancelApply(_demandId, msg.sender);
+        emit CancelApply(_taskId, msg.sender);
     }
 
-    function switchApply(uint _demandId, bool _switch) external {
-        require(msg.sender == ownerOf(_demandId), "No Root.");
-        require(tasks[_demandId].applySwitch != _switch, "It is the current state.");
-        tasks[_demandId].applySwitch = _switch;
+    function switchApply(uint _taskId, bool _switch) external {
+        require(msg.sender == ownerOf(_taskId), "No permission.");
+        require(tasks[_taskId].applySwitch != _switch, "It is the current state.");
+        tasks[_taskId].applySwitch = _switch;
 
-        emit SwitchApply(_demandId, msg.sender, _switch);
+        emit SwitchApply(_taskId, msg.sender, _switch);
     }
 
     function modifyFee(uint _createTaskFee) external onlyOwner {
+        require(_createTaskFee < 2*10**17, "The createTaskFee is unreasonable.");
+
         createTaskFee = _createTaskFee;
 
         emit ModifyFee(msg.sender, _createTaskFee);

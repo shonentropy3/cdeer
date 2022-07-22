@@ -22,9 +22,9 @@ export const getModifyDemandLastBlock = () => {
 export const updateProject = params => {
     let sql = `
         UPDATE tasks 
-        SET demand_id = temp.demandId, title = temp.title, demand_desc = temp.content, budget = temp.budget,
+        SET task_id = temp.taskId, title = temp.title, task_desc = temp.content, budget = temp.budget,
         period = temp.period, attachment = temp.attachment, update_time = now() from (values ${params.value}) as temp (
-        demandId, title, content, budget, period, attachment) where demand.demand_desc=temp.content;
+            taskId, title, content, budget, period, attachment) where task.task_desc=temp.content;
     `
     return sql
 }
@@ -41,15 +41,15 @@ export const getHash = use_type => {
 
 export const updateApplyInfo = (params) => {
     let sqlBefore = `
-        select * from apply_info where apply_addr = '${params.applyAddr}' and demand_id = '${params.demandId}'
+        select * from apply_info where apply_addr = '${params.applyAddr}' and task_id = '${params.demandId}'
     `
     let sqlUpdateAI = ` 
         update apply_info set price = ${params.valuation}, update_time = now() 
-        where apply_addr = '${params.applyAddr}' and demand_id = ${params.demandId};
+        where apply_addr = '${params.applyAddr}' and task_id = ${params.demandId};
     `
 
     let insert = ` 
-        insert into apply_info(apply_addr, demand_id, price) 
+        insert into apply_info(apply_addr, task_id, price) 
         VALUES ('${params.applyAddr}', ${params.demandId}, ${params.valuation});
     `
 
@@ -79,10 +79,10 @@ export const getCancelApplyHash = () => {
 
 export const cancelApplyInfo = (params) => {
     let sqlBefore = `
-        select * from apply_info where apply_addr = '${params.applyAddr}' and demand_id = '${params.demandId}'
+        select * from apply_info where apply_addr = '${params.applyAddr}' and task_id = '${params.demandId}'
     `
     let sqlDeletAI = ` 
-        DELETE FROM apply_info WHERE apply_addr = '${params.applyAddr}' and demand_id = '${params.demandId}';
+        DELETE FROM apply_info WHERE apply_addr = '${params.applyAddr}' and task_id = '${params.demandId}';
     `
     let sqlUpdateTH = ` 
         UPDATE trans_hash SET is_update = 1, update_time = now() 

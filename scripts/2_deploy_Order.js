@@ -1,5 +1,5 @@
 
-const { address } = require('../deployments/dev/Demand.json');
+const { address } = require('../deployments/dev/Task.json');
 const hre = require("hardhat");
 const { writeAbiAddr } = require('./artifact_log.js');
 const { utils } = require("ethers");
@@ -14,7 +14,7 @@ async function main() {
     // Get contract that we want to deploy
     const contractFactory = await hre.ethers.getContractFactory("Order");
     // Deploy contract with the correct constructor arguments
-    console.log("Order demand", address);
+    console.log("Order task", address);
     const contract = await contractFactory.deploy(address);
     // Wait for this transaction to be mined
     await contract.deployed();
@@ -25,8 +25,6 @@ async function main() {
     let artifactT21 = await artifacts.readArtifact("Order");
     await writeAbiAddr(artifactT21, contract.address, "Order", network.name);
 
-    // let result = await contract.hasDemandOrders(0);
-    // console.log(result);
 }
 
 main()

@@ -6,23 +6,23 @@ export const getDemandDate = () => {
 }
 
 export const getDemandInfoDate = params => {
-    let sql = `SELECT * FROM public.tasks WHERE demand_id = '${params}' and del = 0 `
+    let sql = `SELECT * FROM public.tasks WHERE task_id = '${params}' and del = 0 `
     return sql
 }
 
 export const getMyPjcDBa = params => {
-    let sql = `SELECT * FROM public.tasks WHERE demand_addr = '${params}' and del = 0 `
+    let sql = `SELECT * FROM public.tasks WHERE task_addr = '${params}' and del = 0 `
     return sql
 }
 
 export const getMyPjcDBb = params => {
-    let sql = `SELECT * FROM public.tasks WHERE demand_id = '${params}' and del = 0 `
+    let sql = `SELECT * FROM public.tasks WHERE task_id = '${params}' and del = 0 `
     return sql
 }
 
 export const setDemand = params => {
     let sql = `
-            insert into tasks(demand_addr, demand_desc, role, demand_type) 
+            insert into tasks(task_addr, task_desc, role, task_type) 
             VALUES (${params.u_address},'${params.pro_content}', ${params.recruiting_role},${params.demand_type});
         `;
         
@@ -31,8 +31,8 @@ export const setDemand = params => {
 
 export const moDemand = params => {
     let sql = ` update tasks SET title = '${params.title}', budget = ${params.budget}, period = ${params.period} ,
-            demand_desc = '${params.pro_content}' ,role = '${params.recruiting_role}' ,demand_type = '${params.demand_type}',
-            attachment = '${params.attachment}', update_time = now() where demand_id = ${params.demand_id} `;
+    task_desc = '${params.pro_content}' ,role = '${params.recruiting_role}' ,task_type = '${params.demand_type}',
+            attachment = '${params.attachment}', update_time = now() where task_id = ${params.demand_id} `;
     return sql
 }
 
@@ -42,12 +42,9 @@ export const delDemand = params => {
 }
 
 export const setApply = params => {
-    // let sql = ` insert into apply_info("apply_addr", demand_id, estimated_price) 
-    //         VALUES ('${params.applyAddr}', ${params.demandId}, ${params.valuation}) `;
-
-        let sql = ` insert into trans_hash("send_addr", demand_id, category, hash) 
-            VALUES ('${params.applyAddr}', ${params.demandId}, 3, '${params.hash}')`;
-            
+    let sql = ` insert into trans_hash("send_addr", task_id, category, hash) 
+        VALUES ('${params.applyAddr}', ${params.demandId}, 3, '${params.hash}')`;
+        
     return sql
 }
 
@@ -60,9 +57,9 @@ export const getApply = params => {
 
 export const delApply = params => {
     let sqlBefore = `
-        select * from trans_hash where send_addr = '${params.applyAddr}' and demand_id = '${params.demandId}' and is_update = 0 and category = 5;
+        select * from trans_hash where send_addr = '${params.applyAddr}' and task_id = '${params.demandId}' and is_update = 0 and category = 5;
     `
-    let insertSql = `insert into trans_hash("send_addr", demand_id, category, hash) 
+    let insertSql = `insert into trans_hash("send_addr", task_id, category, hash) 
         VALUES ('${params.applyAddr}', ${params.demandId}, 5, '${params.hash}');
     `
     let updateSql = `UPDATE trans_hash SET send_addr = '${params.applyAddr}', update_time = now() 
@@ -78,6 +75,6 @@ export const delApply = params => {
 }
 
 export const modifyApplySwitch = params => {
-    let sql = `UPDATE tasks SET apply_switch = ${params.buttonSwitch}  WHERE demand_id = '${params.demandId}'`
+    let sql = `UPDATE tasks SET apply_switch = ${params.buttonSwitch}  WHERE task_id = '${params.demandId}'`
     return sql
 }

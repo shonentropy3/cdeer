@@ -1,8 +1,8 @@
 const { ethers } = require("hardhat");
 const hre = require("hardhat");
-const demandJson = require('../deployments/dev/Demand.json');
+const taskJson = require('../deployments/dev/Task.json');
 const orderJson = require('../deployments/dev/Order.json');
-const { abi } = require('../deployments/abi/Demand.json');
+const { abi } = require('../deployments/abi/Task.json');
 const orderAbi = require('../deployments/abi/Order.json');
 
 let accounts = [];
@@ -12,13 +12,13 @@ async function main() {
     await hre.run('compile');
     accounts = await ethers.getSigners();
     owner = accounts[0];
-    const demand = new ethers.Contract(demandJson.address, abi, owner);
+    const task = new ethers.Contract(taskJson.address, abi, owner);
     console.log("orderJson.address------", orderJson.address);
-    await demand.connect(owner).setOrder(orderJson.address);
+    await task.connect(owner).setOrder(orderJson.address);
 
     for (let i = 0; i < 4; i++) {
       //创建需求
-      await demand.connect(accounts[3]).createDemand(
+      await task.connect(accounts[3]).createTask(
         { 
             title: "test",
             desc: "desc",
@@ -36,8 +36,8 @@ async function main() {
     console.log("orderJson.address------", orderJson.address);
     await order.connect(accounts[3]).createOrder(
       { 
-        demandId: 3,
-        applyAddr: "0x90f79bf6eb2c4f870365e785982e1f101e93b906",
+        taskId: 3,
+        taker: "0x90f79bf6eb2c4f870365e785982e1f101e93b906",
         token: "0x90f79bf6eb2c4f870365e785982e1f101e93b906",
         amount: ethers.utils.parseEther("5"),
         checked: 1,
@@ -45,14 +45,6 @@ async function main() {
     });
 
     map = await order.connect(accounts[3]).applyOrderIds(1,accounts[3].address);
-    // map['0x']
-    console.log(map)
-    let orderIdTest = await order.connect(accounts[3]).orders(0);
-    orderIdTest = orderIdTest[4]
-    // let checked = Array.from(orderIdTest).forEach(ele => {
-    //   console.log(ele);
-    // });
-    console.log(orderIdTest);
   }
 
   main()
