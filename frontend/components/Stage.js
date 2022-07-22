@@ -1,10 +1,11 @@
 // import { PlusSquareOutlined } from '@ant-design/icons';
-import { InputNumber, Button, message, notification } from 'antd';
+import { InputNumber, Button, message, notification, Input } from 'antd';
 import { useEffect, useState } from 'react';
 
 
 export default function Stage(){
-
+    
+    const { TextArea } = Input;
     const tokenlist = [
         {title: '以太坊', value: 'ethers'},
         {title: '比特', value: 'bcoin'},
@@ -25,14 +26,24 @@ export default function Stage(){
     const init = () => {
         let arr = []
         for (let i = 0; i < stageNum; i++) {
-            arr.push( {stage: i+1, date: 0, price: 0} )
+            arr.push( {stage: i+1, date: 0, price: 0, dsc: ''} )
         }
         stage = arr
         setStage([...stage])
     }
 
     const onChange = (i,value,type) => {
-        type === 'date' ? stage[i].date = value : stage[i].price = value;
+        switch (type) {
+            case 'date':
+                stage[i].date = value
+                break;
+            case 'price':
+                stage[i].price = value
+                break;
+            default:
+                stage[i].dsc = value.target.value
+                break;
+        }
         setStage([...stage])
     };
 
@@ -93,12 +104,17 @@ export default function Stage(){
                 {
                     stage.map((e,i) => 
                         <div className="li" key={i}>
-                            <h2>P{i+1}</h2>
-                            <div className="box">
-                                周期: <InputNumber min={1} value={e.date} onChange={(event) => onChange(i,event,'date')} />
+                            <div className="inner">
+                                <h2>P{i+1}</h2>
+                                <div className="box">
+                                    周期: <InputNumber min={1} value={e.date} onChange={(event) => onChange(i,event,'date')} />
+                                </div>
+                                <div className="box">
+                                    计划金额: <InputNumber min={1} value={e.price} onChange={(event) => onChange(i,event,'price')} />
+                                </div>
                             </div>
-                            <div className="box">
-                                计划金额: <InputNumber min={1} value={e.price} onChange={(event) => onChange(i,event,'price')} />
+                            <div className="inner">
+                                <p>阶段描述:</p> <TextArea showCount maxLength={100} onChange={(event) => onChange(i,event,'dsc')} />
                             </div>
                         </div>
                     )
