@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, Interval, Timeout } from '@nestjs/schedule';
-import { Demand } from 'src/app/db/entity/Demand';
+import { Tasks } from 'src/app/db/entity/Tasks';
 import { BlockLog } from 'src/app/db/entity/BlockLog';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -18,8 +18,8 @@ const USDR_ADDR = require('../../../deployments/Demand.json');
 @Injectable()
 export class TaskService {
     constructor(
-        @InjectRepository(Demand)
-        private readonly demandRepository: Repository<Demand>,
+        @InjectRepository(Tasks)
+        private readonly tasksRepository: Repository<Tasks>,
         @InjectRepository(BlockLog)
         private readonly blockLogRepository: Repository<BlockLog>,
         @InjectRepository(ApplyInfo)
@@ -72,7 +72,7 @@ export class TaskService {
                 let sql = updateProject(paramsSql)
                 
                 try {
-                  let result = await this.demandRepository.query(sql)
+                  let result = await this.tasksRepository.query(sql)
                   this.logger.debug('insertCreateDemand');
                   if (-1 != result[1]) {
                       let params = {
@@ -130,7 +130,7 @@ export class TaskService {
             }
             let sql = updateProject(paramsSql)
             try {
-              let result = await this.demandRepository.query(sql)
+              let result = await this.tasksRepository.query(sql)
               this.logger.debug('modifyDemandLog');
               if (-1 != result[1]) {
                   let params = {

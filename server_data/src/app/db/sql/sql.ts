@@ -21,7 +21,7 @@ export const getModifyDemandLastBlock = () => {
 // TODO:依据hash进行日志查看
 export const updateProject = params => {
     let sql = `
-        UPDATE demand 
+        UPDATE tasks 
         SET demand_id = temp.demandId, title = temp.title, demand_desc = temp.content, budget = temp.budget,
         period = temp.period, attachment = temp.attachment, update_time = now() from (values ${params.value}) as temp (
         demandId, title, content, budget, period, attachment) where demand.demand_desc=temp.content;
