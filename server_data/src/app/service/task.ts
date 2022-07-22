@@ -39,16 +39,16 @@ export class TaskService {
             let filter = {
                 address: USDR_ADDR.address,
                 topics: [
-                    ethers.utils.id("CreateDemand(uint256,address,string,uint256,string,string,uint256)")
+                    ethers.utils.id("CreateTask(uint256,address,string,uint256,string,string,uint256)")
                 ],
                 fromBlock,
                 toBlock
             }
             const logs = await rpcProvider.getLogs(filter);
-            const CreateDemand = new ethers.utils.Interface(["event CreateDemand(uint256 indexed demandId, address indexed demandAddr, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
+            const CreateTask = new ethers.utils.Interface(["event CreateTask(uint256 indexed demandId, address indexed maker, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
             if (logs.length > 0) {
                 let txs = logs.map((ele: any) => {
-                    let decodedData = CreateDemand.parseLog(ele);
+                    let decodedData = CreateTask.parseLog(ele);
                     return {
                         demandId: decodedData.args[0].toString(),
                         title: decodedData.args[2],
@@ -104,10 +104,10 @@ export class TaskService {
             toBlock
         }
         const logs = await rpcProvider.getLogs(filter);
-        const CreateDemand = new ethers.utils.Interface(["event ModifyDemand(uint256 indexed demandId, address demandAddr, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
+        const CreateTask = new ethers.utils.Interface(["event ModifyDemand(uint256 indexed demandId, address maker, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
         if (logs.length > 0) {
             let txs = logs.map((ele: any) => {
-                let decodedData = CreateDemand.parseLog(ele);
+                let decodedData = CreateTask.parseLog(ele);
                 return {
                     demandId: decodedData.args[0].toString(),
                     title: decodedData.args[2],
@@ -159,14 +159,14 @@ export class TaskService {
         let applyForHash = await this.applyInfoRepository.query(getApplyForHash());
         for (const v of applyForHash) {
             const log = await rpcProvider.getTransactionReceipt(v.hash);
-            const ApplyFor = new ethers.utils.Interface(["event ApplyFor(uint256 indexed demandId, address indexed applyAddr, uint256 valuation)"]);
+            const ApplyFor = new ethers.utils.Interface(["event ApplyFor(uint256 indexed demandId, address indexed taker, uint256 valuation)"]);
             let decodedData = ApplyFor.parseLog(log.logs[0]);
             const demandId = decodedData.args.demandId.toString();
-            const applyAddr = decodedData.args.applyAddr.toLowerCase();
+            const taker = decodedData.args.taker.toLowerCase();
             const valuation = decodedData.args.valuation.toString();
             let params = {
                 demandId: demandId,
-                applyAddr: applyAddr,
+                applyAddr: taker,
                 valuation: ethers.utils.BigNumber(valuation).div(100),
                 hash: v.hash
             }
@@ -196,13 +196,13 @@ export class TaskService {
         for (const v of cancelApplyHash) {
             const log = await rpcProvider.getTransactionReceipt(v.hash);
             //TODO:重新部署合约后改demandAddr为applyAddr
-            const CancelApply = new ethers.utils.Interface(["event CancelApply(uint256 indexed demandId, address applyAddr)"]);
+            const CancelApply = new ethers.utils.Interface(["event CancelApply(uint256 indexed demandId, address taker)"]);
             let decodedData = CancelApply.parseLog(log.logs[0]);
             const demandId = decodedData.args.demandId.toString();
-            const applyAddr = decodedData.args.applyAddr.toLowerCase();
+            const taker = decodedData.args.taker.toLowerCase();
             let params = {
                 demandId: demandId,
-                applyAddr: applyAddr,
+                applyAddr: taker,
                 hash: v.hash
             }
             let sql = cancelApplyInfo(params)

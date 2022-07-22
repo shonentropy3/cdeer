@@ -11,21 +11,22 @@ import "./interface/ITask.sol";
 
 //TODO:1.报名限制数量，乙方，时间久远后考虑废弃 2.去掉所有log
 contract Task is ERC721, ITask, Ownable {
-    uint fee = 1*10**17;
+    uint createTaskFee = 1*10**17;
     address _order;
 
     using Counters for Counters.Counter;
  
-    event CreateDemand(uint indexed demandId, address indexed demandAddr, string title, uint budget, 
+    event CreateTask(uint indexed taskId, address indexed maker, string title, uint budget, 
         string desc, string attachment, uint period);
-    event ModifyDemand(uint indexed demandId, address demandAddr, string title, uint budget, 
+    event ModifyTask(uint indexed taskId, address maker, string title, uint budget, 
         string desc, string attachment, uint period);
-    event DeleteDemand(uint indexed demandId, address demandAddr);
-    event ApplyFor(uint indexed demandId, address indexed applyAddr, uint valuation);
-    event CancelApply(uint indexed demandId, address applyAddr);
-    event ModifyApplySwitch(uint indexed demandId, address demandAddr, bool);
+    event DeleteTask(uint indexed taskId, address maker);
+    event ApplyFor(uint indexed taskId, address indexed taker, uint valuation);
+    event CancelApply(uint indexed taskId, address taker);
+    event SwitchApply(uint indexed taskId, address maker, bool);
+    event ModifyFee(address indexed owner, uint createTaskFee);
 
-    struct DemandInfo {
+    struct TaskInfo {
         string title;
         string desc;
         string attachment;
@@ -40,9 +41,9 @@ contract Task is ERC721, ITask, Ownable {
     }
 
     Counters.Counter private demandIds;
-    //demandId = >
-    mapping(uint => DemandInfo) private tasks; 
-    //报名信息,demandId = > applyAddr
+    //taskId = >
+    mapping(uint => TaskInfo) private tasks; 
+    //报名信息,taskId = > taker
     mapping(uint => mapping(address => applyInfo)) private  applyInfos;
 
     //TODO: 项目NFT名称
@@ -55,37 +56,37 @@ contract Task is ERC721, ITask, Ownable {
         _order = order_;    
     }
 
-    function createDemand(DemandInfo memory _demandInfo) external payable {
-        require(msg.value > fee, "Not enough fee.");
+    function createTask(TaskInfo memory _taskInfo) external payable {
+        require(msg.value > createTaskFee, "Not enough createTaskFee.");
         demandIds.increment();   
-        uint demandId = demandIds.current();        
-        tasks[demandId] = DemandInfo({
-            title: _demandInfo.title,
-            desc: _demandInfo.desc,
-            attachment: _demandInfo.attachment,
-            budget: _demandInfo.budget,            
-            period: _demandInfo.period,
+        uint taskId = demandIds.current();        
+        tasks[taskId] = TaskInfo({
+            title: _taskInfo.title,
+            desc: _taskInfo.desc,
+            attachment: _taskInfo.attachment,
+            budget: _taskInfo.budget,            
+            period: _taskInfo.period,
             applySwitch: false
         });
-        _safeMint(msg.sender, demandId);
-        console.log("demandId", demandId);
-        emit CreateDemand(demandId, msg.sender, _demandInfo.title, _demandInfo.budget, 
-            _demandInfo.desc, _demandInfo.attachment, _demandInfo.period);
+        _safeMint(msg.sender, taskId);
+        console.log("taskId", taskId);
+        emit CreateTask(taskId, msg.sender, _taskInfo.title, _taskInfo.budget, 
+            _taskInfo.desc, _taskInfo.attachment, _taskInfo.period);
     }
 
-    function modifyDemand(uint _demandId, DemandInfo memory _demandInfo) external {
+    function modifyDemand(uint _demandId, TaskInfo memory _taskInfo) external {
         require(msg.sender == ownerOf(_demandId), "No root.");
         require(!IOrder(_order).hasDemandOrders(_demandId), "Existing orders.");
 
-        tasks[_demandId].title = _demandInfo.title;
-        tasks[_demandId].budget = _demandInfo.budget;
-        tasks[_demandId].desc = _demandInfo.desc;
-        tasks[_demandId].attachment = _demandInfo.attachment;
-        tasks[_demandId].period = _demandInfo.period;
+        tasks[_demandId].title = _taskInfo.title;
+        tasks[_demandId].budget = _taskInfo.budget;
+        tasks[_demandId].desc = _taskInfo.desc;
+        tasks[_demandId].attachment = _taskInfo.attachment;
+        tasks[_demandId].period = _taskInfo.period;
         tasks[_demandId].applySwitch = false;
 
-        emit ModifyDemand(_demandId, msg.sender, _demandInfo.title, _demandInfo.budget, 
-            _demandInfo.desc, _demandInfo.attachment, _demandInfo.period);
+        emit ModifyTask(_demandId, msg.sender, _taskInfo.title, _taskInfo.budget, 
+            _taskInfo.desc, _taskInfo.attachment, _taskInfo.period);
     }
 
     function deleteDemand(uint _demandId) external {
@@ -95,7 +96,7 @@ contract Task is ERC721, ITask, Ownable {
         delete tasks[_demandId];
         _burn(_demandId);
 
-        emit DeleteDemand(_demandId, msg.sender);
+        emit DeleteTask(_demandId, msg.sender);
     }
 
     function applyFor(uint _demandId, uint _valuation) external {
@@ -119,10 +120,12 @@ contract Task is ERC721, ITask, Ownable {
         require(tasks[_demandId].applySwitch != _switch, "It is the current state.");
         tasks[_demandId].applySwitch = _switch;
 
-        emit ModifyApplySwitch(_demandId, msg.sender, _switch);
+        emit SwitchApply(_demandId, msg.sender, _switch);
     }
 
-    function modifyFee(uint _fee) external onlyOwner {
-        fee = _fee;
+    function modifyFee(uint _createTaskFee) external onlyOwner {
+        createTaskFee = _createTaskFee;
+
+        emit ModifyFee(msg.sender, _createTaskFee);
     }
 }
