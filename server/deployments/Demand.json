@@ -1,4 +1,8 @@
 {
+<<<<<<< HEAD
   "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+=======
+  "address": "0xDC11f7E700A4c898AE5CAddB1082cFfa76512aDD",
+>>>>>>> fd0fd517c889b5509e5f631982ec2ea537a72e9b
   "contractName": "Demand"
 }

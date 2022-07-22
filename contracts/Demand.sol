@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "hardhat/console.sol";
 import "./interface/IDemand.sol";
 
-//TODO:报名限制数量，乙方，时间久远后考虑废弃
+//TODO:1.报名限制数量，乙方，时间久远后考虑废弃 2.去掉所有log
 contract Demand is ERC721, IDemand, Ownable {
     uint fee = 1*10**17;
     address _order;
@@ -57,7 +57,7 @@ contract Demand is ERC721, IDemand, Ownable {
 
     function createDemand(DemandInfo memory _demandInfo) external payable {
         require(msg.value > fee, "Not enough fee.");
-
+        demandIds.increment();   
         uint demandId = demandIds.current();        
         demands[demandId] = DemandInfo({
             title: _demandInfo.title,
@@ -68,7 +68,6 @@ contract Demand is ERC721, IDemand, Ownable {
             applySwitch: false
         });
         _safeMint(msg.sender, demandId);
-        demandIds.increment();   
         console.log("demandId", demandId);
         emit CreateDemand(demandId, msg.sender, _demandInfo.title, _demandInfo.budget, 
             _demandInfo.desc, _demandInfo.attachment, _demandInfo.period);

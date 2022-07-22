@@ -74,6 +74,7 @@ contract Order is IOrder, Ownable {
 
         uint orderId;
         if (applyOrderIds[_order.demandId][_order.applyAddr] == 0) {
+            orderIds.increment();
             orderId = orderIds.current();
             orders[orderId] = Order({
                 demandId: _order.demandId,
@@ -86,8 +87,6 @@ contract Order is IOrder, Ownable {
             applyOrderIds[_order.demandId][_order.applyAddr] = orderId;
 
             console.log("createOrder", orderId);
-
-            orderIds.increment(); 
 
             emit CreateOrder(_order.demandId, msg.sender, _order.applyAddr, _order.amount);                     
         } else {
