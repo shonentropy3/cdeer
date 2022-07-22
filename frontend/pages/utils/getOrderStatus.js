@@ -1,25 +1,33 @@
-import { applyFor } from '../../api/pages/http/api';
+import {getFirstStatus,getSecondStatus} from '../../controller/getOrdStatus'
 // 有没有创建订单
-export const getOrderStatus = async() => {
-    const { ethereum } = window;
+export default async function getOrderStatus(params)  {
+    let oid;
 
-    if (!ethereum) {
-      console.log("Make sure you have Metamask installed!");
-      return;
-    } else {
-      console.log("Wallet exists! We're ready to go!")
+    // 判断甲方是否选择乙方
+    await getFirstStatus({proLabel: params})
+    .then(res => {
+        oid = res.toString()
+    })
+    .catch(err => {
+        console.log(err)
+    })
+    if(oid == 0){
+      return 0
     }
+    
 
-    const accounts = await ethereum.request({ method: 'eth_accounts' });
 
-    if (accounts.length !== 0) {
-      const account = accounts[0];
-      console.log("Found an authorized account: ", account);
-      return account
-    } else {
-      console.log("No authorized account found");
-      
-    }
+    // 判断乙方是否划分好了阶段
+    await getSecondStatus(oid)
+    .then(res => {
+        console.log("res+++++++++=",res);
+        // oid = res.toString()
+        
+        
+    })
+    .catch(err => {
+        console.log(err)
+    })
 }
 // 乙方是否设置阶段
 

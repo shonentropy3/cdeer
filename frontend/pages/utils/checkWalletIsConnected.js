@@ -12,7 +12,6 @@ export const checkWalletIsConnected = async() => {
 
     if (accounts.length !== 0) {
       const account = accounts[0];
-      console.log("Found an authorized account: ", account);
       return account
     } else {
       console.log("No authorized account found");

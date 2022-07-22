@@ -93,7 +93,7 @@ function ProjectList(props) {
         }else{
             // 我开发的项目
             return <>
-                        <Link href="/views/details/Project">
+                        <Link href={{pathname:"/views/details/Project",search:data.demand_id}}>
                         <button>项目详情</button>
                         </Link>
                         <Popconfirm

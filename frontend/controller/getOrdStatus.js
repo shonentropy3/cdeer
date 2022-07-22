@@ -31,9 +31,10 @@ export const getSecondStatus =   async(para) => {
       const signer = provider.getSigner();
       const orderContract = new ethers.Contract(orderAddr.address, order.abi, signer);
       console.log("para==========",para);
-      return await orderContract.orders(1)
+      // await order.connect(accounts[3]).orders(0);
+      return await orderContract.orders(para)
         .then(res => {
-          return res
+          return res[4]
         })
       } else {
         console.log("Ethereum object does not exist");
