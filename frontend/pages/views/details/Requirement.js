@@ -22,13 +22,10 @@ export default function ProjectDetail() {
         
         getDemandInfo({id: oid})
         .then(res=>{
-            let data = res.data
-            Array.from(data).forEach((e,i) => {
-                data[i].role = translatedRole(e.role)
-                data[i].demand_type = translatedPjc(e.demand_type)
-            })
-            
-            detail = data[0]
+            let data = res.data[0]
+            data.role = translatedRole(data.role)
+            data.task_type = translatedPjc(data.task_type)
+            detail = data
             detailSet({...detail})
         })
         .catch(err=>{
@@ -79,7 +76,7 @@ export default function ProjectDetail() {
                         {/* {
                             detail.attachment.length > 0 ? <p>项目附件: {detail.attachment}</p> : ''
                         } */}
-                        <p>项目描述: {detail.content}</p>
+                        <p>项目描述: {detail.task_desc}</p>
                     </div>
                 </div>
             </div>
