@@ -1,15 +1,19 @@
-import {withRouter} from 'next/router'
 import { useEffect, useState } from "react"
-import { getDemandInfo } from '../../http/api';
+import { getDemandInfo, applyFor } from '../../http/api';
 import NavigationBar from "../../../components/NavigationBar";
 import { translatedPjc, translatedRole } from '../../utils/translated';
-import Attend from '../../../components/ApplyFor';
-import { ApplyFor } from '../../../controller/ApplyProject';
+import { ApplyProject } from '../../../controller/ApplyProject';
+import { Modal, InputNumber, message } from 'antd';
+import { checkWalletIsConnected } from '../../utils/checkWalletIsConnected';
+import { useRouter } from 'next/router'
+
 
 export default function ProjectDetail() {
-    let oid = ''
+
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const router = useRouter()
     let [detail,detailSet] = useState({})
-    let [maskStatus,setMaskStatus] = useState(false)
+    let [count,setCount] = useState(null);
 
     const navbar = [
         { label: '找项目', url: '/'},
@@ -17,7 +21,8 @@ export default function ProjectDetail() {
     ]
     
     useEffect(()=>{
-        oid = location.search
+        // 获取项目详情
+        let oid = location.search
         oid = oid.replace('?','')
         
         getDemandInfo({id: oid})
@@ -32,26 +37,69 @@ export default function ProjectDetail() {
             console.log(err);
         })
     },[])
-    
-    const toggleMask = () => {
-        maskStatus = true 
-        setMaskStatus(maskStatus)
+
+    const showModal = () => {
+        setIsModalVisible(true);
+    };
+
+    const onChange = (e) => {
+        count = e;
+        setCount(count);
     }
 
-
-
+    const handleOk = async() => {
+        let account = await checkWalletIsConnected()
+        let obj = {
+            demandId: detail.task_id,
+            valuation: count,
+        }
+        obj = JSON.stringify(obj)
+        let tradeStatus = false
+  
+        await ApplyProject(obj)
+        .then(res => {
+            if (res) {
+                if (res.code) {
+                  tradeStatus = false
+                  message.error('交易失败!');
+                }else{
+                  tradeStatus = true
+                  obj = JSON.parse(obj)
+                  obj.hash = res.hash
+                  obj.applyAddr = account;
+                  obj = JSON.stringify(obj)
+                }
+            }
+        })
+        .catch(err => {
+            console.log('err==>',err);
+        })
+  
+        if (tradeStatus) {
+            applyFor({proLabel: obj})
+              .then(res => {
+                message.success('报名成功!')
+                router.push('/')
+              })
+              .catch(err => {
+                console.log(err);
+              })
+        }
+        setIsModalVisible(false);
+      };
+    
+      const handleCancel = () => {
+        setIsModalVisible(false);
+      };
+    
+      
 
 
     return(
         <>
-            {
-                maskStatus ? 
-                <div className="Mask">
-                    <Attend setParent={setMaskStatus} demand_id={detail.demand_id} />
-                </div>
-                :
-                ''
-            }
+            <Modal title="报名项目" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+                项目估价: <InputNumber size="large" min="1" onChange={onChange} />
+            </Modal>
             <div className="pjc_detail">
                 <NavigationBar data={navbar} />
 
@@ -64,7 +112,7 @@ export default function ProjectDetail() {
                         <div>
                             <p>招募角色: {detail.role}</p>
                         </div>
-                        <button onClick={()=>toggleMask()}>参加项目</button>
+                        <button onClick={()=>showModal()}>参加项目</button>
                         <div>
                             <p>金额 ${detail.budget}</p>
                             <p>类型  {detail.demand_type}</p>

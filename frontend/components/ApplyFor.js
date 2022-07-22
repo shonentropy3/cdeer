@@ -19,9 +19,7 @@ export default function Attend(props) {
         setCount(count);
     }
 
-    useEffect(() => {
-      console.log(demand_id);
-    },[])
+
 
     
     const confirm = async() => {
