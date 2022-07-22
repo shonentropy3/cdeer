@@ -68,8 +68,8 @@ contract Order is IOrder, Ownable {
     }
 
     function createOrder(Order memory _order) external {
-        require(msg.sender == ITask(_task).ownerOf(_order.taskId), "No create permission.");
-        require(address(0) != _order.taker, "ApplyAddr is zero address.");
+        require(msg.sender == ITask(_task).ownerOf(_order.taskId), "No creating permission.");
+        require(address(0) != _order.taker, "Taker is zero address.");
         require(maxTaskOrders >= taskOrders[_order.taskId].length, "Excessive number of orders.");
 
         uint orderId;
@@ -108,7 +108,7 @@ contract Order is IOrder, Ownable {
 
     function setStage(uint _orderId, address _token, uint[] memory _amounts, uint[] memory _periods) external {
         require(orders[_orderId].taker == msg.sender, "No permission.");
-        require(orders[_orderId].checked != makerChecked, "The order has been checked by A.");
+        require(orders[_orderId].checked != makerChecked, "The order has been checked by maker.");
 
         _setStage(_orderId, _amounts, _periods); 
         orders[_orderId].token = _token;
@@ -121,7 +121,7 @@ contract Order is IOrder, Ownable {
     function confirmOrder(uint _orderId) external payable {
         uint _taskId  = orders[_orderId].taskId;
         require(msg.sender == ITask(_task).ownerOf(_taskId), "No confirming permission.");
-        require(orders[_orderId].checked == takerChecked, "No checked by B.");
+        require(orders[_orderId].checked == takerChecked, "Need taker checked.");
         require(maxTaskOrders >= taskOrders[_taskId].length, "Excessive number of orders.");
         
         address _token = orders[_orderId].token;
@@ -164,7 +164,7 @@ contract Order is IOrder, Ownable {
     function terminateOrder(uint _orderId) external {
         uint _taskId  = orders[_orderId].taskId;
         require(ITask(_task).ownerOf(_taskId) == msg.sender || orders[_orderId].taker == msg.sender, "No terminate permission.");
-        require(orders[_orderId].checked != makerChecked, "The order has been checked by A.");
+        require(orders[_orderId].checked != makerChecked, "The order has been checked by maker.");
         
         delete orders[_orderId];
         delete orderStages[_orderId];
@@ -206,7 +206,7 @@ contract Order is IOrder, Ownable {
     // TODO:项目需要抽成
     function withdraw(uint _orderId, uint8 _stageIndex) external {
         require(orders[_orderId].taker == msg.sender, "No permission.");
-        require(orders[_orderId].checked == makerChecked, "The order is not checked by A.");
+        require(orders[_orderId].checked == makerChecked, " Need maker checked.");
         Stage storage pro = orderStages[_orderId][_stageIndex];
         require(!pro.withdrawed, "Aleady withdrawed");
 
@@ -256,7 +256,7 @@ contract Order is IOrder, Ownable {
             orderStagesArr.push(pro);
             totalAmounts += _amounts[i];
         }
-        require(totalAmounts == orders[_orderId].amount, "Wrong amount of commission.");
+        require(totalAmounts == orders[_orderId].amount, "Wrong amounts.");
     }
 
     function _transfer(address _token, address _to, uint _amount) private {

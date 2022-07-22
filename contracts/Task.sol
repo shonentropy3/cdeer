@@ -11,6 +11,7 @@ import "./interface/ITask.sol";
 
 //TODO:1.报名限制数量，乙方，时间久远后考虑废弃 2.去掉所有log
 contract Task is ERC721, ITask, Ownable {
+    // 手续费数量
     uint createTaskFee = 1*10**17;
     address _order;
 
@@ -124,7 +125,7 @@ contract Task is ERC721, ITask, Ownable {
 
         emit SwitchApply(_taskId, msg.sender, _switch);
     }
-
+    // TODO:手续费最大  
     function modifyFee(uint _createTaskFee) external onlyOwner {
         require(_createTaskFee < 2*10**17, "The createTaskFee is unreasonable.");
 
