@@ -19,7 +19,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "db": "rm -rf entities & npx typeorm-model-generator -h localhost -d code_market -p 5432 -u postgres -x 123456 -e postgres -o src/entity --noConfig true --ce pascal --cp camel"
+    "db": "rm -rf entities & npx typeorm-model-generator -h localhost -d code_market -p 5432 -u postgres -x 123456 -e postgres -o src/app/db/entity --noConfig true --ce pascal --cp camel"
   },
   "dependencies": {
     "@metamask/detect-provider": "^1.2.0",

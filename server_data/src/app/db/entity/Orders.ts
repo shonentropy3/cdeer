@@ -2,8 +2,8 @@ import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
 
 @Index("order_pkey", ["id"], { unique: true })
 @Index("order_order_id_key", ["orderId"], { unique: true })
-@Entity("order", { schema: "public" })
-export class Order {
+@Entity("orders", { schema: "public" })
+export class Orders {
   @PrimaryGeneratedColumn({ type: "integer", name: "id" })
   id: number;
 
