@@ -276,7 +276,8 @@
         padding: 20px;
         .li{
             display: flex;
-            flex-direction: column;
+            // flex-direction: column;
+            align-items: flex-start;
             padding: 30px 0;
             border-bottom: 1px solid rgb(224, 224, 224);
             &:last-child{
@@ -303,8 +304,7 @@
                     margin-right: 50px;
                 }
                 &:last-child{
-                    margin-top: 30px;
-                    margin-left: 110px;
+                    margin-top: 7px;
                     display: flex;
                     align-items: flex-start;
                     p{
