@@ -11,10 +11,11 @@ export const ApplyProject = async(account) => {
       const signer = provider.getSigner();
       const demandContract = new ethers.Contract(demandAddr.address, demand.abi, signer);
       let data = JSON.parse(account)
+      let valuation = data.valuation * 100
       console.log('=====',data);
       return await demandContract.applyFor(
         Number(data.demandId),
-        data.valuation
+        valuation
         )
         .then(res => {
           let obj = {

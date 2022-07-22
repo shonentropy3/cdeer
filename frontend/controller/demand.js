@@ -12,13 +12,15 @@ export default async function Demand(para) {
         const demandContract = new ethers.Contract(demandAddr.address, demand.abi, signer);
         let fee = ethers.utils.parseEther("1")
         const data = JSON.parse(para.proLabel)
+        let budget = data.budget * 100
+        let period = data.period * 24 * 60 * 60
           return await demandContract.createDemand(
             { 
                 title: data.title,
                 desc: data.pro_content,
                 attachment: data.hash,
-                budget: data.budget,
-                period: data.period
+                budget: budget,
+                period: period
             },
             {
                 value: fee

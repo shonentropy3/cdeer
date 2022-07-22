@@ -52,7 +52,7 @@ export class TaskService {
                     return {
                         demandId: decodedData.args[0].toString(),
                         title: decodedData.args[2],
-                        budget: decodedData.args[3].toString(),
+                        budget: ethers.utils.BigNumber(decodedData.args[3].toString()).div(100),
                         desc: decodedData.args[4],
                         attachment: decodedData.args[5],
                         period: decodedData.args[6].toString(),
@@ -167,7 +167,7 @@ export class TaskService {
             let params = {
                 demandId: demandId,
                 applyAddr: applyAddr,
-                valuation: valuation,
+                valuation: ethers.utils.BigNumber(valuation).div(100),
                 hash: v.hash
             }
             let sql = updateApplyInfo(params)
