@@ -28,7 +28,6 @@ export class UserService {
 
     // 查看个人项目
     async getMyDemand(@Body() body: any) {
-        console.log(body,'=====');
         if (body.hash) {
           return await this.tasksRepository.query(getMyPjcDBa(body.hash));
         }else{

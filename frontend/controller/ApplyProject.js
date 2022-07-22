@@ -36,8 +36,8 @@ export const CancelApply = async(account) => {
     if (window.ethereum !== 'undefined') {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
-      const demandContract = new ethers.Contract(demandAddr.address, demand.abi, signer);
-      return await demandContract.cancelApply(account.demandId)
+      const taskContract = new ethers.Contract(taskAddr.address, task.abi, signer);
+      return await taskContract.cancelApply(account.demandId)
       .then(res => {
         return res
         })

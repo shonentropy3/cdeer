@@ -55,7 +55,6 @@ function ProjectList(props) {
             }
         })
         if (tradeStatus) {
-            console.log("quxiao=========");
             cancelApply(obj)
               .then(res => {
                 
@@ -79,7 +78,7 @@ function ProjectList(props) {
         currentAccount = await checkWalletIsConnected()
         setCurrentAccount(currentAccount)
         // 获取报名列表
-        getMyApplylist({demandId: data.demand_id})
+        getMyApplylist({demandId: data.task_id})
         .then(res => {
             if (res.length > 0) {
                 pjcStatus = true
@@ -94,7 +93,6 @@ function ProjectList(props) {
         obj = JSON.stringify(obj)
         getOrderStatus(obj)
         .then(res => {
-            console.log(res,'====');
             if (res.length === 3) {
                 pjcStatus = true
                 setPjcStatus(pjcStatus)
@@ -133,22 +131,19 @@ function ProjectList(props) {
         }else{
             // 我开发的项目
             return <>
-                        <Link href={{pathname:"/views/details/Project",search:data.demand_id}}>
+                        <Link href={{pathname:"/views/details/Project",search:data.task_id}}>
                         <button>项目详情</button>
                         </Link>
                         {
-                            !pjcStatus ? 
                             <>
                                 <Popconfirm
                                     title="Are you sure to delete this task?"
-                                    onConfirm={() => deletExploitation(data.demand_id)}
+                                    onConfirm={() => deletExploitation(data.task_id)}
                                     okText="Yes"
                                     cancelText="No" >
                                     <button>取消报名</button>
                                 </Popconfirm>
                             </>
-                            :
-                            ''
                         }
                   </>
         }

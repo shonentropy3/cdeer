@@ -68,7 +68,6 @@ export default function Myproject() {
             if (res.data.length > 0) {
               getMyDemand({demand_id: res.data[0].task_id})
               .then(res => {
-                console.log('mypjc ===>',res);
                 applyList = res[0]
                 setApplyList([applyList])
               })

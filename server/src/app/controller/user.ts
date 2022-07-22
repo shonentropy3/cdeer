@@ -14,8 +14,6 @@ export class UserController {
 
     @Post('getMyApplylist')
     async getMyApplylist(@Body() body: any){
-        console.log('====',body);
-        
         return await this.userService.getMyApplylist(body)
     }
 }

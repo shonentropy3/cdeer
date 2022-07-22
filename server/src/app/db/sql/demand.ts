@@ -63,7 +63,7 @@ export const delApply = params => {
         VALUES ('${params.applyAddr}', ${params.demandId}, 5, '${params.hash}');
     `
     let updateSql = `UPDATE trans_hashes SET send_addr = '${params.applyAddr}', update_time = now() 
-        where trans_hash.hash= '${params.hash}';
+        where trans_hashes.hash= '${params.hash}';
     `
     let obj = {
         sqlBefore: sqlBefore,

@@ -5,7 +5,7 @@ import { BlockLog } from 'src/app/db/entity/BlockLog';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { getLastBlock,getModifyDemandLastBlock, getApplyForHash, getCancelApplyHash} from 'src/app/db/sql/sql';
-import { updateProject, updateApplyInfo, cancelApplyInfo } from 'src/app/db/sql/sql';
+import { updateProject, updateApplyInfo, cancelApply } from 'src/app/db/sql/sql';
 import { updateBlock } from 'src/app/db/sql/sql';
 import { ApplyInfo } from '../db/entity/ApplyInfo';
 const { ethers } = require('ethers');
@@ -194,7 +194,7 @@ export class TaskService {
 
         // 取消报名
         let cancelApplyHash = await this.applyInfoRepository.query(getCancelApplyHash()); 
-        console.log(cancelApplyHash);
+        console.log("获取hash",cancelApplyHash);
         
         for (const v of cancelApplyHash) {
             const log = await rpcProvider.getTransactionReceipt(v.hash);
@@ -204,10 +204,10 @@ export class TaskService {
             const taker = decodedData.args.taker.toLowerCase();
             let params = {
                 taskId: taskId,
-                applyAddr: taker,
+                taker: taker,
                 hash: v.hash
             }
-            let sql = cancelApplyInfo(params)
+            let sql = cancelApply(params)
         try {
             let sqlBefore = await this.applyInfoRepository.query(sql.sqlBefore);
             let sqlDeletAI;

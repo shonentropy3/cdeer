@@ -36,7 +36,7 @@ export class ApplyforService {
     async cancel(@Body() body: any): Promise<ApplyInfo[]> {
         let sql = delApply(body)
         let sqlBefore = await this.applyInfoRepository.query(sql.sqlBefore);
-        console.log(sqlBefore)
+        console.log("调用取消报名", sqlBefore)
         let sqlDeletAI;
         if (sqlBefore.length > 0) {
             return await this.applyInfoRepository.query(sql.updateSql)

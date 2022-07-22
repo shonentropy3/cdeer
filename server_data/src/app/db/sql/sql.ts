@@ -78,12 +78,12 @@ export const getCancelApplyHash = () => {
     return sql
 }
 
-export const cancelApplyInfo = (params) => {
+export const cancelApply = (params) => {
     let sqlBefore = `
-        select * from apply_info where apply_addr = '${params.applyAddr}' and task_id = '${params.demandId}'
+        select * from apply_info where apply_addr = '${params.taker}' and task_id = '${params.taskId}'
     `
     let sqlDeletAI = ` 
-        DELETE FROM apply_info WHERE apply_addr = '${params.applyAddr}' and task_id = '${params.demandId}';
+        DELETE FROM apply_info WHERE apply_addr = '${params.taker}' and task_id = '${params.taskId}';
     `
     let sqlUpdateTH = ` 
         UPDATE trans_hashes SET is_update = 1, update_time = now() 
