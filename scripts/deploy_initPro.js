@@ -16,35 +16,35 @@ async function main() {
     console.log("orderJson.address------", orderJson.address);
     await task.connect(owner).setOrder(orderJson.address);
 
-    for (let i = 0; i < 4; i++) {
-      //创建需求
-      await task.connect(accounts[3]).createTask(
-        { 
-            title: "test",
-            desc: "desc",
-            attachment: "attachment",
-            budget: ethers.utils.parseEther("5"),
-            period: 123423
-        },
-        {
-            value: ethers.utils.parseEther("1"),
-        });
-    }
+    // for (let i = 0; i < 4; i++) {
+    //   //创建需求
+    //   await task.connect(accounts[3]).createTask(
+    //     { 
+    //         title: "test",
+    //         desc: "desc",
+    //         attachment: "attachment",
+    //         budget: ethers.utils.parseEther("5"),
+    //         period: 123423
+    //     },
+    //     {
+    //         value: ethers.utils.parseEther("1"),
+    //     });
+    // }
 
-    // 订单模块
-    const order = new ethers.Contract(orderJson.address, orderAbi.abi, owner);
-    console.log("orderJson.address------", orderJson.address);
-    await order.connect(accounts[3]).createOrder(
-      { 
-        taskId: 3,
-        taker: "0x90f79bf6eb2c4f870365e785982e1f101e93b906",
-        token: "0x90f79bf6eb2c4f870365e785982e1f101e93b906",
-        amount: ethers.utils.parseEther("5"),
-        checked: 1,
-        startDate: 123423
-    });
+    // // 订单模块
+    // const order = new ethers.Contract(orderJson.address, orderAbi.abi, owner);
+    // console.log("orderJson.address------", orderJson.address);
+    // await order.connect(accounts[3]).createOrder(
+    //   { 
+    //     taskId: 3,
+    //     taker: "0x90f79bf6eb2c4f870365e785982e1f101e93b906",
+    //     token: "0x90f79bf6eb2c4f870365e785982e1f101e93b906",
+    //     amount: ethers.utils.parseEther("5"),
+    //     checked: 1,
+    //     startDate: 123423
+    // });
 
-    map = await order.connect(accounts[3]).applyOrderIds(1,accounts[3].address);
+    // map = await order.connect(accounts[3]).applyOrderIds(1,accounts[3].address);
   }
 
   main()

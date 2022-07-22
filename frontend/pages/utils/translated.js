@@ -15,7 +15,6 @@ export const translatedRole = (arr) => {
 
 export const translatedPjc = (arr) => {
     let str = ''
-    
     arr.forEach(e => {
         _data.demand.forEach(ele => {
             if (e === ele.value) {

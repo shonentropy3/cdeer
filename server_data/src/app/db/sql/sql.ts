@@ -1,6 +1,6 @@
 export const getLastBlock = () => {
     let obj = {
-        table: 'block_log',
+        table: 'block_logs',
         keys: 'block',
         conditions: 'id = 0'
     }
@@ -10,7 +10,7 @@ export const getLastBlock = () => {
 
 export const getModifyDemandLastBlock = () => {
     let obj = {
-        table: 'block_log',
+        table: 'block_logs',
         keys: 'block',
         conditions: 'id = 1'
     }
@@ -24,13 +24,13 @@ export const updateProject = params => {
         UPDATE tasks 
         SET task_id = temp.taskId, title = temp.title, task_desc = temp.content, budget = temp.budget,
         period = temp.period, attachment = temp.attachment, update_time = now() from (values ${params.value}) as temp (
-            taskId, title, content, budget, period, attachment) where task.task_desc=temp.content;
+            taskId, title, content, budget, period, attachment) where tasks.task_desc=temp.content;
     `
     return sql
 }
 
 export const updateBlock = params => {
-    let sql = `UPDATE block_log SET block = ${params.latest} WHERE id = ${params.id};`
+    let sql = `UPDATE block_logs SET block = ${params.latest} WHERE id = ${params.id};`
     return sql 
 }
 
@@ -54,8 +54,8 @@ export const updateApplyInfo = (params) => {
     `
 
     let sqlUpdateTH = ` 
-        UPDATE trans_hash SET is_update = 1, update_time = now() 
-        where trans_hash.hash= '${params.hash}';
+        UPDATE trans_hashes SET is_update = 1, update_time = now() 
+        where trans_hashes.hash= '${params.hash}';
     `
     let obj = {
         sqlBefore: sqlBefore,
@@ -67,13 +67,13 @@ export const updateApplyInfo = (params) => {
 }
 
 export const getApplyForHash = () => {
-    let sql = `SELECT hash FROM trans_hash WHERE category = 3 and is_update = 0;`
+    let sql = `SELECT hash FROM trans_hashes WHERE category = 3 and is_update = 0;`
     return sql
 }
 
 
 export const getCancelApplyHash = () => {
-    let sql = `SELECT hash FROM trans_hash WHERE category = 5 and is_update = 0;`
+    let sql = `SELECT hash FROM trans_hashes WHERE category = 5 and is_update = 0;`
     return sql
 }
 
@@ -85,8 +85,8 @@ export const cancelApplyInfo = (params) => {
         DELETE FROM apply_info WHERE apply_addr = '${params.applyAddr}' and task_id = '${params.demandId}';
     `
     let sqlUpdateTH = ` 
-        UPDATE trans_hash SET is_update = 1, update_time = now() 
-        where trans_hash.hash= '${params.hash}';
+        UPDATE trans_hashes SET is_update = 1, update_time = now() 
+        where trans_hashes.hash= '${params.hash}';
     `
 
     let obj = {

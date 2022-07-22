@@ -47,12 +47,14 @@ export class TaskService {
             const logs = await rpcProvider.getLogs(filter);
             const CreateTask = new ethers.utils.Interface(["event CreateTask(uint256 indexed taskId, address indexed maker, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
             if (logs.length > 0) {
+                
                 let txs = logs.map((ele: any) => {
                     let decodedData = CreateTask.parseLog(ele);
+                    console.log();
                     return {
                         taskId: decodedData.args[0].toString(),
                         title: decodedData.args[2],
-                        budget: ethers.utils.BigNumber(decodedData.args[3].toString()).div(100),
+                        budget: Number(decodedData.args[3].toString())/100,
                         desc: decodedData.args[4],
                         attachment: decodedData.args[5],
                         period: decodedData.args[6].toString(),

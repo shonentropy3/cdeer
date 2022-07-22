@@ -20,7 +20,7 @@ export default function Modify(params) {
         {title: '项目预算', type: Number, value: Number(detail.budget)},
         {title: '项目周期', type: Number, value: detail.period}
     ])
-    let [text,setText] = useState(detail.content)
+    let [text,setText] = useState(detail.task_desc)
     const onChange = (t,e,i,index) => {
         
         if (i === 'role') {
@@ -85,17 +85,15 @@ export default function Modify(params) {
         })
         r = `{${r.substring(0,r.lastIndexOf(','))}}`
         p = `{${p.substring(0,p.lastIndexOf(','))}}`
-        console.log("period-----",input[2].value);
-        console.log("budget+++++++",input[1].value);
         let obj = {
-            u_address: data,
+            u_address: detail.task_addr,
             title: input[0].value,
             budget: input[1].value,
             period: input[2].value,
             pro_content: text,
             recruiting_role: r,
             demand_type: p,
-            demand_id: detail.demand_id,
+            demand_id: detail.task_id,
             attachment: detail.attachment
         }
         console.log("obj===>",obj);
@@ -135,7 +133,7 @@ export default function Modify(params) {
     }
 
     const initCheck = async() => {
-        pjc = detail.demand_type
+        pjc = detail.task_type
         role = detail.role
         setPjc([...pjc])
         setRole([...role])
@@ -152,7 +150,7 @@ export default function Modify(params) {
         })
         _data.demand.forEach(ele => {
             let flag = false
-            detail.demand_type.forEach(e => {
+            detail.task_type.forEach(e => {
                 if (ele.value === e) {
                     ele.status = true
                     flag = true

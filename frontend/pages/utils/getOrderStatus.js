@@ -28,4 +28,9 @@ export default async function getOrderStatus(params)  {
     if (oid == 0) {
       return 1
     }
+
+
+    //  划分好阶段==>2
+    
+    //  甲方确认阶段==>3
 }

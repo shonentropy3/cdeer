@@ -55,10 +55,10 @@ export default function Myproject() {
           console.log("Found an account! Address: ", accounts[0]);
           getMyDemand({hash: accounts[0]})
           .then(res => {
-            console.log("res-----",res);
+            console.log(res[0].de);
               Array.from(res).forEach((e,i) => {
                 res[i].roleNew = translatedRole(e.role)
-                res[i].pro_typeNew = translatedPjc(e.demand_type)
+                res[i].pro_typeNew = translatedPjc(e.task_type)
               })
               pjcList = res;
               setPjcList([...pjcList])

@@ -14,7 +14,7 @@ function ProjectList(props) {
     const {type} = props
 
     const goDetail = () => {
-        Router.push({pathname:'/views/details/Order',search: data.demand_id})
+        Router.push({pathname:'/views/details/Order',search: data.task_id})
     }
     let [maskStatus,setMaskStatus] = useState(false)
     let [currentAccount, setCurrentAccount] = useState(null);
@@ -88,13 +88,14 @@ function ProjectList(props) {
         })
         // 获取订单状态
         let obj = {
-            demand_id: Number(data.demand_id),
+            demand_id: Number(data.task_id),
             apply_addr: currentAccount
         }
         obj = JSON.stringify(obj)
         getOrderStatus(obj)
         .then(res => {
-            if (res.length > 0) {
+            console.log(res,'====');
+            if (res.length === 3) {
                 pjcStatus = true
                 setPjcStatus(pjcStatus)
             }

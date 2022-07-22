@@ -89,9 +89,10 @@ function Publish() {
         let para = {"proLabel":data}
         let tradeStatus = true
         // 交易
+
+        
         await Demand(para)
         .then(res => {
-          console.log('res===',res.code);
           if (res) {
             if (res.code) {
               tradeStatus = false
@@ -101,6 +102,7 @@ function Publish() {
             }
           }
         })
+
         // 2、创建项目
         if (tradeStatus) {
           createDemand(para)
