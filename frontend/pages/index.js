@@ -21,7 +21,6 @@ export default function Home() {
       if (data.detail.length === 0 || data.detail === " ") {
         return <Empty />
       }
-      console.log('=====',data.detail.data);
         return data.detail.data.map(
           // return sql.data.map(
           (item, index) => 

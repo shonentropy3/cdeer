@@ -41,16 +41,17 @@ export const getHash = use_type => {
 
 export const updateApplyInfo = (params) => {
     let sqlBefore = `
-        select * from apply_info where apply_addr = '${params.applyAddr}' and task_id = '${params.demandId}'
+        select * from apply_info where apply_addr = '${params.applyAddr}' and task_id = '${params.taskId}'
     `
+    
     let sqlUpdateAI = ` 
         update apply_info set price = ${params.valuation}, update_time = now() 
-        where apply_addr = '${params.applyAddr}' and task_id = ${params.demandId};
+        where apply_addr = '${params.applyAddr}' and task_id = ${params.taskId};
     `
 
     let insert = ` 
         insert into apply_info(apply_addr, task_id, price) 
-        VALUES ('${params.applyAddr}', ${params.demandId}, ${params.valuation});
+        VALUES ('${params.applyAddr}', ${params.taskId}, ${params.valuation});
     `
 
     let sqlUpdateTH = ` 

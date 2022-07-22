@@ -169,7 +169,7 @@ export class TaskService {
             let params = {
                 taskId: taskId,
                 applyAddr: taker,
-                valuation: ethers.utils.BigNumber(valuation).div(100),
+                valuation: Number(valuation)/100,
                 hash: v.hash
             }
             let sql = updateApplyInfo(params)
@@ -178,9 +178,10 @@ export class TaskService {
             let sqlUpdateAI,insertAI;
             if (sqlBefore.length > 0) {
                 sqlUpdateAI = await this.applyInfoRepository.query(sql.sqlUpdateAI);
+                console.log(sqlUpdateAI,'========');
+                
             } else {
                 insertAI = await this.applyInfoRepository.query(sql.insert);
-                console.log("insertAI=====", insertAI)
             }
             if (-1 != sqlUpdateAI[1] || -1 != insertAI[1]) {
                 await this.applyInfoRepository.query(sql.sqlUpdateTH);
