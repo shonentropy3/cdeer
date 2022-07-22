@@ -42,7 +42,7 @@ export const delDemand = params => {
 }
 
 export const setApply = params => {
-    let sql = ` insert into trans_hash("send_addr", task_id, category, hash) 
+    let sql = ` insert into trans_hashes("send_addr", task_id, category, hash) 
         VALUES ('${params.applyAddr}', ${params.demandId}, 3, '${params.hash}')`;
         
     return sql
@@ -57,12 +57,12 @@ export const getApply = params => {
 
 export const delApply = params => {
     let sqlBefore = `
-        select * from trans_hash where send_addr = '${params.applyAddr}' and task_id = '${params.demandId}' and is_update = 0 and category = 5;
+        select * from trans_hashes where send_addr = '${params.applyAddr}' and task_id = '${params.demandId}' and is_update = 0 and category = 5;
     `
-    let insertSql = `insert into trans_hash("send_addr", task_id, category, hash) 
+    let insertSql = `insert into trans_hashes("send_addr", task_id, category, hash) 
         VALUES ('${params.applyAddr}', ${params.demandId}, 5, '${params.hash}');
     `
-    let updateSql = `UPDATE trans_hash SET send_addr = '${params.applyAddr}', update_time = now() 
+    let updateSql = `UPDATE trans_hashes SET send_addr = '${params.applyAddr}', update_time = now() 
         where trans_hash.hash= '${params.hash}';
     `
     let obj = {

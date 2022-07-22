@@ -12,8 +12,10 @@ export class UserController {
         return await this.userService.getMyDemand(body)
     }
 
-    @Post('getMyApplylist')  //  查看已发布需求
+    @Post('getMyApplylist')
     async getMyApplylist(@Body() body: any){
+        console.log('====',body);
+        
         return await this.userService.getMyApplylist(body)
     }
 }

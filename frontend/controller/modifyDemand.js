@@ -11,16 +11,18 @@ export default async function ModifyDemand(account) {
       const taskContract = new ethers.Contract(taskAddr.address, task.abi, signer);
       let data = JSON.parse(account)
       console.log(data,'=====');
+      let price =  data.budget * 100
       return await taskContract.modifyTask(data.demand_id,
         { 
             title: data.title,
-            budget: data.budget,
+            budget: price,
             desc: data.pro_content,
             attachment: data.attachment,
             period: data.period,
             applySwitch: false
         })
         .then(res => {
+          console.log(res,'===>');
           return res
         })
     } else {

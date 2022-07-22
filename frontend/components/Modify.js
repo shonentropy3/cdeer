@@ -89,7 +89,7 @@ export default function Modify(params) {
             u_address: detail.task_addr,
             title: input[0].value,
             budget: input[1].value,
-            period: input[2].value,
+            period: Number(input[2].value),
             pro_content: text,
             recruiting_role: r,
             demand_type: p,
