@@ -3,7 +3,7 @@ import order from '../../deployments/abi/Order.json'
 import { ethers } from 'ethers'
 
 
-export default async function Order(para) {
+export const Order = async(para) => {
     try {
           
         if (window.ethereum !== 'undefined') {
@@ -30,4 +30,26 @@ export default async function Order(para) {
       } catch (err) {
           return err;
       }
+}
+
+export const getOrderAmount = async(para) => {
+  try {
+        
+      if (window.ethereum !== 'undefined') {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const orderContract = new ethers.Contract(orderAddr.address, order.abi, signer);
+      // const data = JSON.parse(para.proLabel)
+      return await orderContract.orders(para)
+        .then(res => {
+          console.log(res,'===========');
+          console.log(res.taskId.toString());
+          return res.amount
+        })
+      } else {
+        console.log("Ethereum object does not exist");
+      }
+    } catch (err) {
+        return err;
+    }
 }

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import Order from "../controller/order"
+import { Order } from "../controller/order";
 
 import { Button, Modal, InputNumber } from 'antd';
 

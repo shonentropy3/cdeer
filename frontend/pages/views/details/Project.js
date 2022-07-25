@@ -23,7 +23,7 @@ export default function Project_detail(params) {
             case 0:
                 return <h1>等待需求方确认</h1>
             case 1:
-                return <Stage />
+                return <Stage/>
             case 2:
                 return <h1>3</h1>
             default:

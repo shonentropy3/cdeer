@@ -1,7 +1,7 @@
 // import { PlusSquareOutlined } from '@ant-design/icons';
 import { InputNumber, Button, message, notification, Input } from 'antd';
 import { useEffect, useState } from 'react';
-
+import { getOrderAmount } from '../controller/order';
 
 export default function Stage(){
     
@@ -26,7 +26,7 @@ export default function Stage(){
     const init = () => {
         let arr = []
         for (let i = 0; i < stageNum; i++) {
-            arr.push( {stage: i+1, date: 0, price: 0, dsc: ''} )
+            arr.push( {stage: i+1, date: 1, price: 1, dsc: ''} )
         }
         stage = arr
         setStage([...stage])
@@ -60,7 +60,7 @@ export default function Stage(){
             date += ele.date;
             price += ele.price;
         })
-        if (date > period || price > budget) {
+        if (price > budget) {
             // message.error('!');
             notification['error']({
                 message: '输入值错误',
@@ -76,6 +76,13 @@ export default function Stage(){
         init()
         setPeriod(15)
         setBudget(1500)
+        
+        let task_id = location.search.replace('?','')
+        getOrderAmount(task_id)
+        .then(res => {
+            console.log(res.toString());
+        })
+        // console.log(task_id);
     },[])
 
     return(
