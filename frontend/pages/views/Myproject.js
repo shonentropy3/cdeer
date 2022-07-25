@@ -3,12 +3,12 @@ import { Dropdown, Menu, Space, Typography } from 'antd';
 import { useEffect, useState } from 'react';
 import ProjectList from '../../components/ProjectList';
 import style from '../../styles/utils.module.scss'
-import { getMyDemand,getApplyinfo } from '../http/api';
-import { translatedPjc, translatedRole } from '../utils/translated'
+import { getMyDemand,getApplyinfo } from '../../http/api';
+import { translatedPjc, translatedRole } from '../../utils/translated'
 
 
 export default function Myproject() {
-    const _data = require("../data/data.json")
+    const _data = require("../../data/data.json")
     const [account,setAccount] = useState('')
     const [visible, setVisible] = useState(false);
     const [title, setTitle] = useState('0');

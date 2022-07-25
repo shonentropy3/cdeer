@@ -1,7 +1,7 @@
 import { Input, InputNumber, Checkbox, Button, message } from 'antd';
 import { useEffect, useState } from 'react';
 import ModifyDemand from '../controller/modifyDemand';
-import { modifyDemand } from '../pages/http/api';
+import { modifyDemand } from '../http/api';
 
 
 export default function Modify(params) {
@@ -9,7 +9,7 @@ export default function Modify(params) {
     const { data } = params
     const { setParent } = params
     const { detail } = params
-    const _data = require("../pages/data/data.json")
+    const _data = require("../data/data.json")
 
     let [role,setRole] = useState([])
     let [pjc,setPjc] = useState([])

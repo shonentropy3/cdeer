@@ -1,4 +1,4 @@
-import {getFirstStatus,getSecondStatus} from '../../controller/getOrdStatus'
+import {getFirstStatus,getSecondStatus} from '../controller/getOrdStatus'
 // 有没有创建订单
 export default async function getOrderStatus(params)  {
     let oid;

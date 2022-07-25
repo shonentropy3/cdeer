@@ -4,10 +4,10 @@ import Router from "next/router";
 import { message, Popconfirm } from 'antd';
 
 import Modify from "./Modify";
-import { cancelApply, deleteDemand, getMyApplylist } from '../pages/http/api';
+import { cancelApply, deleteDemand, getMyApplylist } from '../http/api';
 import { CancelApply } from "../controller/ApplyProject";
-import { checkWalletIsConnected } from "../pages/utils/checkWalletIsConnected";
-import getOrderStatus from "../pages/utils/getOrderStatus";
+import { checkWalletIsConnected } from "../utils/checkWalletIsConnected";
+import getOrderStatus from "../utils/getOrderStatus";
 
 function ProjectList(props) {
     const {data} = props

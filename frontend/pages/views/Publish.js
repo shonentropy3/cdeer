@@ -1,9 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-
-// import { createProject,getHash } from '../http/api';
-
-import { createDemand,getHash } from '../http/api';
-
+import { createDemand,getHash } from '../../http/api';
 import { Input, Form, message, Button, Upload, notification, InputNumber } from 'antd';
 import { UploadOutlined, WarningOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import Demand from '../../controller/demand';
@@ -14,7 +10,7 @@ import { useRouter } from 'next/router'
 // const demandAddr = require('../../../deployments/Demand.json')
 
 function Publish() {
-  const _data = require("../data/data.json")
+  const _data = require("../../data/data.json")
   const router = useRouter();
   const [currentAccount, setCurrentAccount] = useState(null);
 

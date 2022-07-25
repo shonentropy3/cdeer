@@ -2,8 +2,8 @@ import { Steps } from 'antd';
 import { useEffect, useState } from 'react';
 import NavigationBar from "../../../components/NavigationBar";
 import Stage from '../../../components/Stage';
-import getOrderStatus from '../../utils/getOrderStatus';
-import { checkWalletIsConnected } from '../../utils/checkWalletIsConnected'
+import getOrderStatus from '../../../utils/getOrderStatus';
+import { checkWalletIsConnected } from '../../../utils/checkWalletIsConnected'
 
 export default function Project_detail(params) {
     const { Step } = Steps;

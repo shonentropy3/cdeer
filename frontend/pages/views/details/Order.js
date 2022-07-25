@@ -3,8 +3,8 @@ import RegistrationList from '../../../components/RegistrationList'
 import style from '../../../styles/utils.module.scss'
 import { Menu, message, Switch, Empty } from 'antd';
 import NavigationBar from "../../../components/NavigationBar";
-import { getDemandInfo, modifyApplySwitch, getMyApplylist } from "../../http/api";
-import { translatedPjc, translatedRole } from '../../utils/translated'
+import { getDemandInfo, modifyApplySwitch, getMyApplylist } from "../../../http/api";
+import { translatedPjc, translatedRole } from '../../../utils/translated'
 
 export default function OrderDetail(oid) {
 

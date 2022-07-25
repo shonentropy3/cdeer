@@ -1,9 +1,9 @@
 import { useEffect, useState, } from 'react';
 import Link from "next/link"
 import { Spin, BackTop, Divider, Empty } from 'antd';
-import { getDemand } from './http/api';
+import { getDemand } from '../http/api';
 import style from '../styles/utils.module.scss'
-import { translatedPjc, translatedRole } from './utils/translated';
+import { translatedPjc, translatedRole } from '../utils/translated';
 
 
 export default function Home() {
@@ -114,7 +114,7 @@ export default function Home() {
   }
 
   // ============常量==>
-  const _data = require('./data/data.json')
+  const _data = require('../data/data.json')
   const role = _data.market_role
   const pjc = _data.pjc
 
