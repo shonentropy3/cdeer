@@ -267,6 +267,7 @@
         .ant-input-number,select{
             margin-left: 10px;
         }
+
     }
 
     .list{
@@ -292,9 +293,9 @@
                 display: flex;
                 align-items: center;
                 .box{
-                    &:last-child{
+                    &:nth-child(3){
                         .ant-input-number{
-                            width: 200px;
+                            width: 150px;
                         }
                     }
                 }
@@ -305,8 +306,6 @@
                 }
                 &:last-child{
                     margin-top: 7px;
-                    display: flex;
-                    align-items: flex-start;
                     p{
                         margin-right: 20px;
                     }

@@ -119,9 +119,9 @@ export default function Stage(){
                                 <div className="box">
                                     计划金额: <InputNumber min={1} value={e.price} onChange={(event) => onChange(i,event,'price')} />
                                 </div>
-                            </div>
-                            <div className="inner">
-                                <p>阶段描述:</p> <TextArea showCount maxLength={100} onChange={(event) => onChange(i,event,'dsc')} />
+                                <div className="box">
+                                    <p>阶段描述:</p> <TextArea showCount maxLength={100} onChange={(event) => onChange(i,event,'dsc')} />
+                                </div>
                             </div>
                         </div>
                     )
