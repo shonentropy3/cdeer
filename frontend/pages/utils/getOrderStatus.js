@@ -12,6 +12,7 @@ export default async function getOrderStatus(params)  {
         console.log(err)
     })
     if(oid == 0){
+        console.log('阶段一');
       return 0
     }
     

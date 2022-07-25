@@ -38,7 +38,6 @@ export default function Project_detail(params) {
             demand_id: Number(demand_id),
             apply_addr: `${await checkWalletIsConnected()}`
         }
-        console.log(obj,'=====');
         obj = JSON.stringify(obj)
         stateNum = await getOrderStatus(obj)
         setStateNum(stateNum)

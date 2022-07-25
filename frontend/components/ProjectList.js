@@ -101,6 +101,7 @@ function ProjectList(props) {
     }
 
     useEffect(() => {
+        console.log('data===>',data);
         // 初始化
         initialize()
     },[])
