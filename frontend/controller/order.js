@@ -42,7 +42,8 @@ export const getOrderAmount = async(para) => {
       // const data = JSON.parse(para.proLabel)
       return await orderContract.orders(para)
         .then(res => {
-          console.log(res,'===========');
+          console.log(res);
+          console.log(res.taker,'===========');
           console.log(res.taskId.toString());
           return res.amount
         })

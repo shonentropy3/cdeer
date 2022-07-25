@@ -61,14 +61,14 @@ function RegistrationList(params) {
                     {/* 
                         订单状态 > 0 && 订单状态 < 3
                         <button>修改订单</button>
-                        <button>取消订单</button>
                     */}
-                        {/* <button onClick={() => showModal()}>修改订单</button>
+                        <button onClick={() => showModal()}>修改订单</button>
                         <Modal title="Basic Modal" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
                             <p>Some contents...</p>
                             <p>Some contents...</p>
                             <p>Some contents...</p>
-                        </Modal> */}
+                        </Modal>
+                        <button>取消订单</button>
                 </div>
             </div>
         </>
