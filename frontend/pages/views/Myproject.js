@@ -53,7 +53,7 @@ export default function Myproject() {
         try {
           const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
           console.log("Found an account! Address: ", accounts[0]);
-          getMyDemand({hash: accounts[0]})
+          await getMyDemand({hash: accounts[0]})
           .then(res => {
               Array.from(res).forEach((e,i) => {
                 res[i].roleNew = translatedRole(e.role)
@@ -63,21 +63,21 @@ export default function Myproject() {
               setPjcList([...pjcList])
           })
           
-          getApplyinfo({id:accounts[0]})
+          await getApplyinfo({id:accounts[0]})
           .then(res => {
             if (res.data.length > 0) {
-              getMyDemand({demand_id: res.data[0].task_id})
-              .then(res => {
-                
-                applyList = res[0]
-                setApplyList([applyList])
+              let arr = []
+              res.data.forEach(ele => {
+                getMyDemand({demand_id: ele.task_id})
+                  .then(res => {
+                    arr.push(res[0])
+                    applyList = arr
+                    setApplyList([...applyList])
+                  })
               })
             }
-            
           })
-          .catch(err => {
-            console.log(err);
-          })
+          
 
         } catch (err) {
           alert('请登录')

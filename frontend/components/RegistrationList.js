@@ -23,7 +23,8 @@ function RegistrationList(params) {
     let obj = {
         demandId: Number(data.task_id),
         applyAddr: data.apply_addr,
-        amount: Number(count)
+        amount: Number(count),
+        token: '0x90f79bf6eb2c4f870365e785982e1f101e93b906'
       }
       obj = JSON.stringify(obj)
       await Order({proLabel:obj})

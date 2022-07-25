@@ -12,13 +12,12 @@ export default async function Order(para) {
         const demandContract = new ethers.Contract(orderAddr.address, order.abi, signer);
         const data = JSON.parse(para.proLabel)
         console.log('data==>',data);
-
         return await demandContract.createOrder(
           { 
               taskId: data.demandId,
-              taker: "0x90f79bf6eb2c4f870365e785982e1f101e93b906",
-              token: "0x90f79bf6eb2c4f870365e785982e1f101e93b906",
-              amount: ethers.utils.parseEther("5"),
+              taker: data.applyAddr,
+              token: data.token,
+              amount: ethers.utils.parseEther(`${data.amount}`),
               checked: 1,
               startDate: 123423
           })
