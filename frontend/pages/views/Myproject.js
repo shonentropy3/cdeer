@@ -9,6 +9,7 @@ import { translatedPjc, translatedRole } from '../utils/translated'
 
 export default function Myproject() {
     const _data = require("../data/data.json")
+    const [account,setAccount] = useState('')
     const [visible, setVisible] = useState(false);
     const [title, setTitle] = useState('0');
     const [test, setTest] = useState('');
@@ -40,12 +41,73 @@ export default function Myproject() {
           className={style.w150}
           items={_data.list}
         />
-      );
+    );
 
-      // 账号
+    // 我发布的需求
+    const getIssue = async() => {
+      await connectWalletHandler()
+      getMyDemand({hash: account})
+      .then(res => {
+          Array.from(res).forEach((e,i) => {
+            res[i].roleNew = translatedRole(e.role)
+            res[i].pro_typeNew = translatedPjc(e.task_type)
+          })
+          pjcList = res;
+          setPjcList([...pjcList])
+      })
+    }
 
-      const connectWalletHandler = async () => {
-      
+    const issue = () => {
+      return  <div className={`content`}>
+                <h1>{test}</h1>
+                <div className="list">
+                    {
+                      pjcList.map((ele,index) => <ProjectList data={ele} key={index} type="demand" />)
+                    }
+                </div>
+              </div>
+    }
+    // 我开发的项目
+    const getExploitation = () => {
+      getApplyinfo({id:account})
+        .then(res => {
+          if (res.data.length > 0) {
+            let arr = []
+            res.data.forEach(ele => {
+              getMyDemand({demand_id: ele.task_id})
+                .then(res => {
+                  arr.push(res[0])
+                  applyList = arr
+                  setApplyList([...applyList])
+                })
+            })
+          }
+        })
+    }
+
+    const exploitation = () => {
+      return  <div className={`content`}>
+                <h1></h1>
+                <div className="list">
+                    {
+                      applyList.map((ele,index) => <ProjectList data={ele} key={index} type="exploitation" />)
+                    }
+                </div>
+              </div>
+    }
+
+    const panel = () => {
+      switch (selectItem) {
+        case 'item-1':
+            return  issue()
+        case 'item-2':
+            return  exploitation()
+        default: 
+            break
+      }
+    }
+
+    const connectWalletHandler = async () => {
         const { ethereum } = window;
         if (!ethereum) {
           alert("Please install Metamask!");
@@ -53,47 +115,31 @@ export default function Myproject() {
         try {
           const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
           console.log("Found an account! Address: ", accounts[0]);
-          await getMyDemand({hash: accounts[0]})
-          .then(res => {
-              Array.from(res).forEach((e,i) => {
-                res[i].roleNew = translatedRole(e.role)
-                res[i].pro_typeNew = translatedPjc(e.task_type)
-              })
-              pjcList = res;
-              setPjcList([...pjcList])
-          })
-          
-          await getApplyinfo({id:accounts[0]})
-          .then(res => {
-            if (res.data.length > 0) {
-              let arr = []
-              res.data.forEach(ele => {
-                getMyDemand({demand_id: ele.task_id})
-                  .then(res => {
-                    arr.push(res[0])
-                    applyList = arr
-                    setApplyList([...applyList])
-                  })
-              })
-            }
-          })
-          
+          account = await accounts[0]
+          setAccount(account)
 
         } catch (err) {
           alert('请登录')
         }
-      }
+    }
 
+    const toggleNav = (item) => {
+      selectItem = item.key
+      setSelectItem(selectItem)
+    }
 
-      useEffect(()=>{
-        console.log('获取当前账号登陆状态');
-        connectWalletHandler()
-      },[])
-
-      const toggleNav = (item) => {
-        selectItem = item.key
-        setSelectItem(selectItem)
-      }
+    useEffect(() => {
+        switch (selectItem) {
+            case 'item-1':
+                getIssue()
+                break;
+            case 'item-2':
+                getExploitation()
+                break;
+            default:
+                break;
+        }
+    },[selectItem])
 
     return(
       <>
@@ -121,26 +167,7 @@ export default function Myproject() {
                     </div> */}
                 </div>
             </div>
-            {
-              selectItem === 'item-1' ? 
-              <div className={`content`}>
-                <h1>{test}</h1>
-                <div className="list">
-                    {
-                      pjcList.map((ele,index) => <ProjectList data={ele} key={index} type="demand" />)
-                    }
-                </div>
-              </div>
-            :
-              <div className={`content`}>
-                <h1></h1>
-                <div className="list">
-                    {
-                      applyList.map((ele,index) => <ProjectList data={ele} key={index} type="exploitation" />)
-                    }
-                </div>
-              </div>
-            }
+            { panel() }
         </div>
       </>
     )

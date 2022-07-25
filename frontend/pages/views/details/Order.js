@@ -5,13 +5,11 @@ import { Menu, message, Switch, Empty } from 'antd';
 import NavigationBar from "../../../components/NavigationBar";
 import { getDemandInfo, modifyApplySwitch, getMyApplylist } from "../../http/api";
 import { translatedPjc, translatedRole } from '../../utils/translated'
-import Stage from "../../../components/Stage";
 
 export default function OrderDetail(oid) {
 
     let [data,setData] = useState({})
-
-    const [selectItem,setSelectItem] = useState('item-1')
+    let [selectItem,setSelectItem] = useState('item-1')
     let [checked,setChecked] = useState(null)
     let [applylist,setApplylist] = useState([])
 
@@ -61,7 +59,7 @@ export default function OrderDetail(oid) {
                         <p>周期:{data.period}</p>
                         <p>招募角色:{data.role}</p>
                         <p>项目类型:{data.task_type}</p>
-                        <p>项目描述:{data.content}</p>
+                        <p>项目描述:{data.task_desc}</p>
                         
                     </div>
                 </div>
@@ -138,9 +136,6 @@ export default function OrderDetail(oid) {
         })
     }
 
-    
-
-
     useEffect(() => {
         switch (selectItem) {
             case 'item-1':
@@ -153,8 +148,6 @@ export default function OrderDetail(oid) {
                 break;
         }
     },[selectItem])
-
- 
 
     return (
         <div className="ord_detail">
@@ -174,8 +167,6 @@ export default function OrderDetail(oid) {
                 </div>
             </div>
             {panel()}
-
-
         </div>
     )    
 }
