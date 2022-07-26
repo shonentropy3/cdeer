@@ -30,9 +30,8 @@ export class UserService {
     async getMyDemand(@Body() body: any) {
         if (body.hash) {
           return await this.tasksRepository.query(getMyPjcDBa(body.hash));
-        }else{
+        }else{  
           return await this.tasksRepository.query(getMyPjcDBb(body.demand_id));
-          
         }
         
     } 

@@ -14,7 +14,7 @@ function ProjectList(props) {
     const {type} = props
 
     const goDetail = () => {
-        Router.push({pathname:'/views/details/Order',search: data.task_id})
+        Router.push({pathname:'/views/details/Order',search: data.id})
     }
     let [maskStatus,setMaskStatus] = useState(false)
     let [currentAccount, setCurrentAccount] = useState(null);
@@ -78,7 +78,7 @@ function ProjectList(props) {
         currentAccount = await checkWalletIsConnected()
         setCurrentAccount(currentAccount)
         // 获取报名列表
-        getMyApplylist({demandId: data.task_id})
+        getMyApplylist({demandId: data.id})
         .then(res => {
             if (res.length > 0) {
                 pjcStatus = true
@@ -87,7 +87,7 @@ function ProjectList(props) {
         })
         // 获取订单状态
         let obj = {
-            demand_id: Number(data.task_id),
+            demand_id: Number(data.id),
             apply_addr: currentAccount
         }
         obj = JSON.stringify(obj)
@@ -131,14 +131,14 @@ function ProjectList(props) {
         }else{
             // 我开发的项目
             return <>
-                        <Link href={{pathname:"/views/details/Project",search:data.task_id}}>
+                        <Link href={{pathname:"/views/details/Project",search:data.id}}>
                         <button>项目详情</button>
                         </Link>
                         {
                             <>
                                 <Popconfirm
                                     title="Are you sure to delete this task?"
-                                    onConfirm={() => deletExploitation(data.task_id)}
+                                    onConfirm={() => deletExploitation(data.id)}
                                     okText="Yes"
                                     cancelText="No" >
                                     <button>取消报名</button>

@@ -68,7 +68,7 @@ export default function OrderDetail(oid) {
     // 报名列表部分
     const getList = () => {
         // 获取报名列表
-        getMyApplylist({demandId: data.task_id})
+        getMyApplylist({demandId: data.id})
         .then(res => {
             applylist = res 
             setApplylist([...applylist])
