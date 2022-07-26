@@ -6,24 +6,24 @@ export const getDemandDate = () => {
 }
 
 export const getDemandInfoDate = params => {
-    let sql = `SELECT * FROM public.tasks WHERE task_id = '${params}' and del = 0 `
+    let sql = `SELECT * FROM public.tasks WHERE id = '${params}' and del = 0 `
     return sql
 }
 
 export const getMyPjcDBa = params => {
-    let sql = `SELECT * FROM public.tasks WHERE task_addr = '${params}' and del = 0 `
+    let sql = `SELECT * FROM public.tasks WHERE issuer = '${params}' and del = 0 `
     return sql
 }
 
 export const getMyPjcDBb = params => {
-    let sql = `SELECT * FROM public.tasks WHERE task_id = '${params}' and del = 0 `
+    let sql = `SELECT * FROM public.tasks WHERE id = '${params}' and del = 0 `
     return sql
 }
 
 export const setDemand = params => {
     let sql = `
-            insert into tasks(task_addr, task_desc, role, task_type) 
-            VALUES (${params.u_address},'${params.pro_content}', ${params.recruiting_role},${params.demand_type});
+            insert into tasks(issuer, hash, desc, role, task_type) 
+            VALUES (${params.u_address},'${params.hash}','${params.pro_content}', ${params.recruiting_role},${params.demand_type});
         `;
         
     return sql
@@ -31,7 +31,7 @@ export const setDemand = params => {
 
 export const moDemand = params => {
     let sql = ` update tasks SET title = '${params.title}', budget = ${params.budget}, period = ${params.period} ,
-    task_desc = '${params.pro_content}' ,role = '${params.recruiting_role}' ,task_type = '${params.demand_type}',
+    desc = '${params.pro_content}' ,role = '${params.recruiting_role}' ,task_type = '${params.demand_type}',
             attachment = '${params.attachment}', update_time = now() where task_id = ${params.demand_id} `;
     return sql
 }

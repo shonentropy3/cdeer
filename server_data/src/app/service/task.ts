@@ -4,7 +4,7 @@ import { Tasks } from 'src/app/db/entity/Tasks';
 import { BlockLog } from 'src/app/db/entity/BlockLog';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { getLastBlock,getModifyDemandLastBlock, getApplyForHash, getCancelApplyHash} from 'src/app/db/sql/sql';
+import { getLastBlock,getModifyDemandLastBlock, getTaskHash, createTaskSql,createOrderSql, getApplyForHash, getCancelApplyHash, getCreateOrderHash} from 'src/app/db/sql/sql';
 import { updateProject, updateApplyInfo, cancelApply } from 'src/app/db/sql/sql';
 import { updateBlock } from 'src/app/db/sql/sql';
 import { ApplyInfo } from '../db/entity/ApplyInfo';
@@ -13,7 +13,7 @@ const { ethers } = require('ethers');
 const rpcProvider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
 const USDR_ADDR = require('../../../deployments/Task.json');
 
-// 信息同步hash表：待同步类型：1.创建需求 2.修改需求 3.报名 4.修改报名 5.取消报名
+// 信息同步hash表：待同步类型：1.创建需求 2.修改需求 3.报名 4.修改报名 5.取消报名, 6.创建订单或者修改订单
 
 @Injectable()
 export class TaskService {
@@ -157,6 +157,39 @@ export class TaskService {
         let fromBlock = logBlock + 1;
         let toBlock = latest;
 
+        // 创建task任务
+        let taskHash = await this.applyInfoRepository.query(getTaskHash());
+        for (const v of taskHash) {
+            const log = await rpcProvider.getTransactionReceipt(v.hash);
+            const createTask = new ethers.utils.Interface(["event CreateTask(uint256 indexed taskId, address indexed maker, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
+            let decodedData = createTask.parseLog(log.logs[0]);
+            const taskId = decodedData.args.taskId.toString();
+            const title = decodedData.args.title;
+            const budget = Number(decodedData.args.budget.toString())/100,
+            const desc = decodedData.args.desc;
+            const attachment = decodedData.args.attachment;
+            const period = decodedData.args.period.toString;
+            let params = {
+                taskId: taskId,
+                hash: v.hash,
+                title: title,
+                budget: budget,
+                desc: desc,
+                attachment: attachment,
+                period: period
+            }
+            let sql = createTaskSql(params)
+            try {
+                let sqlResult = await this.applyInfoRepository.query(sql.sql);
+                if (-1 != sqlResult[1]) {
+                    await this.applyInfoRepository.query(sql.sqlUpdateTH);
+                }
+                this.logger.debug('createTasks');
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
         // 报名
         let applyForHash = await this.applyInfoRepository.query(getApplyForHash());
         for (const v of applyForHash) {
@@ -194,8 +227,6 @@ export class TaskService {
 
         // 取消报名
         let cancelApplyHash = await this.applyInfoRepository.query(getCancelApplyHash()); 
-        console.log("获取hash",cancelApplyHash);
-        
         for (const v of cancelApplyHash) {
             const log = await rpcProvider.getTransactionReceipt(v.hash);
             const CancelApply = new ethers.utils.Interface(["event CancelApply(uint256 indexed taskId, address taker)"]);
@@ -223,6 +254,40 @@ export class TaskService {
             console.log(error);
         }
         }
+
+        // 未同步连上数据
+        // // 创建订单以及修改订单
+        // let createOrderHash = await this.applyInfoRepository.query(getCreateOrderHash());
+        // for (const v of createOrderHash) {
+        //     const log = await rpcProvider.getTransactionReceipt(v.hash);
+        //     const createOrder = new ethers.utils.Interface([
+        //         "event CreateOrder(uint256 indexed taskId, address indexed issuer, address indexed worker, uint256 amount)"
+        //     ]);
+        //     let decodedData = createOrder.parseLog(log.logs[0]);
+        //     const orderId = decodedData.args.orderId.toString();
+        //     const taskId = decodedData.args.taskId.toString();
+        //     const worker = decodedData.args.worker;
+        //     const amount = decodedData.args.amount.toString();
+        //     let params = {
+        //         orderId: orderId,
+        //         taskId: taskId,
+        //         hash: v.hash,
+        //         worker: worker,
+        //         amount: amount
+        //     }
+        //     let sql = createOrderSql(params)
+        //     try {
+        //         let sqlResult = await this.applyInfoRepository.query(sql.sql);
+        //         if (-1 != sqlResult[1]) {
+        //             await this.applyInfoRepository.query(sql.sqlUpdateTH);
+        //         }
+        //         this.logger.debug('createOrders');
+        //     } catch (error) {
+        //         console.log(error);
+        //     }
+        // }
+
+
 }
 
     @Interval(5000)  //每隔5秒执行一次
