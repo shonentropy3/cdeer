@@ -1,35 +1,31 @@
-import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index } from "typeorm";
 
-@Index("demand_addr", ["demandAddr"], {})
-@Index("demand_demand_desc_key", ["demandDesc"], { unique: true })
-@Index("demand_desc", ["demandDesc"], {})
-@Index("demand_id", ["demandId"], {})
-@Index("demand_pkey", ["id"], { unique: true })
+@Index("tasks_desc_key", ["desc"], { unique: true })
+@Index("desc", ["desc"], {})
+@Index("tasks_id_key", ["id"], { unique: true })
+@Index("id", ["id"], {})
+@Index("issuer", ["issuer"], {})
 @Entity("tasks", { schema: "public" })
 export class Tasks {
-  @PrimaryGeneratedColumn({ type: "integer", name: "id" })
-  id: number;
+  @Column("bigint", { name: "id", nullable: true, unique: true })
+  id: string | null;
 
-  @Column("bigint", { name: "demand_id", nullable: true })
-  demandId: string | null;
+  @Column("character varying", { name: "issuer", nullable: true, length: 64 })
+  issuer: string | null;
 
-  @Column("character varying", {
-    name: "demand_addr",
-    nullable: true,
-    length: 64,
-  })
-  demandAddr: string | null;
+  @Column("character varying", { name: "hash", nullable: true, length: 64 })
+  hash: string | null;
 
   @Column("character varying", { name: "title", nullable: true, length: 255 })
   title: string | null;
 
   @Column("character varying", {
-    name: "demand_desc",
+    name: "desc",
     nullable: true,
     unique: true,
     length: 64,
   })
-  demandDesc: string | null;
+  desc: string | null;
 
   @Column("bigint", { name: "period", nullable: true })
   period: string | null;
@@ -40,8 +36,8 @@ export class Tasks {
   @Column("varchar", { name: "role", nullable: true, array: true })
   role: string[] | null;
 
-  @Column("varchar", { name: "demand_type", nullable: true, array: true })
-  demandType: string[] | null;
+  @Column("varchar", { name: "task_type", nullable: true, array: true })
+  taskType: string[] | null;
 
   @Column("character varying", {
     name: "attachment",

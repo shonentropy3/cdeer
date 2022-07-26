@@ -13,8 +13,8 @@ export class ApplyInfo {
   })
   applyAddr: string | null;
 
-  @Column("bigint", { name: "demand_id", nullable: true })
-  demandId: string | null;
+  @Column("bigint", { name: "task_id", nullable: true })
+  taskId: string | null;
 
   @Column("numeric", { name: "price", nullable: true })
   price: string | null;

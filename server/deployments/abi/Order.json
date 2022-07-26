@@ -24,7 +24,7 @@
         {
           "indexed": true,
           "internalType": "address",
-          "name": "maker",
+          "name": "issuer",
           "type": "address"
         }
       ],
@@ -43,7 +43,7 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "maker",
+          "name": "issuer",
           "type": "address"
         },
         {
@@ -62,19 +62,25 @@
         {
           "indexed": true,
           "internalType": "uint256",
+          "name": "orderId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
           "name": "taskId",
           "type": "uint256"
         },
         {
           "indexed": true,
           "internalType": "address",
-          "name": "maker",
+          "name": "issuer",
           "type": "address"
         },
         {
           "indexed": false,
           "internalType": "address",
-          "name": "taker",
+          "name": "worker",
           "type": "address"
         },
         {
@@ -99,7 +105,7 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "maker",
+          "name": "issuer",
           "type": "address"
         },
         {
@@ -111,7 +117,7 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "taker",
+          "name": "worker",
           "type": "address"
         },
         {
@@ -155,7 +161,7 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "taker",
+          "name": "worker",
           "type": "address"
         },
         {
@@ -236,7 +242,7 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "taker",
+          "name": "worker",
           "type": "address"
         },
         {
@@ -315,7 +321,7 @@
             },
             {
               "internalType": "address",
-              "name": "taker",
+              "name": "worker",
               "type": "address"
             },
             {
@@ -411,7 +417,7 @@
         },
         {
           "internalType": "address",
-          "name": "taker",
+          "name": "worker",
           "type": "address"
         },
         {

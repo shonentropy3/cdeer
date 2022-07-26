@@ -22,10 +22,12 @@ export const getModifyDemandLastBlock = () => {
 export const updateProject = params => {
     let sql = `
         UPDATE tasks 
-        SET id = temp.taskId, title = temp.title, desc = temp.content, budget = temp.budget,
+        SET id = temp.taskId, title = temp.title, "desc" = temp.content, budget = temp.budget,
         period = temp.period, attachment = temp.attachment, update_time = now() from (values ${params.value}) as temp (
             taskId, title, content, budget, period, attachment) where tasks.desc=temp.content;
     `
+    console.log(sql);
+    
     return sql
 }
 

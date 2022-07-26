@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, Interval, Timeout } from '@nestjs/schedule';
 import { Tasks } from 'src/app/db/entity/Tasks';
-import { BlockLog } from 'src/app/db/entity/BlockLog';
+import { BlockLogs } from 'src/app/db/entity/BlockLogs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { getLastBlock,getModifyDemandLastBlock, getTaskHash, createTaskSql,createOrderSql, getApplyForHash, getCancelApplyHash, getCreateOrderHash} from 'src/app/db/sql/sql';
@@ -20,8 +20,8 @@ export class TaskService {
     constructor(
         @InjectRepository(Tasks)
         private readonly tasksRepository: Repository<Tasks>,
-        @InjectRepository(BlockLog)
-        private readonly blockLogRepository: Repository<BlockLog>,
+        @InjectRepository(BlockLogs)
+        private readonly blockLogRepository: Repository<BlockLogs>,
         @InjectRepository(ApplyInfo)
         private readonly applyInfoRepository: Repository<ApplyInfo>
     ) {}
@@ -75,6 +75,7 @@ export class TaskService {
                 
                 try {
                   let result = await this.tasksRepository.query(sql)
+                  
                   this.logger.debug('insertCreateTask');
                   if (-1 != result[1]) {
                       let params = {
@@ -157,38 +158,39 @@ export class TaskService {
         let fromBlock = logBlock + 1;
         let toBlock = latest;
 
-        // 创建task任务
-        let taskHash = await this.applyInfoRepository.query(getTaskHash());
-        for (const v of taskHash) {
-            const log = await rpcProvider.getTransactionReceipt(v.hash);
-            const createTask = new ethers.utils.Interface(["event CreateTask(uint256 indexed taskId, address indexed maker, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
-            let decodedData = createTask.parseLog(log.logs[0]);
-            const taskId = decodedData.args.taskId.toString();
-            const title = decodedData.args.title;
-            const budget = Number(decodedData.args.budget.toString())/100,
-            const desc = decodedData.args.desc;
-            const attachment = decodedData.args.attachment;
-            const period = decodedData.args.period.toString;
-            let params = {
-                taskId: taskId,
-                hash: v.hash,
-                title: title,
-                budget: budget,
-                desc: desc,
-                attachment: attachment,
-                period: period
-            }
-            let sql = createTaskSql(params)
-            try {
-                let sqlResult = await this.applyInfoRepository.query(sql.sql);
-                if (-1 != sqlResult[1]) {
-                    await this.applyInfoRepository.query(sql.sqlUpdateTH);
-                }
-                this.logger.debug('createTasks');
-            } catch (error) {
-                console.log(error);
-            }
-        }
+        // // 创建task任务
+        // let taskHash = await this.applyInfoRepository.query(getTaskHash());
+        // for (const v of taskHash) {
+        //     const log = await rpcProvider.getTransactionReceipt(v.hash);
+        //     const createTask = new ethers.utils.Interface(["event CreateTask(uint256 indexed taskId, address indexed maker, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
+            
+        //     let decodedData = createTask.parseLog(log.logs[0]);
+        //     const taskId = decodedData.args.taskId.toString();
+        //     const title = decodedData.args.title;
+        //     const budget = Number(decodedData.args.budget.toString())/100;
+        //     const desc = decodedData.args.desc;
+        //     const attachment = decodedData.args.attachment;
+        //     const period = decodedData.args.period.toString;
+        //     let params = {
+        //         taskId: taskId,
+        //         hash: v.hash,
+        //         title: title,
+        //         budget: budget,
+        //         desc: desc,
+        //         attachment: attachment,
+        //         period: period
+        //     }
+        //     let sql = createTaskSql(params)
+        //     try {
+        //         let sqlResult = await this.applyInfoRepository.query(sql.sql);
+        //         if (-1 != sqlResult[1]) {
+        //             await this.applyInfoRepository.query(sql.sqlUpdateTH);
+        //         }
+        //         this.logger.debug('createTasks');
+        //     } catch (error) {
+        //         console.log(error);
+        //     }
+        // }
 
         // 报名
         let applyForHash = await this.applyInfoRepository.query(getApplyForHash());

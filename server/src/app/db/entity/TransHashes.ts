@@ -1,9 +1,9 @@
 import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
 
-@Index("trans_hash_hash_key", ["hash"], { unique: true })
-@Index("trans_hash_pkey", ["id"], { unique: true })
-@Entity("trans_hash", { schema: "public" })
-export class TransHash {
+@Index("trans_hashes_hash_key", ["hash"], { unique: true })
+@Index("trans_hashes_pkey", ["id"], { unique: true })
+@Entity("trans_hashes", { schema: "public" })
+export class TransHashes {
   @PrimaryGeneratedColumn({ type: "integer", name: "id" })
   id: number;
 
@@ -15,8 +15,8 @@ export class TransHash {
   })
   hash: string | null;
 
-  @Column("bigint", { name: "demand_id", nullable: true })
-  demandId: string | null;
+  @Column("bigint", { name: "task_id", nullable: true })
+  taskId: string | null;
 
   @Column("smallint", { name: "category", nullable: true })
   category: number | null;

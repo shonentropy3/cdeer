@@ -1,31 +1,19 @@
-import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index } from "typeorm";
 
-@Index("order_pkey", ["id"], { unique: true })
-@Index("order_order_id_key", ["orderId"], { unique: true })
+@Index("orders_id_key", ["id"], { unique: true })
 @Entity("orders", { schema: "public" })
 export class Orders {
-  @PrimaryGeneratedColumn({ type: "integer", name: "id" })
-  id: number;
+  @Column("bigint", { name: "id", nullable: true, unique: true })
+  id: string | null;
 
-  @Column("bigint", { name: "order_id", nullable: true, unique: true })
-  orderId: string | null;
+  @Column("bigint", { name: "task_id", nullable: true })
+  taskId: string | null;
 
-  @Column("bigint", { name: "demand_id", nullable: true })
-  demandId: string | null;
+  @Column("character varying", { name: "worker", nullable: true, length: 64 })
+  worker: string | null;
 
-  @Column("character varying", {
-    name: "order_addr",
-    nullable: true,
-    length: 64,
-  })
-  orderAddr: string | null;
-
-  @Column("character varying", {
-    name: "token_addr",
-    nullable: true,
-    length: 64,
-  })
-  tokenAddr: string | null;
+  @Column("character varying", { name: "hash", nullable: true, length: 64 })
+  hash: string | null;
 
   @Column("character varying", { name: "amount", nullable: true, length: 255 })
   amount: string | null;

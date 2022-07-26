@@ -63,17 +63,25 @@ export class MarketService {
     async createDemand(@Body() body: any): Promise<Tasks[]> {
         let bodyData = JSON.parse(body.proLabel);
         
-        return await this.tasksRepository.query(setDemand(bodyData))
-        .then(res => {
-            let obj = {
-                code: 200
+        let sql = setDemand(bodyData)
+        try {
+            let sqlResult = await this.tasksRepository.query(sql.sql);
+            if (-1 != sqlResult[1]) {
+                return await this.tasksRepository.query(sql.sqlHash)
+                .then(res => {
+                    let obj = {
+                        code: 200
+                    }
+                    return obj
+                })
+                .catch(err => {
+                    console.log('createDemand err =>', err);
+                    return err
+                })
             }
-            return obj
-        })
-        .catch(err => {
-            console.log('createDemand err =>', err);
-            return err
-        })
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     // 修改需求

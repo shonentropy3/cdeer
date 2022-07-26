@@ -90,6 +90,10 @@ function Publish() {
         await Demand(para)
         .then(res => {
           if (res) {
+            data = JSON.parse(data)
+            data.payhash = res.hash
+            data = JSON.stringify(data)
+            para = {"proLabel":data}
             if (res.code) {
               tradeStatus = false
               message.error('交易失败!');
