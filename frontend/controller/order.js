@@ -5,17 +5,15 @@ import { ethers } from 'ethers'
 
 export const Order = async(para) => {
     try {
-          
         if (window.ethereum !== 'undefined') {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
         const demandContract = new ethers.Contract(orderAddr.address, order.abi, signer);
         const data = JSON.parse(para.proLabel)
-        console.log('data==>',data);
         return await demandContract.createOrder(
           { 
               taskId: data.demandId,
-              taker: data.applyAddr,
+              worker: data.applyAddr,
               token: data.token,
               amount: ethers.utils.parseEther(`${data.amount}`),
               checked: 1,
@@ -34,7 +32,6 @@ export const Order = async(para) => {
 
 export const getOrderAmount = async(para) => {
   try {
-        
       if (window.ethereum !== 'undefined') {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
@@ -42,9 +39,6 @@ export const getOrderAmount = async(para) => {
       // const data = JSON.parse(para.proLabel)
       return await orderContract.orders(para)
         .then(res => {
-          console.log(res);
-          console.log(res.taker,'===========');
-          console.log(res.taskId.toString());
           return res.amount
         })
       } else {
@@ -53,4 +47,24 @@ export const getOrderAmount = async(para) => {
     } catch (err) {
         return err;
     }
+}
+
+export const divideStage = async(para) => {
+  try {
+    if (window.ethereum !== 'undefined') {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const demandContract = new ethers.Contract(orderAddr.address, order.abi, signer);
+    const data = JSON.parse(para.proLabel)
+    console.log('data==>',data);
+    return await demandContract.setStage( data._orderId, data._token, [123], data._desc, data._periods )
+      .then(res => {
+        return res
+      })
+    } else {
+      console.log("Ethereum object does not exist");
+    }
+  } catch (err) {
+      return err;
+  }
 }

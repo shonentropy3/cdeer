@@ -23,7 +23,7 @@ export default function Project_detail(params) {
             case 0:
                 return <h1>等待需求方确认</h1>
             case 1:
-                return <Stage/>
+                return <Stage oid={oid} amoumt={amoumt} />
             case 2:
                 return <h1>3</h1>
             default:
@@ -32,6 +32,8 @@ export default function Project_detail(params) {
     }
 
     let [stateNum,setStateNum] = useState(2);
+    let [oid,setOid] = useState()
+    let [amoumt,setAmoumt] = useState()
     
     const init = async() => {
         let obj = {
@@ -39,8 +41,15 @@ export default function Project_detail(params) {
             apply_addr: `${await checkWalletIsConnected()}`
         }
         obj = JSON.stringify(obj)
-        stateNum = await getOrderStatus(obj)
+        await getOrderStatus(obj)
+        .then(res => {
+            stateNum = res.state;
+            oid = res.oid;
+            res.amoumt ? amoumt = res.amoumt : '';
+        })
         setStateNum(stateNum)
+        setOid(oid)
+        setAmoumt(amoumt)
     }
 
     useEffect(() => {

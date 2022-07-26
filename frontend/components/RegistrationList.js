@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Order } from "../controller/order";
 
-import { Button, Modal, InputNumber } from 'antd';
+import { Button, Modal, InputNumber, message } from 'antd';
 
 function RegistrationList(params) {
 
@@ -29,8 +29,8 @@ function RegistrationList(params) {
       obj = JSON.stringify(obj)
       await Order({proLabel:obj})
       .then(res => {
-          console.log(res);
           setIsModalVisible(false);
+          message.success('操作成功!')
       })
       .catch(err => {
           console.log(err);
@@ -43,7 +43,7 @@ function RegistrationList(params) {
     //  TODO:1、是否确认合作 ==> 2、展示取消订单和修改订单
     return(
         <>
-            <Modal title="确认合作" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+            <Modal title="输入价格" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
                 价格: <InputNumber size="large" min="1" onChange={onChange} />
             </Modal>
             <div className="RegistrationList">
@@ -63,12 +63,6 @@ function RegistrationList(params) {
                         <button>修改订单</button>
                     */}
                         <button onClick={() => showModal()}>修改订单</button>
-                        <Modal title="Basic Modal" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-                            <p>Some contents...</p>
-                            <p>Some contents...</p>
-                            <p>Some contents...</p>
-                        </Modal>
-                        <button>取消订单</button>
                 </div>
             </div>
         </>

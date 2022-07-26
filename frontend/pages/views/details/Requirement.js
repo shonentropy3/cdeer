@@ -50,7 +50,7 @@ export default function ProjectDetail() {
     const handleOk = async() => {
         let account = await checkWalletIsConnected()
         let obj = {
-            demandId: detail.task_id,
+            demandId: detail.id,
             valuation: count,
         }
         obj = JSON.stringify(obj)
@@ -65,7 +65,7 @@ export default function ProjectDetail() {
                 }else{
                   tradeStatus = true
                   obj = JSON.parse(obj)
-                  obj.hash = res.hash
+                  obj.hash = res
                   obj.applyAddr = account;
                   obj = JSON.stringify(obj)
                 }
@@ -124,7 +124,7 @@ export default function ProjectDetail() {
                         {/* {
                             detail.attachment.length > 0 ? <p>项目附件: {detail.attachment}</p> : ''
                         } */}
-                        <p>项目描述: {detail.task_desc}</p>
+                        <p>项目描述: {detail.desc}</p>
                     </div>
                 </div>
             </div>

@@ -45,6 +45,7 @@ contract Order is IOrder, Ownable {
     //交付阶段
     struct Stage {
         uint amount;
+        string desc;
         uint8 confirmed;
         bool withdrawed;
         uint endDate;  
@@ -61,7 +62,7 @@ contract Order is IOrder, Ownable {
     // taskId = > orderId
     mapping(uint => uint[]) private taskOrders;
     // orderId = >
-    mapping(uint => Stage[]) private orderStages;
+    mapping(uint => Stage[]) public orderStages;
 
     constructor(address task_) {
         _task = task_;
@@ -106,11 +107,11 @@ contract Order is IOrder, Ownable {
         }
     }
 
-    function setStage(uint _orderId, address _token, uint[] memory _amounts, uint[] memory _periods) external {
+    function setStage(uint _orderId, address _token, uint[] memory _amounts, string[] memory _desc, uint[] memory _periods) external {
         require(orders[_orderId].worker == msg.sender, "No permission.");
         require(orders[_orderId].checked != makerChecked, "The order has been checked by issuer.");
 
-        _setStage(_orderId, _amounts, _periods); 
+        _setStage(_orderId, _amounts, _desc, _periods); 
         orders[_orderId].token = _token;
         orders[_orderId].startDate = block.timestamp;
         orders[_orderId].checked = takerChecked;
@@ -236,7 +237,7 @@ contract Order is IOrder, Ownable {
         maxTaskOrders = _maxTaskOrders;
     }
 
-    function _setStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods) private {
+    function _setStage(uint _orderId, uint[] memory _amounts, string[] memory _desc, uint[] memory _periods) private {
         uint _taskId  = orders[_orderId].taskId;
         require(msg.sender == ITask(_task).ownerOf(_taskId) || msg.sender == orders[_orderId].worker, "No setting permission.");
         require(_amounts.length == _periods.length  && _amounts.length != 0, "Wrong parameter length.");
@@ -249,6 +250,7 @@ contract Order is IOrder, Ownable {
             _endDate += _periods[i];
             Stage memory pro = Stage ({
                 amount: _amounts[i],
+                desc: _desc[i],
                 confirmed: 0,
                 withdrawed: false,
                 endDate: _endDate

@@ -17,11 +17,7 @@ export const ApplyProject = async(account) => {
         valuation
         )
         .then(res => {
-          let obj = {
-            applyAddr: res.from,
-            hash: res.hash
-          }
-          return obj
+          return res.hash
         })
     } else {
       console.log("Ethereum object does not exist");

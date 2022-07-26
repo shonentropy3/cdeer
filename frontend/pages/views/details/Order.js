@@ -59,7 +59,7 @@ export default function OrderDetail(oid) {
                         <p>周期:{data.period}</p>
                         <p>招募角色:{data.role}</p>
                         <p>项目类型:{data.task_type}</p>
-                        <p>项目描述:{data.task_desc}</p>
+                        <p>项目描述:{data.desc}</p>
                         
                     </div>
                 </div>

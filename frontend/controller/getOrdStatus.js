@@ -23,7 +23,7 @@ export const getFirstStatus = async(para) => {
       }
 }
 
-export const getSecondStatus =   async(para) => {
+export const getSecondStatus = async(para) => {
   try {
         
       if (window.ethereum !== 'undefined') {
@@ -32,7 +32,11 @@ export const getSecondStatus =   async(para) => {
       const orderContract = new ethers.Contract(orderAddr.address, order.abi, signer);
       return await orderContract.orders(para)
         .then(res => {
-          return res[4]
+          let obj = {
+            amoumt: Number(res[3].toString())/1000000000000000000,
+            check: res[4]
+          }
+            return obj
         })
       } else {
         console.log("Ethereum object does not exist");
