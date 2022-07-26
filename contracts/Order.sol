@@ -62,7 +62,7 @@ contract Order is IOrder, Ownable {
     // taskId = > orderId
     mapping(uint => uint[]) private taskOrders;
     // orderId = >
-    mapping(uint => Stage[]) public orderStages;
+    mapping(uint => Stage[]) private orderStages;
 
     constructor(address task_) {
         _task = task_;
@@ -161,6 +161,14 @@ contract Order is IOrder, Ownable {
         
         emit ConfirmOrderStage(_orderId, msg.sender, _stageIndex);
     }
+
+    function getOrderStages(uint _orderId) external returns(Stage[] memory orderStagesArr) {
+
+        Stage[] memory orderStagesArr = orderStages[_orderId];
+        // console.log(orderStagesArr, "orderStages");
+        return orderStagesArr;
+    }
+
 
     function terminateOrder(uint _orderId) external {
         uint _taskId  = orders[_orderId].taskId;

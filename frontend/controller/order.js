@@ -56,8 +56,35 @@ export const divideStage = async(para) => {
     const signer = provider.getSigner();
     const demandContract = new ethers.Contract(orderAddr.address, order.abi, signer);
     const data = JSON.parse(para.proLabel)
-    console.log('data==>',data);
-    return await demandContract.setStage( data._orderId, data._token, [123], data._desc, data._periods )
+    let arr = []
+    data._amounts.forEach(ele => {
+      arr.push(ethers.utils.parseEther(`${ele}`))
+    });
+    return await demandContract.setStage( data._orderId, data._token, arr, data._desc, data._periods )
+      .then(res => {
+        if (res.hash) {
+          return 200
+        }else{
+          return 'err'
+        }
+      })
+    } else {
+      console.log("Ethereum object does not exist");
+    }
+  } catch (err) {
+      return err;
+  }
+}
+
+export const orderStage = async(para) => {
+  try {
+    if (window.ethereum !== 'undefined') {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const orderContract = new ethers.Contract(orderAddr.address, order.abi, signer);
+    // const data = JSON.parse(para.proLabel)
+    console.log(orderContract,'===>');
+    return await orderContract.orderStages("1","0")
       .then(res => {
         return res
       })

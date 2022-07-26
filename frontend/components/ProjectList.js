@@ -86,18 +86,19 @@ function ProjectList(props) {
             }
         })
         // 获取订单状态
-        let obj = {
-            demand_id: Number(data.id),
-            apply_addr: currentAccount
-        }
-        obj = JSON.stringify(obj)
-        getOrderStatus(obj)
-        .then(res => {
-            if (res.length === 3) {
-                pjcStatus = true
-                setPjcStatus(pjcStatus)
-            }
-        })
+        // let obj = {
+        //     demand_id: Number(data.id),
+        //     apply_addr: currentAccount
+        // }
+        // obj = JSON.stringify(obj)
+        // getOrderStatus(obj)
+        // .then(res => {
+        //     console.log(res,'res==>');
+        //     if (res.length === 3) {
+        //         pjcStatus = true
+        //         setPjcStatus(pjcStatus)
+        //     }
+        // })
     }
 
     useEffect(() => {
@@ -111,7 +112,15 @@ function ProjectList(props) {
             // 我发布的项目
             return <>
                         <button onClick={()=>{goDetail()}}>查看项目状态</button>
-                        {
+                        <button onClick={() => {toggleMask()}}>修改需求</button>
+                                <Popconfirm
+                                    title="Are you sure to delete this task?"
+                                    onConfirm={deletDemand}
+                                    okText="Yes"
+                                    cancelText="No" >
+                                    <button>删除项目</button>
+                                </Popconfirm>
+                        {/* {
                             !pjcStatus ? 
                             <>
                                 <button onClick={() => {toggleMask()}}>修改需求</button>
@@ -125,7 +134,7 @@ function ProjectList(props) {
                             </>
                             :
                             ''
-                        }
+                        } */}
                         
                   </>
         }else{

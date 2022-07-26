@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Order } from "../controller/order";
-
+import Link from "next/link";
 import { Button, Modal, InputNumber, message } from 'antd';
 
 function RegistrationList(params) {
@@ -56,13 +56,11 @@ function RegistrationList(params) {
                     </div>
                 </div>
                 <div className="right">
-                    {/* <button>不合适</button> */}
                     <button onClick={() => showModal()}>确认合作</button>
-                    {/* 
-                        订单状态 > 0 && 订单状态 < 3
-                        <button>修改订单</button>
-                    */}
-                        <button onClick={() => showModal()}>修改订单</button>
+                    <Link href={{pathname:"/views/details/Stage",query:{address: data.apply_addr,task_id: Number(data.task_id)}}}>
+                        <button>订单详情</button>
+                    </Link>
+                    <button onClick={() => showModal()}>修改订单</button>
                 </div>
             </div>
         </>

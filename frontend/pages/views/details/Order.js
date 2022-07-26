@@ -15,8 +15,7 @@ export default function OrderDetail(oid) {
 
     const items = [
         { label: '项目详情', key: 'item-1'}, // 菜单项务必填写 key
-        { label: '报名列表', key: 'item-2'},
-        { label: '阶段交付', key: 'item-3'}
+        { label: '报名列表', key: 'item-2'}
     ];
 
     const navbar = [
@@ -93,23 +92,12 @@ export default function OrderDetail(oid) {
                 </div>
     }
 
-    // 阶段交付部分
-    const stage = () => {
-        return <div className='container'>
-                    <div className="content">
-                        <h1>阶段交付</h1>
-                    </div>
-                </div>
-    }
-
     const panel = () => {
         switch (selectItem) {
             case 'item-1':
                 return  detail()
             case 'item-2':
                 return  list()
-            default: 
-                return  stage()
         }
     }
 

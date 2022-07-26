@@ -66,7 +66,7 @@ export default function Stage(params){
             periods.push(ele.date);
             desc.push(ele.dsc)
         })
-        
+
         // 遍历确认目前金额&&周期未超标
         let total = 0;
         amounts.forEach(ele => {
@@ -91,7 +91,12 @@ export default function Stage(params){
         obj = JSON.stringify(obj)
         await divideStage({proLabel: obj})
         .then(res => {
-            console.log(res);
+            if (res == 200) {
+                message.success('设置阶段成功')
+                setTimeout(() => {
+                    history.go(0);
+                }, 1000);
+            }
         })
     }
 

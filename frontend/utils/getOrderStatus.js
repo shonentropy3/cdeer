@@ -40,6 +40,13 @@ export default async function getOrderStatus(params)  {
           }
           return obj
     }
+    if (status == 2) {
+        let obj = {
+            state: 2,
+            oid: oid
+        }
+        return obj
+    }
 
 
     //  划分好阶段==>2
