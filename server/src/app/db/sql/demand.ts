@@ -22,8 +22,8 @@ export const getMyPjcDBb = params => {
 
 export const setDemand = params => {
     let sql = `
-            insert into tasks(issuer, hash, role, task_type) 
-            VALUES (${params.u_address},'${params.payhash}', ${params.recruiting_role},${params.demand_type});
+            insert into tasks(issuer, hash, "desc", role, task_type) 
+            VALUES (${params.u_address},'${params.payhash}','${params.pro_content}', ${params.recruiting_role},${params.demand_type});
         `;
 
     let sqlHash = ` insert into trans_hashes("send_addr", category, hash) 
@@ -39,8 +39,10 @@ export const setDemand = params => {
 
 export const moDemand = params => {
     let sql = ` update tasks SET title = '${params.title}', budget = ${params.budget}, period = ${params.period} ,
-    desc = '${params.pro_content}' ,role = '${params.recruiting_role}' ,task_type = '${params.demand_type}',
-            attachment = '${params.attachment}', update_time = now() where task_id = ${params.demand_id} `;
+    "desc" = '${params.pro_content}' ,role = '${params.recruiting_role}' ,task_type = '${params.demand_type}',
+            attachment = '${params.attachment}', update_time = now() where id = ${params.demand_id} `;
+            console.log(sql);
+            
     return sql
 }
 

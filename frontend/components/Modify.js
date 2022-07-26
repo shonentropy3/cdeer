@@ -20,7 +20,7 @@ export default function Modify(params) {
         {title: '项目预算', type: Number, value: Number(detail.budget)},
         {title: '项目周期', type: Number, value: detail.period}
     ])
-    let [text,setText] = useState(detail.task_desc)
+    let [text,setText] = useState(detail.desc)
     const onChange = (t,e,i,index) => {
         
         if (i === 'role') {
@@ -93,7 +93,7 @@ export default function Modify(params) {
             pro_content: text,
             recruiting_role: r,
             demand_type: p,
-            demand_id: detail.task_id,
+            demand_id: detail.id,
             attachment: detail.attachment
         }
         console.log("obj===>",obj);

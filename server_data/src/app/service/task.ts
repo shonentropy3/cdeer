@@ -44,13 +44,13 @@ export class TaskService {
                 fromBlock,
                 toBlock
             }
+            
             const logs = await rpcProvider.getLogs(filter);
             const CreateTask = new ethers.utils.Interface(["event CreateTask(uint256 indexed taskId, address indexed maker, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
             if (logs.length > 0) {
                 
                 let txs = logs.map((ele: any) => {
                     let decodedData = CreateTask.parseLog(ele);
-                    console.log();
                     return {
                         taskId: decodedData.args[0].toString(),
                         title: decodedData.args[2],
@@ -157,42 +157,6 @@ export class TaskService {
         logBlock = Math.max(logBlock, (latest - 100)); // 最多往前100区块
         let fromBlock = logBlock + 1;
         let toBlock = latest;
-
-<<<<<<< Updated upstream
-        // // 创建task任务
-        // let taskHash = await this.applyInfoRepository.query(getTaskHash());
-        // for (const v of taskHash) {
-        //     const log = await rpcProvider.getTransactionReceipt(v.hash);
-        //     const createTask = new ethers.utils.Interface(["event CreateTask(uint256 indexed taskId, address indexed maker, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
-            
-        //     let decodedData = createTask.parseLog(log.logs[0]);
-        //     const taskId = decodedData.args.taskId.toString();
-        //     const title = decodedData.args.title;
-        //     const budget = Number(decodedData.args.budget.toString())/100;
-        //     const desc = decodedData.args.desc;
-        //     const attachment = decodedData.args.attachment;
-        //     const period = decodedData.args.period.toString;
-        //     let params = {
-        //         taskId: taskId,
-        //         hash: v.hash,
-        //         title: title,
-        //         budget: budget,
-        //         desc: desc,
-        //         attachment: attachment,
-        //         period: period
-        //     }
-        //     let sql = createTaskSql(params)
-        //     try {
-        //         let sqlResult = await this.applyInfoRepository.query(sql.sql);
-        //         if (-1 != sqlResult[1]) {
-        //             await this.applyInfoRepository.query(sql.sqlUpdateTH);
-        //         }
-        //         this.logger.debug('createTasks');
-        //     } catch (error) {
-        //         console.log(error);
-        //     }
-        // }
-=======
         // 创建task任务
         let taskHash = await this.applyInfoRepository.query(getTaskHash());
         for (const v of taskHash) {
@@ -225,7 +189,6 @@ export class TaskService {
                 console.log(error);
             }
         }
->>>>>>> Stashed changes
 
         // 报名
         let applyForHash = await this.applyInfoRepository.query(getApplyForHash());
