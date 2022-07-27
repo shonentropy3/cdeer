@@ -11,6 +11,9 @@ import '../styles/components.scss'
 import '../styles/details/requirement.scss'
 import '../styles/details/order.scss'
 import '../styles/details/project.scss'
+import '../styles/details/stage.scss'
+
+
 function MyApp({ Component, pageProps }) {
   return (
     <div>
