@@ -82,9 +82,7 @@ export const orderStage = async(para) => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
     const orderContract = new ethers.Contract(orderAddr.address, order.abi, signer);
-    // const data = JSON.parse(para.proLabel)
-    console.log(orderContract,'===>');
-    return await orderContract.orderStages("1","0")
+    return await orderContract.getOrderStages(para)
       .then(res => {
         return res
       })

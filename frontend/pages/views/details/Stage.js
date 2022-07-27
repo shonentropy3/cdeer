@@ -2,19 +2,15 @@ import { useEffect, useState } from "react";
 import getOrderStatus from "../../../utils/getOrderStatus";
 import { withRouter } from 'next/router'
 import { orderStage } from "../../../controller/order";
-import { Button } from "antd";
-
+import { Button, message } from "antd";
+import { confirmOrder } from "../../../utils/stages";
 
 function OrderDetail({router}) {
 
     let [address,setAddress] = useState('');
     let [task_id,setTask_id] = useState();
     let [oid,setOid] = useState('');
-    let [mock,setMock] = useState([
-        {title: '', price: '100', date: '7', dsc: '阶段开始'},
-        {title: '', price: '20', date: '4', dsc: '完成一半'},
-        {title: '', price: '50', date: '3', dsc: '全部完成'}
-    ])
+    let [arr,setArr] = useState([])
     
     
     const getStage = async() => {
@@ -27,14 +23,47 @@ function OrderDetail({router}) {
         .then(res => {
             oid = res.oid;
             setOid(oid);
-        })
+    })
 
-        return
+    const getDate = (params) => {
+        var date = new Date(params * 1000);  // 参数需要毫秒数，所以这里将秒数乘于 1000
+        let Y = date.getFullYear() + '-';
+        let M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+        let D = date.getDate() + ' ';
+        let h = date.getHours() + ':';
+        let m = date.getMinutes() + ':';
+        let s = date.getSeconds();
+        return Y+M+D+h+m+s
+    }
+
+        // return
         await orderStage(oid)
         .then(res => {
-            console.log(res,'==>');
+            res.forEach((e,i) => {
+                arr[i] = {
+                    price: Number(e[0].toString()) / 1000000000000000000,
+                    date: getDate(e[4].toString()),
+                    dsc: e[1]
+                }
+            })
+            setArr([...arr])
+            console.log(arr,'arr==>');
         })
 
+    }
+
+    const confirmOrd = async() => {
+        await confirmOrder(oid)
+        .then(res => {
+            if (res.code == 200) {
+                message.success('确认订单成功')
+                setTimeout(() => {
+                    history.go(0)
+                }, 1000);
+            }else{
+                message.error('确认订单失败')
+            }
+        })
     }
 
     useEffect(() => {
@@ -48,18 +77,18 @@ function OrderDetail({router}) {
     return <div className="OrderDetail">
         <div className="container">
             <div className="title">
-                <Button type="primary"> 通过申请 </Button>
+                <Button type="primary" onClick={() => confirmOrd()}> 确认订单 </Button>
             </div>
             <div className="list">
                 {
-                    mock.map((e,i) => 
+                    arr.map((e,i) => 
                         <div className="box" key={i}>            
                              <div className="nav">
                                 <p>P{i+1}阶段</p>
                              </div>
                              <div className="panel">
                                 <div>阶段金额 <p>{e.price}$</p></div>
-                                <div>阶段周期 <p>{e.date}天</p></div>
+                                <div>计划交付日期 <p>{e.date}</p></div>
                                 <div>阶段简述 <p>{e.dsc}</p></div>
                              </div>
                              {/* bottom需以订单状态来判断是否显示 */}

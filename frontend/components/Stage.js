@@ -81,6 +81,11 @@ export default function Stage(params){
             return
         }
 
+        // 将天转换为毫秒
+        periods.forEach((e,i) => {
+            periods[i] = e * 24 * 60 * 60
+        })
+        
         let obj = {
             _orderId: oid,
             _token: token,

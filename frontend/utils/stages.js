@@ -46,6 +46,33 @@ export const terminateOrder = async(para) => {
       }
 }
 
+// 确认订单
+export const confirmOrder = async(para) => {
+  try {
+      if (window.ethereum !== 'undefined') {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const demandContract = new ethers.Contract(orderAddr.address, order.abi, signer);
+      console.log(demandContract,'===demandContract==>');
+      return await demandContract.confirmOrder(3)
+          .then(res => {
+            console.log(res,'res==>');
+            if (res.hash) {
+              return {
+                code: 200
+              }
+            }else{
+              return {code: 404}
+            }
+          })
+      } else {
+        console.log("Ethereum object does not exist");
+      }
+    } catch (err) {
+        return err;
+    }
+}
+
 // 确认阶段
 export const confirmOrderStage = async(para) => {
     try {
