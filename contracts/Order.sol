@@ -200,7 +200,12 @@ contract Order is IOrder, Ownable {
         }
         require((block.timestamp >= stageStartDate && orderStagesArr[_stageIndex].endDate >= block.timestamp) || isConfirmed == confirmedIs, "Out stage.");
         uint period = orderStagesArr[_stageIndex].endDate - stageStartDate;
-        sumAmountB += orderStagesArr[_stageIndex].amount * (block.timestamp - stageStartDate) / period;
+        if (block.timestamp > stageStartDate) {
+            sumAmountB += orderStagesArr[_stageIndex].amount * (block.timestamp - stageStartDate) / period;
+        } else {
+            sumAmountB = 0;
+        }
+
         for (_stageIndex; _stageIndex < orderStagesArr.length; _stageIndex++) {
             sumAmount += orderStagesArr[_stageIndex].amount;
             orderStagesArr[_stageIndex].confirmed == confirmedNo;

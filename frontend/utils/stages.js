@@ -114,8 +114,12 @@ export const terminateStage = async(para) => {
         const demandContract = new ethers.Contract(orderAddr.address, order.abi, signer);
         const data = JSON.parse(para.proLabel)
         console.log('data==>',data);
-        return await demandContract.terminateStage(data.orderId, data.stageIndex)
+        console.log(demandContract,'===>');
+        // return await demandContract.terminateStage(data.orderId, data.stageIndex)
+        
+        return await demandContract.terminateStage("1",1)
             .then(res => {
+                console.log(res,"=========res");
               if (res.hash) {
                 return {
                   code: 200
