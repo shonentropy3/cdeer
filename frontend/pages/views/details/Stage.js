@@ -104,9 +104,12 @@ function OrderDetail({router}) {
         .then(res => {
             // console.log(res);
             if (res.code == 200) {
-                message.success('终止交付成功!')
+                message.success('终止交付成功!');
+                setTimeout(() => {
+                    history.go(-1)
+                }, 1000);
             }else{
-                message.error('终止交付失败!')
+                message.error('终止交付失败!');
             }
         })
     }
