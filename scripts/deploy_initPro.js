@@ -36,7 +36,7 @@ async function main() {
     await order.connect(accounts[3]).createOrder(
       { 
         taskId: 1,
-        worker: "0x90f79bf6eb2c4f870365e785982e1f101e93b906",
+        worker: "0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65",
         token: "0x90f79bf6eb2c4f870365e785982e1f101e93b906",
         amount: ethers.utils.parseEther("5"),
         checked: 1,
@@ -44,20 +44,14 @@ async function main() {
     });
 
     // 设置阶段
-    await order.connect(accounts[3]).setStage(1,"0x90f79bf6eb2c4f870365e785982e1f101e93b906",
-    [ethers.utils.parseEther("5")],'',"1"
+    await order.connect(accounts[4]).setStage(1,"0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65",
+    [ethers.utils.parseEther("3"),ethers.utils.parseEther("2")],['atr','bbbbb'],["1","2"]
     );
 
-        // 设置阶段
-        await order.connect(accounts[3]).setStage(1,"0x90f79bf6eb2c4f870365e785982e1f101e93b906",
-        [ethers.utils.parseEther("5")],'',"1"
-        );
+  // 获取阶段信息
+  let arr = await order.connect(accounts[3]).getOrderStages(1);
+    console.log("111",arr)
 
-        // 设置阶段
-      let arr = await order.connect(accounts[3]).getOrderStages(1);
-console.log("111",arr)
-
-    // map = await order.connect(accounts[3]).applyOrderIds(1,accounts[3].address);
   }
 
   main()

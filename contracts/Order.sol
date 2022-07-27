@@ -162,10 +162,9 @@ contract Order is IOrder, Ownable {
         emit ConfirmOrderStage(_orderId, msg.sender, _stageIndex);
     }
 
-    function getOrderStages(uint _orderId) external returns(Stage[] memory orderStagesArr) {
-
-        Stage[] memory orderStagesArr = orderStages[_orderId];
-        // console.log(orderStagesArr, "orderStages");
+    function getOrderStages(uint _orderId) external view returns(Stage[] memory orderStagesArr) {
+        Stage[] memory orderStagesArr;
+        orderStagesArr = orderStages[_orderId];
         return orderStagesArr;
     }
 
