@@ -53,8 +53,11 @@ export const confirmOrder = async(para) => {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
       const demandContract = new ethers.Contract(orderAddr.address, order.abi, signer);
-      console.log(demandContract,'===demandContract==>');
-      return await demandContract.confirmOrder(3)
+      const data = JSON.parse(para.proLabel)
+      console.log(data,'==data==>');
+      return await demandContract.confirmOrder(data.oid,{
+        value: ethers.utils.parseEther(`${data.amount}`),
+      })
           .then(res => {
             console.log(res,'res==>');
             if (res.hash) {
@@ -84,7 +87,15 @@ export const confirmOrderStage = async(para) => {
         console.log('data==>',data);
         return await demandContract.confirmOrderStage(data.orderId, data.stageIndex)
             .then(res => {
-              return res
+              if (res.hash) {
+                return {
+                  code: 200
+                }
+              }else{
+                return {
+                  code: 404
+                }
+              }
             })
         } else {
           console.log("Ethereum object does not exist");
@@ -105,7 +116,13 @@ export const terminateStage = async(para) => {
         console.log('data==>',data);
         return await demandContract.terminateStage(data.orderId, data.stageIndex)
             .then(res => {
-              return res
+              if (res.hash) {
+                return {
+                  code: 200
+                }
+              }else{
+                return res
+              }
             })
         } else {
           console.log("Ethereum object does not exist");
@@ -126,7 +143,13 @@ export const withdraw = async(para) => {
         console.log('data==>',data);
         return await demandContract.withdraw(data.orderId, data.stageIndex)
             .then(res => {
-              return res
+              if (res.hash) {
+                return {
+                  code: 200
+                }
+              }else{
+                return res
+              }
             })
         } else {
           console.log("Ethereum object does not exist");

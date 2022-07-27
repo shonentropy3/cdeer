@@ -24,29 +24,31 @@ export default async function getOrderStatus(params)  {
 
 
     // 判断乙方是否划分好了阶段
-    await getSecondStatus(oid)
+    return await getSecondStatus(oid)
     .then(res => {
-        res.check == 0 ? status = 1 : status = 2
         amoumt = res.amoumt
+        console.log(res,'res==>');
+        switch (res.check) {
+            case 0:
+                status = 1;
+                break;
+            case 1:
+                status = 2;
+                break;
+            default:
+                status = 3;
+                break;
+        }
+        let obj = {
+            state: status,
+            oid: oid,
+            amoumt: amoumt
+        }
+        return obj
     })
     .catch(err => {
         console.log(err)
     })
-    if (status == 1) {
-        let obj = {
-            state: 1,
-            oid: oid,
-            amoumt: amoumt
-          }
-          return obj
-    }
-    if (status == 2) {
-        let obj = {
-            state: 2,
-            oid: oid
-        }
-        return obj
-    }
 
 
     //  划分好阶段==>2

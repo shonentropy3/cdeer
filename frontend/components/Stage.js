@@ -10,13 +10,13 @@ export default function Stage(params){
     const { amoumt } = params;
     const { TextArea } = Input;
     const tokenlist = [
-        {title: '以太坊', value: '0x90f79bf6eb2c4f870365e785982e1f101e93b906'},
-        {title: '比特', value: 'bcoin'},
+        {title: '以太坊', value: '0x0000000000000000000000000000000000000000'},
+        {title: '比特', value: '0x0000000000000000000000000000000000000000'},
     ]
     const [budget,setBudget] = useState(0)
     let [stageNum,setStageNum] = useState(1)
     let [stage,setStage] = useState([])
-    let [token,setToken] = useState('0x90f79bf6eb2c4f870365e785982e1f101e93b906')
+    let [token,setToken] = useState('0x0000000000000000000000000000000000000000')
     
 
     const changeStage = (value) => {

@@ -4,6 +4,7 @@ import NavigationBar from "../../../components/NavigationBar";
 import Stage from '../../../components/Stage';
 import getOrderStatus from '../../../utils/getOrderStatus';
 import { checkWalletIsConnected } from '../../../utils/checkWalletIsConnected'
+import StageWorker from './StageWorker';
 
 export default function Project_detail(params) {
     const { Step } = Steps;
@@ -27,7 +28,7 @@ export default function Project_detail(params) {
             case 2:
                 return <h1>3</h1>
             default:
-                return <h1>4</h1>
+                return <StageWorker />
         }
     }
 

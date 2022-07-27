@@ -189,14 +189,16 @@ contract Order is IOrder, Ownable {
         uint stageStartDate;
         uint sumAmount;
         uint sumAmountA;
-        uint sumAmountB;  
+        uint sumAmountB;
+        uint8 isConfirmed;  
         Stage[] storage orderStagesArr = orderStages[_orderId];
         if (_stageIndex == 0) {
             stageStartDate = startDate;
         } else {
             stageStartDate = orderStagesArr[_stageIndex - 1].endDate;
+            isConfirmed = orderStagesArr[_stageIndex - 1].confirmed;
         }
-        require(block.timestamp > stageStartDate && block.timestamp < orderStagesArr[_stageIndex].endDate, "Out stage.");        
+        require((block.timestamp >= stageStartDate && orderStagesArr[_stageIndex].endDate >= block.timestamp) || isConfirmed == confirmedIs, "Out stage.");
         uint period = orderStagesArr[_stageIndex].endDate - stageStartDate;
         sumAmountB += orderStagesArr[_stageIndex].amount * (block.timestamp - stageStartDate) / period;
         for (_stageIndex; _stageIndex < orderStagesArr.length; _stageIndex++) {
