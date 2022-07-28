@@ -26,7 +26,6 @@ export const translatedPjc = (arr) => {
 }
 
 export const sToDays = (s) => {
-    console.log(s,'s==>');
     let days = s/60/60/24;
     return days
 }

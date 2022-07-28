@@ -28,72 +28,11 @@ export class TaskService {
 
     private readonly logger = new Logger(TaskService.name)
 
-    insertCreateDemand = async () => {
-            let latest = await rpcProvider.getBlockNumber();
-            let last = await this.blockLogRepository.query(getLastBlock());
-            let logBlock = last[0].block;
-            if (logBlock >= latest) return; // 区块已监听过了
-            logBlock = Math.max(logBlock, (latest - 100)); // 最多往前100区块
-            let fromBlock = logBlock + 1;
-            let toBlock = latest;
-            let filter = {
-                address: USDR_ADDR.address,
-                topics: [
-                    ethers.utils.id("CreateTask(uint256,address,string,uint256,string,string,uint256)")
-                ],
-                fromBlock,
-                toBlock
-            }
-            
-            const logs = await rpcProvider.getLogs(filter);
-            const CreateTask = new ethers.utils.Interface(["event CreateTask(uint256 indexed taskId, address indexed maker, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
-            if (logs.length > 0) {
-                
-                let txs = logs.map((ele: any) => {
-                    let decodedData = CreateTask.parseLog(ele);
-                    return {
-                        taskId: decodedData.args[0].toString(),
-                        title: decodedData.args[2],
-                        budget: Number(decodedData.args[3].toString())/100,
-                        desc: decodedData.args[4],
-                        attachment: decodedData.args[5],
-                        period: decodedData.args[6].toString(),
-                    }
-                });
-                let value = ``;
-                for (const v of txs) {
-                    value += `
-                    (${v.taskId}, '${v.title}','${v.desc}', ${v.budget}, ${v.period}, '${v.attachment}'),
-                    `
-                }
-                let sqlValue = value.substring(0,(value.lastIndexOf(',')))
-                let paramsSql = {
-                    statusId: 1,
-                    value: sqlValue
-                }
-                let sql = updateProject(paramsSql)
-                
-                try {
-                  let result = await this.tasksRepository.query(sql)
-                  
-                  this.logger.debug('insertCreateTask');
-                  if (-1 != result[1]) {
-                      let params = {
-                        id: 0,
-                        latest: latest,
-                    }
-                      await this.blockLogRepository.query(updateBlock(params))
-                  }
-                } catch (error) {
-                  console.log(error);
-                }
-            }
-    }
-
     modifyDemandLog = async () => {
         let latest = await rpcProvider.getBlockNumber();
         let last = await this.blockLogRepository.query(getModifyDemandLastBlock());
         let logBlock = last[0].block;
+        
         if (logBlock >= latest) return; //区块已监听过了
         logBlock = Math.max(logBlock, (latest - 100)); //最多往前100区块
         let fromBlock = logBlock + 1;
@@ -106,8 +45,10 @@ export class TaskService {
             fromBlock,
             toBlock
         }
+        
         const logs = await rpcProvider.getLogs(filter);
         const CreateTask = new ethers.utils.Interface(["event ModifyTask(uint256 indexed taskId, address maker, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
+        
         if (logs.length > 0) {
             let txs = logs.map((ele: any) => {
                 let decodedData = CreateTask.parseLog(ele);
@@ -159,38 +100,47 @@ export class TaskService {
         let toBlock = latest;
 
         
-        // // 创建task任务
-        // let taskHash = await this.applyInfoRepository.query(getTaskHash());
-        // for (const v of taskHash) {
-        //     const log = await rpcProvider.getTransactionReceipt(v.hash);
-        //     const createTask = new ethers.utils.Interface(["event CreateTask(uint256 indexed taskId, address indexed maker, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
-        //     let decodedData = createTask.parseLog(log.logs[0]);
-        //     const taskId = decodedData.args.taskId.toString();
-        //     const title = decodedData.args.title;
-        //     const budget = Number(decodedData.args.budget.toString())/100;
-        //     const desc = decodedData.args.desc;
-        //     const attachment = decodedData.args.attachment;
-        //     const period = decodedData.args.period.toString;
-        //     let params = {
-        //         taskId: taskId,
-        //         hash: v.hash,
-        //         title: title,
-        //         budget: budget,
-        //         desc: desc,
-        //         attachment: attachment,
-        //         period: period
-        //     }
-        //     let sql = createTaskSql(params)
-        //     try {
-        //         let sqlResult = await this.applyInfoRepository.query(sql.sql);
-        //         if (-1 != sqlResult[1]) {
-        //             await this.applyInfoRepository.query(sql.sqlUpdateTH);
-        //         }
-        //         this.logger.debug('createTasks');
-        //     } catch (error) {
-        //         console.log(error);
-        //     }
-        // }
+        // 创建task任务
+        let taskHash = await this.applyInfoRepository.query(getTaskHash());
+        
+        for (let v of taskHash) {
+            const log = await rpcProvider.getTransactionReceipt(v.hash);
+            
+            // taskId, msg.sender, _taskInfo.title, _taskInfo.budget, 
+            // _taskInfo.desc, _taskInfo.attachment, _taskInfo.period
+
+            const createTask = new ethers.utils.Interface(["event CreateTask(uint256 indexed taskId, address indexed maker, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
+            
+
+            let decodedData = createTask.parseLog(log.logs[1]);
+            
+            const taskId = decodedData.args.taskId.toString();
+            const title = decodedData.args.title;
+            const budget = Number(decodedData.args.budget.toString())/100;
+            const desc = decodedData.args.desc;
+            const attachment = decodedData.args.attachment;
+            const period = decodedData.args.period.toString();
+            
+            let params = {
+                taskId: taskId,
+                hash: v.hash,
+                title: title,
+                budget: budget,
+                desc: desc,
+                attachment: attachment,
+                period: period
+            }
+            let sql = createTaskSql(params)
+            try {
+                let sqlResult = await this.applyInfoRepository.query(sql.sql);
+                if (-1 != sqlResult[1]) {
+                    await this.applyInfoRepository.query(sql.sqlUpdateTH);
+                }
+                this.logger.debug('createTasks');
+            } catch (error) {
+                console.log(error);
+            }
+        }
 
         // 报名
         let applyForHash = await this.applyInfoRepository.query(getApplyForHash());
@@ -294,7 +244,6 @@ export class TaskService {
 
     @Interval(5000)  //每隔5秒执行一次
     handleInterval() {
-        this.insertCreateDemand()
         this.modifyDemandLog()  
         this.insertApplyFor()
         // this.logger.debug('Called 5 seconds');

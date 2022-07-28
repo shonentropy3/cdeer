@@ -44,10 +44,10 @@ export const getHash = use_type => {
 export const createTaskSql = (params) => {
     let sql = `
         UPDATE tasks 
-        SET id = temp.taskId, title = temp.title, desc = temp.desc, budget = temp.budget,
+        SET id = temp.taskId, title = temp.title, "desc" = temp.desc, budget = temp.budget,
         period = temp.period, attachment = temp.attachment, update_time = now() from (values (${params.taskId}, '${params.hash}',  
             '${params.title}', ${params.budget}, '${params.desc}', '${params.attachment}', ${params.period})) as temp (
-            taskId, hash, title,  budget, desc, attachment, period) where tasks.hash=temp.hash;
+            taskId, hash, title,  budget, "desc", attachment, period) where tasks.hash=temp.hash;
     `
 
     let sqlUpdateTH = ` 

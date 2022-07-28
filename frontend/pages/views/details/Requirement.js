@@ -28,7 +28,6 @@ export default function ProjectDetail() {
         getDemandInfo({id: oid})
         .then(res=>{
             let data = res.data[0]
-            console.log(data);
             data.role = translatedRole(data.role)
             data.task_type = translatedPjc(data.task_type)
             data.period = sToDays(data.period)
