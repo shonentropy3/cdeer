@@ -1,5 +1,5 @@
 
-MNEMONIC = " "
+MNEMONIC = "助记词"
 PROVIDER_URL = "http://127.0.0.1:8545"
 
 LOGGER_LEVEL= "warn"
@@ -8,8 +8,8 @@ PORT = "3030"
 
 PGUSER = "postgres"
 PGHOST = "127.0.0.1"
-PGDATABASE = "postgres"
-PGPASSWORD = " "
+PGDATABASE = "用户名"
+PGPASSWORD = "xxx"
 PGPORT = "5432"
 
 USDR_ADDR = "5432"
