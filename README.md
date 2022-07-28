@@ -10,13 +10,22 @@ server_data：基于nest框架的nodejs项目，作用为同步数据库和链�
 
 ## 注
 
-复制 envExample 文件，命名为.env，添加个人钱包助记词；
+1. 复制 envExample 文件，命名为.env，添加个人钱包助记词
 
-启动项目之前先启动本地节点：
+2. 启动项目之前先启动本地节点，在code--market目录下执行
 
-在code--market目录下执行
+   ```js
+   npx hardhat node
+   ```
 
-`npx hardhat node `
+
+3. 在code--market项目下建表：
+
+   ```js
+   // 第一个postgres为用户名，第二个postgres为库名，可以更改
+   psql -p5432 "postgres" -d postgres -f init_tables.sql
+   ```
+
 
 # 项目启动
 
@@ -59,6 +68,8 @@ npx hardhat run scripts/2_deploy_Order.js --network dev
 npm run start:dev
 ```
 
+2. 设计创建表实体类，可以参考server项目下package.json包中scripts中的db
+
 ## server_data
 
 目前是定时任务同步数据库和链上数据，在server_data/src/app/service/task.ts路径下为定时任务入口；
@@ -76,3 +87,4 @@ INSERT INTO block_logs(id,block) VALUES (0,0),(1,0)
 npm run start:dev
 ```
 
+3. 设计创建表实体类，可以参考server_data项目下package.json包中scripts中的db

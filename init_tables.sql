@@ -11,7 +11,11 @@ CREATE TABLE block_logs (
 CREATE TABLE tasks (
 	"id" BIGINT UNIQUE, 
   "issuer" varchar(64),
+<<<<<<< Updated upstream
   "hash" varchar(64),
+=======
+  "hash" varchar(128),
+>>>>>>> Stashed changes
   "title" varchar(255),
 	"desc" varchar(64),
   "period" BIGINT,
@@ -25,8 +29,13 @@ CREATE TABLE tasks (
   "update_time" date DEFAULT (now())
 );
 
+<<<<<<< Updated upstream
 COMMENT ON COLUMN "public"."tasks"."apply_switch" IS '报名开关：0.关  1.开';
 COMMENT ON COLUMN "public"."tasks"."del" IS '项目状态：0.不删  1.删除';
+=======
+COMMENT ON COLUMN "public"."tasks"."apply_switch" IS '报名开关: 0.关  1.开';
+COMMENT ON COLUMN "public"."tasks"."del" IS '项目状态: 0.不删  1.删除';
+>>>>>>> Stashed changes
 
 
 CREATE INDEX "desc" ON "public"."tasks" USING btree (
@@ -42,6 +51,7 @@ CREATE INDEX "issuer" ON "public"."tasks" USING btree (
 );
 
 
+<<<<<<< Updated upstream
 -- 创建订单表
 CREATE TABLE orders (
 	"id" BIGINT UNIQUE,
@@ -69,6 +79,8 @@ CREATE TABLE users (
 );
 
 
+=======
+>>>>>>> Stashed changes
 -- 创建报名表
 CREATE TABLE apply_info (
  id serial PRIMARY KEY,
@@ -92,6 +104,11 @@ CREATE TABLE trans_hashes (
   "update_time" date DEFAULT (now())
 );
 
+<<<<<<< Updated upstream
 COMMENT ON COLUMN "public"."trans_hashes"."category" IS '交易hash种类：1.创建需求  2.修改需求  3.报名  4.修改报名  5.删除报名 6.创建订单以及修改订单';
 COMMENT ON COLUMN "public"."trans_hashes"."is_update" IS '是否同步链上数据：0.未同步  1.已经同步';
+=======
+COMMENT ON COLUMN "public"."trans_hashes"."category" IS '交易hash种类: 1.创建需求  2.修改需求  3.报名  4.修改报名  5.删除报名 6.创建订单以及修改订单';
+COMMENT ON COLUMN "public"."trans_hashes"."is_update" IS '是否同步链上数据: 0.未同步  1.已经同步';
+>>>>>>> Stashed changes
 
