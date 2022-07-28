@@ -24,3 +24,9 @@ export const translatedPjc = (arr) => {
     })
     return str.substring(0,str.lastIndexOf('、'))
 }
+
+export const sToDays = (s) => {
+    console.log(s,'s==>');
+    let days = s/60/60/24;
+    return days
+}

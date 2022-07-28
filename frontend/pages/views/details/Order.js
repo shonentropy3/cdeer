@@ -4,7 +4,7 @@ import style from '../../../styles/utils.module.scss'
 import { Menu, message, Switch, Empty } from 'antd';
 import NavigationBar from "../../../components/NavigationBar";
 import { getDemandInfo, modifyApplySwitch, getMyApplylist } from "../../../http/api";
-import { translatedPjc, translatedRole } from '../../../utils/translated'
+import { translatedPjc, translatedRole, sToDays } from '../../../utils/translated'
 
 export default function OrderDetail(oid) {
 
@@ -38,6 +38,7 @@ export default function OrderDetail(oid) {
             let r = res.data[0]
             r.role = translatedRole(r.role)
             r.task_type = translatedPjc(r.task_type)
+            r.period = sToDays(r.period)
             data = r
             setData({...data})
             checked = data.apply_switch === 1 ? true : false

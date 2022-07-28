@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { getDemandInfo, applyFor } from '../../../http/api';
 import NavigationBar from "../../../components/NavigationBar";
-import { translatedPjc, translatedRole } from '../../../utils/translated';
+import { translatedPjc, translatedRole, sToDays } from '../../../utils/translated';
 import { ApplyProject } from '../../../controller/ApplyProject';
 import { Modal, InputNumber, message } from 'antd';
 import { checkWalletIsConnected } from '../../../utils/checkWalletIsConnected';
@@ -28,8 +28,10 @@ export default function ProjectDetail() {
         getDemandInfo({id: oid})
         .then(res=>{
             let data = res.data[0]
+            console.log(data);
             data.role = translatedRole(data.role)
             data.task_type = translatedPjc(data.task_type)
+            data.period = sToDays(data.period)
             detail = data
             detailSet({...detail})
         })

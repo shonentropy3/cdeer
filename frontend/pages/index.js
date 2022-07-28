@@ -3,7 +3,7 @@ import Link from "next/link"
 import { Spin, BackTop, Divider, Empty } from 'antd';
 import { getDemand } from '../http/api';
 import style from '../styles/utils.module.scss'
-import { translatedPjc, translatedRole } from '../utils/translated';
+import { translatedPjc, translatedRole, sToDays } from '../utils/translated';
 
 
 export default function Home() {
@@ -72,9 +72,10 @@ export default function Home() {
   const marketData = async()=>{
     await getDemand()
     .then(res => {
-      Array.from(res).forEach((e,i) => {
-        res[i].role = translatedRole(e.role)
-        res[i].demand_type = translatedPjc(e.demand_type)
+      Array.from(res.data).forEach((e,i) => {
+        res.data[i].role = translatedRole(e.role)
+        res.data[i].demand_type = translatedPjc(e.task_type)
+        res.data[i].period = sToDays(e.period)
       })
       data.detail = res
       data.status = 1

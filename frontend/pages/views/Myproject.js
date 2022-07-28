@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import ProjectList from '../../components/ProjectList';
 import style from '../../styles/utils.module.scss'
 import { getMyDemand,getApplyinfo } from '../../http/api';
-import { translatedPjc, translatedRole } from '../../utils/translated'
+import { translatedPjc, translatedRole, sToDays } from '../../utils/translated'
 
 
 export default function Myproject() {
@@ -51,6 +51,7 @@ export default function Myproject() {
           Array.from(res).forEach((e,i) => {
             res[i].roleNew = translatedRole(e.role)
             res[i].pro_typeNew = translatedPjc(e.task_type)
+            res[i].period = sToDays(e.period)
           })
           pjcList = res;
           setPjcList([...pjcList])
@@ -76,6 +77,7 @@ export default function Myproject() {
             res.data.forEach(ele => {
               getMyDemand({demand_id: ele.task_id})
                 .then(res => {
+                  res[0].period = sToDays(res[0].period)
                   arr.push(res[0])
                   applyList = arr
                   setApplyList([...applyList])
