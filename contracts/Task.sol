@@ -24,7 +24,7 @@ contract Task is ERC721, ITask, Ownable {
     event DeleteTask(uint indexed taskId, address maker);
     event ApplyFor(uint indexed taskId, address indexed taker, uint valuation);
     event CancelApply(uint indexed taskId, address taker);
-    event SwitchApply(uint indexed taskId, address maker, bool);
+    event ApplyEnable(uint indexed taskId, address maker, bool);
     event ModifyFee(address indexed owner, uint createTaskFee);
 
     struct TaskInfo {
@@ -33,7 +33,7 @@ contract Task is ERC721, ITask, Ownable {
         string attachment;
         uint budget;
         uint period;
-        bool applyEnable;
+        bool applyEnabled;
     }
 
     struct applyInfo {
@@ -67,7 +67,7 @@ contract Task is ERC721, ITask, Ownable {
             attachment: _taskInfo.attachment,
             budget: _taskInfo.budget,            
             period: _taskInfo.period,
-            applyEnable: false
+            applyEnabled: true
         });
         _safeMint(msg.sender, taskId);
 
@@ -86,7 +86,7 @@ contract Task is ERC721, ITask, Ownable {
         tasks[_taskId].desc = _taskInfo.desc;
         tasks[_taskId].attachment = _taskInfo.attachment;
         tasks[_taskId].period = _taskInfo.period;
-        tasks[_taskId].applyEnable = false;
+        tasks[_taskId].applyEnabled = _taskInfo.applyEnabled;
 
         emit ModifyTask(_taskId, msg.sender, _taskInfo.title, _taskInfo.budget, 
             _taskInfo.desc, _taskInfo.attachment, _taskInfo.period);
@@ -104,7 +104,7 @@ contract Task is ERC721, ITask, Ownable {
 
     function applyFor(uint _taskId, uint _valuation) external {
         require(msg.sender != ownerOf(_taskId), "Not apply for orders yourself.");
-        require(applyEnable, "The apply switch is closed.");
+        require(tasks[_taskId].applyEnabled, "The apply switch is closed.");
 
         applyInfos[_taskId][msg.sender].isApply = true;
         applyInfos[_taskId][msg.sender].valuation = _valuation;
@@ -119,12 +119,12 @@ contract Task is ERC721, ITask, Ownable {
         emit CancelApply(_taskId, msg.sender);
     }
 
-    function switchApply(uint _taskId, bool _switch) external {
+    function applyEnable(uint _taskId, bool _applyEnabled) external {
         require(msg.sender == ownerOf(_taskId), "No permission.");
-        require(tasks[_taskId].applyEnable != _switch, "It is the current state.");
-        tasks[_taskId].applyEnable = _switch;
+        require(tasks[_taskId].applyEnabled != _applyEnabled, "It is the current state.");
+        tasks[_taskId].applyEnabled = _applyEnabled;
 
-        emit SwitchApply(_taskId, msg.sender, _switch);
+        emit ApplyEnable(_taskId, msg.sender, _applyEnabled);
     }
     // TODO:手续费最大  
     function modifyFee(uint _createTaskFee) external onlyOwner {

@@ -16,6 +16,31 @@
           "type": "uint256"
         },
         {
+          "indexed": false,
+          "internalType": "address",
+          "name": "maker",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "name": "ApplyEnable",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "taskId",
+          "type": "uint256"
+        },
+        {
           "indexed": true,
           "internalType": "address",
           "name": "taker",
@@ -260,31 +285,6 @@
       "inputs": [
         {
           "indexed": true,
-          "internalType": "uint256",
-          "name": "taskId",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "maker",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "name": "SwitchApply",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
           "internalType": "address",
           "name": "from",
           "type": "address"
@@ -304,6 +304,24 @@
       ],
       "name": "Transfer",
       "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_taskId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "_applyEnabled",
+          "type": "bool"
+        }
+      ],
+      "name": "applyEnable",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
     },
     {
       "inputs": [
@@ -404,7 +422,7 @@
             },
             {
               "internalType": "bool",
-              "name": "applySwitch",
+              "name": "applyEnabled",
               "type": "bool"
             }
           ],
@@ -523,7 +541,7 @@
             },
             {
               "internalType": "bool",
-              "name": "applySwitch",
+              "name": "applyEnabled",
               "type": "bool"
             }
           ],
@@ -688,24 +706,6 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_taskId",
-          "type": "uint256"
-        },
-        {
-          "internalType": "bool",
-          "name": "_switch",
-          "type": "bool"
-        }
-      ],
-      "name": "switchApply",
-      "outputs": [],
-      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
