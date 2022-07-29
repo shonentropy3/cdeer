@@ -176,7 +176,6 @@ function Publish() {
                 </div>
                         
         </> 
-        
       )
     }
     // 输入绑定
@@ -214,35 +213,32 @@ function Publish() {
       Set_pjc([...pjc])
     }
     // 输入数据
-    let [account,Set_account] = useState(
-        [
-            {
-                title: '项目名称',
-                value: '',
-                status: '',
-                help: ''
-            },
-            {
-                title: '项目预算',
-                value: '',
-                status: '',
-                help: ''
-            },
-            {
-                title: '项目周期',
-                value: '',
-                status: '',
-                help: ''
-            },
-            {
-                title: '项目描述',
-                value: '',
-                status: '',
-                help: ''
-            }
-            
-        ]
-      )
+    let [account,Set_account] = useState([
+          {
+              title: '项目名称',
+              value: '',
+              status: '',
+              help: ''
+          },
+          {
+              title: '项目预算',
+              value: '',
+              status: '',
+              help: ''
+          },
+          {
+              title: '项目周期',
+              value: '',
+              status: '',
+              help: ''
+          },
+          {
+              title: '项目描述',
+              value: '',
+              status: '',
+              help: ''
+          }
+    ])
       // 角色
       let [tuan,Set_tuan] = useState([])
       // 项目类型

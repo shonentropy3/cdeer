@@ -108,7 +108,7 @@ export default function OrderDetail(oid) {
         checked = !checked
         setChecked(checked)
         let obj = {
-            demandId: data.demand_id,
+            demandId: data.id,
             buttonSwitch: s,
         }
         obj = JSON.stringify(obj)

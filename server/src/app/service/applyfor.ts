@@ -68,6 +68,7 @@ export class ApplyforService {
     // TODO:需要考虑验证问题
     async modifyApplySwitch(@Body() body: any): Promise<ApplyInfo[]> {
         let bodyData = JSON.parse(body.proLabel)
+        
         return await this.applyInfoRepository.query(modifyApplySwitch(bodyData))
         .then(res =>{
             let obj = {

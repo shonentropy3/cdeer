@@ -96,22 +96,13 @@ export class TaskService {
         let logBlock = last[0].block;
         if (logBlock >= latest) return; // 区块已监听过了
         logBlock = Math.max(logBlock, (latest - 100)); // 最多往前100区块
-        let fromBlock = logBlock + 1;
-        let toBlock = latest;
-
         
         // 创建task任务
         let taskHash = await this.applyInfoRepository.query(getTaskHash());
         
         for (let v of taskHash) {
             const log = await rpcProvider.getTransactionReceipt(v.hash);
-            
-            // taskId, msg.sender, _taskInfo.title, _taskInfo.budget, 
-            // _taskInfo.desc, _taskInfo.attachment, _taskInfo.period
-
             const createTask = new ethers.utils.Interface(["event CreateTask(uint256 indexed taskId, address indexed maker, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
-            
-
             let decodedData = createTask.parseLog(log.logs[1]);
             
             const taskId = decodedData.args.taskId.toString();

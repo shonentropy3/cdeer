@@ -84,6 +84,8 @@ export const delApply = params => {
 }
 
 export const modifyApplySwitch = params => {
-    let sql = `UPDATE tasks SET apply_switch = ${params.buttonSwitch}  WHERE task_id = '${params.demandId}'`
+    let sql = `UPDATE tasks SET apply_switch = ${params.buttonSwitch}  WHERE id = '${params.demandId}'`
+    console.log(sql,'==>');
+    
     return sql
 }

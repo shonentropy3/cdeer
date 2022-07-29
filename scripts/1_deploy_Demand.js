@@ -4,7 +4,7 @@ const { utils } = require("ethers");
 
 async function main() {
     await hre.run('compile');
-    const [deployer,deployer1] = await ethers.getSigners();
+    const [deployer,deployer1] = await hre.ethers.getSigners();
     const baseTokenURI = `QmSsw6EcnwEiTT9c4rnAGeSENvsJMepNHmbrgi2S9bXNJr`;
 
     // Get owner/deployer's wallet address
