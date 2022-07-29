@@ -33,7 +33,7 @@ contract Task is ERC721, ITask, Ownable {
         string attachment;
         uint budget;
         uint period;
-        bool applySwitch;
+        bool applyEnable;
     }
 
     struct applyInfo {
@@ -67,7 +67,7 @@ contract Task is ERC721, ITask, Ownable {
             attachment: _taskInfo.attachment,
             budget: _taskInfo.budget,            
             period: _taskInfo.period,
-            applySwitch: false
+            applyEnable: false
         });
         _safeMint(msg.sender, taskId);
 
@@ -86,7 +86,7 @@ contract Task is ERC721, ITask, Ownable {
         tasks[_taskId].desc = _taskInfo.desc;
         tasks[_taskId].attachment = _taskInfo.attachment;
         tasks[_taskId].period = _taskInfo.period;
-        tasks[_taskId].applySwitch = false;
+        tasks[_taskId].applyEnable = false;
 
         emit ModifyTask(_taskId, msg.sender, _taskInfo.title, _taskInfo.budget, 
             _taskInfo.desc, _taskInfo.attachment, _taskInfo.period);
@@ -104,6 +104,7 @@ contract Task is ERC721, ITask, Ownable {
 
     function applyFor(uint _taskId, uint _valuation) external {
         require(msg.sender != ownerOf(_taskId), "Not apply for orders yourself.");
+        require(applyEnable, "The apply switch is closed.");
 
         applyInfos[_taskId][msg.sender].isApply = true;
         applyInfos[_taskId][msg.sender].valuation = _valuation;
@@ -120,8 +121,8 @@ contract Task is ERC721, ITask, Ownable {
 
     function switchApply(uint _taskId, bool _switch) external {
         require(msg.sender == ownerOf(_taskId), "No permission.");
-        require(tasks[_taskId].applySwitch != _switch, "It is the current state.");
-        tasks[_taskId].applySwitch = _switch;
+        require(tasks[_taskId].applyEnable != _switch, "It is the current state.");
+        tasks[_taskId].applyEnable = _switch;
 
         emit SwitchApply(_taskId, msg.sender, _switch);
     }

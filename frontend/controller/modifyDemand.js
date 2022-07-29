@@ -19,7 +19,7 @@ export default async function ModifyDemand(account) {
             desc: data.pro_content,
             attachment: data.attachment,
             period: data.period,
-            applySwitch: false
+            applyEnable: false
         })
         .then(res => {
           console.log(res,'===>');
