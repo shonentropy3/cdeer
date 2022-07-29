@@ -76,13 +76,9 @@ npm run start:dev
 
 注：
 
-1. 创建task需求时，目前使用扫块的形式，因此会记录上一次执行块的高度，启动该项目之前，需在block_logs表中插入数据
-2. 需复制.envExample文件，命名为.env，填写数据
+1. 需复制.envExample文件，命名为.env，填写数据
 
 ```js
-// 插入数据sql语句
-INSERT INTO block_logs(id,block) VALUES (0,0),(1,0)
-
 // 启动项目
 npm run start:dev
 ```
