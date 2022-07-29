@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "hardhat/console.sol";
 import "./interface/ITask.sol";
 
-//TODO:1.报名限制数量(暂时取消了)，乙方，时间久远后考虑废弃 2.去掉所有log
+//TODO:1.报名限制数量(暂时取消了)，乙方，时间久远后考虑废弃之前报名数 2.去掉所有log
 contract Task is ERC721, ITask, Ownable {
     // 手续费数量
     uint createTaskFee = 1*10**17;
