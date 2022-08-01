@@ -20,6 +20,31 @@ export const getMyPjcDBb = params => {
     return sql
 }
 
+export const getFilter = params => {
+    let role = `cast(array['${params.role}'] as varchar[])&&role`;
+    let and = ' and ';
+    let where = 'WHERE';
+    let type = `cast(array['${params.task_type}'] as varchar[])&&task_type`;
+
+    if (!params.role) {
+        role = '';
+        and = '';
+    }
+    if (!params.task_type) {
+        type = '';
+        and = '';
+    }
+    if (!params.role&&!params.role) {
+        role = '';
+        type = '';
+        and = '';
+        where= '';
+    }
+    let sql = `SELECT * FROM public.tasks ${where} ${role} ${and} ${type}`
+    return sql
+}
+
+
 export const setDemand = params => {
     let sql = `
             insert into tasks(issuer, hash, "desc", role, task_type) 

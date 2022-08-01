@@ -33,7 +33,6 @@ export class UserService {
         }else{  
           return await this.tasksRepository.query(getMyPjcDBb(body.demand_id));
         }
-        
     } 
 
     async getMyApplylist(@Body() body: any) {

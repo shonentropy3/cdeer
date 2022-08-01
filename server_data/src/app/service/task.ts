@@ -52,6 +52,7 @@ export class TaskService {
         if (logs.length > 0) {
             let txs = logs.map((ele: any) => {
                 let decodedData = CreateTask.parseLog(ele);
+                console.log(decodedData);
                 return {
                     taskId: decodedData.args[0].toString(),
                     title: decodedData.args[2],
@@ -102,6 +103,7 @@ export class TaskService {
         
         for (let v of taskHash) {
             const log = await rpcProvider.getTransactionReceipt(v.hash);
+
             const createTask = new ethers.utils.Interface(["event CreateTask(uint256 indexed taskId, address indexed maker, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
             let decodedData = createTask.parseLog(log.logs[1]);
             
@@ -154,8 +156,6 @@ export class TaskService {
             let sqlUpdateAI,insertAI;
             if (sqlBefore.length > 0) {
                 sqlUpdateAI = await this.applyInfoRepository.query(sql.sqlUpdateAI);
-                console.log(sqlUpdateAI,'========');
-                
             } else {
                 insertAI = await this.applyInfoRepository.query(sql.insert);
             }

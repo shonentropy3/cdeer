@@ -1,7 +1,7 @@
 import { useEffect, useState, } from 'react';
 import Link from "next/link"
 import { Spin, BackTop, Divider, Empty } from 'antd';
-import { getDemand } from '../http/api';
+import { getDemand, getFilter } from '../http/api';
 import style from '../styles/utils.module.scss'
 import { translatedPjc, translatedRole, sToDays } from '../utils/translated';
 
@@ -14,11 +14,8 @@ export default function Home() {
           <Spin />
         </>;
     }
-    if (data.status === 2) {
-        // return "Error:"+error;
-    }
     if (data.status === 1) {
-      if (data.detail.length === 0 || data.detail === " ") {
+      if (data.detail.data.length === 0 || data.detail === " ") {
         return <Empty />
       }
         return data.detail.data.map(
@@ -65,7 +62,25 @@ export default function Home() {
 
   // 筛选分类
   let filter = () => {
-    console.log(pjcC,roleC);
+    data.status = 0;
+    Set_data({...data})
+    let obj = {
+      role: roleC,
+      task_type: pjcC
+    }
+    obj = JSON.stringify(obj)
+    getFilter({obj: obj})
+    .then(res => {
+      Array.from(res.data).forEach((e,i) => {
+        res.data[i].role = translatedRole(e.role)
+        res.data[i].demand_type = translatedPjc(e.task_type)
+        res.data[i].period = sToDays(e.period)
+      })
+      data.detail = res;
+      data.status = 1;
+      Set_data({...data})
+      console.log(data);
+    })
   }
 
   // 获取页面数据

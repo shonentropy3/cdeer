@@ -31,4 +31,9 @@ export class MarketController {
     async getDemandInfo(@Body() body: any){
         return await this.marketService.getDemandInfo(body)
     }
+
+    @Post('getFilter')  // 查看需求详情
+    async getFilter(@Body() body: any){
+        return await this.marketService.getFilter(body)
+    }
 }

@@ -22,6 +22,17 @@ export const createDemand = (data) => {
 );
 }
 
+export const getFilter = (data) => {
+
+    return serviceAxios({
+        url: "/demand/getFilter",
+        // url: "/upchain/createDemand",
+        method: "post",
+        data,
+    }
+);
+}
+
 export const modifyDemand = (data) => {
 
     return serviceAxios({

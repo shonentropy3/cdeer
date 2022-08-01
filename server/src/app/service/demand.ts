@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { Tasks } from '../db/entity/Tasks';	//引入entity
 
 // dbUtils
-import { getDemandDate, getDemandInfoDate, setDemand, moDemand, delDemand } from '../db/sql/demand';
+import { getDemandDate, getDemandInfoDate, setDemand, moDemand, delDemand, getFilter } from '../db/sql/demand';
 
 
 @Injectable()
@@ -31,6 +31,24 @@ export class MarketService {
             return err
         });
     }
+
+    // 获取筛选列表
+    async getFilter(@Body() body: any): Promise<Tasks[]> {
+        let data = JSON.parse(body.obj);
+        return await this.tasksRepository.query(getFilter(data))
+        .then(res =>{
+            let obj = {
+                code: 200,
+                data: res
+            }
+            return obj
+        })
+        .catch(err => {
+            console.log('getDemandInfo =>', err)
+            return err
+        });
+    }
+    
 
     // 获取项目详情
     async getDemandInfo(@Body() body: any): Promise<Tasks[]> {
