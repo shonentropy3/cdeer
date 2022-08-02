@@ -1,9 +1,8 @@
 import { Button, message } from "antd";
 import { useEffect, useState } from "react"
-import { orderStage } from "../../../controller/order";
+import { orderStage, withdraw } from "../../../controller/order";
 import { checkWalletIsConnected } from "../../../utils/checkWalletIsConnected";
 import getOrderStatus from "../../../utils/getOrderStatus";
-import { withdraw } from "../../../utils/stages";
 
 export default function StageWorker() {
     

@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import getOrderStatus from "../../../utils/getOrderStatus";
 import { withRouter } from 'next/router'
-import { orderStage } from "../../../controller/order";
+import { orderStage, confirmOrder, confirmOrderStage, terminateStage } from "../../../controller/order";
 import { Button, message } from "antd";
-import { confirmOrder, confirmOrderStage, terminateStage } from "../../../utils/stages";
 
 function OrderDetail({router}) {
 

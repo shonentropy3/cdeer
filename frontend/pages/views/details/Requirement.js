@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { getDemandInfo, applyFor } from '../../../http/api';
 import NavigationBar from "../../../components/NavigationBar";
 import { translatedPjc, translatedRole, sToDays } from '../../../utils/translated';
-import { ApplyProject } from '../../../controller/ApplyProject';
+import { ApplyProject } from '../../../controller/task';
 import { Modal, InputNumber, message } from 'antd';
 import { checkWalletIsConnected } from '../../../utils/checkWalletIsConnected';
 import { useRouter } from 'next/router'

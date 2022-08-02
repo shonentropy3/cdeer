@@ -5,7 +5,7 @@ import { message, Popconfirm } from 'antd';
 
 import Modify from "./Modify";
 import { cancelApply, deleteDemand, getMyApplylist } from '../http/api';
-import { CancelApply } from "../controller/ApplyProject";
+import { CancelApply } from "../controller/task";
 import { checkWalletIsConnected } from "../utils/checkWalletIsConnected";
 import getOrderStatus from "../utils/getOrderStatus";
 

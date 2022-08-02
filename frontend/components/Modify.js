@@ -1,6 +1,6 @@
 import { Input, InputNumber, Checkbox, Button, message } from 'antd';
 import { useEffect, useState } from 'react';
-import ModifyDemand from '../controller/modifyDemand';
+import { ModifyDemand } from '../controller/task';
 import { modifyDemand } from '../http/api';
 
 

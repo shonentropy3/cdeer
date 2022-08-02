@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { createDemand,getHash } from '../../http/api';
 import { Input, Form, message, Button, Upload, notification, InputNumber } from 'antd';
 import { UploadOutlined, WarningOutlined, InfoCircleOutlined } from '@ant-design/icons';
-import Demand from '../../controller/demand';
+import { Demand } from '../../controller/task';
 import { useRouter } from 'next/router'
 
 
@@ -90,6 +90,7 @@ function Publish() {
         await Demand(para)
         .then(res => {
           if (res) {
+            console.log(res);
             data = JSON.parse(data)
             data.payhash = res.hash
             data = JSON.stringify(data)
@@ -102,12 +103,10 @@ function Publish() {
             }
           }
         })
-
         // 2、创建项目
         if (tradeStatus) {
           createDemand(para)
             .then(res => {
-              console.log(res);
               if (res.code == '200') {
                 message.success('创建成功');
                 setTimeout(() => {

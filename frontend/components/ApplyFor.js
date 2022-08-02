@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
 import { CloseCircleTwoTone } from '@ant-design/icons';
 import { InputNumber, Button, message } from 'antd';
-import { applyFor } from '../pages/http/api';
-import { ApplyProject } from "../controller/ApplyProject";
+import { applyFor } from '../http/api';
+import { ApplyProject } from "../controller/task";
 import { checkWalletIsConnected } from "../utils/checkWalletIsConnected";
 import Order from "../controller/order";
 

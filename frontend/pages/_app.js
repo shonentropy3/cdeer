@@ -12,13 +12,20 @@ import '../styles/details/requirement.scss'
 import '../styles/details/order.scss'
 import '../styles/details/project.scss'
 import '../styles/details/stage.scss'
+import { Web3ReactProvider } from "@web3-react/core";
+import { Web3Provider } from "@ethersproject/providers";
 
 
+const getLibrary = (provider) => {
+  return new Web3Provider(provider);
+};
 function MyApp({ Component, pageProps }) {
   return (
     <div>
+      <Web3ReactProvider getLibrary={getLibrary}>
       <Header />
       <Component {...pageProps} />
+      </Web3ReactProvider>
     </div>
   )
 }

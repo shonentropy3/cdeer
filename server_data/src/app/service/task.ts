@@ -48,11 +48,12 @@ export class TaskService {
         
         const logs = await rpcProvider.getLogs(filter);
         const CreateTask = new ethers.utils.Interface(["event ModifyTask(uint256 indexed taskId, address maker, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
+        // console.log('logs==>',logs);
         
         if (logs.length > 0) {
             let txs = logs.map((ele: any) => {
                 let decodedData = CreateTask.parseLog(ele);
-                console.log(decodedData);
+
                 return {
                     taskId: decodedData.args[0].toString(),
                     title: decodedData.args[2],
