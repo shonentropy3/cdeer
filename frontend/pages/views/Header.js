@@ -20,7 +20,6 @@ function Header() {
         deactivate, 
         library:provider } = useWeb3React();
 
-    let [state,setState] = useState(undefined)
     const [hasMetamask, setHasMetamask] = useState(false);
     useEffect(() => {
         if (typeof window.ethereum !== "undefined") {
@@ -31,20 +30,10 @@ function Header() {
     
     const connect = async() => {
         await activate(injected)
-        .then(() => {
-            console.log(account);
-        })
-        state = account;
-        setState(state)
-        console.log(account);
     }
-
 
     const disconnect = async() => {
         deactivate()
-        state = account;
-        setState(state)
-        console.log(account);
     }
 
     return (
@@ -85,6 +74,8 @@ function Header() {
 
                     </div>
                 </Link> */}
+                
+                {active ? <p>{account}</p> : ""}
                 {hasMetamask ? (
                     active ? (
                         <Button className='connect' type="primary" onClick={() => disconnect()}>disconnect</Button>
@@ -94,7 +85,6 @@ function Header() {
                 ) : (
                     "Please install metamask"
                 )}
-                {active ? <p>{account}</p> : ""}
             </div>
         </div>
     )
