@@ -6,14 +6,15 @@ export const ModifyDemand = async(account) => {
   try {
     if (window.ethereum !== 'undefined') {
       let data = JSON.parse(account)
-      let price =  data.budget * 100
+      let budget = data.budget * 100 
+      let period = data.period * 24 * 60 * 60
       return await taskContract().modifyTask(data.demand_id,
         { 
             title: data.title,
-            budget: price,
+            budget: budget,
             desc: data.pro_content,
             attachment: data.attachment,
-            period: data.period,
+            period: period,
             applyEnabled: true
         })
         .then(res => {

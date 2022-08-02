@@ -2,9 +2,51 @@ import Link from 'next/link'
 // import style from '../../styles/header.module.scss'
 // import { MessageOutlined } from '@ant-design/icons';
 import { DownOutlined } from '@ant-design/icons';
-import { Dropdown, Menu, Space } from 'antd';
+import { Dropdown, Menu, Space, Button } from 'antd';
+
+import { InjectedConnector } from "@web3-react/injected-connector";
+import { useWeb3React } from "@web3-react/core"
+import { useEffect, useState } from 'react';
+export const injected = new InjectedConnector();
+
 
 function Header() {
+    const { 
+        active, 
+        account, 
+        library, 
+        connector, 
+        activate, 
+        deactivate, 
+        library:provider } = useWeb3React();
+
+    let [state,setState] = useState(undefined)
+    const [hasMetamask, setHasMetamask] = useState(false);
+    useEffect(() => {
+        if (typeof window.ethereum !== "undefined") {
+          setHasMetamask(true);
+          connect();
+        }
+      },[]);
+    
+    const connect = async() => {
+        await activate(injected)
+        .then(() => {
+            console.log(account);
+        })
+        state = account;
+        setState(state)
+        console.log(account);
+    }
+
+
+    const disconnect = async() => {
+        deactivate()
+        state = account;
+        setState(state)
+        console.log(account);
+    }
+
     return (
         <div className='header'>
             <div className="left">
@@ -37,14 +79,22 @@ function Header() {
                             发布项目
                         </div>
                     </Link>
-                    
-
                 </div>
-                <Link href="/views/My">
+                {/* <Link href="/views/My">
                     <div className="avt">
 
                     </div>
-                </Link>
+                </Link> */}
+                {hasMetamask ? (
+                    active ? (
+                        <Button className='connect' type="primary" onClick={() => disconnect()}>disconnect</Button>
+                    ) : (
+                        <Button className='connect' type="primary" onClick={() => connect()}>connect</Button>
+                    )
+                ) : (
+                    "Please install metamask"
+                )}
+                {active ? <p>{account}</p> : ""}
             </div>
         </div>
     )
