@@ -31,7 +31,6 @@
             }
             input{
                 outline: none;
-                border: 1px solid #cad3de;
                 padding: 10px;
                 border-radius: 5px;
             }
@@ -92,11 +91,11 @@
             .result{
                 display: flex;
                 flex-wrap: wrap;
-                margin-bottom: 30px;
                 font-size: 15px;
                 color: rgb(79, 79, 79);
                 div{
                     margin-right: 50px;
+                    margin-bottom: 30px;
                     display: flex;
                     align-items: center;
                     &:last-child{

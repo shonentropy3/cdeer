@@ -2,11 +2,13 @@ import Link from 'next/link'
 // import style from '../../styles/header.module.scss'
 // import { MessageOutlined } from '@ant-design/icons';
 import { DownOutlined } from '@ant-design/icons';
-import { Dropdown, Menu, Space, Button } from 'antd';
+import { Dropdown, Menu, Space, Button, Modal, Divider } from 'antd';
 
 import { InjectedConnector } from "@web3-react/injected-connector";
 import { useWeb3React } from "@web3-react/core"
 import { useEffect, useState } from 'react';
+import { connectors } from '../../utils/connectors';
+
 export const injected = new InjectedConnector();
 
 
@@ -18,25 +20,66 @@ function Header() {
         connector, 
         activate, 
         deactivate, 
+        chainId,
         library:provider } = useWeb3React();
 
     const [hasMetamask, setHasMetamask] = useState(false);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+
+    const showModal = () => {
+        setIsModalVisible(true);
+      };
+
+    const handleOk = () => {
+      setIsModalVisible(false);
+    };
+    
+    const handleCancel = () => {
+      setIsModalVisible(false);
+    };
+    
+
     useEffect(() => {
         if (typeof window.ethereum !== "undefined") {
           setHasMetamask(true);
-          connect();
         }
       },[]);
     
-    const connect = async() => {
-        await activate(injected)
-    }
+    // const connect = async() => {
+    //     await activate(injected)
+    // }
 
     const disconnect = async() => {
         deactivate()
     }
 
+    const test = async() => {
+        console.log(account,'==account==>');
+        console.log(connector,chainId);
+    }
+
     return (
+        <>
+        <Modal title="" className='Mask_connect' visible={isModalVisible} footer={null} onCancel={handleCancel}>
+            <div className="title">Welcome to Code-Market</div>
+            <div className='strong'>Sign-in to get started</div>
+            <Button className="li" onClick={() => {
+                console.log(connectors.injected);
+                activate(connectors.injected);
+                handleCancel();
+            }}>Metamask</Button>
+
+            <Button className="li" onClick={() => {
+                activate(connectors.walletConnect);
+                handleCancel();
+            }}>WalletConnect</Button>
+
+            <Button className="li" onClick={() => {
+                activate(connectors.coinbaseWallet);
+                handleCancel();
+            }}>coinbaseWallet</Button>
+            {/* <Divider>{}</Divider> */}
+        </Modal>
         <div className='header'>
             <div className="left">
                 <div className="logo">
@@ -75,18 +118,19 @@ function Header() {
                     </div>
                 </Link> */}
                 
-                {active ? <p>{account}</p> : ""}
+                {/* {active ? <p>{account}</p> : ""} */}
                 {hasMetamask ? (
                     active ? (
-                        <Button className='connect' type="primary" onClick={() => disconnect()}>disconnect</Button>
+                        <p>{account}</p>
                     ) : (
-                        <Button className='connect' type="primary" onClick={() => connect()}>connect</Button>
+                        <Button className='connect' type="primary" onClick={() => showModal()}>connect</Button>
                     )
                 ) : (
                     "Please install metamask"
                 )}
             </div>
         </div>
+        </>
     )
 }
 export default Header

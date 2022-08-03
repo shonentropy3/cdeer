@@ -4,15 +4,67 @@ import { Input, Form, message, Button, Upload, notification, InputNumber } from 
 import { UploadOutlined, WarningOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { Demand } from '../../controller/task';
 import { useRouter } from 'next/router'
+import { useWeb3React } from "@web3-react/core"
+import Checkbox from 'antd/lib/checkbox/Checkbox';
 
 
 // const demand = require('../../../deployments/abi/Demand.json')
 // const demandAddr = require('../../../deployments/Demand.json')
 
 function Publish() {
-  const _data = require("../../data/data.json")
-  const router = useRouter();
-  const [currentAccount, setCurrentAccount] = useState(null);
+
+  const { 
+    active, 
+    // account, 
+    library, 
+    connector, 
+    activate, 
+    deactivate, 
+    chainId,
+    library:provider } = useWeb3React();
+    const _data = require("../../data/data.json")
+    const router = useRouter();
+    const [currentAccount, setCurrentAccount] = useState(null);
+    let [inner,setInner] = useState(_data.inner)
+        // 输入数据
+        let [account,Set_account] = useState([
+          {
+              title: '项目名称',
+              value: '',
+              status: '',
+              help: ''
+          },
+          {
+              title: '项目预算',
+              value: '',
+              status: '',
+              help: ''
+          },
+          {
+              title: '项目周期',
+              value: '',
+              status: '',
+              help: ''
+          },
+          {
+              title: '项目描述',
+              value: '',
+              status: '',
+              help: ''
+          }
+    ])
+      // 角色
+      let [tuan,Set_tuan] = useState([])
+      // 项目类型
+      let [pjc,Set_pjc] = useState([])
+      // 附件
+      let [form_Data,form_DataSet] = useState()
+
+    useEffect(() => {
+      inner[5].list = _data.market_role;
+      inner[6].list = _data.pjc;
+      setInner([...inner])
+    },[])
 
     const connectWalletHandler = async () => {
         const { ethereum } = window;
@@ -27,8 +79,6 @@ function Publish() {
           console.log(err)
         }
     }
-
-
 
     const mintNftHandler = async () => {
 
@@ -122,22 +172,10 @@ function Publish() {
               message.error('创建失败');
             })
         }
-        // createDemand(para,account)
-
-        // console.log("ethereum===>", ethereum);
-        //   if (typeof window.ethereum !== 'undefined') {
-        //       let addr=await ethereum.request({ method: 'eth_requestAccounts' });//授权连接钱包
-        //       console.log('用户钱包地址:',addr[0]);
-        //   }else{
-        //       console.log('未安装钱包插件！');
-        //   }
-
 
     }
 
-
     // 登陆/下单按钮
-    
     const buttonModel = () => {
       if (currentAccount) {
         return <button onClick={mintNftHandler} className='btn login'> Mint NFT </button>
@@ -146,45 +184,6 @@ function Publish() {
       }
     }
 
-
-    // 角色选择(输出)
-    const roleBox = () => {
-      return <>
-                <p>选择具体角色</p>
-                <div className="result">
-                  {
-                    _data.role.map((item,index)=> <div key={index}>
-                      <input type="checkbox" value={item.value}  name="role" onChange={e=>{get_tuan(e)}}/>{item.name}
-                    </div> )
-                  }
-                </div>
-            </> 
-    }
-
-    // 类型选择(输出)
-    const typeBox = () => {
-      return(
-        <>
-                <p>选择您的项目类型（可多选）</p>
-                <div className="result">
-                  {
-                    _data.demand.map((item,index)=> <div className="result" key={index}>
-                      <input type="checkbox" value={item.value} name="role" onChange={e=>{get_pjc(e)}}/>{item.name}
-                    </div> )
-                  }
-                </div>
-                        
-        </> 
-      )
-    }
-    // 输入绑定
-    let get_account = (e,i,j) =>{
-        j ? account[i].value = e : account[i].value = e.target.value;
-        account[i].help = ''
-        account[i].status = ''
-        Set_account([...account])
-        // console.log(e);
-    }
     // 团队角色绑定
     let get_tuan = e => {
       let res = e.target.defaultValue
@@ -211,39 +210,6 @@ function Publish() {
       pjc.push(res)
       Set_pjc([...pjc])
     }
-    // 输入数据
-    let [account,Set_account] = useState([
-          {
-              title: '项目名称',
-              value: '',
-              status: '',
-              help: ''
-          },
-          {
-              title: '项目预算',
-              value: '',
-              status: '',
-              help: ''
-          },
-          {
-              title: '项目周期',
-              value: '',
-              status: '',
-              help: ''
-          },
-          {
-              title: '项目描述',
-              value: '',
-              status: '',
-              help: ''
-          }
-    ])
-      // 角色
-      let [tuan,Set_tuan] = useState([])
-      // 项目类型
-      let [pjc,Set_pjc] = useState([])
-      // 附件
-      let [form_Data,form_DataSet] = useState()
 
 
       // 上传前
@@ -300,69 +266,111 @@ function Publish() {
           } 
       };
 
+      const print = (e,i) => {
+        switch (e.type) {
+          case "input":
+            return <Input status={e.status} onChange={(event)=>{textChange(event,i)}} />
+
+          case "number":
+            return <InputNumber status={e.status} className={`${'data'+i}`}  min={1} onChange={(event)=>{textChange(event,i)}} />
+
+          case "text":
+            return <Input.TextArea name="" id="" cols="30" rows="10" onChange={(event)=>{textChange(event,i)}} />
+
+        }
+      }
+
+      const textChange = (e,i) => {
+        if (!e.target) {
+          inner[i].value = e;
+          inner[i].help = '';
+          inner[i].status = '';
+          setInner([...inner]);
+          return
+        }
+        inner[i].value = e.target.value;
+        inner[i].help = '';
+        inner[i].status = '';
+        setInner([...inner]);
+      }
+
+      const boxChange = (e,i) => {
+        let res = e.target.value
+
+        for (let j = 0; j < inner[i].value.length; j++) {
+          if (res === inner[i].value[j]) {
+            inner[i].value.splice(j,1)
+            setInner([...inner])
+            return
+          }
+        }
+        inner[i].value.push(res)
+        setInner([...inner])
+      }
 
     return(
         <div className="publish">
             <div className="box">
                     <h1>发布项目</h1>
                     {
-                        account.map((item,index) => <div key={index} className={`inner`}>
-                            <div className="title">
-                                {item.title}
-                            </div>
-                            <div className="desc">
-                                {
-                                    index !== account.length - 1 ? 
-                                    <>
+                      inner.map((element,index) => {
+                        if (element.type) {
+                          return  <div key={index} className={`inner`}>
+                                    <div className="title">
+                                      {element.name}
+                                    </div>
+                                    <div className="desc">
+                                      {
+                                        index !== 3 ? 
                                         <Form.Item
-                                            validateStatus={item.status}
-                                            help={item.help}
-                                            >
-                                            {
-                                              index > 0 ?  
-                                              <InputNumber status={item.status} className={`${'data'+index}`} min={1} onChange={(e)=>{get_account(e,index,'num')}} />
-                                              : 
-                                              <Input status={item.status} className={`${'data'+index}`} onChange={(e)=>{get_account(e,index)}} />
-                                            }
-                                            
-                                            {index === 1 ? '$' : ''}
-                                            {index === 2 ? '天' : ''}
+                                          validateStatus={element.status}
+                                          help={element.help}
+                                        >
+                                          {print(element,index)}
                                         </Form.Item>
-                                    </>
-                                    :
-                                    <>
-                                        <Form.Item validateStatus={item.status} hasFeedback help={item.help}>
-                                            <Input.TextArea name="" id="" cols="30" rows="10" onChange={(e)=>{get_account(e,index)}} />
+                                        :
+                                        <Form.Item validateStatus={element.status} hasFeedback help={element.help}>
+                                          {print(element,index)}
                                         </Form.Item>
-                                    </>
-                                }
-                            </div>
-                            
-                        </div>
-                        )
+                                      }
+                                    </div>
+                                  </div>
+                        }
+                        else if (element.list) {
+                          return  <div key={index} className="type">
+                                    <p>{element.name}</p>
+                                    <div className="result">
+                                    {
+                                      _data.pjc.map((e,i)=> {
+                                        if (e.value !== null) {
+                                          return  <div key={i}>
+                                                    <input type="checkbox" value={e.value} onChange={event=>{boxChange(event,index)}}/>{e.name}
+                                                  </div>
+                                        }
+                                      } )
+                                    }
+                                    </div>
+                                  </div>
+                        }
+                        else{
+                          return <div className={`upload`}>
+                              <p>相关文档<span>(选填)</span></p>
+                              <InfoCircleOutlined className='mr20' onClick={()=>tips()} />
+                              <Upload
+                                listType="picture"
+                                maxCount={1}
+                                name="file"
+                                onChange={handleChange}
+                                customRequest={upload}
+                              >
+                                <Button icon={<UploadOutlined />}>Upload (Max: 1)</Button>
+                              </Upload>
+                          
+                          </div>
+                        }
+                      })
                     }
-                    <div className={`upload`}>
-                      <p>相关文档<span>(选填)</span></p>
 
-                      <InfoCircleOutlined className='mr20' onClick={()=>tips()} />
-                      
-                        <Upload
-                          listType="picture"
-                          maxCount={1}
-                          name="file"
-                          onChange={handleChange}
-                          customRequest={upload}
-                        >
-                          <Button icon={<UploadOutlined />}>Upload (Max: 1)</Button>
-                        </Upload>
-                      
-                    </div>
-                    <div className="type">
-                    {roleBox()}
-                    </div>
-                    <div className="type">
-                    {typeBox()}
-                    </div>
                     {buttonModel()}
 
             </div>
