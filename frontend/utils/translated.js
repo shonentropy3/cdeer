@@ -4,7 +4,7 @@ const _data = require('../data/data.json')
 export const translatedRole = (arr) => {
     let str = ''
     arr.forEach(e => {
-        _data.role.forEach(ele => {
+        _data.market_role.forEach(ele => {
             if (e === ele.value) {
                 str += ele.name+'、'
             }
@@ -16,7 +16,7 @@ export const translatedRole = (arr) => {
 export const translatedPjc = (arr) => {
     let str = ''
     arr.forEach(e => {
-        _data.demand.forEach(ele => {
+        _data.pjc.forEach(ele => {
             if (e === ele.value) {
                 str += ele.name+'、'
             }

@@ -1,6 +1,4 @@
 import Link from 'next/link'
-// import style from '../../styles/header.module.scss'
-// import { MessageOutlined } from '@ant-design/icons';
 import { DownOutlined } from '@ant-design/icons';
 import { Dropdown, Menu, Space, Button, Modal, Divider } from 'antd';
 
@@ -23,7 +21,6 @@ function Header() {
         chainId,
         library:provider } = useWeb3React();
 
-    const [hasMetamask, setHasMetamask] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     const showModal = () => {
@@ -37,25 +34,10 @@ function Header() {
     const handleCancel = () => {
       setIsModalVisible(false);
     };
-    
 
-    useEffect(() => {
-        if (typeof window.ethereum !== "undefined") {
-          setHasMetamask(true);
-        }
-      },[]);
-    
-    // const connect = async() => {
-    //     await activate(injected)
-    // }
-
+    // 退出
     const disconnect = async() => {
         deactivate()
-    }
-
-    const test = async() => {
-        console.log(account,'==account==>');
-        console.log(connector,chainId);
     }
 
     return (
@@ -64,7 +46,6 @@ function Header() {
             <div className="title">Welcome to Code-Market</div>
             <div className='strong'>Sign-in to get started</div>
             <Button className="li" onClick={() => {
-                console.log(connectors.injected);
                 activate(connectors.injected);
                 handleCancel();
             }}>Metamask</Button>
@@ -119,15 +100,13 @@ function Header() {
                 </Link> */}
                 
                 {/* {active ? <p>{account}</p> : ""} */}
-                {hasMetamask ? (
+                {
                     active ? (
                         <p>{account}</p>
                     ) : (
                         <Button className='connect' type="primary" onClick={() => showModal()}>connect</Button>
                     )
-                ) : (
-                    "Please install metamask"
-                )}
+                }
             </div>
         </div>
         </>

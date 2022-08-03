@@ -87,6 +87,7 @@ export default function Home() {
   const marketData = async()=>{
     await getDemand()
     .then(res => {
+      
       Array.from(res.data).forEach((e,i) => {
         res.data[i].role = translatedRole(e.role)
         res.data[i].demand_type = translatedPjc(e.task_type)
