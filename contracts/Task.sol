@@ -6,25 +6,29 @@ import "./interface/IOrder.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "hardhat/console.sol";
 import "./interface/ITask.sol";
 
-//TODO:1.报名限制数量(暂时取消了)，乙方，时间久远后考虑废弃之前报名数 2.去掉所有log
+import "hardhat/console.sol";
+
+//TODO:1.报名限制数量(暂时取消了)，乙方，时间久远后考虑废弃之前报名数 
+// 2.去掉所有log
 contract Task is ERC721, ITask, Ownable {
     // 手续费数量
     uint createTaskFee = 1*10**17;
-    address _order;
+
+    address public order;
 
     using Counters for Counters.Counter;
- 
-    event CreateTask(uint indexed taskId, address indexed maker, string title, uint budget, 
+
+    event TaskCreated(uint indexed taskId, address indexed issuer, string title, uint budget, 
         string desc, string attachment, uint period);
-    event ModifyTask(uint indexed taskId, address maker, string title, uint budget, 
+    event TaskModified(uint indexed taskId, address issuer, string title, uint budget, 
         string desc, string attachment, uint period);
-    event DeleteTask(uint indexed taskId, address maker);
-    event ApplyFor(uint indexed taskId, address indexed taker, uint valuation);
-    event CancelApply(uint indexed taskId, address taker);
-    event ApplyEnable(uint indexed taskId, address maker, bool);
+    event TaskDisabled(uint indexed taskId, bool disabled);
+
+    event ApplyFor(uint indexed taskId, address indexed worker, uint cost);
+    event CancelApply(uint indexed taskId, address worker);
+    
     event ModifyFee(address indexed owner, uint createTaskFee);
 
     struct TaskInfo {
@@ -33,33 +37,31 @@ contract Task is ERC721, ITask, Ownable {
         string attachment;
         uint budget;
         uint period;
-        bool applyEnabled;
+        bool disabled;
     }
 
-    struct applyInfo {
-        bool isApply;
-        uint valuation;
-    }
 
     Counters.Counter private taskIds;
-    //taskId = >
-    mapping(uint => TaskInfo) private tasks; 
-    //报名信息,taskId = > taker
-    mapping(uint => mapping(address => applyInfo)) private  applyInfos;
+    //taskId =>
+    mapping(uint => TaskInfo) public tasks; 
+
+    //报名信息: taskId => worker
+    mapping(uint => mapping(address => uint)) private applyCosts;
 
     //TODO: 项目NFT名称
     constructor() ERC721("UpChain","UpChain") {
 
     }
 
-    function setOrder(address order_) external  virtual override onlyOwner {
-        require(order_ != address(0), "The parameter is zero address.");
-        _order = order_;    
+    function setOrder(address _order) external virtual override onlyOwner {
+        require(_order != address(0), "The parameter is zero address.");
+        order = _order;    
     }
 
     function createTask(TaskInfo memory _taskInfo) external payable {
-        require(msg.value > createTaskFee, "Not enough createTaskFee.");
-        taskIds.increment();   
+        require(msg.value >= createTaskFee, "Not enough createTaskFee.");
+        taskIds.increment();
+
         uint taskId = taskIds.current();        
         tasks[taskId] = TaskInfo({
             title: _taskInfo.title,
@@ -67,65 +69,49 @@ contract Task is ERC721, ITask, Ownable {
             attachment: _taskInfo.attachment,
             budget: _taskInfo.budget,            
             period: _taskInfo.period,
-            applyEnabled: true
+            disabled: false
         });
         _safeMint(msg.sender, taskId);
 
         console.log("taskId", taskId);
 
-        emit CreateTask(taskId, msg.sender, _taskInfo.title, _taskInfo.budget, 
+        emit TaskCreated(taskId, msg.sender, _taskInfo.title, _taskInfo.budget, 
             _taskInfo.desc, _taskInfo.attachment, _taskInfo.period);
     }
 
     function modifyTask(uint _taskId, TaskInfo memory _taskInfo) external {
         require(msg.sender == ownerOf(_taskId), "No permission.");
-        require(!IOrder(_order).hasTaskOrders(_taskId), "Existing orders.");
+        require(!IOrder(order).hasTaskOrders(_taskId), "Existing orders.");
 
         tasks[_taskId].title = _taskInfo.title;
         tasks[_taskId].budget = _taskInfo.budget;
         tasks[_taskId].desc = _taskInfo.desc;
         tasks[_taskId].attachment = _taskInfo.attachment;
         tasks[_taskId].period = _taskInfo.period;
-        tasks[_taskId].applyEnabled = _taskInfo.applyEnabled;
+        tasks[_taskId].disabled = _taskInfo.disabled;
 
-        emit ModifyTask(_taskId, msg.sender, _taskInfo.title, _taskInfo.budget, 
+        emit TaskModified(_taskId, msg.sender, _taskInfo.title, _taskInfo.budget, 
             _taskInfo.desc, _taskInfo.attachment, _taskInfo.period);
     }
 
-    function deleteTask(uint _taskId) external {
-        require(msg.sender == ownerOf(_taskId), "No permission.");
-        require(!IOrder(_order).hasTaskOrders(_taskId), "Existing orders.");
-
-        delete tasks[_taskId];
-        _burn(_taskId);
-
-        emit DeleteTask(_taskId, msg.sender);
-    }
-
-    function applyFor(uint _taskId, uint _valuation) external {
+    function applyFor(uint _taskId, uint _cost) external {
         require(msg.sender != ownerOf(_taskId), "Not apply for orders yourself.");
-        require(tasks[_taskId].applyEnabled, "The apply switch is closed.");
+        require(!tasks[_taskId].disabled, "The apply switch is closed.");
 
-        applyInfos[_taskId][msg.sender].isApply = true;
-        applyInfos[_taskId][msg.sender].valuation = _valuation;
+        applyCosts[_taskId][msg.sender] = _cost;
 
-        emit ApplyFor(_taskId, msg.sender, _valuation);
+        emit ApplyFor(_taskId, msg.sender, _cost);
     }
 
-    function cancelApply(uint _taskId) external {
-        require(msg.sender != ownerOf(_taskId), "Not applied.");
-        applyInfos[_taskId][msg.sender].isApply = false;
 
-        emit CancelApply(_taskId, msg.sender);
-    }
-
-    function applyEnable(uint _taskId, bool _applyEnabled) external {
+    function disableTask(uint _taskId, bool _disabled) external {
         require(msg.sender == ownerOf(_taskId), "No permission.");
-        require(tasks[_taskId].applyEnabled != _applyEnabled, "It is the current state.");
-        tasks[_taskId].applyEnabled = _applyEnabled;
+        require(tasks[_taskId].disabled != _disabled, "same state.");
 
-        emit ApplyEnable(_taskId, msg.sender, _applyEnabled);
+        tasks[_taskId].disabled = _disabled;
+        emit TaskDisabled(_taskId, _disabled);
     }
+
     // TODO:手续费最大  
     function modifyFee(uint _createTaskFee) external onlyOwner {
         require(_createTaskFee < 2*10**17, "The createTaskFee is unreasonable.");
