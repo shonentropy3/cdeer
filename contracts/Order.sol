@@ -17,6 +17,7 @@ contract Order is IOrder, Ownable {
     uint8 constant private makerChecked = 2;
     uint8 constant private accepted = 1;
     uint8 constant private refused = 2;
+
     uint8 private maxTaskOrders = 12;
     uint8 private maxStages = 12;
     address private _task;

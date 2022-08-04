@@ -7,14 +7,18 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "./interface/ITask.sol";
+import './libs/TransferHelper.sol';
 
 import "hardhat/console.sol";
 
 //TODO:1.报名限制数量(暂时取消了)，乙方，时间久远后考虑废弃之前报名数 
 // 2.去掉所有log
+// 3. NFT 显示
 contract Task is ERC721, ITask, Ownable {
-    // 手续费数量
-    uint createTaskFee = 1*10**17;
+    // 手续费
+    uint private taskFee  = 1*10**17;
+    uint private applyFee = 0;
+    address private feeReceiver;
 
     address public order;
 
@@ -29,7 +33,7 @@ contract Task is ERC721, ITask, Ownable {
     event ApplyFor(uint indexed taskId, address indexed worker, uint cost);
     event CancelApply(uint indexed taskId, address worker);
     
-    event ModifyFee(address indexed owner, uint createTaskFee);
+    event ModifyFee(uint taskFee, uint applyFee, address feeReceiver);
 
     struct TaskInfo {
         string title;
@@ -50,16 +54,16 @@ contract Task is ERC721, ITask, Ownable {
 
     //TODO: 项目NFT名称
     constructor() ERC721("UpChain","UpChain") {
-
+        feeReceiver = msg.sender;
     }
 
     function setOrder(address _order) external virtual override onlyOwner {
-        require(_order != address(0), "The parameter is zero address.");
+        require(_order != address(0), "zero address");
         order = _order;    
     }
 
     function createTask(TaskInfo memory _taskInfo) external payable {
-        require(msg.value >= createTaskFee, "Not enough createTaskFee.");
+        require(msg.value >= taskFee, "Not enough taskFee.");
         taskIds.increment();
 
         uint taskId = taskIds.current();        
@@ -94,7 +98,8 @@ contract Task is ERC721, ITask, Ownable {
             _taskInfo.desc, _taskInfo.attachment, _taskInfo.period);
     }
 
-    function applyFor(uint _taskId, uint _cost) external {
+    function applyFor(uint _taskId, uint _cost) external payable {
+        require(msg.value >= applyFee, "low fee");
         require(msg.sender != ownerOf(_taskId), "Not apply for orders yourself.");
         require(!tasks[_taskId].disabled, "The apply switch is closed.");
 
@@ -103,6 +108,12 @@ contract Task is ERC721, ITask, Ownable {
         emit ApplyFor(_taskId, msg.sender, _cost);
     }
 
+    function cancelApply(uint _taskId) external {
+        require(applyCosts[_taskId][msg.sender] > 0, "Not applied.");
+        applyCosts[_taskId][msg.sender] = 0;
+
+        emit CancelApply(_taskId, msg.sender);
+    }
 
     function disableTask(uint _taskId, bool _disabled) external {
         require(msg.sender == ownerOf(_taskId), "No permission.");
@@ -112,12 +123,21 @@ contract Task is ERC721, ITask, Ownable {
         emit TaskDisabled(_taskId, _disabled);
     }
 
-    // TODO:手续费最大  
-    function modifyFee(uint _createTaskFee) external onlyOwner {
-        require(_createTaskFee < 2*10**17, "The createTaskFee is unreasonable.");
+    function transferFee(uint amount) external {
+        TransferHelper.safeTransferETH(feeReceiver, amount);
+    }
 
-        createTaskFee = _createTaskFee;
+    function updateFeeReceiver(uint _taskFee, uint _applyFee, address _receiver) external onlyOwner {
+        require(_taskFee < 2*10**17, "The taskFee is unreasonable.");
 
-        emit ModifyFee(msg.sender, _createTaskFee);
+        taskFee = _taskFee;
+        applyFee = _applyFee;
+        feeReceiver = _receiver;
+
+        emit ModifyFee(_taskFee, _applyFee, _receiver);
+    }
+
+    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+        
     }
 }
