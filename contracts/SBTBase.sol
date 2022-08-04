@@ -5,18 +5,12 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
-import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts/utils/Context.sol";
-import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 
 /**
  * @dev Implementation of Soulbound Token[SBT]: Non-tranable Token
  */
-contract SBTBase is Context, ERC165, IERC721, IERC721Metadata {
-    using Address for address;
-    using Strings for uint256;
-
+contract SBTBase is ERC165, IERC721, IERC721Metadata {
     // Token name
     string private _name;
 
@@ -79,21 +73,10 @@ contract SBTBase is Context, ERC165, IERC721, IERC721Metadata {
     }
 
     /**
-     * @dev See {IERC721Metadata-tokenURI}.
+     * @dev See {IERC721Metadata-tokenURI} need override.
      */
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         _requireMinted(tokenId);
-
-        string memory baseURI = _baseURI();
-        return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, tokenId.toString())) : "";
-    }
-
-    /**
-     * @dev Base URI for computing {tokenURI}. If set, the resulting URI for each
-     * token will be the concatenation of the `baseURI` and the `tokenId`. Empty
-     * by default, can be overridden in child contracts.
-     */
-    function _baseURI() internal view virtual returns (string memory) {
         return "";
     }
 

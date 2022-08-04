@@ -5,22 +5,23 @@ pragma solidity ^0.8.0;
 import "./interface/IOrder.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "./interface/ITask.sol";
-import './libs/TransferHelper.sol';
+import "./SBTBase.sol";
 
-import "hardhat/console.sol";
+import "./interface/ITask.sol";
+import "./interface/IMetadata.sol";
+import './libs/TransferHelper.sol';
 
 //TODO:1.报名限制数量(暂时取消了)，乙方，时间久远后考虑废弃之前报名数 
 // 2.去掉所有log
 // 3. NFT 显示
-contract Task is ERC721, ITask, Ownable {
+contract Task is SBTBase, Ownable {
     // 手续费
     uint private taskFee  = 1*10**17;
     uint private applyFee = 0;
     address private feeReceiver;
 
     address public order;
+    address public metadataAddr;
 
     using Counters for Counters.Counter;
 
@@ -35,15 +36,6 @@ contract Task is ERC721, ITask, Ownable {
     
     event ModifyFee(uint taskFee, uint applyFee, address feeReceiver);
 
-    struct TaskInfo {
-        string title;
-        string desc;
-        string attachment;
-        uint budget;
-        uint period;
-        bool disabled;
-    }
-
 
     Counters.Counter private taskIds;
     //taskId =>
@@ -53,14 +45,10 @@ contract Task is ERC721, ITask, Ownable {
     mapping(uint => mapping(address => uint)) private applyCosts;
 
     //TODO: 项目NFT名称
-    constructor() ERC721("UpChain","UpChain") {
+    constructor() SBTBase("UpChain","UpChain") {
         feeReceiver = msg.sender;
     }
 
-    function setOrder(address _order) external virtual override onlyOwner {
-        require(_order != address(0), "zero address");
-        order = _order;    
-    }
 
     function createTask(TaskInfo memory _taskInfo) external payable {
         require(msg.value >= taskFee, "Not enough taskFee.");
@@ -75,9 +63,7 @@ contract Task is ERC721, ITask, Ownable {
             period: _taskInfo.period,
             disabled: false
         });
-        _safeMint(msg.sender, taskId);
-
-        console.log("taskId", taskId);
+        _mint(msg.sender, taskId);
 
         emit TaskCreated(taskId, msg.sender, _taskInfo.title, _taskInfo.budget, 
             _taskInfo.desc, _taskInfo.attachment, _taskInfo.period);
@@ -127,9 +113,13 @@ contract Task is ERC721, ITask, Ownable {
         TransferHelper.safeTransferETH(feeReceiver, amount);
     }
 
-    function updateFeeReceiver(uint _taskFee, uint _applyFee, address _receiver) external onlyOwner {
-        require(_taskFee < 2*10**17, "The taskFee is unreasonable.");
+    function setOrder(address _order) external onlyOwner {
+        require(_order != address(0), "zero address");
+        order = _order;    
+    }
 
+
+    function updateFeeReceiver(uint _taskFee, uint _applyFee, address _receiver) external onlyOwner {
         taskFee = _taskFee;
         applyFee = _applyFee;
         feeReceiver = _receiver;
@@ -137,7 +127,14 @@ contract Task is ERC721, ITask, Ownable {
         emit ModifyFee(_taskFee, _applyFee, _receiver);
     }
 
-    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
-        
+    function setMetadataContract(address _meta) external onlyOwner {
+        require(_meta != address(0), "zero address");
+        metadataAddr = _meta;
     }
+
+    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+        return IMetadata(metadataAddr).tokenURI(tokenId);
+    }
+
+
 }
