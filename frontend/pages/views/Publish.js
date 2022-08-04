@@ -6,6 +6,14 @@ import { Demand } from '../../controller/task';
 import { useRouter } from 'next/router'
 import { useWeb3React } from "@web3-react/core"
 import { connectors } from '../../utils/connectors';
+import task from '../../../deployments/abi/Task.json'
+import taskAddr from '../../contracts/deployments/Task.json'
+import hello from '../../../deployments/abi/Hello.json'
+import helloAddr from '../../contracts/deployments/Hello.json'
+
+import { ethers } from 'ethers'
+
+// import useProvider//
 
 function Publish() {
 
@@ -13,7 +21,8 @@ function Publish() {
     active, 
     account, 
     activate, 
-    library:provider } = useWeb3React();
+    library,
+    library: provider } = useWeb3React();
     const _data = require("../../data/data.json")
     const router = useRouter();
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -49,6 +58,7 @@ function Publish() {
             inner[i].help = inner[i].name+'不能为空!'
           }
           if (e.value.length === 0 && i > 4) {
+            console.log(e.value);
             flag = false
             message.error('“具体角色” 和 “项目类型” 不可为空!');
             document.documentElement.scrollTop = 0;
@@ -73,7 +83,6 @@ function Publish() {
         })
         inner[6].value.map((e,i) => {
           if (inner[6].value.length - 1 !== i) {
-            console.log('hh');
             pjc += e+','
             return
           }
@@ -105,6 +114,51 @@ function Publish() {
         let para = {"proLabel":data}
         let tradeStatus = true
 
+
+        // console.log(library.getSigner(account));
+        // return
+        // await library.getSigner(account).signMessage('👋')
+        //         .then((res) => {
+        //           console.log(res);
+        //         })
+        // return
+
+        // await library.provider.request({
+        //   method: "personal_sign",
+        //   params: ['xxx', account]
+        // });
+// return
+
+        let fee = ethers.utils.parseEther("0.1")
+        data = JSON.parse(para.proLabel)
+        let budget = data.budget * 100
+        let period = data.period * 24 * 60 * 60
+        // const signer = library.getSigner()
+        // const signer = await library.getSigner(account)
+        // console.log(signer);
+        // console.log(signer,":",library.provider.signer);
+        // return
+        let signer = await library.getSigner(account).connectUnchecked();
+        // console.log(signer);
+
+        
+        const taskContract = new ethers.Contract(taskAddr.address, task.abi, signer);
+        await taskContract.createTask(
+            { 
+                title: data.title,
+                desc: data.pro_content,
+                attachment: data.hash,
+                budget: budget,
+                period: period
+            },
+            {
+                value: fee
+            })
+            .then(res => {
+              console.log('res==>',res);
+              return res
+            })
+        return
         // 交易
         await Demand(para)
         .then(res => {
@@ -140,6 +194,10 @@ function Publish() {
             })
         }
 
+    }
+
+    function getProviderOrSigner(provider, account) {
+      return getSigner(provider, account)
     }
 
     // 登陆/下单按钮

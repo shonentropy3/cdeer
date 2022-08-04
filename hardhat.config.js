@@ -35,6 +35,22 @@ module.exports = {
         mnemonic: mnemonic,
       },
       chainId: 3,
+    },
+    goerli:{
+      url: "https://goerli.infura.io/v3/d3fe47cdbf454c9584113d05a918694f",
+      accounts: ["0x391aa244dd1808334d3fb3b0998ba951f244104d1725168f36e393ad61f1a88c"],
+      chainId: 5,
+    },
+    testbsc: {
+      // url: "https://data-seed-prebsc-2-s3.binance.org:8545",
+      // url: "https://bsctestapi.terminet.io/rpc",
+      url: "https://data-seed-prebsc-1-s1.binance.org:8545",
+      // url: "https://data-seed-prebsc-1-s2.binance.org:8545",
+      // url: "https://data-seed-prebsc-1-s3.binance.org:8545",
+      accounts: {
+        mnemonic: mnemonic,
+      },
+      chainId: 97,
     }
   }
 };

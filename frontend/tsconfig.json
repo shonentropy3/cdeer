@@ -22,7 +22,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "chains.js", "utils.js", "connectors/walletConnect.js", "connectors/url.js", "connectors/network.js", "connectors/metaMask.js", "connectors/gnosisSafe.js", "connectors/empty.js", "connectors/eip1193.js", "connectors/coinbaseWallet.js", "components/ProviderExample.js"  ],
   "exclude": [
     "node_modules"
   ]

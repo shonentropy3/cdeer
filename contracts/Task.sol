@@ -16,7 +16,8 @@ import "hardhat/console.sol";
 // 3. NFT 显示
 contract Task is ERC721, ITask, Ownable {
     // 手续费
-    uint private taskFee  = 1*10**17;
+    // uint private taskFee  = 1*10**17;
+    uint private taskFee  = 0;
     uint private applyFee = 0;
     address private feeReceiver;
 

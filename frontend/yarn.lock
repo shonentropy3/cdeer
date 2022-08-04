@@ -226,7 +226,7 @@
     "core-js-pure" "^3.20.2"
     "regenerator-runtime" "^0.13.4"
 
-"@babel/runtime@^7.10.1", "@babel/runtime@^7.10.2", "@babel/runtime@^7.10.4", "@babel/runtime@^7.11.1", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.5", "@babel/runtime@^7.16.3", "@babel/runtime@^7.18.0", "@babel/runtime@^7.18.3", "@babel/runtime@^7.5.5":
+"@babel/runtime@^7.10.1", "@babel/runtime@^7.10.2", "@babel/runtime@^7.10.4", "@babel/runtime@^7.11.1", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.1", "@babel/runtime@^7.12.5", "@babel/runtime@^7.16.3", "@babel/runtime@^7.18.0", "@babel/runtime@^7.18.3", "@babel/runtime@^7.5.5":
   "integrity" "sha512-38Y8f7YUhce/K7RMwTp7m0uCumpv9hZkitCbBClqQIow1qSbCvGkcegKOXpEWCQLfWmevgRiWokZ1GkpfhbZug=="
   "resolved" "https://registry.npmmirror.com/@babel/runtime/-/runtime-7.18.3.tgz"
   "version" "7.18.3"
@@ -364,7 +364,7 @@
     "@ethersproject/logger" "^5.6.0"
     "@ethersproject/properties" "^5.6.0"
 
-"@ethersproject/address@^5.4.0", "@ethersproject/address@^5.6.1", "@ethersproject/address@5.6.1":
+"@ethersproject/address@^5", "@ethersproject/address@^5.6.1", "@ethersproject/address@5.6.1":
   "integrity" "sha512-uOgF0kS5MJv9ZvCz7x6T2EXJSzotiybApn4XlOgoTX0xdtyVIJ7pF+6cGPxiEq/dpBiTfMiw7Yc81JcwhSYA0Q=="
   "resolved" "https://registry.npmmirror.com/@ethersproject/address/-/address-5.6.1.tgz"
   "version" "5.6.1"
@@ -390,7 +390,7 @@
     "@ethersproject/bytes" "^5.6.1"
     "@ethersproject/properties" "^5.6.0"
 
-"@ethersproject/bignumber@^5.6.2", "@ethersproject/bignumber@5.6.2":
+"@ethersproject/bignumber@^5.6.0", "@ethersproject/bignumber@^5.6.2", "@ethersproject/bignumber@5.6.2":
   "integrity" "sha512-v7+EEUbhGqT3XJ9LMPsKvXYHFc8eHxTowFCG/HgJErmq4XHJ2WR7aeyICg3uTOAQ7Icn0GFHAohXEhxQHq4Ubw=="
   "resolved" "https://registry.npmmirror.com/@ethersproject/bignumber/-/bignumber-5.6.2.tgz"
   "version" "5.6.2"
@@ -429,7 +429,7 @@
     "@ethersproject/properties" "^5.6.0"
     "@ethersproject/transactions" "^5.6.2"
 
-"@ethersproject/experimental@^5.5.0":
+"@ethersproject/experimental@^5.6.0":
   "integrity" "sha512-yMymv32XMr9sXvHc3S1On2wD0JMT6n4X9uKpfZ8jFFw5rEcI99yfovcCZ0tpUedh1b3IvReSain+RobeNQmmEg=="
   "resolved" "https://registry.npmmirror.com/@ethersproject/experimental/-/experimental-5.6.3.tgz"
   "version" "5.6.3"
@@ -489,7 +489,7 @@
     "aes-js" "3.0.0"
     "scrypt-js" "3.0.1"
 
-"@ethersproject/keccak256@^5.0.0-beta.130", "@ethersproject/keccak256@^5.6.1", "@ethersproject/keccak256@5.6.1":
+"@ethersproject/keccak256@^5.6.1", "@ethersproject/keccak256@5.6.1":
   "integrity" "sha512-bB7DQHCTRDooZZdL3lk9wpL0+XuG3XLGHLh3cePnybsO3V0rdCAOQGpn/0R3aODmnTOOkCATJiD2hnL+5bwthA=="
   "resolved" "https://registry.npmmirror.com/@ethersproject/keccak256/-/keccak256-5.6.1.tgz"
   "version" "5.6.1"
@@ -524,7 +524,7 @@
   dependencies:
     "@ethersproject/logger" "^5.6.0"
 
-"@ethersproject/providers@^5.5.1", "@ethersproject/providers@5.6.8":
+"@ethersproject/providers@^5", "@ethersproject/providers@^5.6.0", "@ethersproject/providers@5.6.8":
   "integrity" "sha512-Wf+CseT/iOJjrGtAOf3ck9zS7AgPmr2fZ3N97r4+YXN3mBePTG2/bJ8DApl9mVwYL+RpYbNxMEkEp4mPGdwG/w=="
   "resolved" "https://registry.npmmirror.com/@ethersproject/providers/-/providers-5.6.8.tgz"
   "version" "5.6.8"
@@ -623,7 +623,7 @@
     "@ethersproject/rlp" "^5.6.1"
     "@ethersproject/signing-key" "^5.6.2"
 
-"@ethersproject/units@5.6.1":
+"@ethersproject/units@^5.6.0", "@ethersproject/units@5.6.1":
   "integrity" "sha512-rEfSEvMQ7obcx3KWD5EWWx77gqv54K6BKiZzKxkQJqtpriVsICrktIQmKl8ReNToPeIYPnFHpXvKpi068YFZXw=="
   "resolved" "https://registry.npmmirror.com/@ethersproject/units/-/units-5.6.1.tgz"
   "version" "5.6.1"
@@ -675,7 +675,7 @@
     "@ethersproject/properties" "^5.6.0"
     "@ethersproject/strings" "^5.6.1"
 
-"@gnosis.pm/safe-apps-provider@^0.11.0":
+"@gnosis.pm/safe-apps-provider@^0.11.3":
   "integrity" "sha512-vER+vuf44f40KfwqTRjU8rdVMDnGZMmgQcGetlMxq+MTI7VD2Cr3CrCuABFGE/DZK80SxZ+IvQ9yjkemo/ywmQ=="
   "resolved" "https://registry.npmmirror.com/@gnosis.pm/safe-apps-provider/-/safe-apps-provider-0.11.3.tgz"
   "version" "0.11.3"
@@ -683,7 +683,7 @@
     "@gnosis.pm/safe-apps-sdk" "7.5.0"
     "events" "^3.3.0"
 
-"@gnosis.pm/safe-apps-sdk@^7.3.0":
+"@gnosis.pm/safe-apps-sdk@^7.5.0":
   "integrity" "sha512-2MFdcNu/n2pioeX2TiXMmwtxvhl5SM8Y2RapDF8YxF11naubKvVXIg5KDJfmvGfXCn7wyqjLxkBcUkMPFbcS8w=="
   "resolved" "https://registry.npmmirror.com/@gnosis.pm/safe-apps-sdk/-/safe-apps-sdk-7.6.0.tgz"
   "version" "7.6.0"
@@ -700,9 +700,9 @@
     "ethers" "^5.6.8"
 
 "@gnosis.pm/safe-react-gateway-sdk@^3.1.3":
-  "integrity" "sha512-Bupn8J4IgKAtrFxMBi8WVh4YiZ6rcCk/41C7Dz4+B8tQRhcCelc2YXQljcWMZAzS/yfv7yHlpjpMrNpj3jGGTw=="
-  "resolved" "https://registry.npmmirror.com/@gnosis.pm/safe-react-gateway-sdk/-/safe-react-gateway-sdk-3.2.4.tgz"
-  "version" "3.2.4"
+  "integrity" "sha512-WGg9xoraotuKe99Xw/75HggoQCojzCMR5TN1AHy39oerVX7thsNBs0WU7NiJ/X/rvmWXfZ/DOqeOijswZDgrJw=="
+  "resolved" "https://registry.npmmirror.com/@gnosis.pm/safe-react-gateway-sdk/-/safe-react-gateway-sdk-3.3.4.tgz"
+  "version" "3.3.4"
   dependencies:
     "cross-fetch" "^3.1.5"
 
@@ -879,6 +879,14 @@
     "@types/node" "*"
     "@types/responselike" "*"
 
+"@types/hoist-non-react-statics@^3.3.1":
+  "integrity" "sha512-iMIqiko6ooLrTh1joXodJK5X9xeEALT1kM5G3ZLhD3hszxBdIEd5C75U834D9mLcINgD4OyZf5uQXjkuYydWvA=="
+  "resolved" "https://registry.npmmirror.com/@types/hoist-non-react-statics/-/hoist-non-react-statics-3.3.1.tgz"
+  "version" "3.3.1"
+  dependencies:
+    "@types/react" "*"
+    "hoist-non-react-statics" "^3.3.0"
+
 "@types/http-cache-semantics@*":
   "integrity" "sha512-SZs7ekbP8CN0txVG2xVRH6EgKmEm31BOxA07vkFaETzZz1xh+cbt8BcI0slpymvwhx5dlFnQG2rTlPVQn+iRPQ=="
   "resolved" "https://registry.npmmirror.com/@types/http-cache-semantics/-/http-cache-semantics-4.0.1.tgz"
@@ -918,7 +926,7 @@
   "resolved" "https://registry.npmmirror.com/@types/prop-types/-/prop-types-15.7.5.tgz"
   "version" "15.7.5"
 
-"@types/react@^18.0.15":
+"@types/react@*", "@types/react@^16.8 || ^17.0 || ^18.0", "@types/react@^18.0.15":
   "integrity" "sha512-iz3BtLuIYH1uWdsv6wXYdhozhqj20oD4/Hk2DNXIn1kFsmp9x8d9QB6FnPhfkbhd2PgEONt9Q1x/ebkwjfFLow=="
   "resolved" "https://registry.npmmirror.com/@types/react/-/react-18.0.15.tgz"
   "version" "18.0.15"
@@ -945,6 +953,11 @@
   "version" "4.0.3"
   dependencies:
     "@types/node" "*"
+
+"@types/use-sync-external-store@^0.0.3":
+  "integrity" "sha512-EwmlvuaxPNej9+T4v5AuBPJa2x2UOJVdjCtDHgcDqitUeOtjnJKJ+apYjVcAoBEMjKW1VVFGZLUb5+qqa09XFA=="
+  "resolved" "https://registry.npmmirror.com/@types/use-sync-external-store/-/use-sync-external-store-0.0.3.tgz"
+  "version" "0.0.3"
 
 "@typescript-eslint/parser@^5.21.0":
   "integrity" "sha512-ruKWTv+x0OOxbzIw9nW5oWlUopvP/IQDjB5ZqmTglLIoDTctLlAJpAQFpNPJP/ZI7hTT9sARBosEfaKbcFuECw=="
@@ -1044,7 +1057,7 @@
   "resolved" "https://registry.npmmirror.com/@walletconnect/environment/-/environment-1.0.0.tgz"
   "version" "1.0.0"
 
-"@walletconnect/ethereum-provider@^1.7.1", "@walletconnect/ethereum-provider@^1.7.8":
+"@walletconnect/ethereum-provider@^1.7.1", "@walletconnect/ethereum-provider@^1.7.5", "@walletconnect/ethereum-provider@^1.7.8":
   "integrity" "sha512-dnl560zFMdK/LD4MD2XwHbWj7RXOaeXWPc9jzDaosLQLAXfA5mKe4XbCFFUPbVMYuyBdRI9NZv3Ci/qDb5wncQ=="
   "resolved" "https://registry.npmmirror.com/@walletconnect/ethereum-provider/-/ethereum-provider-1.7.8.tgz"
   "version" "1.7.8"
@@ -1188,32 +1201,46 @@
   dependencies:
     "@web3-react/types" "^6.0.7"
 
-"@web3-react/core@^6.1.9":
-  "integrity" "sha512-P877DslsbAkWIlMANpWiK7pCvNwlz0kJC0EGckuVh0wlA23J4UnFxq6xyOaxkxaDCu14rA/tAO0NbwjcXTQgSA=="
-  "resolved" "https://registry.npmmirror.com/@web3-react/core/-/core-6.1.9.tgz"
-  "version" "6.1.9"
+"@web3-react/coinbase-wallet@^8.0.34-beta.0":
+  "integrity" "sha512-eGgtGtAqcRL64U1lcWeICB9CmpUycVl/mWD/b2Nd7yE0hXFUbPGLZHNvBTpnOpkANkjHI5ufFoyDGzzoxdw12A=="
+  "resolved" "https://registry.npmmirror.com/@web3-react/coinbase-wallet/-/coinbase-wallet-8.0.34-beta.0.tgz"
+  "version" "8.0.34-beta.0"
   dependencies:
-    "@ethersproject/keccak256" "^5.0.0-beta.130"
-    "@web3-react/abstract-connector" "^6.0.7"
-    "@web3-react/types" "^6.0.7"
-    "tiny-invariant" "^1.0.6"
-    "tiny-warning" "^1.0.3"
+    "@web3-react/types" "^8.0.20-beta.0"
 
-"@web3-react/eip1193@^8.0.0-beta.0":
-  "integrity" "sha512-iw4mmhv0TCKuCo7bmYZBSpc12/tuK4NfEdQIjv5djXnzkInmsS/xc46WFmYLmBkbyDylhxW83re1gbS1Hwa47w=="
-  "resolved" "https://registry.npmmirror.com/@web3-react/eip1193/-/eip1193-8.0.0-beta.0.tgz"
-  "version" "8.0.0-beta.0"
+"@web3-react/core@^8.0.35-beta.0":
+  "integrity" "sha512-vkEL2Vafu57lTA9T/cd3DNkZoDZ3G/JDUgxgjHqKLQVF4bPucrkeErqIHutAJ4suIi4bLOD0dFPMpFs+Bq7RgA=="
+  "resolved" "https://registry.npmmirror.com/@web3-react/core/-/core-8.0.35-beta.0.tgz"
+  "version" "8.0.35-beta.0"
   dependencies:
-    "@web3-react/types" "^8.0.0-beta.0"
+    "@web3-react/store" "^8.0.25-beta.0"
+    "@web3-react/types" "^8.0.20-beta.0"
+    "zustand" "^4.0.0-rc.0"
+  optionalDependencies:
+    "@ethersproject/providers" "^5"
 
-"@web3-react/gnosis-safe@^8.0.0-beta.0":
-  "integrity" "sha512-U2Z8XYt1v/KB4kdqJImFJNNXo9tEP2XLSpf2hVVhpSgJwmvx60tkJcK48XE+qOrb1Ea95gTwwD8buWAqDklBhA=="
-  "resolved" "https://registry.npmmirror.com/@web3-react/gnosis-safe/-/gnosis-safe-8.0.0-beta.0.tgz"
-  "version" "8.0.0-beta.0"
+"@web3-react/eip1193@^8.0.26-beta.0":
+  "integrity" "sha512-n/2ajjABcP8DktZfXxSHrxtPIxeSRJ9tsgfmd9XPEIW9FO7xLzLrF+nloTSghtZ8H+ZKKcswlKjYq4rbX/oqHg=="
+  "resolved" "https://registry.npmmirror.com/@web3-react/eip1193/-/eip1193-8.0.26-beta.0.tgz"
+  "version" "8.0.26-beta.0"
   dependencies:
-    "@gnosis.pm/safe-apps-provider" "^0.11.0"
-    "@gnosis.pm/safe-apps-sdk" "^7.3.0"
-    "@web3-react/types" "^8.0.14-beta.0"
+    "@web3-react/types" "^8.0.20-beta.0"
+
+"@web3-react/empty@^8.0.20-beta.0":
+  "integrity" "sha512-hde1Wq7w03cal6hD0E+seVg6ZFMWKcaSZ0S5UwJi5CDxhF79oL8QuzpvTBslohRkWqzqlvl52wCSVaY+l2+F8Q=="
+  "resolved" "https://registry.npmmirror.com/@web3-react/empty/-/empty-8.0.20-beta.0.tgz"
+  "version" "8.0.20-beta.0"
+  dependencies:
+    "@web3-react/types" "^8.0.20-beta.0"
+
+"@web3-react/gnosis-safe@^8.0.6-beta.0":
+  "integrity" "sha512-xDf87UPfAZK89T19q0oKsN8P6RgWKqD8T9CxjClIVdeDxOoEWMTPn9FPeXM5/Ik3+pq3UUaqcITUZb2CMD14Zw=="
+  "resolved" "https://registry.npmmirror.com/@web3-react/gnosis-safe/-/gnosis-safe-8.0.6-beta.0.tgz"
+  "version" "8.0.6-beta.0"
+  dependencies:
+    "@gnosis.pm/safe-apps-provider" "^0.11.3"
+    "@gnosis.pm/safe-apps-sdk" "^7.5.0"
+    "@web3-react/types" "^8.0.20-beta.0"
 
 "@web3-react/injected-connector@^6.0.7":
   "integrity" "sha512-Y7aJSz6pg+MWKtvdyuqyy6LWuH+4Tqtph1LWfiyVms9II9ar/9B/de4R8wh4wjg91wmHkU+D75yP09E/Soh2RA=="
@@ -1224,50 +1251,50 @@
     "@web3-react/types" "^6.0.7"
     "tiny-warning" "^1.0.3"
 
-"@web3-react/metamask@^8.0.0-beta.0":
-  "integrity" "sha512-5tHnEGUM7EhOJrbXJPdR7Sp7+tyPl9boB0hzVQdq4gKQ93GCTvwroKasQldJf3M/J1P20a5VIy1w9Ln4mYkr4w=="
-  "resolved" "https://registry.npmmirror.com/@web3-react/metamask/-/metamask-8.0.0-beta.0.tgz"
-  "version" "8.0.0-beta.0"
+"@web3-react/metamask@^8.0.28-beta.0":
+  "integrity" "sha512-IXuVyj6vhRAhfGQ/sN4qgET8EEdqX844pB4kCDG9kjPD3LLm5kq47ykBosgTr9YCUtdHAXN0UaUimD0TbLMRFg=="
+  "resolved" "https://registry.npmmirror.com/@web3-react/metamask/-/metamask-8.0.28-beta.0.tgz"
+  "version" "8.0.28-beta.0"
   dependencies:
     "@metamask/detect-provider" "^1.2.0"
-    "@web3-react/types" "^8.0.0-beta.0"
+    "@web3-react/types" "^8.0.20-beta.0"
 
-"@web3-react/network@^8.0.0-beta.0":
-  "integrity" "sha512-VBLFOEPCgfgiKiIfgtZQ+H9ltNG46ugLdsk6I/Ys7sVLu6kwp8/tzNCXre8ehKcS6FPYHV/LjovwvZZ0Q5Bsow=="
-  "resolved" "https://registry.npmmirror.com/@web3-react/network/-/network-8.0.0-beta.0.tgz"
-  "version" "8.0.0-beta.0"
+"@web3-react/network@^8.0.27-beta.0":
+  "integrity" "sha512-kLHilUpLkDejx0C5Rr57puQSEVA+BQmT58xN6D/elphcZpVHAIkbh/MCYm0XrnLmqq0uOjw+jDhEYBBn80ncHQ=="
+  "resolved" "https://registry.npmmirror.com/@web3-react/network/-/network-8.0.27-beta.0.tgz"
+  "version" "8.0.27-beta.0"
   dependencies:
-    "@ethersproject/experimental" "^5.5.0"
-    "@ethersproject/providers" "^5.5.1"
-    "@web3-react/types" "^8.0.0-beta.0"
+    "@ethersproject/providers" "^5"
+    "@web3-react/types" "^8.0.20-beta.0"
 
-"@web3-react/store@^8.0.0-beta.0":
-  "integrity" "sha512-MIf5k1pG4EVDzl4GAJbohiA9IUeBjH266KtxvyjANWheRL0ylC6Go6scgG+1Japi/NUKBW1wtPO+biYTO4ws/w=="
-  "resolved" "https://registry.npmmirror.com/@web3-react/store/-/store-8.0.0-beta.0.tgz"
-  "version" "8.0.0-beta.0"
+"@web3-react/store@^8.0.25-beta.0":
+  "integrity" "sha512-YHrZ42EHiQ9UAJq8Y/pHsyXu6GhzbCSHaQJ9U0wCDhbPoQ9QjOj0Pwcaa/VLXljuynK/7ERP942nI1IzArt9Sg=="
+  "resolved" "https://registry.npmmirror.com/@web3-react/store/-/store-8.0.25-beta.0.tgz"
+  "version" "8.0.25-beta.0"
   dependencies:
-    "@ethersproject/address" "^5.4.0"
-    "@web3-react/types" "^8.0.0-beta.0"
-    "zustand" "^4.0.0-beta.0"
+    "@ethersproject/address" "^5"
+    "@web3-react/types" "^8.0.20-beta.0"
+    "zustand" "^4.0.0-rc.0"
 
 "@web3-react/types@^6.0.7":
   "integrity" "sha512-ofGmfDhxmNT1/P/MgVa8IKSkCStFiyvXe+U5tyZurKdrtTDFU+wJ/LxClPDtFerWpczNFPUSrKcuhfPX1sI6+A=="
   "resolved" "https://registry.npmmirror.com/@web3-react/types/-/types-6.0.7.tgz"
   "version" "6.0.7"
 
-"@web3-react/types@^8.0.0-beta.0":
-  "integrity" "sha512-6yVwgf+zOt2/o6l0DeZXJcKV/85rcafS3MSLk8c2l98Jw8THc+ZyOeLWb0TUBzj7rc5v+PoKz4Fs2wsf8LOJew=="
-  "resolved" "https://registry.npmmirror.com/@web3-react/types/-/types-8.0.0-beta.0.tgz"
-  "version" "8.0.0-beta.0"
-  dependencies:
-    "zustand" "^4.0.0-beta.0"
-
-"@web3-react/types@^8.0.14-beta.0":
-  "integrity" "sha512-au3Udzjdo3HNeT4SMbJ9YZMgeRfQYeXx9xDGlNGGF5uH+43fDoSG9AJb4z4OKA1jXNeP7qGg5WWYZLfwBRoyFg=="
-  "resolved" "https://registry.npmmirror.com/@web3-react/types/-/types-8.0.14-beta.0.tgz"
-  "version" "8.0.14-beta.0"
+"@web3-react/types@^8.0.20-beta.0":
+  "integrity" "sha512-qOZYMyUmsm3Um6t6Pg3OgnE86ufhWZpB5/VxsooB8cdpXc/C/f8KMyYSeM63GoKSMScOKwfqV6yODFL7g/Qc8g=="
+  "resolved" "https://registry.npmmirror.com/@web3-react/types/-/types-8.0.20-beta.0.tgz"
+  "version" "8.0.20-beta.0"
   dependencies:
     "zustand" "^4.0.0-rc.0"
+
+"@web3-react/url@^8.0.25-beta.0":
+  "integrity" "sha512-cjFfAFjsWF5vqJ7TG79HT72jNNWlcS9bqbNK2jvu25zej62zMpPvy4iyYiV7zy2SLbAQTdsgvIMYAdxRbnzlWg=="
+  "resolved" "https://registry.npmmirror.com/@web3-react/url/-/url-8.0.25-beta.0.tgz"
+  "version" "8.0.25-beta.0"
+  dependencies:
+    "@ethersproject/providers" "^5"
+    "@web3-react/types" "^8.0.20-beta.0"
 
 "@web3-react/walletconnect-connector@^6.2.13":
   "integrity" "sha512-rTsYLv2UpQZ92Yv5kyIwzrG+2aQkzE8ki2ElotJ6GmSl3yF9WSaGNfKpE8XI5+aPvbAk4mMn8lIy+os3a9gJgw=="
@@ -1280,12 +1307,13 @@
     "@web3-react/types" "^6.0.7"
     "tiny-invariant" "^1.0.6"
 
-"@web3-react/walletconnect@^8.0.1-beta.0":
-  "integrity" "sha512-GZKtxXW6GRfSv68kmfTbZBDR/MPgSb4AOX7TVjxShX0UQB10BGmxjd/EK1BRucwijAIXo9ERDU0plbKjC1S8bA=="
-  "resolved" "https://registry.npmmirror.com/@web3-react/walletconnect/-/walletconnect-8.0.1-beta.0.tgz"
-  "version" "8.0.1-beta.0"
+"@web3-react/walletconnect@^8.0.35-beta.0":
+  "integrity" "sha512-fUrqcnwAr5oecZ6VUE/7+RSVURrohbAgWMLKYxd8Zo47AtTPzgJ1t5Lydh/EX4xJPLhfK1LqX5YgMwiys3DvhQ=="
+  "resolved" "https://registry.npmmirror.com/@web3-react/walletconnect/-/walletconnect-8.0.35-beta.0.tgz"
+  "version" "8.0.35-beta.0"
   dependencies:
-    "@web3-react/types" "^8.0.0-beta.0"
+    "@web3-react/types" "^8.0.20-beta.0"
+    "eventemitter3" "^4.0.7"
 
 "@web3-react/walletlink-connector@^6.2.14":
   "integrity" "sha512-F2v1Uu7Nhptt7AaUEJpz69+NVUJxyUfDEA5B/Vr1HkqAL1aJM5gv6B1m4M/VdXKLpmjZ9Kg6X0+VUEyAx1eQ4w=="
@@ -3032,6 +3060,11 @@
     "is-hex-prefixed" "1.0.0"
     "strip-hex-prefix" "1.0.0"
 
+"eventemitter3@^4.0.7":
+  "integrity" "sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw=="
+  "resolved" "https://registry.npmmirror.com/eventemitter3/-/eventemitter3-4.0.7.tgz"
+  "version" "4.0.7"
+
 "eventemitter3@4.0.4":
   "integrity" "sha512-rlaVLnVxtxvoyLsQQFBx53YmXHDxRIzzTLbdfxqi4yocpSjAxXwkU0cScM5JgSKMqEhrZpnvQ2D9gjylR0AimQ=="
   "resolved" "https://registry.npmmirror.com/eventemitter3/-/eventemitter3-4.0.4.tgz"
@@ -3586,6 +3619,13 @@
   "integrity" "sha512-4FP6J0oI8jqb6gLLl9tSwVdosWJ/AKSGJ+HwYf6Ixe4MUcEkst4uWzpVQrNOCin0fzTRQbXV8ePheU8WiiDYBw=="
   "resolved" "https://registry.npmmirror.com/hmacsha1/-/hmacsha1-1.0.0.tgz"
   "version" "1.0.0"
+
+"hoist-non-react-statics@^3.3.0", "hoist-non-react-statics@^3.3.2":
+  "integrity" "sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw=="
+  "resolved" "https://registry.npmmirror.com/hoist-non-react-statics/-/hoist-non-react-statics-3.3.2.tgz"
+  "version" "3.3.2"
+  dependencies:
+    "react-is" "^16.7.0"
 
 "http-cache-semantics@^4.0.0":
   "integrity" "sha512-carPklcUh7ROWRK7Cv27RPtdhYhUsela/ue5/jKzjegVvXDqM2ILE9Q2BGn9JZJh1g87cp56su/FgQSzcWS8cQ=="
@@ -5235,7 +5275,7 @@
     "rc-resize-observer" "^1.0.0"
     "rc-util" "^5.15.0"
 
-"react-dom@*", "react-dom@^17.0.2 || ^18.0.0-0", "react-dom@^18.2.0", "react-dom@>=16.0.0", "react-dom@>=16.11.0", "react-dom@>=16.9.0":
+"react-dom@*", "react-dom@^16.8 || ^17.0 || ^18.0", "react-dom@^17.0.2 || ^18.0.0-0", "react-dom@^18.2.0", "react-dom@>=16.0.0", "react-dom@>=16.11.0", "react-dom@>=16.9.0":
   "integrity" "sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g=="
   "resolved" "https://registry.npmmirror.com/react-dom/-/react-dom-18.2.0.tgz"
   "version" "18.2.0"
@@ -5243,12 +5283,29 @@
     "loose-envify" "^1.1.0"
     "scheduler" "^0.23.0"
 
-"react-is@^16.12.0", "react-is@^16.13.1":
+"react-is@^16.12.0", "react-is@^16.13.1", "react-is@^16.7.0":
   "integrity" "sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ=="
   "resolved" "https://registry.npmmirror.com/react-is/-/react-is-16.13.1.tgz"
   "version" "16.13.1"
 
-"react@*", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^17.0.2 || ^18.0.0-0", "react@^18.2.0", "react@>= 16.8.0 || 17.x.x || ^18.0.0-0", "react@>=16.0.0", "react@>=16.11.0", "react@>=16.8", "react@>=16.9.0":
+"react-is@^18.0.0":
+  "integrity" "sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w=="
+  "resolved" "https://registry.npmmirror.com/react-is/-/react-is-18.2.0.tgz"
+  "version" "18.2.0"
+
+"react-redux@^8.0.2":
+  "integrity" "sha512-nBwiscMw3NoP59NFCXFf02f8xdo+vSHT/uZ1ldDwF7XaTpzm+Phk97VT4urYBl5TYAPNVaFm12UHAEyzkpNzRA=="
+  "resolved" "https://registry.npmmirror.com/react-redux/-/react-redux-8.0.2.tgz"
+  "version" "8.0.2"
+  dependencies:
+    "@babel/runtime" "^7.12.1"
+    "@types/hoist-non-react-statics" "^3.3.1"
+    "@types/use-sync-external-store" "^0.0.3"
+    "hoist-non-react-statics" "^3.3.2"
+    "react-is" "^18.0.0"
+    "use-sync-external-store" "^1.0.0"
+
+"react@*", "react@^16.8 || ^17.0 || ^18.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^17.0.2 || ^18.0.0-0", "react@^18.2.0", "react@>= 16.8.0 || 17.x.x || ^18.0.0-0", "react@>=16.0.0", "react@>=16.11.0", "react@>=16.8", "react@>=16.9.0":
   "integrity" "sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ=="
   "resolved" "https://registry.npmmirror.com/react/-/react-18.2.0.tgz"
   "version" "18.2.0"
@@ -6007,7 +6064,7 @@
   "resolved" "https://registry.npmmirror.com/url-to-options/-/url-to-options-1.0.1.tgz"
   "version" "1.0.1"
 
-"use-sync-external-store@1.2.0":
+"use-sync-external-store@^1.0.0", "use-sync-external-store@1.2.0":
   "integrity" "sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA=="
   "resolved" "https://registry.npmmirror.com/use-sync-external-store/-/use-sync-external-store-1.2.0.tgz"
   "version" "1.2.0"
@@ -6492,7 +6549,7 @@
     "y18n" "^4.0.0"
     "yargs-parser" "^13.1.2"
 
-"zustand@^4.0.0-beta.0", "zustand@^4.0.0-rc.0":
+"zustand@^4.0.0-rc.0":
   "integrity" "sha512-OrsfQTnRXF1LZ9/vR/IqN9ws5EXUhb149xmPjErZnUrkgxS/gAHGy2dPNIVkVvoxrVe1sIydn4JjF0dYHmGeeQ=="
   "resolved" "https://registry.npmmirror.com/zustand/-/zustand-4.0.0.tgz"
   "version" "4.0.0"

@@ -32,7 +32,8 @@ export const Demand = async(para) => {
     try {
         
         if (window.ethereum !== 'undefined') {
-        let fee = ethers.utils.parseEther("1")
+        // let fee = ethers.utils.parseEther("1")
+        let fee = ethers.utils.parseEther("0")
         const data = JSON.parse(para.proLabel)
         let budget = data.budget * 100
         let period = data.period * 24 * 60 * 60
@@ -61,7 +62,6 @@ export const Demand = async(para) => {
 
 export const ApplyProject = async(account) => {
     try {
-      
       if (window.ethereum !== 'undefined') {
         let data = JSON.parse(account)
         let valuation = data.valuation * 100

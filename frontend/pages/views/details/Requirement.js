@@ -6,10 +6,16 @@ import { ApplyProject } from '../../../controller/task';
 import { Modal, InputNumber, message } from 'antd';
 import { checkWalletIsConnected } from '../../../utils/checkWalletIsConnected';
 import { useRouter } from 'next/router'
+import { useWeb3React } from "@web3-react/core"
+
+import task from '../../../../deployments/abi/Task.json'
+import taskAddr from '../../../contracts/deployments/Task.json'
+import { ethers } from 'ethers'
 
 
 export default function ProjectDetail() {
 
+    const { account, library, provider } = useWeb3React();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const router = useRouter()
     let [detail,detailSet] = useState({})
@@ -49,17 +55,30 @@ export default function ProjectDetail() {
     }
 
     const handleOk = async() => {
-        let account = await checkWalletIsConnected()
         let obj = {
             demandId: detail.id,
             valuation: count,
         }
-        obj = JSON.stringify(obj)
+        // obj = JSON.stringify(obj)
         let tradeStatus = false
-  
+
+        let valuation = obj.valuation * 100
+        const signer = library.getSigner();
+        const taskContract = new ethers.Contract(taskAddr.address, task.abi, signer);
+        await taskContract.applyFor(Number(obj.demandId), valuation)
+        .then(res => {
+        //   return res.hash
+        console.log('hh');
+        console.log('<==>',res);
+        })
+        .catch(err => {
+            console.log('err==>',Number(obj.demandId),valuation);
+        })
+        return
         await ApplyProject(obj)
         .then(res => {
             if (res) {
+                console.log('res==>',res);
                 if (res.code) {
                   tradeStatus = false
                   message.error('交易失败!');

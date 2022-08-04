@@ -9,6 +9,8 @@ async function main() {
 
     // Get owner/deployer's wallet address
     const [owner] = await hre.ethers.getSigners();
+    console.log("owner:",owner.address);
+    
     // Get contract that we want to deploy
     const contractFactory = await hre.ethers.getContractFactory("Task");
     // Deploy contract with the correct constructor arguments

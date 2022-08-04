@@ -12,21 +12,39 @@ import '../styles/details/requirement.scss'
 import '../styles/details/order.scss'
 import '../styles/details/project.scss'
 import '../styles/details/stage.scss'
-import { Web3ReactProvider } from "@web3-react/core";
-import { Web3Provider } from "@ethersproject/providers";
+import '../styles/globals.css'
+
+import { useWeb3React, Web3ReactProvider } from '@web3-react/core'
+import { coinbaseWallet, hooks as coinbaseWalletHooks } from '../connectors/coinbaseWallet'
+import { hooks as metaMaskHooks, metaMask } from '../connectors/metaMask'
+import { hooks as networkHooks, network } from '../connectors/network'
+import { hooks as walletConnectHooks, walletConnect } from '../connectors/walletConnect'
+import { getName } from '../utils'
 
 
-const getLibrary = (provider) => {
-  return new Web3Provider(provider);
-};
+const connectors = [
+  [metaMask, metaMaskHooks],
+  [walletConnect, walletConnectHooks],
+  [coinbaseWallet, coinbaseWalletHooks],
+  [network, networkHooks]
+]
+
+function Child() {
+  const { connector } = useWeb3React()
+  // console.log(`Priority Connector is: ${getName(connector)}`)
+  return null
+}
+
 function MyApp({ Component, pageProps }) {
-  return (
-    <div>
-      <Web3ReactProvider getLibrary={getLibrary}>
-      <Header />
+  return(
+    <>
+    <Web3ReactProvider connectors={connectors}>
+      <Header></Header>
       <Component {...pageProps} />
-      </Web3ReactProvider>
-    </div>
+      {/* <Child /> */}
+    </Web3ReactProvider>
+      
+    </>
   )
 }
 
