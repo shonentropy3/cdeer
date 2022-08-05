@@ -12,8 +12,6 @@ import "./interface/IMetadata.sol";
 import './libs/TransferHelper.sol';
 
 //TODO:1.报名限制数量(暂时取消了)，乙方，时间久远后考虑废弃之前报名数 
-// 2.去掉所有log
-// 3. NFT 显示
 contract Task is SBTBase, Ownable {
     // 手续费
     // uint private taskFee  = 1*10**17;
@@ -26,10 +24,8 @@ contract Task is SBTBase, Ownable {
 
     using Counters for Counters.Counter;
 
-    event TaskCreated(uint indexed taskId, address indexed issuer, string title, uint budget, 
-        string desc, string attachment, uint period);
-    event TaskModified(uint indexed taskId, address issuer, string title, uint budget, 
-        string desc, string attachment, uint period);
+    event TaskCreated(uint indexed taskId, address issuer, TaskInfo task);
+    event TaskModified(uint indexed taskId, address issuer, TaskInfo task);
     event TaskDisabled(uint indexed taskId, bool disabled);
 
     event ApplyFor(uint indexed taskId, address indexed worker, uint cost);
@@ -46,68 +42,89 @@ contract Task is SBTBase, Ownable {
     mapping(uint => mapping(address => uint)) private applyCosts;
 
     //TODO: 项目NFT名称
-    constructor() SBTBase("UpChain","UpChain") {
+    constructor() SBTBase("UpChain", "UpChain") {
         feeReceiver = msg.sender;
     }
 
-
-    function createTask(TaskInfo memory _taskInfo) external payable {
+    function createTask(address who, TaskInfo memory task) external payable {
         require(msg.value >= taskFee, "Not enough taskFee.");
         taskIds.increment();
 
         uint taskId = taskIds.current();        
         tasks[taskId] = TaskInfo({
-            title: _taskInfo.title,
-            desc: _taskInfo.desc,
-            attachment: _taskInfo.attachment,
-            budget: _taskInfo.budget,            
-            period: _taskInfo.period,
+            title: task.title,
+            desc: task.desc,
+            attachment: task.attachment,
+            currency: task.currency,
+            budget: task.budget,
+            period: task.period,
+            categories: task.categories,
+            skills: task.skills,
             disabled: false
         });
-        _mint(msg.sender, taskId);
+        _mint(who, taskId);
 
-        emit TaskCreated(taskId, msg.sender, _taskInfo.title, _taskInfo.budget, 
-            _taskInfo.desc, _taskInfo.attachment, _taskInfo.period);
+        emit TaskCreated(taskId, who, tasks[taskId]);
     }
 
-    function modifyTask(uint _taskId, TaskInfo memory _taskInfo) external {
-        require(msg.sender == ownerOf(_taskId), "No permission.");
-        require(!IOrder(order).hasTaskOrders(_taskId), "Existing orders.");
+    function modifyTask(uint taskId, TaskInfo memory task) external {
+        require(msg.sender == ownerOf(taskId), "No permission.");
+        require(!IOrder(order).hasTaskOrders(taskId), "Existing orders.");
 
-        tasks[_taskId].title = _taskInfo.title;
-        tasks[_taskId].budget = _taskInfo.budget;
-        tasks[_taskId].desc = _taskInfo.desc;
-        tasks[_taskId].attachment = _taskInfo.attachment;
-        tasks[_taskId].period = _taskInfo.period;
-        tasks[_taskId].disabled = _taskInfo.disabled;
+        TaskInfo storage taskInfo = tasks[taskId];
 
-        emit TaskModified(_taskId, msg.sender, _taskInfo.title, _taskInfo.budget, 
-            _taskInfo.desc, _taskInfo.attachment, _taskInfo.period);
+        taskInfo.title = task.title;
+        
+        taskInfo.desc = task.desc;
+        taskInfo.attachment = task.attachment;
+        taskInfo.currency = task.currency;
+        taskInfo.budget = task.budget;
+        taskInfo.period = task.period;
+        taskInfo.categories = task.categories;
+        taskInfo.skills = task.skills;
+        taskInfo.disabled = task.disabled;
+
+        emit TaskModified(taskId, msg.sender, taskInfo);
     }
 
-    function applyFor(uint _taskId, uint _cost) external payable {
+    function applyFor(address who, uint taskId, uint _cost) public payable {
         require(msg.value >= applyFee, "low fee");
-        require(msg.sender != ownerOf(_taskId), "Not apply for orders yourself.");
-        require(!tasks[_taskId].disabled, "The apply switch is closed.");
-
-        applyCosts[_taskId][msg.sender] = _cost;
-
-        emit ApplyFor(_taskId, msg.sender, _cost);
+        doApply(who, taskId, _cost);
     }
 
-    function cancelApply(uint _taskId) external {
-        require(applyCosts[_taskId][msg.sender] > 0, "Not applied.");
-        applyCosts[_taskId][msg.sender] = 0;
+    function doApply(address who, uint taskId, uint _cost) internal {
+        require(who != ownerOf(taskId), "Not apply for orders yourself.");
+        require(!tasks[taskId].disabled, "The apply switch is closed.");
 
-        emit CancelApply(_taskId, msg.sender);
+        applyCosts[taskId][who] = _cost;
+        emit ApplyFor(taskId, who, _cost);
     }
 
-    function disableTask(uint _taskId, bool _disabled) external {
-        require(msg.sender == ownerOf(_taskId), "No permission.");
-        require(tasks[_taskId].disabled != _disabled, "same state.");
+    function cancelApply(uint taskId) public {
+        require(applyCosts[taskId][msg.sender] > 0, "Not applied.");
+        applyCosts[taskId][msg.sender] = 0;
 
-        tasks[_taskId].disabled = _disabled;
-        emit TaskDisabled(_taskId, _disabled);
+        emit CancelApply(taskId, msg.sender);
+    }
+
+    function applyAndCancel(address who, uint[] memory taskIds, uint[] memory costs, uint[] memory cancelIds) external payable { 
+        uint applyNum = taskIds.length; 
+        require(msg.value >= applyFee * applyNum, "low fee");
+        for( uint i=0; i < applyNum; i++) {
+            doApply(who, taskIds[i], costs[i]);
+        }
+
+        for( uint i=0; i < cancelIds.length; i++) {
+            cancelApply(cancelIds[i]);
+        }
+    }
+
+    function disableTask(uint taskId, bool _disabled) external {
+        require(msg.sender == ownerOf(taskId), "No permission.");
+        require(tasks[taskId].disabled != _disabled, "same state.");
+
+        tasks[taskId].disabled = _disabled;
+        emit TaskDisabled(taskId, _disabled);
     }
 
     function transferFee(uint amount) external {
@@ -118,7 +135,6 @@ contract Task is SBTBase, Ownable {
         require(_order != address(0), "zero address");
         order = _order;    
     }
-
 
     function updateFeeReceiver(uint _taskFee, uint _applyFee, address _receiver) external onlyOwner {
         taskFee = _taskFee;
@@ -136,6 +152,5 @@ contract Task is SBTBase, Ownable {
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         return IMetadata(metadataAddr).tokenURI(tokenId);
     }
-
 
 }
