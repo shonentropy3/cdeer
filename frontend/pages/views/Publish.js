@@ -94,7 +94,7 @@ function Publish() {
           budget: Number(inner[1].value),
           u_address: `'${web3_react.accounts[0]}'`,
           hash: '',
-          payhash: ''
+          payhash: '',
         }
         if (form_Data) {
           await getHash(form_Data)
@@ -110,31 +110,10 @@ function Publish() {
         let para = {"proLabel":data}
         let tradeStatus = true
 
-
-
-        const signer = web3_react.provider.getSigner(web3_react.accounts[0]);
-        console.log(signer);
-        const taskContract = new ethers.Contract(taskAddr.address, task.abi, signer);
-        // const Contract = new ethers.Contract(helloAddr.address, hello.abi, provider.getSigner(accounts[0]));
-          await taskContract().createTask(
-            { 
-                title: data.title,
-                desc: data.pro_content,
-                attachment: data.hash,
-                budget: budget,
-                period: period
-            },
-            {
-                value: fee
-            })
-            .then(res => {
-              console.log(res);
-              return res
-            })
-        return
         // 交易
         await Demand(para)
         .then(res => {
+          console.log(res);
           if (res) {
             data = JSON.parse(data)
             data.payhash = res.hash
@@ -148,7 +127,6 @@ function Publish() {
             }
           }
         })
-        console.log(web3_react.provider.getSigner(web3_react.accounts[0]));
         return
         // 2、创建项目
         if (tradeStatus) {

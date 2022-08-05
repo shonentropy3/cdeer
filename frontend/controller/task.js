@@ -1,6 +1,9 @@
 import { ethers } from 'ethers'
 import { taskContract } from '.'
-import { useSelector } from 'react-redux'
+
+
+
+
 
 export const ModifyDemand = async(account) => {
 
@@ -31,17 +34,13 @@ export const ModifyDemand = async(account) => {
 
 export const Demand = async(para) => {
     try {
-        const redux = useSelector(state => state.web3_react.value)
-        if (window.ethereum !== 'undefined') {
-        // let fee = ethers.utils.parseEther("1")
-        let fee = ethers.utils.parseEther("0")
-        const data = JSON.parse(para.proLabel)
-        let budget = data.budget * 100
-        let period = data.period * 24 * 60 * 60
-        const signer = redux.provider.getSigner(redux.accounts[0]);
-        const taskContract = new ethers.Contract(taskAddr.address, task.abi, signer);
+          // let fee = ethers.utils.parseEther("1")
+          let fee = ethers.utils.parseEther("0")
+          const data = JSON.parse(para.proLabel)
+          let budget = data.budget * 100
+          let period = data.period * 24 * 60 * 60
           return await taskContract().createTask(
-            { 
+            {
                 title: data.title,
                 desc: data.pro_content,
                 attachment: data.hash,
@@ -52,12 +51,11 @@ export const Demand = async(para) => {
                 value: fee
             })
             .then(res => {
-              console.log(res);
+              console.log('hhhh');
+              console.log(res,'===========>>====');
               return res
             })
-        } else {
-          console.log("Ethereum object does not exist");
-        }
+        
       } catch (err) {
           return err;
       }

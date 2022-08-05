@@ -16,40 +16,15 @@
           "type": "uint256"
         },
         {
-          "indexed": false,
-          "internalType": "address",
-          "name": "maker",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "name": "ApplyEnable",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "taskId",
-          "type": "uint256"
-        },
-        {
           "indexed": true,
           "internalType": "address",
-          "name": "taker",
+          "name": "worker",
           "type": "address"
         },
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "valuation",
+          "name": "cost",
           "type": "uint256"
         }
       ],
@@ -118,7 +93,7 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "taker",
+          "name": "worker",
           "type": "address"
         }
       ],
@@ -129,136 +104,25 @@
       "anonymous": false,
       "inputs": [
         {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "taskId",
-          "type": "uint256"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "maker",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "title",
-          "type": "string"
-        },
-        {
           "indexed": false,
           "internalType": "uint256",
-          "name": "budget",
+          "name": "taskFee",
           "type": "uint256"
         },
         {
           "indexed": false,
-          "internalType": "string",
-          "name": "desc",
-          "type": "string"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "attachment",
-          "type": "string"
-        },
-        {
-          "indexed": false,
           "internalType": "uint256",
-          "name": "period",
-          "type": "uint256"
-        }
-      ],
-      "name": "CreateTask",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "taskId",
+          "name": "applyFee",
           "type": "uint256"
         },
         {
           "indexed": false,
           "internalType": "address",
-          "name": "maker",
+          "name": "feeReceiver",
           "type": "address"
-        }
-      ],
-      "name": "DeleteTask",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "owner",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "createTaskFee",
-          "type": "uint256"
         }
       ],
       "name": "ModifyFee",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "taskId",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "maker",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "title",
-          "type": "string"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "budget",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "desc",
-          "type": "string"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "attachment",
-          "type": "string"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "period",
-          "type": "uint256"
-        }
-      ],
-      "name": "ModifyTask",
       "type": "event"
     },
     {
@@ -278,6 +142,123 @@
         }
       ],
       "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "taskId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "issuer",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "budget",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "desc",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "attachment",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "period",
+          "type": "uint256"
+        }
+      ],
+      "name": "TaskCreated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "taskId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "disabled",
+          "type": "bool"
+        }
+      ],
+      "name": "TaskDisabled",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "taskId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "issuer",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "budget",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "desc",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "attachment",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "period",
+          "type": "uint256"
+        }
+      ],
+      "name": "TaskModified",
       "type": "event"
     },
     {
@@ -313,44 +294,26 @@
           "type": "uint256"
         },
         {
-          "internalType": "bool",
-          "name": "_applyEnabled",
-          "type": "bool"
-        }
-      ],
-      "name": "applyEnable",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "uint256",
-          "name": "_taskId",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_valuation",
+          "name": "_cost",
           "type": "uint256"
         }
       ],
       "name": "applyFor",
       "outputs": [],
-      "stateMutability": "nonpayable",
+      "stateMutability": "payable",
       "type": "function"
     },
     {
       "inputs": [
         {
           "internalType": "address",
-          "name": "to",
+          "name": "",
           "type": "address"
         },
         {
           "internalType": "uint256",
-          "name": "tokenId",
+          "name": "",
           "type": "uint256"
         }
       ],
@@ -422,11 +385,11 @@
             },
             {
               "internalType": "bool",
-              "name": "applyEnabled",
+              "name": "disabled",
               "type": "bool"
             }
           ],
-          "internalType": "struct Task.TaskInfo",
+          "internalType": "struct TaskInfo",
           "name": "_taskInfo",
           "type": "tuple"
         }
@@ -442,9 +405,14 @@
           "internalType": "uint256",
           "name": "_taskId",
           "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "_disabled",
+          "type": "bool"
         }
       ],
-      "name": "deleteTask",
+      "name": "disableTask",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -453,7 +421,7 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "tokenId",
+          "name": "",
           "type": "uint256"
         }
       ],
@@ -472,12 +440,12 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "owner",
+          "name": "",
           "type": "address"
         },
         {
           "internalType": "address",
-          "name": "operator",
+          "name": "",
           "type": "address"
         }
       ],
@@ -493,16 +461,16 @@
       "type": "function"
     },
     {
-      "inputs": [
+      "inputs": [],
+      "name": "metadataAddr",
+      "outputs": [
         {
-          "internalType": "uint256",
-          "name": "_createTaskFee",
-          "type": "uint256"
+          "internalType": "address",
+          "name": "",
+          "type": "address"
         }
       ],
-      "name": "modifyFee",
-      "outputs": [],
-      "stateMutability": "nonpayable",
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -541,11 +509,11 @@
             },
             {
               "internalType": "bool",
-              "name": "applyEnabled",
+              "name": "disabled",
               "type": "bool"
             }
           ],
-          "internalType": "struct Task.TaskInfo",
+          "internalType": "struct TaskInfo",
           "name": "_taskInfo",
           "type": "tuple"
         }
@@ -563,6 +531,19 @@
           "internalType": "string",
           "name": "",
           "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "order",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
         }
       ],
       "stateMutability": "view",
@@ -611,17 +592,17 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "from",
+          "name": "",
           "type": "address"
         },
         {
           "internalType": "address",
-          "name": "to",
+          "name": "",
           "type": "address"
         },
         {
           "internalType": "uint256",
-          "name": "tokenId",
+          "name": "",
           "type": "uint256"
         }
       ],
@@ -634,22 +615,22 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "from",
+          "name": "",
           "type": "address"
         },
         {
           "internalType": "address",
-          "name": "to",
+          "name": "",
           "type": "address"
         },
         {
           "internalType": "uint256",
-          "name": "tokenId",
+          "name": "",
           "type": "uint256"
         },
         {
           "internalType": "bytes",
-          "name": "data",
+          "name": "",
           "type": "bytes"
         }
       ],
@@ -662,12 +643,12 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "operator",
+          "name": "",
           "type": "address"
         },
         {
           "internalType": "bool",
-          "name": "approved",
+          "name": "",
           "type": "bool"
         }
       ],
@@ -680,7 +661,20 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "order_",
+          "name": "_meta",
+          "type": "address"
+        }
+      ],
+      "name": "setMetadataContract",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_order",
           "type": "address"
         }
       ],
@@ -725,6 +719,50 @@
       "inputs": [
         {
           "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "tasks",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "desc",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "attachment",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "budget",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "period",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "disabled",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
           "name": "tokenId",
           "type": "uint256"
         }
@@ -743,18 +781,31 @@
     {
       "inputs": [
         {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "transferFee",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "address",
-          "name": "from",
+          "name": "",
           "type": "address"
         },
         {
           "internalType": "address",
-          "name": "to",
+          "name": "",
           "type": "address"
         },
         {
           "internalType": "uint256",
-          "name": "tokenId",
+          "name": "",
           "type": "uint256"
         }
       ],
@@ -772,6 +823,29 @@
         }
       ],
       "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_taskFee",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_applyFee",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_receiver",
+          "type": "address"
+        }
+      ],
+      "name": "updateFeeReceiver",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
