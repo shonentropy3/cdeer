@@ -2,28 +2,18 @@ import Link from 'next/link'
 import { DownOutlined } from '@ant-design/icons';
 import { Dropdown, Menu, Space, Button, Modal, Divider } from 'antd';
 
-import { InjectedConnector } from "@web3-react/injected-connector";
 import { useEffect, useState } from 'react';
-import { connectors } from '../../utils/connectors';
-
-// import { hooks, metaMask } from '../../connectors/metaMask';
-// // import { hooks } from '../../connectors/walletConnect';
-
-// const { useChainId, useAccounts, useIsActivating, useIsActive, useProvider, useENSNames } = hooks
-
-import hello from '../../../deployments/abi/Hello.json'
-import helloAddr from '../../contracts/deployments/Hello.json'
-import { ethers } from 'ethers'
-import { URI_AVAILABLE } from '@web3-react/walletconnect'
-import ConnectMetaMask from '../../components/ConnectMetaMask';
-
-export const injected = new InjectedConnector();
+import { useDispatch, useSelector } from 'react-redux'
+import { clearValue } from '../../redux/web3_reactSlice'
+import Card from '../../components/Card';
 
 
 function Header() {
 
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [web3_react,setWeb3_react] = useState({})
+    const redux = useSelector(state => state.web3_react.value)
+    let [web3_react, setWeb3] = useState({})
+    const dispatch = useDispatch()
 
     const showModal = () => {
         setIsModalVisible(true);
@@ -37,38 +27,15 @@ function Header() {
       setIsModalVisible(false);
     };
 
-    const test = async() => {
-
-        console.log(web3_react);
-        return
-        // walletConnect.activate();
-        // return
-
-        const Contract = new ethers.Contract(helloAddr.address, hello.abi, provider.getSigner(accounts[0]));
-        Contract.setVaule(1)
-        .then(res => {
-            console.log(res,'res==>');
-        })
-        .catch(err => {
-            console.log(err);
-        })
-    }
+    useEffect(() => {
+        web3_react = redux;
+        setWeb3({...web3_react})
+    },[redux])
 
     return (
         <>
         <Modal title="" className='Mask_connect' visible={isModalVisible} footer={null} onCancel={handleCancel}>
-            <div className="title">Welcome to Code-Market</div>
-            <div className='strong'>Sign-in to get started</div>
-            
-            <ConnectMetaMask className="li" change={setWeb3_react} cancel={handleCancel}></ConnectMetaMask>
-
-            <Button className="li" onClick={() => test()}>WalletConnect</Button>
-
-            <Button className="li" onClick={() => {
-                activate(connectors.coinbaseWallet);
-                handleCancel();
-            }}>coinbaseWallet</Button>
-            {/* <Divider>{}</Divider> */}
+          <Card cancel={handleCancel}></Card>
         </Modal>
         <div className='header'>
             <div className="left">
@@ -104,7 +71,12 @@ function Header() {
                 </div>
                 {
                     web3_react.isActive ? (
-                        <p>{web3_react.accounts[0]}</p>
+                        <>
+                        <p onClick={() => {
+                            web3_react.wallet.deactivate ? web3_react.wallet.deactivate() : ''
+                            dispatch(clearValue())
+                        }}>{web3_react.accounts[0]}</p>
+                        </>
                     ) : (
                         <Button className='connect' type="primary" onClick={() => showModal()}>connect</Button>
                     )

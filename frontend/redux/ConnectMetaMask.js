@@ -2,12 +2,13 @@
 import { useEffect } from 'react';
 import { metaMask, hooks } from '../connectors/metaMask';
 import { Button } from 'antd';
+import { useSelector, useDispatch } from 'react-redux'
+import { changeValue } from './web3_reactSlice'
 
 const { useChainId, useAccounts, useIsActivating, useIsActive, useProvider, useENSNames } = hooks
 
 export default function ConnectMetaMask(props) {
 
-    const { change } = props;
     const { cancel } = props;
     const web3_react = {
         chainId : useChainId(),
@@ -15,9 +16,11 @@ export default function ConnectMetaMask(props) {
         isActivating : useIsActivating(),
         isActive : useIsActive(),
         provider : useProvider(),
-        ENSNames : useENSNames()
+        ENSNames : useENSNames(),
+        wallet: metaMask
     }
-
+    // redux
+    const dispatch = useDispatch()
     
 
     useEffect(() => {
@@ -28,8 +31,7 @@ export default function ConnectMetaMask(props) {
 
     const connect = async() => {
         await metaMask.activate();
-        // TODO:改为redux存储web3_react
-        await change({...web3_react})
+        dispatch(changeValue(web3_react))
         cancel()
     }
 

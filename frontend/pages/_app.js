@@ -19,8 +19,9 @@ import { coinbaseWallet, hooks as coinbaseWalletHooks } from '../connectors/coin
 import { hooks as metaMaskHooks, metaMask } from '../connectors/metaMask'
 import { hooks as networkHooks, network } from '../connectors/network'
 import { hooks as walletConnectHooks, walletConnect } from '../connectors/walletConnect'
-import { getName } from '../utils'
-
+// import { getName } from '../utils'
+import store from '../redux/store'
+import { Provider } from 'react-redux'
 
 const connectors = [
   [metaMask, metaMaskHooks],
@@ -39,9 +40,11 @@ function MyApp({ Component, pageProps }) {
   return(
     <>
     <Web3ReactProvider connectors={connectors}>
-      <Header></Header>
-      <Component {...pageProps} />
-      {/* <Child /> */}
+      <Provider store={store}>
+        <Header></Header>
+        <Component {...pageProps} />
+        {/* <Child /> */}
+      </Provider>
     </Web3ReactProvider>
       
     </>

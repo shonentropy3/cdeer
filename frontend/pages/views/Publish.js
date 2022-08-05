@@ -5,27 +5,25 @@ import { UploadOutlined, WarningOutlined, InfoCircleOutlined } from '@ant-design
 import { Demand } from '../../controller/task';
 import { useRouter } from 'next/router'
 import { useWeb3React } from "@web3-react/core"
-import { connectors } from '../../utils/connectors';
 import task from '../../../deployments/abi/Task.json'
 import taskAddr from '../../contracts/deployments/Task.json'
 import hello from '../../../deployments/abi/Hello.json'
 import helloAddr from '../../contracts/deployments/Hello.json'
 
+import Card from '../../components/Card';
+
 import { ethers } from 'ethers'
+import { useSelector } from 'react-redux'
 
 // import useProvider//
 
 function Publish() {
 
-  const { 
-    active, 
-    account, 
-    activate, 
-    library,
-    library: provider } = useWeb3React();
+
     const _data = require("../../data/data.json")
     const router = useRouter();
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const web3_react = useSelector(state => state.web3_react.value)
 
     let [inner,setInner] = useState(_data.inner)
 
@@ -47,7 +45,6 @@ function Publish() {
     };
 
     const mintNftHandler = async () => {
-
         let flag = true
         // 校验一:是否为空
 
@@ -95,7 +92,7 @@ function Publish() {
           title: `${inner[0].value}`,
           period: Number(inner[2].value),
           budget: Number(inner[1].value),
-          u_address: `'${account}'`,
+          u_address: `'${web3_react.accounts[0]}'`,
           hash: '',
           payhash: ''
         }
@@ -109,41 +106,17 @@ function Publish() {
               return err
             })
         }
-        
         data = JSON.stringify(data)
         let para = {"proLabel":data}
         let tradeStatus = true
 
 
-        // console.log(library.getSigner(account));
-        // return
-        // await library.getSigner(account).signMessage('👋')
-        //         .then((res) => {
-        //           console.log(res);
-        //         })
-        // return
 
-        // await library.provider.request({
-        //   method: "personal_sign",
-        //   params: ['xxx', account]
-        // });
-// return
-
-        let fee = ethers.utils.parseEther("0.1")
-        data = JSON.parse(para.proLabel)
-        let budget = data.budget * 100
-        let period = data.period * 24 * 60 * 60
-        // const signer = library.getSigner()
-        // const signer = await library.getSigner(account)
-        // console.log(signer);
-        // console.log(signer,":",library.provider.signer);
-        // return
-        let signer = await library.getSigner(account).connectUnchecked();
-        // console.log(signer);
-
-        
+        const signer = web3_react.provider.getSigner(web3_react.accounts[0]);
+        console.log(signer);
         const taskContract = new ethers.Contract(taskAddr.address, task.abi, signer);
-        await taskContract.createTask(
+        // const Contract = new ethers.Contract(helloAddr.address, hello.abi, provider.getSigner(accounts[0]));
+          await taskContract().createTask(
             { 
                 title: data.title,
                 desc: data.pro_content,
@@ -155,7 +128,7 @@ function Publish() {
                 value: fee
             })
             .then(res => {
-              console.log('res==>',res);
+              console.log(res);
               return res
             })
         return
@@ -175,6 +148,8 @@ function Publish() {
             }
           }
         })
+        console.log(web3_react.provider.getSigner(web3_react.accounts[0]));
+        return
         // 2、创建项目
         if (tradeStatus) {
           createDemand(para)
@@ -196,13 +171,10 @@ function Publish() {
 
     }
 
-    function getProviderOrSigner(provider, account) {
-      return getSigner(provider, account)
-    }
 
     // 登陆/下单按钮
     const buttonModel = () => {
-      if (account !== undefined) {
+      if (web3_react.accounts !== undefined) {
         return <button onClick={mintNftHandler} className='btn login'> Mint NFT </button>
       } else {
         return <button onClick={() => showModal()} className='btn connect'> Connect Wallet </button>
@@ -308,23 +280,9 @@ function Publish() {
     return(
       <>
         <Modal title="" className='Mask_connect' visible={isModalVisible} footer={null} onCancel={handleCancel}>
-            <div className="title">Welcome to Code-Market</div>
-            <div className='strong'>Sign-in to get started</div>
-            <Button className="li" onClick={() => {
-                activate(connectors.injected);
-                handleCancel();
-            }}>Metamask</Button>
 
-            <Button className="li" onClick={() => {
-                activate(connectors.walletConnect);
-                handleCancel();
-            }}>WalletConnect</Button>
+          <Card cancel={handleCancel}></Card>
 
-            <Button className="li" onClick={() => {
-                activate(connectors.coinbaseWallet);
-                handleCancel();
-            }}>coinbaseWallet</Button>
-            {/* <Divider>{}</Divider> */}
         </Modal>
         <div className="publish">
             <div className="box">
@@ -370,7 +328,7 @@ function Publish() {
                                   </div>
                         }
                         else{
-                          return <div className={`upload`}>
+                          return <div key={index} className={`upload`}>
                               <p>相关文档<span>(选填)</span></p>
                               <InfoCircleOutlined className='mr20' onClick={()=>tips()} />
                               <Upload

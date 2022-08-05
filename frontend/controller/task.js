@@ -1,5 +1,6 @@
 import { ethers } from 'ethers'
 import { taskContract } from '.'
+import { useSelector } from 'react-redux'
 
 export const ModifyDemand = async(account) => {
 
@@ -30,13 +31,15 @@ export const ModifyDemand = async(account) => {
 
 export const Demand = async(para) => {
     try {
-        
+        const redux = useSelector(state => state.web3_react.value)
         if (window.ethereum !== 'undefined') {
         // let fee = ethers.utils.parseEther("1")
         let fee = ethers.utils.parseEther("0")
         const data = JSON.parse(para.proLabel)
         let budget = data.budget * 100
         let period = data.period * 24 * 60 * 60
+        const signer = redux.provider.getSigner(redux.accounts[0]);
+        const taskContract = new ethers.Contract(taskAddr.address, task.abi, signer);
           return await taskContract().createTask(
             { 
                 title: data.title,
