@@ -24,18 +24,18 @@ export default function ConnectWalletConnect(props) {
     const dispatch = useDispatch()
     
 
-    useEffect(() => {
-        walletConnect.events.on(URI_AVAILABLE, (uri) => {
-          console.log(`uri: ${uri}`)
-        })
-      }, [])
+    // useEffect(() => {
+    //     walletConnect.events.on(URI_AVAILABLE, (uri) => {
+    //       console.log(`uri: ${uri}`)
+    //     })
+    //   }, [])
     
-      // attempt to connect eagerly on mount
-      useEffect(() => {
-        walletConnect.connectEagerly().catch(() => {
-          console.debug('Failed to connect eagerly to walletconnect')
-        })
-      }, [])
+    //   // attempt to connect eagerly on mount
+    //   useEffect(() => {
+    //     walletConnect.connectEagerly().catch(() => {
+    //       console.debug('Failed to connect eagerly to walletconnect')
+    //     })
+    //   }, [])
 
     const connect = async() => {
         await walletConnect.activate();
@@ -43,7 +43,6 @@ export default function ConnectWalletConnect(props) {
         if (web3_react.isActive) {
           cancel()
         }
-        
     }
 
     return <Button className="li" onClick={() => connect()} >WalletConnect</Button>

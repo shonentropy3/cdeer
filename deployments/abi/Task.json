@@ -154,40 +154,63 @@
           "type": "uint256"
         },
         {
-          "indexed": true,
+          "indexed": false,
           "internalType": "address",
           "name": "issuer",
           "type": "address"
         },
         {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "title",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "desc",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "attachment",
+              "type": "string"
+            },
+            {
+              "internalType": "uint8",
+              "name": "currency",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint64",
+              "name": "budget",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint32",
+              "name": "period",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint48",
+              "name": "categories",
+              "type": "uint48"
+            },
+            {
+              "internalType": "uint48",
+              "name": "skills",
+              "type": "uint48"
+            },
+            {
+              "internalType": "bool",
+              "name": "disabled",
+              "type": "bool"
+            }
+          ],
           "indexed": false,
-          "internalType": "string",
-          "name": "title",
-          "type": "string"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "budget",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "desc",
-          "type": "string"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "attachment",
-          "type": "string"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "period",
-          "type": "uint256"
+          "internalType": "struct TaskInfo",
+          "name": "task",
+          "type": "tuple"
         }
       ],
       "name": "TaskCreated",
@@ -228,34 +251,57 @@
           "type": "address"
         },
         {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "title",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "desc",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "attachment",
+              "type": "string"
+            },
+            {
+              "internalType": "uint8",
+              "name": "currency",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint64",
+              "name": "budget",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint32",
+              "name": "period",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint48",
+              "name": "categories",
+              "type": "uint48"
+            },
+            {
+              "internalType": "uint48",
+              "name": "skills",
+              "type": "uint48"
+            },
+            {
+              "internalType": "bool",
+              "name": "disabled",
+              "type": "bool"
+            }
+          ],
           "indexed": false,
-          "internalType": "string",
-          "name": "title",
-          "type": "string"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "budget",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "desc",
-          "type": "string"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "attachment",
-          "type": "string"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "period",
-          "type": "uint256"
+          "internalType": "struct TaskInfo",
+          "name": "task",
+          "type": "tuple"
         }
       ],
       "name": "TaskModified",
@@ -289,8 +335,41 @@
     {
       "inputs": [
         {
+          "internalType": "address",
+          "name": "who",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "taskIds",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "costs",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "cancelIds",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "applyAndCancel",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "who",
+          "type": "address"
+        },
+        {
           "internalType": "uint256",
-          "name": "_taskId",
+          "name": "taskId",
           "type": "uint256"
         },
         {
@@ -345,7 +424,7 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_taskId",
+          "name": "taskId",
           "type": "uint256"
         }
       ],
@@ -356,6 +435,11 @@
     },
     {
       "inputs": [
+        {
+          "internalType": "address",
+          "name": "who",
+          "type": "address"
+        },
         {
           "components": [
             {
@@ -374,14 +458,29 @@
               "type": "string"
             },
             {
-              "internalType": "uint256",
-              "name": "budget",
-              "type": "uint256"
+              "internalType": "uint8",
+              "name": "currency",
+              "type": "uint8"
             },
             {
-              "internalType": "uint256",
+              "internalType": "uint64",
+              "name": "budget",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint32",
               "name": "period",
-              "type": "uint256"
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint48",
+              "name": "categories",
+              "type": "uint48"
+            },
+            {
+              "internalType": "uint48",
+              "name": "skills",
+              "type": "uint48"
             },
             {
               "internalType": "bool",
@@ -390,7 +489,7 @@
             }
           ],
           "internalType": "struct TaskInfo",
-          "name": "_taskInfo",
+          "name": "task",
           "type": "tuple"
         }
       ],
@@ -403,7 +502,7 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_taskId",
+          "name": "taskId",
           "type": "uint256"
         },
         {
@@ -477,7 +576,7 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "_taskId",
+          "name": "taskId",
           "type": "uint256"
         },
         {
@@ -498,14 +597,29 @@
               "type": "string"
             },
             {
-              "internalType": "uint256",
-              "name": "budget",
-              "type": "uint256"
+              "internalType": "uint8",
+              "name": "currency",
+              "type": "uint8"
             },
             {
-              "internalType": "uint256",
+              "internalType": "uint64",
+              "name": "budget",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint32",
               "name": "period",
-              "type": "uint256"
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint48",
+              "name": "categories",
+              "type": "uint48"
+            },
+            {
+              "internalType": "uint48",
+              "name": "skills",
+              "type": "uint48"
             },
             {
               "internalType": "bool",
@@ -514,7 +628,7 @@
             }
           ],
           "internalType": "struct TaskInfo",
-          "name": "_taskInfo",
+          "name": "task",
           "type": "tuple"
         }
       ],
@@ -741,14 +855,29 @@
           "type": "string"
         },
         {
-          "internalType": "uint256",
-          "name": "budget",
-          "type": "uint256"
+          "internalType": "uint8",
+          "name": "currency",
+          "type": "uint8"
         },
         {
-          "internalType": "uint256",
+          "internalType": "uint64",
+          "name": "budget",
+          "type": "uint64"
+        },
+        {
+          "internalType": "uint32",
           "name": "period",
-          "type": "uint256"
+          "type": "uint32"
+        },
+        {
+          "internalType": "uint48",
+          "name": "categories",
+          "type": "uint48"
+        },
+        {
+          "internalType": "uint48",
+          "name": "skills",
+          "type": "uint48"
         },
         {
           "internalType": "bool",

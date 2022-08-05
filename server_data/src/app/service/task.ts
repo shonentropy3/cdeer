@@ -10,7 +10,7 @@ import { updateBlock } from 'src/app/db/sql/sql';
 import { ApplyInfo } from '../db/entity/ApplyInfo';
 const { ethers } = require('ethers');
 // TODO:更改配置文件
-const rpcProvider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
+const rpcProvider = new ethers.providers.JsonRpcProvider("https://goerli.infura.io/v3/d3fe47cdbf454c9584113d05a918694f");
 const USDR_ADDR = require('../../../deployments/Task.json');
 
 // 信息同步hash表：待同步类型：1.创建需求 2.修改需求 3.报名 4.修改报名 5.取消报名, 6.创建订单或者修改订单
@@ -40,7 +40,7 @@ export class TaskService {
         let filter = {
             address: USDR_ADDR.address,
             topics: [
-                ethers.utils.id("ModifyTask(uint256,address,string,uint256,string,string,uint256)")
+                '0xeb0b0373fe4634755d2b0e27fc62dd567fed0e1e4d90d5317dfe735804cc5bf7'
             ],
             fromBlock,
             toBlock
@@ -48,7 +48,6 @@ export class TaskService {
         
         const logs = await rpcProvider.getLogs(filter);
         const CreateTask = new ethers.utils.Interface(["event ModifyTask(uint256 indexed taskId, address maker, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
-        // console.log('logs==>',logs);
         
         if (logs.length > 0) {
             let txs = logs.map((ele: any) => {
@@ -94,6 +93,7 @@ export class TaskService {
     insertApplyFor = async () => {
         //获取未同步的信息
         let latest = await rpcProvider.getBlockNumber();
+        
         let last = await this.applyInfoRepository.query(getLastBlock());
         let logBlock = last[0].block;
         if (logBlock >= latest) return; // 区块已监听过了
@@ -105,7 +105,10 @@ export class TaskService {
         for (let v of taskHash) {
             const log = await rpcProvider.getTransactionReceipt(v.hash);
 
-            const createTask = new ethers.utils.Interface(["event CreateTask(uint256 indexed taskId, address indexed maker, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
+            // TODO:==>     address who, TaskInfo memory task
+            const createTask = new ethers.utils.Interface(["event TaskCreated(uint256 indexed taskId, address issuer, TaskInfo task)"]);
+            console.log(createTask);
+            
             let decodedData = createTask.parseLog(log.logs[1]);
             
             const taskId = decodedData.args.taskId.toString();

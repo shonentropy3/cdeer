@@ -113,7 +113,6 @@ function Publish() {
         // 交易
         await Demand(para)
         .then(res => {
-          console.log(res);
           if (res) {
             data = JSON.parse(data)
             data.payhash = res.hash
@@ -127,7 +126,6 @@ function Publish() {
             }
           }
         })
-        return
         // 2、创建项目
         if (tradeStatus) {
           createDemand(para)

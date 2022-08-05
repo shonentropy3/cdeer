@@ -51,8 +51,6 @@ export const Demand = async(para) => {
                 value: fee
             })
             .then(res => {
-              console.log('hhhh');
-              console.log(res,'===========>>====');
               return res
             })
         
