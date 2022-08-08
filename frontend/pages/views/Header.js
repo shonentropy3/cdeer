@@ -8,12 +8,52 @@ import { clearValue } from '../../redux/web3_reactSlice'
 import Card from '../../components/Card';
 
 
+
 function Header() {
 
     const [isModalVisible, setIsModalVisible] = useState(false);
     const redux = useSelector(state => state.web3_react.value)
     let [web3_react, setWeb3] = useState({})
+    let [account,setAccount] = useState()
     const dispatch = useDispatch()
+
+    const menu = (
+        <Menu
+          items={[
+            {
+                type: 'group',
+                label: (
+                    <p value={web3_react.accounts}>Hello, {account}</p>
+                )
+            },
+            {
+                type: 'divider',
+            },
+            {
+              key: '1',
+              label: (
+                <Link href="/views/My">
+                  个人中心
+                </Link>
+              ),
+            },
+            {
+                type: 'divider',
+            },
+            {
+              key: '2',
+              danger: true,
+              label: (
+                <p onClick={() => {
+                    web3_react.wallet.deactivate ? 
+                    web3_react.wallet.deactivate()
+                    : ''
+                dispatch(clearValue())}}>退出登陆</p>
+              ),
+            }
+          ]}
+        />
+      );
 
     const showModal = () => {
         setIsModalVisible(true);
@@ -30,6 +70,13 @@ function Header() {
     useEffect(() => {
         web3_react = redux;
         setWeb3({...web3_react})
+        
+        if (!web3_react.isActive) {
+            return
+        }
+        account = web3_react.accounts[0]
+        account = account.substr(0,5) + '...' + account.substr(account.length - 5 , 4)
+        setAccount(account)
     },[redux])
 
     return (
@@ -72,10 +119,11 @@ function Header() {
                 {
                     web3_react.isActive ? (
                         <>
-                        <p onClick={() => {
-                            web3_react.wallet.deactivate ? web3_react.wallet.deactivate() : ''
-                            dispatch(clearValue())
-                        }}>{web3_react.accounts[0]}</p>
+                        <Dropdown overlay={menu}>
+                        <div className="avt">
+                            
+                        </div>
+                        </Dropdown>
                         </>
                     ) : (
                         <Button className='connect' type="primary" onClick={() => showModal()}>connect</Button>
