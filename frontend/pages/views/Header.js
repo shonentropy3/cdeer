@@ -1,6 +1,5 @@
 import Link from 'next/link'
-import { DownOutlined } from '@ant-design/icons';
-import { Dropdown, Menu, Space, Button, Modal, Divider } from 'antd';
+import { Dropdown, Menu, Button, Modal, Divider } from 'antd';
 
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
@@ -23,7 +22,7 @@ function Header() {
             {
                 type: 'group',
                 label: (
-                    <p value={web3_react.accounts}>Hello, {account}</p>
+                    <p value={web3_react.accounts}>Hello, <em>{account}</em></p>
                 )
             },
             {

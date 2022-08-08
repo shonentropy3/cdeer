@@ -8,6 +8,8 @@ import { getLastBlock,getModifyDemandLastBlock, getTaskHash, createTaskSql,creat
 import { updateProject, updateApplyInfo, cancelApply } from 'src/app/db/sql/sql';
 import { updateBlock } from 'src/app/db/sql/sql';
 import { ApplyInfo } from '../db/entity/ApplyInfo';
+
+
 const { ethers } = require('ethers');
 // TODO:更改配置文件
 // const rpcProvider = new ethers.providers.JsonRpcProvider("https://goerli.infura.io/v3/d3fe47cdbf454c9584113d05a918694f");
@@ -106,27 +108,21 @@ export class TaskService {
         for (let v of taskHash) {
             const log = await rpcProvider.getTransactionReceipt(v.hash);
             
-            // TODO:==>     address who, TaskInfo memory task
-            const createTask = new ethers.utils.Interface(["event TaskCreated(uint256 indexed taskId, address issuer, TaskInfo task)"]);
-            console.log('rpcProvider=====>',rpcProvider);
-            
+            const createTask = new ethers.utils.Interface(
+                ["event TaskCreated(uint256 indexed,address,tuple(string,string,string,uint8,uint64,uint32,uint48,uint48,bool))"]
+            );
             let decodedData = createTask.parseLog(log.logs[1]);
-            
-            const taskId = decodedData.args.taskId.toString();
-            const title = decodedData.args.title;
-            const budget = Number(decodedData.args.budget.toString())/100;
-            const desc = decodedData.args.desc;
-            const attachment = decodedData.args.attachment;
-            const period = decodedData.args.period.toString();
-            
+            const taskId = decodedData.args[0].toString();
+            const who = decodedData.args[1];
+            const _data = decodedData.args[2];
             let params = {
                 taskId: taskId,
                 hash: v.hash,
-                title: title,
-                budget: budget,
-                desc: desc,
-                attachment: attachment,
-                period: period
+                title: _data[0],
+                desc: _data[1],
+                attachment: _data[2],
+                budget: _data[4].toString(),
+                period: _data[5]
             }
             let sql = createTaskSql(params)
             try {
