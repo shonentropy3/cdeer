@@ -74,7 +74,6 @@ contract Task is SBTBase, Ownable {
         TaskInfo storage taskInfo = tasks[taskId];
 
         taskInfo.title = task.title;
-        
         taskInfo.desc = task.desc;
         taskInfo.attachment = task.attachment;
         taskInfo.currency = task.currency;

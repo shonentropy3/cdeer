@@ -39,18 +39,26 @@ export const Demand = async(para) => {
           const data = JSON.parse(para.proLabel)
           let budget = data.budget * 100
           let period = data.period * 24 * 60 * 60
+          let who = data.u_address
+          console.log(data,'===>');
           return await taskContract().createTask(
+            who,
             {
-                title: data.title,
-                desc: data.pro_content,
-                attachment: data.hash,
-                budget: budget,
-                period: period
-            },
+              title: data.title,
+              desc: data.pro_content,
+              attachment: data.hash,
+              currency: 1,  //  币种,x10000,保留四位小数,前端只展示两位小数
+              budget: budget,
+              period: period,
+              categories: 1,
+              skills: 1,  //  原role,职业为1,2,3...整数型
+            }
+            ,
             {
                 value: fee
             })
             .then(res => {
+              console.log(res);
               return res
             })
         

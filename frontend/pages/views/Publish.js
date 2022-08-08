@@ -92,7 +92,7 @@ function Publish() {
           title: `${inner[0].value}`,
           period: Number(inner[2].value),
           budget: Number(inner[1].value),
-          u_address: `'${web3_react.accounts[0]}'`,
+          u_address: `${web3_react.accounts[0]}`,
           hash: '',
           payhash: '',
         }

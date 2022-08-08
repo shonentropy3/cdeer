@@ -171,6 +171,5 @@ export const URLS = Object.keys(CHAINS).reduce((accumulator, chainId) => {
     accumulator[Number(chainId)] = validURLs
   }
   accumulator[5] = ['https://goerli.infura.io/v3/d3fe47cdbf454c9584113d05a918694f'];
-  console.log(accumulator);
   return accumulator
 }, {})
