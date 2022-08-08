@@ -74,7 +74,7 @@ function Header() {
             return
         }
         account = web3_react.accounts[0]
-        account = account.substr(0,5) + '...' + account.substr(account.length - 5 , 4)
+        account = account.substr(0,5) + '...' + account.substr(account.length - 4 , 4)
         setAccount(account)
     },[redux])
 

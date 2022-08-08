@@ -40,7 +40,6 @@ export const Demand = async(para) => {
           let budget = data.budget * 100
           let period = data.period * 24 * 60 * 60
           let who = data.u_address
-          console.log(data,'===>');
           return await taskContract().createTask(
             who,
             {
@@ -52,8 +51,7 @@ export const Demand = async(para) => {
               period: period,
               categories: 1,
               skills: 1,  //  原role,职业为1,2,3...整数型
-            }
-            ,
+            },
             {
                 value: fee
             })

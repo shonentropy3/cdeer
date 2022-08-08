@@ -7,6 +7,7 @@ import store from '../redux/store'
 
 export const taskContract = () => {
     const web3 = store.getState().web3_react.value;
+    console.log(web3);
     const signer = web3.provider.getSigner(web3.accounts[0])
     const fun = new ethers.Contract(taskAddr.address, task.abi, signer);
     return fun;
