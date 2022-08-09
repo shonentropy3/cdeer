@@ -59,7 +59,6 @@ export default function ProjectDetail() {
     }
 
     const handleOk = async() => {
-        console.log(web3_react.accounts[0]);
         let obj = {
             demandId: detail.id,
             valuation: count,
@@ -70,6 +69,7 @@ export default function ProjectDetail() {
 
         await ApplyProject(obj)
         .then(res => {
+            console.log('res===>',res);
             if (res) {
                 if (res.code) {
                   tradeStatus = false
