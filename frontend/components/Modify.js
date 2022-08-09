@@ -88,20 +88,18 @@ export default function Modify(params) {
         let obj = {
             u_address: detail.task_addr,
             title: input[0].value,
-            budget: input[1].value,
-            period: Number(input[2].value),
+            budget: input[1].value * 100,
+            period: Number(input[2].value) * 24 * 60 * 60,
             pro_content: text,
             recruiting_role: r,
             demand_type: p,
             demand_id: detail.id,
             attachment: detail.attachment
         }
-        console.log("obj===>",obj);
         obj = JSON.stringify(obj)
         let tradeStatus = false
         await ModifyDemand(obj)
         .then(res => {
-            console.log('=====',res);
           if (res) {
             if (res.code) {
               tradeStatus = false
@@ -137,7 +135,7 @@ export default function Modify(params) {
         role = detail.role
         setPjc([...pjc])
         setRole([...role])
-        _data.role.forEach(ele => {
+        _data.market_role.forEach(ele => {
             let flag = false
             detail.role.forEach(e => {
                  if (ele.value === e) {
@@ -148,7 +146,7 @@ export default function Modify(params) {
             })
             flag ? roleList.push(true):roleList.push(false)
         })
-        _data.demand.forEach(ele => {
+        _data.pjc.forEach(ele => {
             let flag = false
             detail.task_type.forEach(e => {
                 if (ele.value === e) {
@@ -161,7 +159,6 @@ export default function Modify(params) {
         })
         setRolelist([...roleList])
         setPjclist([...pjcList])
-        console.log(pjcList);
     }
 
     const cancel = () => {
@@ -171,6 +168,7 @@ export default function Modify(params) {
  
     useEffect(()=>{
         initCheck()
+        detail.budget = detail.budget / 100
     },[])
 
     
@@ -197,14 +195,14 @@ export default function Modify(params) {
             <div className="checkbox">
                 <p>选择角色:</p>
                 {
-                    _data.role.map((e,i) => <Checkbox key={i} checked={roleList[i]} onChange={(event)=>onChange(event,e,'role',i)}>{e.name}</Checkbox>)
+                    _data.market_role.map((e,i) => <Checkbox key={i} checked={roleList[i]} onChange={(event)=>onChange(event,e,'role',i)}>{e.name}</Checkbox>)
                 }
                 
             </div>
             <div className="checkbox">
                 <p>选择项目类型:</p>
                 {
-                    _data.demand.map((e,i) => <Checkbox key={i} checked={pjcList[i]} onChange={(event)=>onChange(event,e,'pjc',i)}>{e.name}</Checkbox>)
+                    _data.pjc.map((e,i) => <Checkbox key={i} checked={pjcList[i]} onChange={(event)=>onChange(event,e,'pjc',i)}>{e.name}</Checkbox>)
                 }
             </div>
             <div className="btn">

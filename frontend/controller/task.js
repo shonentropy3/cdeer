@@ -8,16 +8,21 @@ export const ModifyDemand = async(account) => {
       let data = JSON.parse(account)
       let budget = data.budget * 100 
       let period = data.period * 24 * 60 * 60
-      return await taskContract().modifyTask(data.demand_id,
-        { 
-            title: data.title,
-            budget: budget,
-            desc: data.pro_content,
-            attachment: data.attachment,
-            period: period,
-            applyEnabled: true
+      console.log(data,period);
+      return await taskContract().modifyTask(
+        data.demand_id,
+        {
+          title: data.title,
+          desc: data.pro_content,
+          attachment: data.attachment,
+          currency: 1,  //  币种,x10000,保留四位小数,前端只展示两位小数
+          budget: data.budget,
+          period: data.period,
+          categories: 1,
+          skills: 1,  //  原role,职业为1,2,3...整数型
         })
         .then(res => {
+          console.log(res);
           return res
         })
     } else {
