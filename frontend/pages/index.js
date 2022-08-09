@@ -37,7 +37,7 @@ export default function Home() {
                   <div>
                       <div className={style.flex_start}>
                         <div className={style.mr30}>
-                          招募: {item.role}
+                          招募: {item.demand_role}
                         </div>
                         <div className={style.mr30}>
                           类型: {item.demand_type}
@@ -87,9 +87,8 @@ export default function Home() {
   const marketData = async()=>{
     await getDemand()
     .then(res => {
-      
       Array.from(res.data).forEach((e,i) => {
-        res.data[i].role = translatedRole(e.role)
+        res.data[i].demand_role = translatedRole(e.role)
         res.data[i].demand_type = translatedPjc(e.task_type)
         res.data[i].period = sToDays(e.period)
       })

@@ -232,6 +232,9 @@ function Publish() {
       }
 
       const textChange = (e,i) => {
+        if (!e) {
+          return
+        }
         if (!e.target) {
           inner[i].value = e;
           inner[i].help = '';
@@ -298,7 +301,16 @@ function Publish() {
                                     <p>{element.name}</p>
                                     <div className="result">
                                     {
+                                      element.title === 'task_type' ? 
                                       _data.pjc.map((e,i)=> {
+                                        if (e.value !== null) {
+                                          return  <div key={i}>
+                                                    <input type="checkbox" value={e.value} onChange={event=>{boxChange(event,index)}}/>{e.name}
+                                                  </div>
+                                        }
+                                      } )
+                                      :
+                                      _data.market_role.map((e,i)=> {
                                         if (e.value !== null) {
                                           return  <div key={i}>
                                                     <input type="checkbox" value={e.value} onChange={event=>{boxChange(event,index)}}/>{e.name}

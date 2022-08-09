@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Router from "next/router"
 import { Dropdown, Menu, Button, Modal, Divider } from 'antd';
 
 import { useEffect, useState } from 'react';
@@ -66,6 +67,15 @@ function Header() {
       setIsModalVisible(false);
     };
 
+    const inspection = (url) => {
+        // 检测登陆状态
+        if (!web3_react.isActive) {
+            setIsModalVisible(true);
+            return
+        }
+        Router.push({pathname: url, query: {}})
+    }    
+
     useEffect(() => {
         web3_react = redux;
         setWeb3({...web3_react})
@@ -104,11 +114,9 @@ function Header() {
             </div>
             <div className="right">
                 <div className="zone">
-                    <Link href="/views/Myproject">
-                        <div className="_li">
+                        <div className="_li" onClick={() => inspection('/views/Myproject')}>
                             我的项目
                         </div>
-                    </Link>
                     <Link href="/views/Publish">
                         <div className="_li">
                             发布项目
