@@ -6,16 +6,16 @@ import { ApplyProject } from '../../../controller/task';
 import { Modal, InputNumber, message } from 'antd';
 import { checkWalletIsConnected } from '../../../utils/checkWalletIsConnected';
 import { useRouter } from 'next/router'
-import { useWeb3React } from "@web3-react/core"
 
 import task from '../../../../deployments/abi/Task.json'
 import taskAddr from '../../../contracts/deployments/Task.json'
 import { ethers } from 'ethers'
+import { useSelector } from "react-redux";
 
 
 export default function ProjectDetail() {
 
-    const { account, library, provider } = useWeb3React();
+    const web3_react = useSelector(state => state.web3_react.value)
     const [isModalVisible, setIsModalVisible] = useState(false);
     const router = useRouter()
     let [detail,detailSet] = useState({})
@@ -46,6 +46,10 @@ export default function ProjectDetail() {
     },[])
 
     const showModal = () => {
+        if (!web3_react.isActive) {
+            alert('请登陆')
+            return
+        }
         setIsModalVisible(true);
     };
 
@@ -55,30 +59,18 @@ export default function ProjectDetail() {
     }
 
     const handleOk = async() => {
+        console.log(web3_react.accounts[0]);
         let obj = {
             demandId: detail.id,
             valuation: count,
+            address: web3_react.accounts[0]
         }
-        // obj = JSON.stringify(obj)
+        obj = JSON.stringify(obj)
         let tradeStatus = false
 
-        let valuation = obj.valuation * 100
-        const signer = library.getSigner();
-        const taskContract = new ethers.Contract(taskAddr.address, task.abi, signer);
-        await taskContract.applyFor(Number(obj.demandId), valuation)
-        .then(res => {
-        //   return res.hash
-        console.log('hh');
-        console.log('<==>',res);
-        })
-        .catch(err => {
-            console.log('err==>',Number(obj.demandId),valuation);
-        })
-        return
         await ApplyProject(obj)
         .then(res => {
             if (res) {
-                console.log('res==>',res);
                 if (res.code) {
                   tradeStatus = false
                   message.error('交易失败!');
@@ -86,7 +78,6 @@ export default function ProjectDetail() {
                   tradeStatus = true
                   obj = JSON.parse(obj)
                   obj.hash = res
-                  obj.applyAddr = account;
                   obj = JSON.stringify(obj)
                 }
             }

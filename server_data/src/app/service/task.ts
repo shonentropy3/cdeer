@@ -145,7 +145,7 @@ export class TaskService {
             const ApplyFor = new ethers.utils.Interface(["event ApplyFor(uint256 indexed taskId, address indexed taker, uint256 valuation)"]);
             let decodedData = ApplyFor.parseLog(log.logs[0]);
             const taskId = decodedData.args.taskId.toString();
-            const taker = decodedData.args.taker.toLowerCase();
+            const taker = decodedData.args.taker;
             const valuation = decodedData.args.valuation.toString();
             let params = {
                 taskId: taskId,

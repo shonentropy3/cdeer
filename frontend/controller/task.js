@@ -38,7 +38,6 @@ export const Demand = async(para) => {
           // let fee = ethers.utils.parseEther("1")
           let fee = ethers.utils.parseEther("0")
           const data = JSON.parse(para.proLabel)
-          let budget = data.budget * 100
           let period = data.period * 24 * 60 * 60
           let who = data.u_address
           return await taskContract().createTask(
@@ -48,7 +47,7 @@ export const Demand = async(para) => {
               desc: data.pro_content,
               attachment: data.hash,
               currency: 1,  //  币种,x10000,保留四位小数,前端只展示两位小数
-              budget: budget,
+              budget: data.budget,
               period: period,
               categories: 1,
               skills: 1,  //  原role,职业为1,2,3...整数型
@@ -72,7 +71,8 @@ export const ApplyProject = async(account) => {
         let data = JSON.parse(account)
         let valuation = data.valuation * 100
         return await taskContract().applyFor(
-          Number(data.demandId),
+          data.address, 
+          Number(data.demandId), 
           valuation
           )
           .then(res => {

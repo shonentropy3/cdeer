@@ -91,7 +91,7 @@ function Publish() {
           demand_type: `'{${pjc}}'`,
           title: `${inner[0].value}`,
           period: Number(inner[2].value),
-          budget: Number(inner[1].value),
+          budget: Number(inner[1].value) * 100,
           u_address: `${web3_react.accounts[0]}`,
           hash: '',
           payhash: '',

@@ -1,4 +1,15 @@
+import { useCallback, useEffect } from "react"
+import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
+
 function My(params) {
+
+    const { activate, accounts } = useWeb3React();
+    useEffect(() => {
+        console.log(accounts);
+        // console.log(connector);
+        // return
+        // connectWallet(connectors.walletConnect).then()
+    },[])
 
     const personalBar = () => {
         return <div className="personalBar">

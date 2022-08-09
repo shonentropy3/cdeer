@@ -78,7 +78,7 @@ export const delDemand = params => {
 
 export const setApply = params => {
     let sql = ` insert into trans_hashes("send_addr", task_id, category, hash) 
-        VALUES ('${params.applyAddr}', ${params.demandId}, 3, '${params.hash}')`;
+        VALUES ('${params.address}', ${params.demandId}, 3, '${params.hash}')`;
     return sql
 }
 
