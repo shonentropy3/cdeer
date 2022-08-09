@@ -65,11 +65,7 @@ export const CHAINS = {
     name: "Rinkeby"
   },
   5: {
-    urls: [
-      process.env.infuraKey
-        ? `https://goerli.infura.io/v3/d3fe47cdbf454c9584113d05a918694f`
-        : ""
-    ].filter(url => url !== ""),
+    urls: [`https://goerli.infura.io/v3/d3fe47cdbf454c9584113d05a918694f`].filter(url => url !== ""),
     name: "Görli"
   },
   42: {
@@ -166,10 +162,8 @@ export const CHAINS = {
 export const URLS = Object.keys(CHAINS).reduce((accumulator, chainId) => {
   
   const validURLs = CHAINS[Number(chainId)].urls
-
   if (validURLs.length) {
     accumulator[Number(chainId)] = validURLs
   }
-  accumulator[5] = ['https://goerli.infura.io/v3/d3fe47cdbf454c9584113d05a918694f'];
   return accumulator
 }, {})

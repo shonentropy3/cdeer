@@ -5,6 +5,7 @@ import ProjectList from '../../components/ProjectList';
 import style from '../../styles/utils.module.scss'
 import { getMyDemand,getApplyinfo } from '../../http/api';
 import { translatedPjc, translatedRole, sToDays } from '../../utils/translated'
+import { useSelector } from 'react-redux'
 
 
 export default function Myproject() {
@@ -14,6 +15,8 @@ export default function Myproject() {
     const [title, setTitle] = useState('0');
     const [test, setTest] = useState('');
     const [selectItem,setSelectItem] = useState('item-1')
+    const web3_react = useSelector(state => state.web3_react.value)
+
     let [pjcList,setPjcList] = useState([])
     let [applyList,setApplyList] = useState([])
 
@@ -45,8 +48,7 @@ export default function Myproject() {
 
     // 我发布的需求
     const getIssue = async() => {
-      await connectWalletHandler()
-      getMyDemand({hash: account})
+      getMyDemand({hash: web3_react.accounts[0]})
       .then(res => {
           Array.from(res).forEach((e,i) => {
             res[i].roleNew = translatedRole(e.role)
@@ -70,7 +72,7 @@ export default function Myproject() {
     }
     // 我开发的项目
     const getExploitation = () => {
-      getApplyinfo({id:account})
+      getApplyinfo({id: web3_react.accounts[0]})
         .then(res => {
           if (res.data.length > 0) {
             let arr = []
@@ -109,28 +111,16 @@ export default function Myproject() {
       }
     }
 
-    const connectWalletHandler = async () => {
-        const { ethereum } = window;
-        if (!ethereum) {
-          alert("Please install Metamask!");
-        }
-        try {
-          const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-          console.log("Found an account! Address: ", accounts[0]);
-          account = await accounts[0]
-          setAccount(account)
-
-        } catch (err) {
-          alert('请登录')
-        }
-    }
-
     const toggleNav = (item) => {
       selectItem = item.key
       setSelectItem(selectItem)
     }
 
     useEffect(() => {
+      if (!web3_react.accounts) {
+        alert('请登陆')
+        return
+      }
         switch (selectItem) {
             case 'item-1':
                 getIssue()

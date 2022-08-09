@@ -1,10 +1,6 @@
 import { ethers } from 'ethers'
 import { taskContract } from '.'
 
-
-
-
-
 export const ModifyDemand = async(account) => {
 
   try {
@@ -56,7 +52,7 @@ export const Demand = async(para) => {
                 value: fee
             })
             .then(res => {
-              console.log(res);
+              console.log(res,'=====task====>');
               return res
             })
         

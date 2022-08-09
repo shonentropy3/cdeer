@@ -114,7 +114,6 @@ export class TaskService {
             );
             let decodedData = createTask.parseLog(log.logs[1]);
             const taskId = decodedData.args[0].toString();
-            const who = decodedData.args[1];
             const _data = decodedData.args[2];
             let params = {
                 taskId: taskId,
@@ -126,8 +125,10 @@ export class TaskService {
                 period: _data[5]
             }
             let sql = createTaskSql(params)
+            
             try {
                 let sqlResult = await this.applyInfoRepository.query(sql.sql);
+                
                 if (-1 != sqlResult[1]) {
                     await this.applyInfoRepository.query(sql.sqlUpdateTH);
                 }

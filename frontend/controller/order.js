@@ -28,6 +28,7 @@ export const Order = async(para) => {
 export const getOrderAmount = async(para) => {
   try {
       if (window.ethereum !== 'undefined') {
+        console.log(para);
       return await orderContract().orders(para)
         .then(res => {
           return res.amount
