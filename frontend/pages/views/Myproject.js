@@ -118,7 +118,6 @@ export default function Myproject() {
 
     useEffect(() => {
       if (!web3_react.accounts) {
-        alert('请登陆')
         return
       }
         switch (selectItem) {
@@ -131,7 +130,7 @@ export default function Myproject() {
             default:
                 break;
         }
-    },[selectItem])
+    },[web3_react.accounts])
 
     return(
       <>

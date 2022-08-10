@@ -1,7 +1,7 @@
 
 import { useEffect } from 'react';
 import { walletConnect, hooks } from '../connectors/walletConnect';
-import { Button } from 'antd';
+import { Button, message } from 'antd';
 import { useDispatch } from 'react-redux'
 import { changeValue } from './web3_reactSlice'
 import { URI_AVAILABLE } from '@web3-react/walletconnect'
@@ -39,14 +39,20 @@ export default function ConnectWalletConnect(props) {
 
     const connect = async() => {
         await walletConnect.activate()
+        .then(() => {
+            dispatch(changeValue(web3_react))
+            window.localStorage.setItem("provider", "walletConnect");
+            cancel()
+            message.success('登陆成功')
+            setTimeout(() => {
+                history.go(0)
+            }, 500);
+        })
         .catch(err => {
             console.log(err);
+            return
         })
-        dispatch(changeValue(web3_react))
-        window.localStorage.setItem("provider", "walletConnect");
-        if (web3_react.isActive) {
-          cancel()
-        }
+        
     }
 
     return <Button className="li" onClick={() => connect()} >WalletConnect</Button>

@@ -137,7 +137,7 @@ export default function Modify(params) {
         setRole([...role])
         _data.market_role.forEach(ele => {
             let flag = false
-            detail.role.forEach(e => {
+            detail.role.forEach((e,i) => {
                  if (ele.value === e) {
                     ele.status = true
                     flag = true
@@ -148,7 +148,7 @@ export default function Modify(params) {
         })
         _data.pjc.forEach(ele => {
             let flag = false
-            detail.task_type.forEach(e => {
+            detail.task_type.forEach((e,i) => {
                 if (ele.value === e) {
                     ele.status = true
                     flag = true
@@ -195,14 +195,22 @@ export default function Modify(params) {
             <div className="checkbox">
                 <p>选择角色:</p>
                 {
-                    _data.market_role.map((e,i) => <Checkbox key={i} checked={roleList[i]} onChange={(event)=>onChange(event,e,'role',i)}>{e.name}</Checkbox>)
+                    _data.market_role.map((e,i) => {
+                        if (i > 0) {
+                            return <Checkbox key={i} checked={roleList[i]} onChange={(event)=>onChange(event,e,'role',i)}>{e.name}</Checkbox>
+                        }
+                    })
                 }
                 
             </div>
             <div className="checkbox">
                 <p>选择项目类型:</p>
                 {
-                    _data.pjc.map((e,i) => <Checkbox key={i} checked={pjcList[i]} onChange={(event)=>onChange(event,e,'pjc',i)}>{e.name}</Checkbox>)
+                    _data.pjc.map((e,i) => {
+                        if (i > 0) {
+                            return <Checkbox key={i} checked={pjcList[i]} onChange={(event)=>onChange(event,e,'pjc',i)}>{e.name}</Checkbox>
+                        }
+                    })
                 }
             </div>
             <div className="btn">
