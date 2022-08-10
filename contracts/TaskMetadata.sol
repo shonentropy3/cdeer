@@ -5,20 +5,30 @@ import "./interface/IMetadata.sol";
 import "./libs/MyStrings.sol";
 import "base64-sol/base64.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "./libs/uint8a6.sol";
 
-contract TaskMetadate is IMetadata, Ownable {
+contract TaskMetadata is IMetadata {
     using MyStrings for string;
+    using uint8a6 for uint;
+    
+    function getValue(uint[] memory indexs, uint[] memory values) public view returns (uint) {
+        uint len = indexs.length;
+        require(len == values.length, "length mismatch");
+
+        uint va;
+
+        for (uint256 i = 0; i < len; i++) {
+            va = va.set(i, values[i]);
+        }
+        
+        return va;
+    }
 
     ITask public taskAddr;
     string public background;
 
     constructor(address _task) {
         taskAddr = ITask(_task);
-    }
-
-    function setBackground(string calldata bk) external onlyOwner {
-        background = bk;
     }
 
     function tokenURI(uint256 tokenId) external view override returns (string memory) {
