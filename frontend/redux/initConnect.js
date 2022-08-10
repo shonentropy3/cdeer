@@ -37,8 +37,10 @@ export default function InitConnect(params) {
   }
     
   const walletconnect = async() => {
-    await walletConnect.activate();
-    // dispatch(changeValue(obj));
+    await walletConnect.activate()
+    .catch(err => {
+      console.log(err);
+    })
   } 
   
   const initConnect = {
@@ -59,7 +61,9 @@ export default function InitConnect(params) {
   }
 
   useEffect(() => {
-    provider !== undefined ? initConnect[provider]() : '';
+    if (provider !== undefined && provider !== null) {
+      initConnect[provider]()
+    }
   },[provider])
 
   return <>

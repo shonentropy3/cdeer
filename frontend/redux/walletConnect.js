@@ -17,9 +17,11 @@ export default function WalletConnect() {
     }
     useEffect(() => {
         async function init() {
-            await walletConnect.activate();
+            await walletConnect.activate()
+            .catch(err => {
+                console.log(err);
+            })
             dispatch(changeValue(obj));
-            console.log(obj);
         }
         if (walletConnect.provider) {
             init()

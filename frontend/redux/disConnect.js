@@ -25,6 +25,7 @@ export default function DisConnect(params) {
     return  <>
         <p onClick={() => {
             disConnect[provider]()
+            window.localStorage.removeItem('provider')
             dispatch(clearValue())
         }}>
             退出登陆

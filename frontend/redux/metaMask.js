@@ -19,7 +19,6 @@ export default function MetaMask() {
         async function init() {
             await metaMask.activate();
             dispatch(changeValue(obj));
-            console.log(obj);
         }
         if (metaMask.provider) {
             init()

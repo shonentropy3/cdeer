@@ -38,7 +38,10 @@ export default function ConnectWalletConnect(props) {
     //   }, [])
 
     const connect = async() => {
-        await walletConnect.activate();
+        await walletConnect.activate()
+        .catch(err => {
+            console.log(err);
+        })
         dispatch(changeValue(web3_react))
         window.localStorage.setItem("provider", "walletConnect");
         if (web3_react.isActive) {

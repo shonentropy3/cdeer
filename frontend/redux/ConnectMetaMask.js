@@ -1,7 +1,7 @@
 
 import { useEffect } from 'react';
 import { metaMask, hooks } from '../connectors/metaMask';
-import { Button } from 'antd';
+import { Button, message } from 'antd';
 import { useSelector, useDispatch } from 'react-redux'
 import { changeValue } from './web3_reactSlice'
 
@@ -34,6 +34,10 @@ export default function ConnectMetaMask(props) {
         window.localStorage.setItem("provider", "metaMask");
         if (web3_react.isActive) {
             cancel()
+            message.success('登陆成功!')
+            setTimeout(() => {
+                history.go(0)
+            }, 500);
         }
     }
 
