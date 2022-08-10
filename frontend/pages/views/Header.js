@@ -6,8 +6,8 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import { clearValue } from '../../redux/web3_reactSlice'
 import Card from '../../components/Card';
-
-
+import InitConnect from '../../redux/initConnect';
+import DisConnect from '../../redux/disConnect';
 
 function Header() {
 
@@ -15,7 +15,9 @@ function Header() {
     const redux = useSelector(state => state.web3_react.value)
     let [web3_react, setWeb3] = useState({})
     let [account,setAccount] = useState()
+    let [provider,setProvider] = useState()
     const dispatch = useDispatch()
+    
 
     const menu = (
         <Menu
@@ -44,11 +46,7 @@ function Header() {
               key: '2',
               danger: true,
               label: (
-                <p onClick={() => {
-                    web3_react.wallet.deactivate ? 
-                    web3_react.wallet.deactivate()
-                    : ''
-                dispatch(clearValue())}}>退出登陆</p>
+                <DisConnect provider={ provider } />
               ),
             }
           ]}
@@ -83,10 +81,16 @@ function Header() {
         if (!web3_react.isActive) {
             return
         }
+        console.log(web3_react);
         account = web3_react.accounts[0]
         account = account.substr(0,5) + '...' + account.substr(account.length - 4 , 4)
         setAccount(account)
     },[redux])
+
+    useEffect(() => {
+        provider = window.localStorage.getItem("provider");
+        setProvider(provider)
+    },[])
 
     return (
         <>
@@ -94,6 +98,7 @@ function Header() {
           <Card cancel={handleCancel}></Card>
         </Modal>
         <div className='header'>
+            <InitConnect provider={provider}></InitConnect>
             <div className="left">
                 <div className="logo">
 

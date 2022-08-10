@@ -16,8 +16,7 @@ export default function ConnectMetaMask(props) {
         isActivating : useIsActivating(),
         isActive : useIsActive(),
         provider : useProvider(),
-        ENSNames : useENSNames(),
-        wallet: metaMask
+        ENSNames : useENSNames()
     }
     // redux
     const dispatch = useDispatch()
@@ -32,7 +31,10 @@ export default function ConnectMetaMask(props) {
     const connect = async() => {
         await metaMask.activate();
         dispatch(changeValue(web3_react))
-        cancel()
+        window.localStorage.setItem("provider", "metaMask");
+        if (web3_react.isActive) {
+            cancel()
+        }
     }
 
     return <Button className="li" onClick={() => connect()} >Metamask</Button>

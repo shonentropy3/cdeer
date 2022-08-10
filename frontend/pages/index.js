@@ -4,10 +4,10 @@ import { Spin, BackTop, Divider, Empty } from 'antd';
 import { getDemand, getFilter } from '../http/api';
 import style from '../styles/utils.module.scss'
 import { translatedPjc, translatedRole, sToDays } from '../utils/translated';
+import store from '../redux/store';
 
 
 export default function Home() {
-
   const responseDate = () => {
     if (data.status === 0) {
         return <>
@@ -153,8 +153,7 @@ export default function Home() {
   useEffect(() => {
       marketData()
     }, [])
-  
-
+    
 
     
   return (
