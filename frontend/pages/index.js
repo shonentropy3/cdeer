@@ -72,10 +72,12 @@ export default function Home() {
     getFilter({obj: obj})
     .then(res => {
       Array.from(res.data).forEach((e,i) => {
-        res.data[i].role = translatedRole(e.role)
+        res.data[i].demand_role = translatedRole(e.role)
         res.data[i].demand_type = translatedPjc(e.task_type)
         res.data[i].period = sToDays(e.period)
       })
+      console.log(res,'====>');
+      console.log('role===>',role);
       data.detail = res;
       data.status = 1;
       Set_data({...data})

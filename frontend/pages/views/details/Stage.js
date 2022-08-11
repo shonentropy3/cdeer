@@ -29,6 +29,7 @@ function OrderDetail({router}) {
         await orderStage(oid)
         .then(res => {
             amount = 0
+            console.log(res);
             res.forEach((e,i) => {
                 
                 let price = Number(e[0].toString()) / 1000000000000000000;
