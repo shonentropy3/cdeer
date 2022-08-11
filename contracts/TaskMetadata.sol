@@ -11,10 +11,9 @@ contract TaskMetadata is IMetadata {
     using MyStrings for string;
     using uint8a6 for uint;
     
-    function getValue(uint[] memory indexs, uint[] memory values) public view returns (uint) {
-        uint len = indexs.length;
-        require(len == values.length, "length mismatch");
-
+    function getValue(uint[] memory values) public view returns (uint) {
+        uint len = values.length;
+        require(len < 6 , "length mismatch");
         uint va;
 
         for (uint256 i = 0; i < len; i++) {
@@ -36,11 +35,16 @@ contract TaskMetadata is IMetadata {
         return generateTokenUri(svgFormat);
     }
 
+    function set(uint id, string tag) {
+
+    }
+
     function generateSVG(uint taskId) internal view returns (string memory svg) {
         TaskInfo memory task = taskAddr.tasks(taskId);
 
         string memory title = task.title;
         string memory desc = task.desc.shorten(20);
+        task.skills;
 
 
         return
@@ -72,7 +76,6 @@ contract TaskMetadata is IMetadata {
                     unicode":",
                     "</text>",
                     '<text class="cls-5" transform="translate(203.07 419.55)">',
-                    title,
                     "</text>",
                     '<text class="cls-5" transform="translate(130.43 452.85)">',
                     unicode"Token ID：",
