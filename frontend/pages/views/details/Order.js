@@ -5,7 +5,7 @@ import { Menu, message, Switch, Empty } from 'antd';
 import NavigationBar from "../../../components/NavigationBar";
 import { getDemandInfo, modifyApplySwitch, getMyApplylist } from "../../../http/api";
 import { translatedPjc, translatedRole, sToDays } from '../../../utils/translated'
-import { getFirstStatus } from "../../../controller/order";
+import { getFirstStatus, getSecondStatus } from "../../../controller/order";
 
 export default function OrderDetail(oid) {
 
@@ -67,23 +67,35 @@ export default function OrderDetail(oid) {
     }
 
     // 报名列表部分
-    const getList = () => {
+    const getList = async() => {
         // 获取报名列表
-        getMyApplylist({demandId: data.id})
+        await getMyApplylist({demandId: data.id})
         .then(res => {
-            res.forEach(async(ele) => {
+            res.forEach(async(ele,index) => {
                 let obj = {
                     demand_id: ele.task_id,
                     apply_addr: ele.apply_addr
                 }
                 obj = JSON.stringify(obj);
                 await getFirstStatus({proLabel: obj})
-                .then(res => {
-                    console.log(res,'======');
+                .then(stage => {
+                    if (stage.toString() === '0') {
+                        res[index].stage = 0
+                    }else{
+                        getSecondStatus(stage.toString())
+                        .then(stage => {
+                            if (stage.check === 0) {
+                                res[index].stage = 1
+                            }else{
+                                res[index].stage = 2
+                            }
+                            applylist = res 
+                            setApplylist([...applylist])
+                        })
+                    }
                 })
             });
-            applylist = res 
-            setApplylist([...applylist])
+            
 
         })
         .catch(err => {

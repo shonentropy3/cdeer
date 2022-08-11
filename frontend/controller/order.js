@@ -13,9 +13,12 @@ export const Order = async(para) => {
               checked: 1,
               startDate: 123423
           })
-            .then(res => {
-              return res
-            })
+          .then(res => {
+            let obj = {
+              code: 200
+            }
+            return obj
+          })
         } else {
           console.log("Ethereum object does not exist");
         }

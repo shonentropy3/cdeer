@@ -13,7 +13,6 @@ export default async function getOrderStatus(params)  {
         console.log(err)
     })
     if(status == 0){
-        console.log('阶段一');
       let obj = {
         state: 0,
         oid: oid
@@ -27,7 +26,6 @@ export default async function getOrderStatus(params)  {
     return await getSecondStatus(oid)
     .then(res => {
         amoumt = res.amoumt
-        console.log(res,'res==>');
         switch (res.check) {
             case 0:
                 status = 1;

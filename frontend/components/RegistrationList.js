@@ -29,8 +29,15 @@ function RegistrationList(params) {
       obj = JSON.stringify(obj)
       await Order({proLabel:obj})
       .then(res => {
-          setIsModalVisible(false);
-          message.success('操作成功!')
+          if (res.code === 200) {
+            setIsModalVisible(false);
+            message.success('操作成功!')
+            setTimeout(() => {
+                history.go(0)
+            }, 500);
+          }else{
+            message.error('操作失败!')
+          }
       })
       .catch(err => {
           console.log(err);
@@ -40,6 +47,19 @@ function RegistrationList(params) {
   const handleCancel = () => {
     setIsModalVisible(false);
   };
+
+  const print = () => {
+    switch (data.stage) {
+        case 0:
+            return  <button onClick={() => showModal()}>确认合作</button>
+        case 1:
+            return  <button onClick={() => showModal()}>修改订单</button>
+        case 2:
+            return  <Link href={{pathname:"/views/details/Stage",query:{address: data.apply_addr,task_id: Number(data.task_id)}}}>
+                        <button>订单详情</button>
+                    </Link>
+    }
+  }
     //  TODO:1、是否确认合作 ==> 2、展示取消订单和修改订单
     return(
         <>
@@ -56,11 +76,7 @@ function RegistrationList(params) {
                     </div>
                 </div>
                 <div className="right">
-                    <button onClick={() => showModal()}>确认合作</button>
-                    <Link href={{pathname:"/views/details/Stage",query:{address: data.apply_addr,task_id: Number(data.task_id)}}}>
-                        <button>订单详情</button>
-                    </Link>
-                    <button onClick={() => showModal()}>修改订单</button>
+                    {print()}
                 </div>
             </div>
         </>
