@@ -123,7 +123,7 @@ export default function ProjectDetail() {
                         <div>
                             <p>招募角色: {detail.role}</p>
                         </div>
-                        <button onClick={()=>showModal()}>参加项目</button>
+                            <button onClick={()=>showModal()}>参加项目</button>
                         <div>
                             <p>金额 ${detail.budget}</p>
                             <p>类型  {detail.demand_type}</p>

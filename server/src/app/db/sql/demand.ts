@@ -1,12 +1,12 @@
 
 
 export const getDemandDate = () => {
-    let sql = `SELECT * FROM public."tasks" WHERE del = 0 `
+    let sql = `SELECT * FROM public."tasks" WHERE del = 0 and apply_switch = 1 `
     return sql
 }
 
 export const getDemandInfoDate = params => {
-    let sql = `SELECT * FROM public.tasks WHERE id = '${params}' and del = 0 `
+    let sql = `SELECT * FROM public.tasks WHERE id = '${params}' and del = 0`
     return sql
 }
 

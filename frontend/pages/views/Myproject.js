@@ -62,7 +62,7 @@ export default function Myproject() {
 
     const issue = () => {
       return  <div className={`content`}>
-                <h1>{test}</h1>
+                <h1></h1>
                 <div className="list">
                     {
                       pjcList.map((ele,index) => <ProjectList data={ele} key={index} type="demand" />)
