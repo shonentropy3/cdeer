@@ -49,14 +49,13 @@ export const Demand = async(para) => {
               currency: 1,  //  币种,x10000,保留四位小数,前端只展示两位小数
               budget: data.budget,
               period: period,
-              categories: 1,
-              skills: 1,  //  原role,职业为1,2,3...整数型
+              categories: data.categories,
+              skills: data.skills,  //  原role,职业为1,2,3...整数型
             },
             {
                 value: fee
             })
             .then(res => {
-              console.log(res,'=====task====>');
               return res
             })
         

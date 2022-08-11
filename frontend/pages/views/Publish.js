@@ -24,7 +24,6 @@ function Publish() {
     const router = useRouter();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const web3_react = useSelector(state => state.web3_react.value)
-
     let [inner,setInner] = useState(_data.inner)
 
       // 附件
@@ -85,6 +84,15 @@ function Publish() {
           }
           pjc += e
         })
+        // 移位运算>>>>
+        let role_index = 0;
+        let pjc_index = 0;
+        inner[5].index.forEach((ele,index) => {
+          role_index += ele << ( ( inner[5].index.length - (index + 1) ) * 8 )
+        })
+        inner[6].index.forEach((ele,index) => {
+          pjc_index += ele << ( ( inner[6].index.length - (index + 1) ) * 8 )
+        })
         let data = {
           pro_content: `${inner[3].value}`,
           recruiting_role: `'{${role}}'`,
@@ -93,6 +101,8 @@ function Publish() {
           period: Number(inner[2].value),
           budget: Number(inner[1].value) * 100,
           u_address: `${web3_react.accounts[0]}`,
+          categories: pjc_index,
+          skills: role_index,
           hash: '',
           payhash: '',
         }
@@ -115,6 +125,7 @@ function Publish() {
         //  console.log(res);
         // })
         // return
+
 
         // 交易
         await Demand(para)
@@ -250,16 +261,37 @@ function Publish() {
 
       const boxChange = (e,i) => {
         let res = e.target.value
-
+        
         for (let j = 0; j < inner[i].value.length; j++) {
           if (res === inner[i].value[j]) {
             inner[i].value.splice(j,1)
             setInner([...inner])
+            indexValue(res,i)
             return
           }
         }
         inner[i].value.push(res)
         setInner([...inner])
+        indexValue(res,i)
+      }
+
+      const indexValue = (res,i) => {
+        let arr = []
+        inner[i].list.forEach((ele,index) => {
+          if (index === 0) {
+            return
+          }
+          let flag = false
+          inner[i].value.forEach((e,i) => {
+               if (ele.value === e) {
+                  ele.status = true
+                  flag = true
+                  return
+              }
+          })
+          flag ? arr.push(index):''
+      })
+      inner[i].index = arr
       }
 
     return(

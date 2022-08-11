@@ -5,8 +5,7 @@ export const Order = async(para) => {
     try {
         if (window.ethereum !== 'undefined') {
         const data = JSON.parse(para.proLabel)
-        return await orderContract().createOrder(
-          { 
+        return await orderContract().createOrder({ 
               taskId: data.demandId,
               worker: data.applyAddr,
               token: data.token,

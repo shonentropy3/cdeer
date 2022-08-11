@@ -5,6 +5,7 @@ import { Menu, message, Switch, Empty } from 'antd';
 import NavigationBar from "../../../components/NavigationBar";
 import { getDemandInfo, modifyApplySwitch, getMyApplylist } from "../../../http/api";
 import { translatedPjc, translatedRole, sToDays } from '../../../utils/translated'
+import { getFirstStatus } from "../../../controller/order";
 
 export default function OrderDetail(oid) {
 
@@ -70,8 +71,20 @@ export default function OrderDetail(oid) {
         // 获取报名列表
         getMyApplylist({demandId: data.id})
         .then(res => {
+            res.forEach(async(ele) => {
+                let obj = {
+                    demand_id: ele.task_id,
+                    apply_addr: ele.apply_addr
+                }
+                obj = JSON.stringify(obj);
+                await getFirstStatus({proLabel: obj})
+                .then(res => {
+                    console.log(res,'======');
+                })
+            });
             applylist = res 
             setApplylist([...applylist])
+
         })
         .catch(err => {
             console.log(err);
