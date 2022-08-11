@@ -78,21 +78,21 @@ export default function OrderDetail(oid) {
                 }
                 obj = JSON.stringify(obj);
                 await getFirstStatus({proLabel: obj})
-                .then(stage => {
+                .then(async(stage) => {
                     if (stage.toString() === '0') {
                         res[index].stage = 0
                     }else{
-                        getSecondStatus(stage.toString())
+                        await getSecondStatus(stage.toString())
                         .then(stage => {
                             if (stage.check === 0) {
                                 res[index].stage = 1
                             }else{
                                 res[index].stage = 2
                             }
-                            applylist = res 
-                            setApplylist([...applylist])
                         })
                     }
+                    applylist = res 
+                    setApplylist([...applylist])
                 })
             });
             

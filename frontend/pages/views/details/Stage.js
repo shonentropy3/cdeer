@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import getOrderStatus from "../../../utils/getOrderStatus";
 import { withRouter } from 'next/router'
-import { orderStage, confirmOrder, confirmOrderStage, terminateStage } from "../../../controller/order";
+import { orderStage, confirmOrder, confirmOrderStage, terminateStage, getSecondStatus } from "../../../controller/order";
 import { Button, message } from "antd";
 
 function OrderDetail({router}) {
@@ -11,7 +11,7 @@ function OrderDetail({router}) {
     let [oid,setOid] = useState('');
     let [arr,setArr] = useState([]);
     let [amount,setAmount] = useState(0);
-    
+    let [status,setStatus] = useState(false);
     
     const getStage = async() => {
         let obj = {
@@ -21,8 +21,21 @@ function OrderDetail({router}) {
         obj = JSON.stringify(obj)
         await getOrderStatus(obj)
         .then(res => {
+            console.log(res.oid);
             oid = res.oid;
             setOid(oid);
+        })
+
+        await getSecondStatus(oid)
+        .then(res => {
+            console.log(res,'=====');
+            if (res.check === 1) {
+                status = false
+            }
+            if (res.check === 2) {
+                status = true
+            }
+            setStatus(status);
         })
 
         // return
@@ -52,9 +65,9 @@ function OrderDetail({router}) {
         let M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
         let D = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ' ';
         let h = date.getHours() + ':';
-        let m = date.getMinutes() + ':';
-        let s = date.getSeconds();
-        return Y+M+D+h+m+s
+        let m = date.getMinutes();
+        // let s = date.getSeconds();
+        return Y+M+D+h+m
     }   
 
     const confirmOrd = async() => {
@@ -125,7 +138,12 @@ function OrderDetail({router}) {
     return <div className="OrderDetail">
         <div className="StageContainer">
             <div className="title">
-                <Button type="primary" onClick={() => confirmOrd()}> 确认订单 </Button>
+                {
+                    !status ? 
+                    <Button type="primary" onClick={() => confirmOrd()}> 确认订单 </Button>
+                    :
+                    ''
+                }
             </div>
             <div className="list">
                 {
@@ -145,8 +163,15 @@ function OrderDetail({router}) {
                                     需求方发起了...
                                 </div>
                                 <div className="r">
-                                    <Button type="primary" onClick={() => confirmStage(i)}>确认交付</Button>
-                                    <Button onClick={() => rejectStage(i)} >拒绝交付</Button>
+                                    {
+                                        status ? 
+                                            <>
+                                                <Button type="primary" onClick={() => confirmStage(i)}>确认交付</Button>
+                                                <Button onClick={() => rejectStage(i)} >拒绝交付</Button>
+                                            </>
+                                        :
+                                        ''
+                                    }
                                 </div>
                              </div>
                         </div> )

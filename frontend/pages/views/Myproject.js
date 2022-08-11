@@ -121,17 +121,17 @@ export default function Myproject() {
         return
       }
 
-        switch (selectItem) {
-            case 'item-1':
-                getIssue()
-                break;
-            case 'item-2':
-                getExploitation()
-                break;
-            default:
-                break;
-        }
-    },[selectItem])
+      switch (selectItem) {
+          case 'item-1':
+              getIssue()
+              break;
+          case 'item-2':
+              getExploitation()
+              break;
+          default:
+              break;
+      }
+    },[selectItem,web3_react])
 
     return(
       <>

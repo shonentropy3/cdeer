@@ -69,7 +69,6 @@ export default function ProjectDetail() {
 
         await ApplyProject(obj)
         .then(res => {
-            console.log('res===>',res);
             if (res) {
                 if (res.code) {
                   tradeStatus = false
