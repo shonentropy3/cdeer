@@ -3,6 +3,7 @@ import getOrderStatus from "../../../utils/getOrderStatus";
 import { withRouter } from 'next/router'
 import { orderStage, confirmOrder, confirmOrderStage, terminateStage, getSecondStatus } from "../../../controller/order";
 import { Button, message } from "antd";
+import { useSelector } from 'react-redux'
 
 function OrderDetail({router}) {
 
@@ -12,6 +13,7 @@ function OrderDetail({router}) {
     let [arr,setArr] = useState([]);
     let [amount,setAmount] = useState(0);
     let [status,setStatus] = useState(false);
+    const web3_react = useSelector(state => state.web3_react.value)
     
     const getStage = async() => {
         let obj = {
@@ -28,7 +30,6 @@ function OrderDetail({router}) {
 
         await getSecondStatus(oid)
         .then(res => {
-            console.log(res,'=====');
             if (res.check === 1) {
                 status = false
             }
@@ -37,7 +38,7 @@ function OrderDetail({router}) {
             }
             setStatus(status);
         })
-
+        
         // return
         await orderStage(oid)
         .then(res => {
@@ -128,12 +129,15 @@ function OrderDetail({router}) {
     }
 
     useEffect(() => {
+        if (!web3_react.accounts) {
+            return
+        }
         task_id = Number(router.query.task_id);
         address = router.query.address;
         setAddress(address);
         setTask_id(task_id);
         getStage()
-    },[])
+    },[web3_react])
 
     return <div className="OrderDetail">
         <div className="StageContainer">
