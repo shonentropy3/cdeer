@@ -120,6 +120,7 @@ export default function Myproject() {
       if (!web3_react.accounts) {
         return
       }
+
         switch (selectItem) {
             case 'item-1':
                 getIssue()
@@ -130,7 +131,7 @@ export default function Myproject() {
             default:
                 break;
         }
-    },[web3_react.accounts])
+    },[selectItem])
 
     return(
       <>

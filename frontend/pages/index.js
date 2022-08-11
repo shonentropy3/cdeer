@@ -71,7 +71,6 @@ export default function Home() {
     obj = JSON.stringify(obj)
     getFilter({obj: obj})
     .then(res => {
-      console.log('res===>',res);
       Array.from(res.data).forEach((e,i) => {
         res.data[i].demand_role = translatedRole(e.role)
         res.data[i].demand_type = translatedPjc(e.task_type)
@@ -80,7 +79,6 @@ export default function Home() {
       data.detail = res;
       data.status = 1;
       Set_data({...data})
-      console.log(data);
     })
   }
 
