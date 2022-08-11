@@ -18,7 +18,7 @@ async function main() {
     console.log(owner.address,'============>');
     // //创建需求
     await task.connect(accounts[3]).createTask(
-       '0x5f2CC90663c2599c306984c43E7C93F7FD8E773e',
+      '0x5f2CC90663c2599c306984c43E7C93F7FD8E773e',
       {
         title: "test",
         desc: "desc",

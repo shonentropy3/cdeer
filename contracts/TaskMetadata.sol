@@ -5,10 +5,23 @@ import "./interface/IMetadata.sol";
 import "./libs/MyStrings.sol";
 import "base64-sol/base64.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "./libs/uint8a6.sol";
 
-contract TaskMetadate is IMetadata, Ownable {
+contract TaskMetadata is IMetadata {
     using MyStrings for string;
+    using uint8a6 for uint;
+    
+    function getValue(uint[] memory values) public view returns (uint) {
+        uint len = values.length;
+        require(len < 6 , "length mismatch");
+        uint va;
+
+        for (uint256 i = 0; i < len; i++) {
+            va = va.set(i, values[i]);
+        }
+        
+        return va;
+    }
 
     ITask public taskAddr;
     string public background;
@@ -17,13 +30,13 @@ contract TaskMetadate is IMetadata, Ownable {
         taskAddr = ITask(_task);
     }
 
-    function setBackground(string calldata bk) external onlyOwner {
-        background = bk;
-    }
-
     function tokenURI(uint256 tokenId) external view override returns (string memory) {
         string memory svgFormat = generateSVG(tokenId);
         return generateTokenUri(svgFormat);
+    }
+
+    function set(uint id, string tag) {
+
     }
 
     function generateSVG(uint taskId) internal view returns (string memory svg) {
@@ -31,6 +44,7 @@ contract TaskMetadate is IMetadata, Ownable {
 
         string memory title = task.title;
         string memory desc = task.desc.shorten(20);
+        task.skills;
 
 
         return
@@ -62,7 +76,6 @@ contract TaskMetadate is IMetadata, Ownable {
                     unicode":",
                     "</text>",
                     '<text class="cls-5" transform="translate(203.07 419.55)">',
-                    title,
                     "</text>",
                     '<text class="cls-5" transform="translate(130.43 452.85)">',
                     unicode"Token ID：",
