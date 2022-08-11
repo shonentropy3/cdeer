@@ -34,7 +34,7 @@ export const getFilter = params => {
         type = '';
         and = '';
     }
-    if (!params.role&&!params.role) {
+    if (!params.role&&!params.task_type) {
         role = '';
         type = '';
         and = '';
