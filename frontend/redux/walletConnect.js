@@ -26,7 +26,7 @@ export default function WalletConnect() {
         if (walletConnect.provider) {
             init()
         }
-    },[walletConnect.provider])
+    },[obj.provider])
     return <>
     {/* <h1>metamask</h1> */}
     </>

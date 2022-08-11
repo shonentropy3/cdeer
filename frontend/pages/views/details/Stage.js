@@ -83,7 +83,7 @@ function OrderDetail({router}) {
             if (res.code == 200) {
                 message.success('确认订单成功')
                 setTimeout(() => {
-                    history.go(-1)
+                    history.go(0)
                 }, 1000);
             }else{
                 message.error('确认订单失败')
@@ -116,11 +116,10 @@ function OrderDetail({router}) {
         obj = JSON.stringify(obj)
         await terminateStage({proLabel: obj})
         .then(res => {
-            // console.log(res);
             if (res.code == 200) {
                 message.success('终止交付成功!');
                 setTimeout(() => {
-                    history.go(-1)
+                    history.go(0)
                 }, 1000);
             }else{
                 message.error('终止交付失败!');

@@ -3,12 +3,14 @@ import { useEffect, useState } from "react"
 import { orderStage, withdraw } from "../../../controller/order";
 import { checkWalletIsConnected } from "../../../utils/checkWalletIsConnected";
 import getOrderStatus from "../../../utils/getOrderStatus";
+import { useSelector } from 'react-redux'
 
 export default function StageWorker() {
     
     let [oid,setOid] = useState('');
     let [task_id,setTask_id] = useState('');
     let [arr,setArr] = useState([])
+    const web3_react = useSelector(state => state.web3_react.value)
 
     const getOid = async() => {
         let obj = {
@@ -20,7 +22,6 @@ export default function StageWorker() {
         .then(res => {
             oid = res.oid;
             setOid(oid);
-            getStage()
         })
     }
 
@@ -36,8 +37,10 @@ export default function StageWorker() {
     }
 
     const getStage = async() => {
+        console.log('zhixingle');
         await orderStage(oid)
         .then(res => {
+            console.log(res,'===>');
             res.forEach((e,i) => {
                 
                 let price = Number(e[0].toString()) / 1000000000000000000;
@@ -72,10 +75,18 @@ export default function StageWorker() {
     }
     
     useEffect(() => {
-        task_id = location.search.replace('?','');
-        setTask_id(task_id);
-        getOid();
-    },[])
+        async function init() {
+            if (!web3_react.accounts) {
+                return
+            }
+            task_id = location.search.replace('?','');
+            setTask_id(task_id);
+            await getOid();
+            getStage();
+        }
+        init()
+        console.log(web3_react);
+    },[web3_react])
 
     return <div className="StageContainer">
             <div className="list">

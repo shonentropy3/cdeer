@@ -23,7 +23,7 @@ export default function MetaMask() {
         if (metaMask.provider) {
             init()
         }
-    },[metaMask.provider])
+    },[obj.provider])
     return <>
     {/* <h1>metamask</h1> */}
     </>
