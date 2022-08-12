@@ -23,20 +23,6 @@ export default function ConnectWalletConnect(props) {
     // redux
     const dispatch = useDispatch()
     
-
-    // useEffect(() => {
-    //     walletConnect.events.on(URI_AVAILABLE, (uri) => {
-    //       console.log(`uri: ${uri}`)
-    //     })
-    //   }, [])
-    
-    //   // attempt to connect eagerly on mount
-    //   useEffect(() => {
-    //     walletConnect.connectEagerly().catch(() => {
-    //       console.debug('Failed to connect eagerly to walletconnect')
-    //     })
-    //   }, [])
-
     const connect = async() => {
         await walletConnect.activate()
         .then(() => {
