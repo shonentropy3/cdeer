@@ -37,10 +37,8 @@ export default function StageWorker() {
     }
 
     const getStage = async() => {
-        console.log('zhixingle');
         await orderStage(oid)
         .then(res => {
-            console.log(res,'===>');
             res.forEach((e,i) => {
                 
                 let price = Number(e[0].toString()) / 1000000000000000000;
@@ -66,6 +64,9 @@ export default function StageWorker() {
         .then(res => {
             if (res.code == 200) {
                 message.success('提款成功!')
+                setTimeout(() => {
+                    history.go(0)
+                }, 1000);
             }else{
                 message.success('提款失败!')
             }
@@ -85,7 +86,6 @@ export default function StageWorker() {
             getStage();
         }
         init()
-        console.log(web3_react);
     },[web3_react])
 
     return <div className="StageContainer">

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { getDemandInfo, applyFor } from '../../../http/api';
+import { getDemandInfo, applyFor, getFile } from '../../../http/api';
 import NavigationBar from "../../../components/NavigationBar";
 import { translatedPjc, translatedRole, sToDays } from '../../../utils/translated';
 import { ApplyProject } from '../../../controller/task';
@@ -9,7 +9,7 @@ import { useRouter } from 'next/router'
 
 import task from '../../../../deployments/abi/Task.json'
 import taskAddr from '../../../contracts/deployments/Task.json'
-import { ethers } from 'ethers'
+import { ethers, logger } from 'ethers'
 import { useSelector } from "react-redux";
 
 
@@ -27,22 +27,27 @@ export default function ProjectDetail() {
     ]
     
     useEffect(()=>{
-        // 获取项目详情
-        let oid = location.search
-        oid = oid.replace('?','')
         
-        getDemandInfo({id: oid})
-        .then(res=>{
-            let data = res.data[0]
-            data.role = translatedRole(data.role)
-            data.task_type = translatedPjc(data.task_type)
-            data.period = sToDays(data.period)
-            detail = data
-            detailSet({...detail})
-        })
-        .catch(err=>{
-            console.log(err);
-        })
+        async function init(params) {
+            // 获取项目详情
+            let oid = location.search
+            oid = oid.replace('?','')
+            
+            await getDemandInfo({id: oid})
+            .then(res=>{
+                let data = res.data[0]
+                data.role = translatedRole(data.role)
+                data.task_type = translatedPjc(data.task_type)
+                data.period = sToDays(data.period)
+                detail = data
+                detailSet({...detail})
+            })
+            .catch(err=>{
+                console.log(err);
+            })
+            
+        }
+        init()
     },[])
 
     const showModal = () => {
@@ -102,7 +107,13 @@ export default function ProjectDetail() {
         setIsModalVisible(false);
       };
     
-      
+      const download = () => {
+        getFile({hash: detail.attachment})
+        .then(res => {
+            console.log(res);
+            
+        })
+      }
 
 
     return(
@@ -131,9 +142,15 @@ export default function ProjectDetail() {
                         </div>
                     </div>
                     <div className='content'>
-                        {/* {
-                            detail.attachment.length > 0 ? <p>项目附件: {detail.attachment}</p> : ''
-                        } */}
+                        {
+                            detail.attachment !== '' ? 
+                            <>
+                                项目附件: {detail.attachment}
+                                <button onClick={() => download()}>download</button>
+                            </>
+                            :
+                            ''
+                        }
                         <p>项目描述: {detail.desc}</p>
                     </div>
                 </div>

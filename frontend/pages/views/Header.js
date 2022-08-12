@@ -81,7 +81,6 @@ function Header() {
         if (!web3_react.isActive) {
             return
         }
-        console.log(web3_react);
         account = web3_react.accounts[0]
         account = account.substr(0,5) + '...' + account.substr(account.length - 4 , 4)
         setAccount(account)

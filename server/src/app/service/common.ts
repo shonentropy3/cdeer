@@ -30,7 +30,9 @@ export class CommonService {
             writeStream.write(file.buffer, function (err) {
                 if (!err) {
                     let res = 'cache_area/'+ time
+                    
                     ipfs.add(fs.readFileSync(res), function (err, files) {
+                        
                         if (err || typeof files == "undefined") {
                             console.log('Ipfs writeStream err==>', err);
                         } else {
@@ -60,14 +62,36 @@ export class CommonService {
         client.putFile(obj.hash, file[0].buffer)
         .then(res => {
             console.log('上传upyun ===>', res);
+            return true
         })
         .catch(err => {
             console.log('上传upyun ===>',err);
+            return false
         })
         fs.unlink(obj.path, (err) => {
             if (err) throw err;
         });
         return obj.hash
+    }
+
+    downloadFile(@Body() body: any){
+        // return body
+        console.log(__dirname);
+        
+        return
+        const saveTo = fs.createWriteStream(join(__dirname, '附件'))
+
+        
+        client.getFile(body.hash,saveTo)
+        .then(res =>{
+            // file has been saved to localSample.txt
+            // you can pipe the stream to anywhere you want
+            console.log(res);
+            
+        })
+        .catch(err => {
+            return 'error'
+        })
     }
 
     // AxiosErrorTip

@@ -17,4 +17,9 @@ export class CommonController {
             return this.commonService.pushFile(files, res)
          })
     }
+
+    @Post('download') //   下载文件
+    async downloadFile(@Body() body: any){
+        return this.commonService.downloadFile(body)
+    }
 }

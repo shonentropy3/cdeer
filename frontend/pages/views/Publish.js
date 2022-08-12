@@ -119,7 +119,6 @@ function Publish() {
         data = JSON.stringify(data)
         let para = {"proLabel":data}
         let tradeStatus = true
-
         // await web3_react.provider.getSigner(web3_react.accounts[0]).signMessage('👋')
         // .then((res) => {
         //  console.log(res);

@@ -33,6 +33,7 @@ export const getFilter = (data) => {
 );
 }
 
+
 export const modifyDemand = (data) => {
 
     return serviceAxios({
@@ -58,6 +59,16 @@ export const getHash = (data) => {
     
     return serviceAxios({
         url: "/common/upload",
+        method: "post",
+        data,
+    }
+);
+}
+
+export const getFile = (data) => {
+    
+    return serviceAxios({
+        url: "/common/download",
         method: "post",
         data,
     }
