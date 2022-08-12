@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { metaMask, hooks } from '../connectors/metaMask';
 import { Button, message } from 'antd';
 import { useSelector, useDispatch } from 'react-redux'
-import { changeValue } from './web3_reactSlice'
+import { changeValue } from '../redux/web3_reactSlice'
 
 const { useChainId, useAccounts, useIsActivating, useIsActive, useProvider, useENSNames } = hooks
 

@@ -111,15 +111,16 @@ function ProjectList(props) {
         if (type === "demand") {
             // 我发布的项目
             return <>
+            {/* TODO: 修改需求状态判断 */}
                         <button onClick={()=>{goDetail()}}>查看项目状态</button>
                         <button onClick={() => {toggleMask()}}>修改需求</button>
-                                <Popconfirm
-                                    title="Are you sure to delete this task?"
-                                    onConfirm={deletDemand}
-                                    okText="Yes"
-                                    cancelText="No" >
-                                    <button>删除项目</button>
-                                </Popconfirm>
+                        <Popconfirm
+                            title="Are you sure to delete this task?"
+                            onConfirm={deletDemand}
+                            okText="Yes"
+                            cancelText="No" >
+                            <button>删除项目</button>
+                        </Popconfirm>
                         {/* {
                             !pjcStatus ? 
                             <>

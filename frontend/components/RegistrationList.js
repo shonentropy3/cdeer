@@ -56,7 +56,7 @@ function RegistrationList(params) {
             return  <button onClick={() => showModal()}>修改订单</button>
         case 2:
             return  <Link href={{pathname:"/views/details/Stage",query:{address: data.apply_addr,task_id: Number(data.task_id)}}}>
-                        <button>订单详情</button>
+                        <button>阶段详情</button>
                     </Link>
     }
   }

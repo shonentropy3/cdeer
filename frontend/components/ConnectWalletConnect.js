@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { walletConnect, hooks } from '../connectors/walletConnect';
 import { Button, message } from 'antd';
 import { useDispatch } from 'react-redux'
-import { changeValue } from './web3_reactSlice'
+import { changeValue } from '../redux/web3_reactSlice';
 import { URI_AVAILABLE } from '@web3-react/walletconnect'
 
 const { useChainId, useAccounts, useIsActivating, useIsActive, useProvider, useENSNames } = hooks

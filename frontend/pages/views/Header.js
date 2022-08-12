@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { clearValue } from '../../redux/web3_reactSlice'
 import Card from '../../components/Card';
 import InitConnect from '../../redux/initConnect';
-import DisConnect from '../../redux/disConnect';
+import DisConnect from '../../components/disConnect';
 
 function Header() {
 

@@ -2,7 +2,7 @@
 import { useDispatch } from 'react-redux'
 import { metaMask } from '../connectors/metaMask';
 import { walletConnect } from '../connectors/walletConnect';
-import { clearValue } from './web3_reactSlice'
+import { clearValue } from '../redux/web3_reactSlice'
 
 
 export default function DisConnect(params) {

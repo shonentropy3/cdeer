@@ -1,6 +1,6 @@
 
-import ConnectMetaMask from '../redux/ConnectMetaMask';
-import ConnectWalletConnect from '../redux/ConnectWalletConnect';
+import ConnectMetaMask from './ConnectMetaMask';
+import ConnectWalletConnect from './ConnectWalletConnect';
 
 export default function Card(props) {
     
