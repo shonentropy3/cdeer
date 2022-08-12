@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Post, Request, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { CommonService } from '../service/common';
 
@@ -18,8 +18,9 @@ export class CommonController {
          })
     }
 
-    @Post('download') //   下载文件
-    async downloadFile(@Body() body: any){
-        return this.commonService.downloadFile(body)
-    }
+    // @Get('download') //   下载文件
+    // async downloadFile(@Request() request: any){
+    //     let hash = request.query.hash;
+    //     return this.commonService.downloadFile(hash)
+    // }
 }

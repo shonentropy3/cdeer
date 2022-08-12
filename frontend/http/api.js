@@ -65,15 +65,6 @@ export const getHash = (data) => {
 );
 }
 
-export const getFile = (data) => {
-    
-    return serviceAxios({
-        url: "/common/download",
-        method: "post",
-        data,
-    }
-);
-}
 
 export const getDemandInfo = (data) => {
     return serviceAxios({

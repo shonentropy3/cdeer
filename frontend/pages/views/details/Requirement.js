@@ -107,12 +107,8 @@ export default function ProjectDetail() {
         setIsModalVisible(false);
       };
     
-      const download = () => {
-        getFile({hash: detail.attachment})
-        .then(res => {
-            console.log(res);
-            
-        })
+      const download = async() => {
+        window.open("http://ipfs.learnblockchain.cn/"+detail.attachment);
       }
 
 
