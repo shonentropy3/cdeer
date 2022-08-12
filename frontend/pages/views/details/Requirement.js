@@ -108,6 +108,11 @@ export default function ProjectDetail() {
       };
     
       const download = async() => {
+        // getFile(detail.attachment)
+        // .then(res => {
+        //     // console.log(res);
+            
+        // })
         window.open("http://ipfs.learnblockchain.cn/"+detail.attachment);
       }
 

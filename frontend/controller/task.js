@@ -7,8 +7,6 @@ export const ModifyDemand = async(account) => {
     if (window.ethereum !== 'undefined') {
       let data = JSON.parse(account)
       let budget = data.budget * 100 
-      let period = data.period * 24 * 60 * 60
-      console.log(data,period);
       return await taskContract().modifyTask(
         data.demand_id,
         {
@@ -16,7 +14,7 @@ export const ModifyDemand = async(account) => {
           desc: data.pro_content,
           attachment: data.attachment,
           currency: 1,  //  币种,x10000,保留四位小数,前端只展示两位小数
-          budget: data.budget,
+          budget: budget,
           period: data.period,
           categories: 1,
           skills: 1,  //  原role,职业为1,2,3...整数型

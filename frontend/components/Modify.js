@@ -88,7 +88,7 @@ export default function Modify(params) {
         let obj = {
             u_address: detail.task_addr,
             title: input[0].value,
-            budget: input[1].value * 100,
+            budget: input[1].value,
             period: Number(input[2].value) * 24 * 60 * 60,
             pro_content: text,
             recruiting_role: r,
@@ -112,7 +112,7 @@ export default function Modify(params) {
         .catch(err => {
             console.log('err==>',err);
         })
-        
+
         if (tradeStatus) {
             modifyDemand({proLabel: obj})
               .then(res => {
@@ -168,7 +168,7 @@ export default function Modify(params) {
  
     useEffect(()=>{
         initCheck()
-        detail.budget = detail.budget / 100
+        // detail.budget = detail.budget / 100
     },[])
 
     
