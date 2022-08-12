@@ -14,6 +14,7 @@ import Card from '../../components/Card';
 
 import { ethers } from 'ethers'
 import { useSelector } from 'react-redux'
+import { BitOperation } from '../../utils/BitOperation';
 
 // import useProvider//
 
@@ -84,15 +85,7 @@ function Publish() {
           }
           pjc += e
         })
-        // 移位运算>>>>
-        let role_index = 0;
-        let pjc_index = 0;
-        inner[5].index.forEach((ele,index) => {
-          role_index += ele << ( ( inner[5].index.length - (index + 1) ) * 8 )
-        })
-        inner[6].index.forEach((ele,index) => {
-          pjc_index += ele << ( ( inner[6].index.length - (index + 1) ) * 8 )
-        })
+        
         let data = {
           pro_content: `${inner[3].value}`,
           recruiting_role: `'{${role}}'`,
@@ -101,8 +94,8 @@ function Publish() {
           period: Number(inner[2].value),
           budget: Number(inner[1].value) * 100,
           u_address: `${web3_react.accounts[0]}`,
-          categories: pjc_index,
-          skills: role_index,
+          categories: BitOperation(inner[6].index),
+          skills: BitOperation(inner[5].index),
           hash: '',
           payhash: '',
         }

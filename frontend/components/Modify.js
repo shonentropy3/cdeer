@@ -21,45 +21,32 @@ export default function Modify(params) {
         {title: '项目周期', type: Number, value: detail.period}
     ])
     let [text,setText] = useState(detail.desc)
-    const onChange = (t,e,i,index) => {
-        
-        if (i === 'role') {
-            roleList[index] = !roleList[index]
-            setRolelist([...roleList])
-            if (t.target.checked) {
-                role.push(e.value)
-            }else{
-                role.forEach((ele,i) => {
-                    if (ele === e.value) {
-                        role.splice(i,1)
-                    }
-                })
-            }
-            setRole([...role])
-        }else{
-            pjcList[index] = !pjcList[index]
-            setPjclist([...pjcList])
-            if (t.target.checked) {
-                pjc.push(e.value)
 
-            }else{
-                pjc.forEach((ele,i) => {
-                    if (ele === e.value) {
-                        pjc.splice(i,1)
-                    }
-                })
-            }
-            setPjc([...pjc])
+    const change = (arr,index,set,element,list,checked) => {
+        arr[index] = !arr[index];
+        set([...arr]);
+        if (checked.target.checked) {
+            list.push(element.value)
+        }else{
+            list.forEach((ele,i) => {
+                ele === element.value ? list.splice(i,1) : ''
+            })
         }
+    }
+
+    const onChange = (t,e,i,index) => {
+        i === 'role' ? 
+            change(roleList,index,setRolelist,e,role,t) 
+            : 
+            change(pjcList,index,setPjclist,e,pjc,t)
     }
 
     const inner = (event,e) => {
         let value
-        if (typeof event == 'number') {
+        typeof event == 'number' ? 
             value = event
-        }else{
+            :
             value = event.target.value
-        }
         
         input.forEach((ele,index) => {
             if (ele.title === e.title) {
@@ -86,7 +73,7 @@ export default function Modify(params) {
         r = `{${r.substring(0,r.lastIndexOf(','))}}`
         p = `{${p.substring(0,p.lastIndexOf(','))}}`
         let obj = {
-            u_address: detail.task_addr,
+            u_address: detail.issuer,
             title: input[0].value,
             budget: input[1].value,
             period: Number(input[2].value) * 24 * 60 * 60,
