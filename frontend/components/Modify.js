@@ -2,6 +2,7 @@ import { Input, InputNumber, Checkbox, Button, message } from 'antd';
 import { useEffect, useState } from 'react';
 import { ModifyDemand } from '../controller/task';
 import { modifyDemand } from '../http/api';
+import { BitOperation } from '../utils/BitOperation';
 
 
 export default function Modify(params) {
@@ -72,6 +73,16 @@ export default function Modify(params) {
         })
         r = `{${r.substring(0,r.lastIndexOf(','))}}`
         p = `{${p.substring(0,p.lastIndexOf(','))}}`
+
+        console.log(roleList, pjcList);
+        let skills = [];
+        let categories = [];
+        roleList.forEach((e,i) => {
+            e ? skills.push(i) : ""
+        });
+        pjcList.forEach((e,i) => {
+            e ? categories.push(i) : ""
+        });
         let obj = {
             u_address: detail.issuer,
             title: input[0].value,
@@ -81,7 +92,9 @@ export default function Modify(params) {
             recruiting_role: r,
             demand_type: p,
             demand_id: detail.id,
-            attachment: detail.attachment
+            attachment: detail.attachment,
+            skills: BitOperation(skills),
+            categories: BitOperation(categories)
         }
         obj = JSON.stringify(obj)
         let tradeStatus = false
@@ -117,35 +130,31 @@ export default function Modify(params) {
           }
     }
 
-    const initCheck = async() => {
-        pjc = detail.task_type
-        role = detail.role
-        setPjc([...pjc])
-        setRole([...role])
-        _data.market_role.forEach(ele => {
-            let flag = false
-            detail.role.forEach((e,i) => {
-                 if (ele.value === e) {
-                    ele.status = true
-                    flag = true
-                    return
-                }
-            })
-            flag ? roleList.push(true):roleList.push(false)
-        })
-        _data.pjc.forEach(ele => {
-            let flag = false
-            detail.task_type.forEach((e,i) => {
+    const Check = (arr, list, check, set) => {
+        arr.forEach((ele,index) => {
+            let flag = false;
+            list.forEach((e,i) => {
                 if (ele.value === e) {
                     ele.status = true
                     flag = true
                     return
                 }
             })
-            flag ? pjcList.push(true):pjcList.push(false)
+            flag ? check.push(true): check.push(false)
         })
-        setRolelist([...roleList])
-        setPjclist([...pjcList])
+        set([...check])
+    }
+
+    const initCheck = async() => {
+        pjc = detail.task_type
+        role = detail.role
+        setPjc([...pjc])
+        setRole([...role])
+
+        Check(_data.market_role, detail.role, roleList, setRolelist);
+        Check(_data.pjc, detail.task_type, pjcList, setPjclist);
+
+
     }
 
     const cancel = () => {
@@ -154,8 +163,9 @@ export default function Modify(params) {
 
  
     useEffect(()=>{
+        roleList = [];
+        pjcList = [];
         initCheck()
-        // detail.budget = detail.budget / 100
     },[])
 
     
