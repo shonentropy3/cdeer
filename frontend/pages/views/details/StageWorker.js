@@ -101,7 +101,6 @@ export default function StageWorker() {
                                 <div>计划交付日期 <p>{e.date}</p></div>
                                 <div>阶段简述 <p>{e.dsc}</p></div>
                              </div>
-                             {/* bottom需以订单状态来判断是否显示 */}
                              <div className="bottom">
                                 <div className="l">
                                     需求方发起了...

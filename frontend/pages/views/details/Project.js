@@ -1,4 +1,4 @@
-import { Steps } from 'antd';
+import { Steps, Button } from 'antd';
 import { useEffect, useState } from 'react';
 import NavigationBar from "../../../components/NavigationBar";
 import Stage from '../../../components/Stage';
@@ -26,13 +26,13 @@ export default function Project_detail(params) {
             case 1:
                 return <Stage oid={oid} amoumt={amoumt} />
             case 2:
-                return <h1>3</h1>
+                return <Button onClick={() => {setStateNum(1)}}>修改阶段</Button>
             default:
                 return <StageWorker />
         }
     }
 
-    let [stateNum,setStateNum] = useState(2);
+    let [stateNum,setStateNum] = useState(0);
     let [oid,setOid] = useState()
     let [amoumt,setAmoumt] = useState()
     

@@ -74,7 +74,6 @@ export default function Modify(params) {
         r = `{${r.substring(0,r.lastIndexOf(','))}}`
         p = `{${p.substring(0,p.lastIndexOf(','))}}`
 
-        console.log(roleList, pjcList);
         let skills = [];
         let categories = [];
         roleList.forEach((e,i) => {

@@ -159,7 +159,7 @@ export default function ProjectDetail() {
                             <p>金额 ${detail.budget}</p>
                             <p>类型  {detail.demand_type}</p>
                             <p>周期  {detail.period}</p>
-                            <p>报名人数  xx</p>
+                            {/* <p>报名人数  xx</p> */}
                         </div>
                     </div>
                     <div className='content'>

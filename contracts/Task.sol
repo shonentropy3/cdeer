@@ -132,7 +132,7 @@ contract Task is SBTBase, Ownable {
 
     function setOrder(address _order) external onlyOwner {
         require(_order != address(0), "zero address");
-        order = _order;    
+        order = _order;
     }
 
     function updateFeeReceiver(uint _taskFee, uint _applyFee, address _receiver) external onlyOwner {
