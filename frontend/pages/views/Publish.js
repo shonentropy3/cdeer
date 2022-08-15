@@ -26,6 +26,7 @@ function Publish() {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const web3_react = useSelector(state => state.web3_react.value)
     let [inner,setInner] = useState(_data.inner)
+    let [suffix,setSuffix] = useState("")
 
       // 附件
     let [form_Data,form_DataSet] = useState()
@@ -96,6 +97,7 @@ function Publish() {
           u_address: `${web3_react.accounts[0]}`,
           categories: BitOperation(inner[6].index),
           skills: BitOperation(inner[5].index),
+          suffix: suffix,
           hash: '',
           payhash: '',
         }
@@ -135,6 +137,7 @@ function Publish() {
             }
           }
         })
+
         // 2、创建项目
         if (tradeStatus) {
           createDemand(para)
@@ -213,6 +216,8 @@ function Publish() {
       }
 
       const handleChange = (info) => {
+        suffix = info.file.name;
+        setSuffix(suffix);
           if (info.file.status === 'done') {
             message.success(`${info.file.name} file uploaded successfully`);
           } else if (info.file.status === 'error') {

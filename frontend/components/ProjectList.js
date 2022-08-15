@@ -129,8 +129,7 @@ function ProjectList(props) {
                         <Link href={{pathname:"/views/details/Project",search:data.id}}>
                         <button>项目详情</button>
                         </Link>
-                        {
-                            <>
+                        {<>
                                 <Popconfirm
                                     title="Are you sure to delete this task?"
                                     onConfirm={() => deletExploitation(data.id)}
@@ -138,8 +137,7 @@ function ProjectList(props) {
                                     cancelText="No" >
                                     <button>取消报名</button>
                                 </Popconfirm>
-                            </>
-                        }
+                        </>}
                   </>
         }
     }

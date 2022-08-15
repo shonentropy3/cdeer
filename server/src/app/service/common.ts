@@ -74,17 +74,21 @@ export class CommonService {
         return obj.hash
     }
 
-    // downloadFile(hash){
-    //     // return body
-    //     // const saveTo = fs.createWriteStream(join(__dirname, '附件'))
-    //     client.getFile(hash)
-    //     .then(res =>{
-    //         return res
-    //     })
-    //     .catch(err => {
-    //         return 'error'
-    //     })
-    // }
+    downloadFile(body){     
+        const saveTo = fs.createWriteStream(join('Download', body.suffix))
+
+        
+        client.getFile(body.hash,saveTo)
+        .then(res =>{
+            // file has been saved to localSample.txt
+            // you can pipe the stream to anywhere you want
+            console.log(res);
+            
+        })
+        .catch(err => {
+            return 'error'
+        })
+    }
 
     // AxiosErrorTip
     handleError(error: AxiosError) {

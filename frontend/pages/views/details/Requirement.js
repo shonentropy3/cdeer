@@ -3,7 +3,7 @@ import { getDemandInfo, applyFor, getFile } from '../../../http/api';
 import NavigationBar from "../../../components/NavigationBar";
 import { translatedPjc, translatedRole, sToDays } from '../../../utils/translated';
 import { ApplyProject } from '../../../controller/task';
-import { Modal, InputNumber, message } from 'antd';
+import { Modal, InputNumber, message, Button } from 'antd';
 import { checkWalletIsConnected } from '../../../utils/checkWalletIsConnected';
 import { useRouter } from 'next/router'
 
@@ -106,16 +106,36 @@ export default function ProjectDetail() {
       const handleCancel = () => {
         setIsModalVisible(false);
       };
-    
-      const download = async() => {
-        // getFile(detail.attachment)
-        // .then(res => {
-        //     // console.log(res);
-            
-        // })
-        window.open("http://ipfs.learnblockchain.cn/"+detail.attachment);
+
+      const getBlob = (url,cb) => {
+        let xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.responseType = 'blob';
+        xhr.onload = function() {
+          if (xhr.status === 200) {
+            cb(xhr.response);
+          }
+        }
+        xhr.send();
       }
 
+      const courseDownload = (url, filename) => {
+        getBlob(url, function(blob) {
+          saveAs(blob, filename);
+        })
+      }
+
+      const saveAs = (blob, filename) => {
+        if (window.navigator.msSaveOrOpenBlob) {
+          navigator.msSaveBlob(blob, filename);
+        } else {
+          let link = document.createElement('a');
+          link.href = window.URL.createObjectURL(blob);
+          link.download = filename;
+          link.click();
+          window.URL.revokeObjectURL(link.href);
+        }
+      }
 
     return(
         <>
@@ -146,8 +166,8 @@ export default function ProjectDetail() {
                         {
                             detail.attachment !== '' ? 
                             <>
-                                项目附件: {detail.attachment}
-                                <button onClick={() => download()}>download</button>
+                                项目附件: {detail.suffix}
+                                <Button type="primary" onClick={() => courseDownload("http://ipfs.learnblockchain.cn/" + detail.attachment, detail.suffix)}>download</Button>
                             </>
                             :
                             ''

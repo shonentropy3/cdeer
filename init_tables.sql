@@ -21,6 +21,7 @@ CREATE TABLE tasks (
   "attachment" varchar(64),
 	"apply_switch" int2 DEFAULT 1,
 	"del" int2 NOT NULL DEFAULT 0,
+  "suffix" varchar(64),
   "create_time" date DEFAULT (now()),
   "update_time" date DEFAULT (now())
 );

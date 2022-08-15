@@ -23,4 +23,9 @@ export class CommonController {
     //     let hash = request.query.hash;
     //     return this.commonService.downloadFile(hash)
     // }
+    @Post('download') //   下载文件
+    async downloadFile(@Body() body: any){
+        this.commonService.downloadFile(body)
+    }
+
 }
