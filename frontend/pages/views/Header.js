@@ -8,6 +8,7 @@ import { clearValue } from '../../redux/web3_reactSlice'
 import Card from '../../components/Card';
 import InitConnect from '../../redux/initConnect';
 import DisConnect from '../../components/disConnect';
+import axios from 'axios';
 
 function Header() {
 
@@ -18,6 +19,8 @@ function Header() {
     let [provider,setProvider] = useState()
     const dispatch = useDispatch()
     
+
+
 
     const menu = (
         <Menu

@@ -35,9 +35,6 @@ contract TaskMetadata is IMetadata {
         return generateTokenUri(svgFormat);
     }
 
-    function set(uint id, string tag) {
-
-    }
 
     function generateSVG(uint taskId) internal view returns (string memory svg) {
         TaskInfo memory task = taskAddr.tasks(taskId);
