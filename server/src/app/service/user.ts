@@ -43,8 +43,21 @@ export class UserService {
       return this.tasksRepository.query(getMyApplylist(body.demandId));
     } 
 
-    async getNfts(body: any){
-      return this.nftsRepository.query(getNftlist(body.account));
+    async getCacheNfts(body: any){
+      let params = body.params;
+      let arr = [];
+      let state = false;
+      await this.nftsRepository.query(getNftlist(params.account))
+      .then(res => {
+        res.length === 0 ? state = false : state = true;
+        res.map(e => {
+          if (e.info !== null) {
+            arr.push(e.info)
+          }
+        })
+      })
+      
+      return {state: state, data: arr}
     }
 
 

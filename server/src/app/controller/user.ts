@@ -20,18 +20,31 @@ export class UserController {
     @Post('getMyNftlist')
     async getMyNftlist(@Body() body: any){
 
-
+        let flag = false;
+        let arr = [];
         // return this.userService.getNftscanErc1155(body)
-        
-        let arr = []
+        await this.userService.getCacheNfts(body)
+        .then(res => {
+            if (res.state) {
+                arr = res.data;                
+                flag = true;
+            }
+        })
+        if (flag) {
+            return arr
+        }        
         return await new Promise ((resolve,reject)=>{
-            // 存入psql
+            // 存入psql ==> 缓存
             resolve(this.userService.getNft(body))
          })
-         .then((res)=>{
-            // return this.commonService.pushFile(files, res)
-            console.log('==>',res);
-            
+         .then(async(res)=>{
+            await this.userService.getCacheNfts(body)
+            .then(res => {
+                if (res.state) {
+                    arr = res.data
+                }
+            })
+            return arr
          })
     }
 }

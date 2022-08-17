@@ -13,6 +13,6 @@ export const setNftlist = (params,obj) => {
 }
 
 export const getNftlist = params => {
-    let sql = ` SELECT * FROM nfts WHERE issuer = '${params}'`
+    let sql = ` SELECT * FROM nfts WHERE account = '${params}'`
     return sql
 }
