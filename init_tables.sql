@@ -76,7 +76,7 @@ CREATE TABLE nfts (
 	"account" varchar(42),
 	"chain" varchar(15),
   "erc_type" varchar(7),
-  "create_time" int4
+  "create_time" int8
 );
 CREATE INDEX "account" ON "public"."nfts" USING btree (
   "account" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST

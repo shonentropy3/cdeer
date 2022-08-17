@@ -25,11 +25,8 @@ export class UserController {
         
         let arr = []
         return await new Promise ((resolve,reject)=>{
-            this.userService.getNftscanErc1155(body)
-            
-            // resolve()
-            // console.log(this.userService.getNftscanErc1155(body));
-            
+            // 存入psql
+            resolve(this.userService.getNft(body))
          })
          .then((res)=>{
             // return this.commonService.pushFile(files, res)

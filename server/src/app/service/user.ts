@@ -43,18 +43,31 @@ export class UserService {
       return this.tasksRepository.query(getMyApplylist(body.demandId));
     } 
 
-    async getNftscan(body: any){
+    async getNfts(body: any){
       return this.nftsRepository.query(getNftlist(body.account));
+    }
+
+
+    async getNft(body: any) {
+      await this.getNftscanErc721(body);
+      await this.getNftscanErc1155(body);
     }
 
     async getNftscanErc721(body: any) {
       let params = body.params;
       params.erc_type = 'erc721';
+      return this.getNftscan(params)
     }
     
     async getNftscanErc1155(body: any) {
       let params = body.params;
       params.erc_type = 'erc1155';
+      return this.getNftscan(params)
+    }
+
+
+    async getNftscan(body: any) {
+      let params = body;
       const checkResultObservable = this.httpService.get(
         `https://${params.chain}.nftscan.com/api/v2/account/own/${params.account}?erc_type=${params.erc_type}`,
         { headers: { 'X-API-KEY': 'Ovzh6fBZ' } }
@@ -62,10 +75,9 @@ export class UserService {
       const checkResult = await (await lastValueFrom(checkResultObservable)).data;
       const data = checkResult.data.content;
       if (checkResult.code === 200) {
-        this.nftsRepository.query(setNftlist(data,params));
+        return this.nftsRepository.query(setNftlist(data,params));
       }
-      
-      // .pipe(
+            // .pipe(
       //   map(response => {
       //     let data = response.data
       //     console.log('data==>',data);
@@ -84,9 +96,6 @@ export class UserService {
       //   }), 
       //   )
     }
-
-
-
 
     // AxiosErrorTip
     handleError(error: AxiosError) {
