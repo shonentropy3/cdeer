@@ -150,3 +150,8 @@ export const cancelApply = (params) => {
     return obj
 }
 
+export const getCacheNfts = params => {
+    let sql = `DELETE FROM nfts WHERE create_time <= ${params}`
+    return sql
+}
+

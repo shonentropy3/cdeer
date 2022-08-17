@@ -4,11 +4,11 @@ import { Tasks } from 'src/app/db/entity/Tasks';
 import { BlockLogs } from 'src/app/db/entity/BlockLogs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { getLastBlock,getModifyDemandLastBlock, getTaskHash, createTaskSql,createOrderSql, getApplyForHash, getCancelApplyHash, getCreateOrderHash} from 'src/app/db/sql/sql';
+import { getLastBlock,getModifyDemandLastBlock, getTaskHash, createTaskSql,createOrderSql, getApplyForHash, getCancelApplyHash, getCreateOrderHash, getCacheNfts} from 'src/app/db/sql/sql';
 import { updateProject, updateApplyInfo, cancelApply } from 'src/app/db/sql/sql';
 import { updateBlock } from 'src/app/db/sql/sql';
 import { ApplyInfo } from '../db/entity/ApplyInfo';
-
+import { Nfts } from '../db/entity/Nfts';
 
 const { ethers } = require('ethers');
 // TODO:更改配置文件
@@ -26,7 +26,9 @@ export class TaskService {
         @InjectRepository(BlockLogs)
         private readonly blockLogRepository: Repository<BlockLogs>,
         @InjectRepository(ApplyInfo)
-        private readonly applyInfoRepository: Repository<ApplyInfo>
+        private readonly applyInfoRepository: Repository<ApplyInfo>,
+        @InjectRepository(Nfts)
+        private readonly nftsRepository: Repository<Nfts>
     ) {}
 
     private readonly logger = new Logger(TaskService.name)
@@ -241,10 +243,16 @@ export class TaskService {
 
 }
 
+    clearNftCache = async () => {
+        const min10 = Date.now()-600000;
+        this.nftsRepository.query(getCacheNfts(min10))
+    }
+
     @Interval(5000)  //每隔5秒执行一次
     handleInterval() {
         this.modifyDemandLog()  
         this.insertApplyFor()
+        this.clearNftCache()
         // this.logger.debug('Called 5 seconds');
     }
 
