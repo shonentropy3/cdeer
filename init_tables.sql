@@ -69,3 +69,15 @@ COMMENT ON COLUMN "public"."trans_hashes"."category" IS '交易hash种类: 1.创
 COMMENT ON COLUMN "public"."trans_hashes"."is_update" IS '是否同步链上数据: 0.未同步  1.已经同步';
 
 
+-- 创建nftscan缓存表
+CREATE TABLE nfts (
+ id serial PRIMARY KEY,
+  "info" json,
+	"account" varchar(42),
+	"chain" varchar(15),
+  "erc_type" varchar(7),
+  "create_time" int4
+);
+CREATE INDEX "account" ON "public"."nfts" USING btree (
+  "account" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
+);

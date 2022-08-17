@@ -16,4 +16,25 @@ export class UserController {
     async getMyApplylist(@Body() body: any){
         return await this.userService.getMyApplylist(body)
     }
+    
+    @Post('getMyNftlist')
+    async getMyNftlist(@Body() body: any){
+
+
+        // return this.userService.getNftscanErc1155(body)
+        
+        let arr = []
+        return await new Promise ((resolve,reject)=>{
+            this.userService.getNftscanErc1155(body)
+            
+            // resolve()
+            // console.log(this.userService.getNftscanErc1155(body));
+            
+         })
+         .then((res)=>{
+            // return this.commonService.pushFile(files, res)
+            console.log('==>',res);
+            
+         })
+    }
 }

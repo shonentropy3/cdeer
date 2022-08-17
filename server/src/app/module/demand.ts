@@ -8,6 +8,7 @@ import { UserService } from '../service/user';
 import {HttpModule} from '@nestjs/axios'
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Tasks } from '../db/entity/Tasks';
+import { Nfts } from '../db/entity/Nfts';
 
 
 @Module({
@@ -15,7 +16,7 @@ import { Tasks } from '../db/entity/Tasks';
   providers: [MarketService, CommonService, UserService],
   imports: [
     HttpModule,
-    TypeOrmModule.forFeature([Tasks]),
+    TypeOrmModule.forFeature([Tasks, Nfts]),
   ]
 })
 export class DemandModule {}

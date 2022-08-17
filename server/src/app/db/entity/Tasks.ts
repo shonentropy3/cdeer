@@ -1,6 +1,5 @@
 import { Column, Entity, Index } from "typeorm";
 
-@Index("tasks_desc_key", ["desc"], { unique: true })
 @Index("desc", ["desc"], {})
 @Index("tasks_id_key", ["id"], { unique: true })
 @Index("id", ["id"], {})
@@ -13,18 +12,13 @@ export class Tasks {
   @Column("character varying", { name: "issuer", nullable: true, length: 64 })
   issuer: string | null;
 
-  @Column("character varying", { name: "hash", nullable: true, length: 64 })
+  @Column("character varying", { name: "hash", nullable: true, length: 128 })
   hash: string | null;
 
   @Column("character varying", { name: "title", nullable: true, length: 255 })
   title: string | null;
 
-  @Column("character varying", {
-    name: "desc",
-    nullable: true,
-    unique: true,
-    length: 64,
-  })
+  @Column("character varying", { name: "desc", nullable: true, length: 64 })
   desc: string | null;
 
   @Column("bigint", { name: "period", nullable: true })
@@ -69,4 +63,7 @@ export class Tasks {
     default: () => "now()",
   })
   updateTime: string | null;
+
+  @Column("character varying", { name: "suffix", nullable: true, length: 64 })
+  suffix: string | null;
 }

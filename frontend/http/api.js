@@ -146,10 +146,10 @@ export const getMyApplylist = (data) => {
 
 
 
-// export const getMyApplylist = (data) => {
-//     return serviceAxios({
-//         url: "/user/getMyApplylist",
-//         method: "post",
-//         data,
-//     })
-// }
+export const getMyNftlist = (data) => {
+    return serviceAxios({
+        url: "/user/getMyNftlist",
+        method: "post",
+        data,
+    })
+}

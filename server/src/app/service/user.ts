@@ -3,11 +3,11 @@ import { BadRequestException, Body, HttpException, HttpStatus, Injectable, NotFo
 import { AxiosError } from 'axios';
 import { createWriteStream } from 'fs';
 import { join } from 'path/posix';
-import { from, map, Observable, tap, throwError } from 'rxjs';
+import { from, map, Observable, tap, throwError, lastValueFrom } from 'rxjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Tasks } from '../db/entity/Tasks';	//引入entity
-
+import { Nfts } from '../db/entity/Nfts';
 // ipfs/upyun
 const fs  = require('fs');
 var upyun = require("upyun")
@@ -18,12 +18,16 @@ const client = new upyun.Client(service);
 // dbUtils
 import { getMyPjcDBa, getMyPjcDBb } from '../db/sql/demand';
 import { getMyApplylist } from '../db/sql/apply_info';
+import { getNftlist, setNftlist } from '../db/sql/nft';
 
 @Injectable()
 export class UserService {
     constructor(
         @InjectRepository(Tasks)
         private readonly tasksRepository: Repository<Tasks>,
+        @InjectRepository(Nfts)
+        private readonly nftsRepository: Repository<Nfts>,
+        private httpService: HttpService
     ) {}
 
     // 查看个人项目
@@ -38,6 +42,51 @@ export class UserService {
     async getMyApplylist(@Body() body: any) {
       return this.tasksRepository.query(getMyApplylist(body.demandId));
     } 
+
+    async getNftscan(body: any){
+      return this.nftsRepository.query(getNftlist(body.account));
+    }
+
+    async getNftscanErc721(body: any) {
+      let params = body.params;
+      params.erc_type = 'erc721';
+    }
+    
+    async getNftscanErc1155(body: any) {
+      let params = body.params;
+      params.erc_type = 'erc1155';
+      const checkResultObservable = this.httpService.get(
+        `https://${params.chain}.nftscan.com/api/v2/account/own/${params.account}?erc_type=${params.erc_type}`,
+        { headers: { 'X-API-KEY': 'Ovzh6fBZ' } }
+      )
+      const checkResult = await (await lastValueFrom(checkResultObservable)).data;
+      const data = checkResult.data.content;
+      if (checkResult.code === 200) {
+        this.nftsRepository.query(setNftlist(data,params));
+      }
+      
+      // .pipe(
+      //   map(response => {
+      //     let data = response.data
+      //     console.log('data==>',data);
+          
+      //     // if (data.code === 200) {
+      //     //   // ERC1155: owner赋值  ==>   因json查询速度慢遂另外存储account
+      //     //   // if (params.erc_type === 'erc1155') {
+      //     //   //   data.data.content.map(e => {
+      //     //   //     e.owner = params.account
+      //     //   //   })
+      //     //   // }
+      //     //   // console.log('===>',setNftlist(data.data.content,params));
+      //     //   // // return
+      //     //   // return this.nftsRepository.query(setNftlist(data.data.content,params));
+      //     // }
+      //   }), 
+      //   )
+    }
+
+
+
 
     // AxiosErrorTip
     handleError(error: AxiosError) {

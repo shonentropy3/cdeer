@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react"
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import axios from "axios";
+import NftPanel from "../../components/My/NftPanel";
 
 function My(params) {
 
@@ -8,6 +9,7 @@ function My(params) {
     const erc_type = 'erc721';
     const key = 'Ovzh6fBZ';
     let [nftList,setNftList] = useState([])
+    let [item,setItem] = useState('nft')
     
     useEffect(() => {
         async function init() {
@@ -40,6 +42,16 @@ function My(params) {
     },[])
 
 
+    const print = () => {
+        switch (item) {
+            case 'nft':
+                return  <NftPanel></NftPanel>
+        
+            default:
+                break;
+        }
+    }
+
 
     const personalBar = () => {
         return <div className="personalBar">
@@ -66,10 +78,10 @@ function My(params) {
     const listBar = () => {
         return <div className='listBar'>
             <ul className='list'>
-                <li>基本信息</li>
+                {/* TODO: 点击显示相对应的板块   */}
+                <li>NFT</li>
                 <li>开发记录</li>
                 <li>发布记录</li>
-                <li>NFT</li>
             </ul>
         </div>
     }
@@ -82,18 +94,7 @@ function My(params) {
                 {listBar()}
             </div>
             <div className="my_r">
-                <div className="label">
-
-                </div>
-                <div className="address">
-
-                </div>
-                <div className="completed">
-
-                </div>
-                <div className="nft">
-                    
-                </div>
+                {print()}
             </div>
         </div>
     )
