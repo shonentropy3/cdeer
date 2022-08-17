@@ -18,7 +18,7 @@ const client = new upyun.Client(service);
 // dbUtils
 import { getMyPjcDBa, getMyPjcDBb } from '../db/sql/demand';
 import { getMyApplylist } from '../db/sql/apply_info';
-import { getNftlist, setNftlist } from '../db/sql/nft';
+import { getCacheNfts, hasNft, isOutTime, setNftlist, updateNftlist } from '../db/sql/nft';
 
 @Injectable()
 export class UserService {
@@ -43,72 +43,80 @@ export class UserService {
       return this.tasksRepository.query(getMyApplylist(body.demandId));
     } 
 
-    async getCacheNfts(body: any){
+
+    // psql中是否有该账户nft缓存
+    async hasNft(body: any) {
       let params = body.params;
-      let arr = [];
-      let state = false;
-      await this.nftsRepository.query(getNftlist(params.account))
+      return this.nftsRepository.query(hasNft(params.account))
       .then(res => {
-        res.length === 0 ? state = false : state = true;
+        if (res.length === 0) {
+          // 没有
+          return false
+        }else{
+          return true
+        }
+      })
+    }
+
+    // 该账户nft缓存是否超时
+    async isOutTime(body: any) {
+      let params = body.params;
+      params.time = Date.now();
+      return this.nftsRepository.query(isOutTime(params))
+      .then(res => {
+        if (res.length === 0) {
+          // 没有超时
+          return true
+        }else{
+          return false
+        }
+      })
+    }
+
+    async getCacheNftsList(body: any){
+      let params = body.params;
+      return this.nftsRepository.query(getCacheNfts(params))
+      .then(res => {
+        let arr = [];
         res.map(e => {
           if (e.info !== null) {
             arr.push(e.info)
           }
         })
+        return arr;
       })
-      
-      return {state: state, data: arr}
     }
 
-
-    async getNft(body: any) {
-      await this.getNftscanErc721(body);
-      await this.getNftscanErc1155(body);
+    async setNftCache(body: any) {
+      for (let i = 0; i < body.length; i++) {
+        this.nftsRepository.query(setNftlist(body[i]))
+      }
     }
 
-    async getNftscanErc721(body: any) {
-      let params = body.params;
-      params.erc_type = 'erc721';
-      return this.getNftscan(params)
+    async updateNftCache(body: any) {
+      for (let i = 0; i < body.length; i++) {
+        this.nftsRepository.query(updateNftlist(body[i]))
+      }
     }
-    
-    async getNftscanErc1155(body: any) {
-      let params = body.params;
-      params.erc_type = 'erc1155';
-      return this.getNftscan(params)
-    }
-
 
     async getNftscan(body: any) {
-      let params = body;
-      const checkResultObservable = this.httpService.get(
-        `https://${params.chain}.nftscan.com/api/v2/account/own/${params.account}?erc_type=${params.erc_type}`,
-        { headers: { 'X-API-KEY': 'Ovzh6fBZ' } }
-      )
-      const checkResult = await (await lastValueFrom(checkResultObservable)).data;
-      const data = checkResult.data.content;
-      if (checkResult.code === 200) {
-        return this.nftsRepository.query(setNftlist(data,params));
+      let params = body.params;
+      const arr = ['erc721','erc1155'];
+      let detail = []
+      for (let i = 0; i < arr.length; i++) {
+        const checkResultObservable = this.httpService.get(
+          `https://${params.chain}.nftscan.com/api/v2/account/own/${params.account}?erc_type=${arr[i]}`,
+          { headers: { 'X-API-KEY': 'Ovzh6fBZ' } }
+        )
+        const checkResult = await (await lastValueFrom(checkResultObservable)).data;
+        const data = checkResult.data.content;
+        detail.push({
+          erc_type: arr[i], data: data, account: params.account, chain: params.chain
+        })
       }
-            // .pipe(
-      //   map(response => {
-      //     let data = response.data
-      //     console.log('data==>',data);
-          
-      //     // if (data.code === 200) {
-      //     //   // ERC1155: owner赋值  ==>   因json查询速度慢遂另外存储account
-      //     //   // if (params.erc_type === 'erc1155') {
-      //     //   //   data.data.content.map(e => {
-      //     //   //     e.owner = params.account
-      //     //   //   })
-      //     //   // }
-      //     //   // console.log('===>',setNftlist(data.data.content,params));
-      //     //   // // return
-      //     //   // return this.nftsRepository.query(setNftlist(data.data.content,params));
-      //     // }
-      //   }), 
-      //   )
+      return detail
     }
+    
 
     // AxiosErrorTip
     handleError(error: AxiosError) {

@@ -1,5 +1,5 @@
 import { Button } from "antd"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { getMyNftlist } from "../../http/api"
 
 
@@ -18,8 +18,7 @@ export default function NftPanel() {
 
     const request = () => {
         let obj = {
-            erc_type: erc,
-            chain: chain,
+            chain: 'polygonapi',
             account: '0xd2AEc55186F9f713128d48087f0e2EF5F453ca79'
         }
         getMyNftlist({params: obj})
@@ -28,9 +27,13 @@ export default function NftPanel() {
         })
     }
 
+    useEffect(() => {
+        request()
+    },[])
+
 
     return <div className="NftPanel">
-        <div className="top">
+        {/* <div className="top">
             <div className="box">
                 {
                     erc_type.map((e,i) => <Button key={i} onClick={() => {erc=e,setErc(erc),request()}} type={erc === e ? 'primary':''}>{e}</Button>)
@@ -43,6 +46,7 @@ export default function NftPanel() {
                 }
             </div>
 
-        </div>
+        </div> */}
+        
     </div>
 }

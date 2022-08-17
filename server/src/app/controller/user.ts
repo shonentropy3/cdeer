@@ -19,32 +19,35 @@ export class UserController {
     
     @Post('getMyNftlist')
     async getMyNftlist(@Body() body: any){
-
-        let flag = false;
-        let arr = [];
-        // return this.userService.getNftscanErc1155(body)
-        await this.userService.getCacheNfts(body)
+        let flag: any;
+        await this.userService.hasNft(body)
         .then(res => {
-            if (res.state) {
-                arr = res.data;                
-                flag = true;
-            }
+            flag = res
         })
-        if (flag) {
-            return arr
-        }        
-        return await new Promise ((resolve,reject)=>{
-            // 存入psql ==> 缓存
-            resolve(this.userService.getNft(body))
-         })
-         .then(async(res)=>{
-            await this.userService.getCacheNfts(body)
-            .then(res => {
-                if (res.state) {
-                    arr = res.data
-                }
-            })
-            return arr
-         })
+        flag ? 
+        // psql有
+            await this.userService.isOutTime(body)
+                .then(async(res) => {
+                    res ? 
+                        // 没有超时 ==> 获取psql缓存
+                        ''
+                    :
+                        // 超时了 ==> 更新psql
+                        await this.userService.getNftscan(body)
+                            .then(res => {
+                                this.userService.updateNftCache(res);
+                            })
+                })
+        :
+        // psql没有
+            await this.userService.getNftscan(body)
+                .then(res => {
+                    this.userService.setNftCache(res);
+                })
+
+
+        return this.userService.getCacheNftsList(body)
+        
+        
     }
 }

@@ -243,16 +243,16 @@ export class TaskService {
 
 }
 
-    clearNftCache = async () => {
-        const min10 = Date.now()-600000;
-        this.nftsRepository.query(getCacheNfts(min10))
-    }
+    // clearNftCache = async () => {
+    //     const min10 = Date.now()-600000;
+    //     this.nftsRepository.query(getCacheNfts(min10))
+    // }
 
     @Interval(5000)  //每隔5秒执行一次
     handleInterval() {
         this.modifyDemandLog()  
         this.insertApplyFor()
-        this.clearNftCache()
+        // this.clearNftCache()
         // this.logger.debug('Called 5 seconds');
     }
 
