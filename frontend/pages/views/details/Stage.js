@@ -4,6 +4,7 @@ import { withRouter } from 'next/router'
 import { orderStage, confirmOrder, confirmOrderStage, terminateStage, getSecondStatus } from "../../../controller/order";
 import { Button, message } from "antd";
 import { useSelector } from 'react-redux'
+import { getDate } from "../../../utils/getDate";
 
 function OrderDetail({router}) {
 
@@ -50,7 +51,7 @@ function OrderDetail({router}) {
 
                 arr[i] = {
                     price: price,
-                    date: getDate(e[4].toString()),
+                    date: getDate(e[4].toString() * 1000),    // 参数需要毫秒数，所以这里将秒数乘于 1000
                     dsc: e[1]
                 }
             })
@@ -59,16 +60,16 @@ function OrderDetail({router}) {
         })
     }
 
-    const getDate = (params) => {
-        var date = new Date(params * 1000);  // 参数需要毫秒数，所以这里将秒数乘于 1000
-        let Y = date.getFullYear() + '-';
-        let M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
-        let D = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ' ';
-        let h = date.getHours() + ':';
-        let m = date.getMinutes();
-        // let s = date.getSeconds();
-        return Y+M+D+h+m
-    }   
+    // const getDate = (params) => {
+    //     var date = new Date(params * 1000);  // 参数需要毫秒数，所以这里将秒数乘于 1000
+    //     let Y = date.getFullYear() + '-';
+    //     let M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+    //     let D = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ' ';
+    //     let h = date.getHours() + ':';
+    //     let m = date.getMinutes();
+    //     // let s = date.getSeconds();
+    //     return Y+M+D+h+m
+    // }
 
     const confirmOrd = async() => {
         let obj = {

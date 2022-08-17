@@ -65,6 +65,7 @@
                 padding: 0 20px;
                 display: flex;
                 flex-direction: column;
+                cursor: pointer;
                 // justify-content: cen;
                 li{
                     padding: 25px;
@@ -77,6 +78,38 @@
         width: 850px;
         height: 800px;
         border: 1px solid #000;
+        .NftPanel{
+            box-sizing: border-box;
+            padding: 10px;
+            display: flex;
+            .card{
+                width: 200px;
+                height: 100px;
+                position: relative;
+                box-shadow: 0 0 4px 1px gray;
+                &:hover{
+                    img{
+                        height: 210px;
+                    }
+                    .desc{
+                        background-color: rgba(0, 0, 0, 0.425);
+                        padding: 5px;
+                    }
+                }
+                img{
+                    height: 200px;
+                    position: absolute;
+                    transition: width 0.3s, height 0.3s;
+                }
+                .desc{
+                    position: absolute;
+                    color: white;
+                    text-shadow: 2px 2px black;
+                    transition: background-color 0.3s, padding 0.3s;
+                }
+            }
+        }
+        // panel
     }
     
 }

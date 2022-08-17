@@ -1,6 +1,7 @@
 import { Button } from "antd"
 import { useState, useEffect } from "react"
 import { getMyNftlist } from "../../http/api"
+import { getDate } from "../../utils/getDate"
 
 
 
@@ -15,6 +16,9 @@ export default function NftPanel() {
     ]
     let [erc,setErc] = useState('erc721')
     let [chain,setChain] = useState('restapi')
+    let [nftList,setNftList] = useState([])
+    let [srcList,setSrcList] = useState([])
+
 
     const request = () => {
         let obj = {
@@ -23,8 +27,29 @@ export default function NftPanel() {
         }
         getMyNftlist({params: obj})
         .then(res => {
-            console.log(res);
+            nftList = res;
+            parseImg(res)
         })
+    }
+
+    const parseImg = (arr) => {
+        arr.map((e,i) => {
+            let url = e.image_uri;
+            if (url.indexOf('Qm') === 0 || url.indexOf('ba') === 0) {
+                e.image_uri = "https://dweb.link/ipfs/"+url
+            }
+            if (url.indexOf('data:image/svg+xml;base64') === 0) {
+                e.image_uri = url
+            }
+            if(url.indexOf('https://') === 0){
+                e.image_uri = url
+            }
+            if(url.indexOf('ar://') === 0){
+                e.image_uri = url
+            }
+            e.latest_trade_timestamp = getDate(e.latest_trade_timestamp)
+        })
+        setNftList([...nftList])
     }
 
     useEffect(() => {
@@ -33,20 +58,16 @@ export default function NftPanel() {
 
 
     return <div className="NftPanel">
-        {/* <div className="top">
-            <div className="box">
-                {
-                    erc_type.map((e,i) => <Button key={i} onClick={() => {erc=e,setErc(erc),request()}} type={erc === e ? 'primary':''}>{e}</Button>)
-                }  
-            </div>
-            
-            <div className="box">
-                {
-                    chains.map((e,i) => <Button key={i} onClick={() => {chain=e.value,setChain(chain),request()}} type={chain === e.value ? 'primary':''}>{e.title}</Button>) 
-                }
-            </div>
+        {
+            nftList.map((e,i) => 
+            <div key={i} className="card">
+                <img src={e.image_uri} alt="" />
+                <div className="desc">
+                    <p>{e.name}</p>
+                    <p>{e.latest_trade_timestamp}</p>
+                </div>
+            </div> )
+        }
 
-        </div> */}
-        
     </div>
 }
