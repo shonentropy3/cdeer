@@ -3,12 +3,8 @@ import Router from "next/router"
 import { Dropdown, Menu, Button, Modal, Divider } from 'antd';
 
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux'
-import { clearValue } from '../../redux/web3_reactSlice'
 import Card from '../../components/Card';
-import InitConnect from '../../redux/initConnect';
 import DisConnect from '../../components/disConnect';
-import axios from 'axios';
 
 import {
     useAccount,
@@ -19,6 +15,43 @@ import {
     useProvider
   } from 'wagmi'
 
+  const menu = (
+    <Menu
+      items={[
+        {
+            type: 'group',
+            label: (
+                // <p value={web3_react.accounts}>Hello, <em>{account}</em></p>
+                '账号'
+            )
+        },
+        {
+            type: 'divider',
+        },
+        {
+          key: '1',
+          label: (
+            <Link href="/views/My">
+              个人中心
+            </Link>
+          ),
+        },
+        {
+            type: 'divider',
+        },
+        {
+          key: '2',
+          danger: true,
+          label: (
+            // <DisConnect provider={ provider } />
+            '退出登陆'
+          ),
+        }
+      ]}
+    />
+  );
+
+
 function Header() {
     const { address, connector, isConnected } = useAccount()
     const { data: ensAvatar } = useEnsAvatar({ addressOrName: address })
@@ -26,48 +59,7 @@ function Header() {
 
 
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const redux = useSelector(state => state.web3_react.value)
-    let [web3_react, setWeb3] = useState({})
-    let [account,setAccount] = useState()
-    let [provider,setProvider] = useState()
-    const dispatch = useDispatch()
-    
-
-
-
-    const menu = (
-        <Menu
-          items={[
-            {
-                type: 'group',
-                label: (
-                    <p value={web3_react.accounts}>Hello, <em>{account}</em></p>
-                )
-            },
-            {
-                type: 'divider',
-            },
-            {
-              key: '1',
-              label: (
-                <Link href="/views/My">
-                  个人中心
-                </Link>
-              ),
-            },
-            {
-                type: 'divider',
-            },
-            {
-              key: '2',
-              danger: true,
-              label: (
-                <DisConnect provider={ provider } />
-              ),
-            }
-          ]}
-        />
-      );
+    let [account,setAccount] = useState('');
 
     const showModal = () => {
         setIsModalVisible(true);
@@ -81,31 +73,10 @@ function Header() {
       setIsModalVisible(false);
     };
 
-    const inspection = (url) => {
-        // 检测登陆状态
-        if (!web3_react.isActive) {
-            setIsModalVisible(true);
-            return
-        }
-        Router.push({pathname: url, query: {}})
-    }    
-
     useEffect(() => {
-        web3_react = redux;
-        setWeb3({...web3_react})
-        
-        if (!web3_react.isActive) {
-            return
-        }
-        account = web3_react.accounts[0]
-        account = account.substr(0,5) + '...' + account.substr(account.length - 4 , 4)
+        account = address;
         setAccount(account)
-    },[redux])
-
-    useEffect(() => {
-        provider = window.localStorage.getItem("provider");
-        setProvider(provider)
-    },[])
+    },[address])
 
     return (
         <>
@@ -113,7 +84,6 @@ function Header() {
           <Card cancel={handleCancel}></Card>
         </Modal>
         <div className='header'>
-            <InitConnect provider={provider}></InitConnect>
             <div className="left">
                 <div className="logo">
 
@@ -143,7 +113,7 @@ function Header() {
                         </div>
                     </Link>
                 </div>
-                {
+                {/* {
                     web3_react.isActive ? (
                         <>
                         <Dropdown overlay={menu}>
@@ -155,20 +125,8 @@ function Header() {
                     ) : (
                         <Button className='connect' type="primary" onClick={() => showModal()}>connect</Button>
                     )
-                }
-                {
-                    isConnected ? 
-                    <div>
-                        <img src={ensAvatar} alt="ENS Avatar" />
-                        <div>{ensName ? `${ensName} (${address})` : address}</div>
-                        {/* <div>Connected to {connector.name}</div> */}
-                        {/* <button onClick={disconnect}>Disconnect</button> */}
-
-                    </div>
-                    :
-                    ''
-                }
-
+                } */}
+                {account}
             </div>
         </div>
         </>
