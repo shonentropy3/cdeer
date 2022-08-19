@@ -14,11 +14,7 @@ export default function NftPanel() {
         {title: 'Polygon', value: 'polygonapi'},
         {title: 'Arbitrum', value: 'arbitrumapi'},
     ]
-    let [erc,setErc] = useState('erc721')
-    let [chain,setChain] = useState('restapi')
     let [nftList,setNftList] = useState([])
-    let [srcList,setSrcList] = useState([])
-
 
     const request = () => {
         let obj = {

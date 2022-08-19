@@ -267,7 +267,7 @@
     "@babel/helper-validator-identifier" "^7.18.6"
     "to-fast-properties" "^2.0.0"
 
-"@coinbase/wallet-sdk@^3.0.4":
+"@coinbase/wallet-sdk@^3.0.4", "@coinbase/wallet-sdk@^3.3.0", "@coinbase/wallet-sdk@>=3.3.0":
   "integrity" "sha512-enGI01ByRM6+brAQHbZwEyZ4wukuRZQkUusQSUsZAS03pv5uLop0SL1+CJiw5KbmFq7FbXmH36sOO4HmTiS4zA=="
   "resolved" "https://registry.npmmirror.com/@coinbase/wallet-sdk/-/wallet-sdk-3.4.0.tgz"
   "version" "3.4.0"
@@ -865,6 +865,30 @@
   dependencies:
     "defer-to-connect" "^2.0.1"
 
+"@tanstack/query-core@^4.0.0-beta.1":
+  "integrity" "sha512-UOyOhHKLS/5i9qG2iUnZNVV3R9riJJmG9eG+hnMFIPT/oRh5UzAfjxCtBneNgPQZLDuP8y6YtRYs/n4qVAD5Ng=="
+  "resolved" "https://registry.npmmirror.com/@tanstack/query-core/-/query-core-4.2.1.tgz"
+  "version" "4.2.1"
+
+"@tanstack/query-sync-storage-persister@^4.0.10":
+  "integrity" "sha512-exjzMdQ00CfGD/FTPgzxciC57Uvs2SbltEumPpVENvWs2L/Bf7Lxy9rTMVqzgCORHINd1RVPBhN8Lx5fnzPIKQ=="
+  "resolved" "https://registry.npmmirror.com/@tanstack/query-sync-storage-persister/-/query-sync-storage-persister-4.2.1.tgz"
+  "version" "4.2.1"
+
+"@tanstack/react-query-persist-client@^4.0.10":
+  "integrity" "sha512-5z3oo6S8stiPTFK7hmv4O04ZTMgdCrhgV+cq+z0t2NJwd5eeKPLrAUSBM+ah9eEhUlzs5ZEhaYeSwtPopOjYdg=="
+  "resolved" "https://registry.npmmirror.com/@tanstack/react-query-persist-client/-/react-query-persist-client-4.2.1.tgz"
+  "version" "4.2.1"
+
+"@tanstack/react-query@^4.0.10":
+  "integrity" "sha512-w02oTOYpoxoBzD/onAGRQNeLAvggLn7WZjS811cT05WAE/4Q3br0PTp388M7tnmyYGbgOOhFq0MkhH0wIfAKqA=="
+  "resolved" "https://registry.npmmirror.com/@tanstack/react-query/-/react-query-4.2.1.tgz"
+  "version" "4.2.1"
+  dependencies:
+    "@tanstack/query-core" "^4.0.0-beta.1"
+    "@types/use-sync-external-store" "^0.0.3"
+    "use-sync-external-store" "^1.2.0"
+
 "@types/bn.js@^4.11.3":
   "integrity" "sha512-pqr857jrp2kPuO9uRjZ3PwnJTjoQy+fcdxvBTvHm6dkmEL9q+hDD/2j/0ELOBPtPnS8LjCX0gI9nbl8lVkadpg=="
   "resolved" "https://registry.npmmirror.com/@types/bn.js/-/bn.js-4.11.6.tgz"
@@ -1013,6 +1037,14 @@
     "@typescript-eslint/types" "5.29.0"
     "eslint-visitor-keys" "^3.3.0"
 
+"@wagmi/core@^0.5.4":
+  "integrity" "sha512-EisAQTXyglnfzALHRnI8rSXlt95O3KNgBN4fHOQvYj6sBOsp/t9ooaqMIbqn4v5xMJSjmYgnQH1J5InQOcTCNg=="
+  "resolved" "https://registry.npmmirror.com/@wagmi/core/-/core-0.5.4.tgz"
+  "version" "0.5.4"
+  dependencies:
+    "eventemitter3" "^4.0.7"
+    "zustand" "^4.0.0"
+
 "@walletconnect/browser-utils@^1.7.8":
   "integrity" "sha512-iCL0XCWOZaABIc0lqA79Vyaybr3z26nt8mxiwvfrG8oaKUf5Y21Of4dj+wIXQ4Hhblre6SgDlU0Ffb39+1THOw=="
   "resolved" "https://registry.npmmirror.com/@walletconnect/browser-utils/-/browser-utils-1.7.8.tgz"
@@ -1067,7 +1099,7 @@
   "resolved" "https://registry.npmmirror.com/@walletconnect/environment/-/environment-1.0.0.tgz"
   "version" "1.0.0"
 
-"@walletconnect/ethereum-provider@^1.7.1", "@walletconnect/ethereum-provider@^1.7.5", "@walletconnect/ethereum-provider@^1.7.8":
+"@walletconnect/ethereum-provider@^1.7.5", "@walletconnect/ethereum-provider@^1.7.8", "@walletconnect/ethereum-provider@>=1.7.5":
   "integrity" "sha512-dnl560zFMdK/LD4MD2XwHbWj7RXOaeXWPc9jzDaosLQLAXfA5mKe4XbCFFUPbVMYuyBdRI9NZv3Ci/qDb5wncQ=="
   "resolved" "https://registry.npmmirror.com/@walletconnect/ethereum-provider/-/ethereum-provider-1.7.8.tgz"
   "version" "1.7.8"
@@ -1174,7 +1206,7 @@
     "@walletconnect/utils" "^1.7.8"
     "ws" "7.5.3"
 
-"@walletconnect/types@^1.7.1", "@walletconnect/types@^1.7.8":
+"@walletconnect/types@^1.7.8":
   "integrity" "sha512-0oSZhKIrtXRJVP1jQ0EDTRtotQY6kggGjDcmm/LLQBKnOZXdPeo0sPkV/7DjT5plT3O7Cjc6JvuXt9WOY0hlCA=="
   "resolved" "https://registry.npmmirror.com/@walletconnect/types/-/types-1.7.8.tgz"
   "version" "1.7.8"
@@ -1203,13 +1235,6 @@
   "version" "1.0.0"
   dependencies:
     "@walletconnect/window-getters" "^1.0.0"
-
-"@web3-react/abstract-connector@^6.0.7":
-  "integrity" "sha512-RhQasA4Ox8CxUC0OENc1AJJm8UTybu/oOCM61Zjg6y0iF7Z0sqv1Ai1VdhC33hrQpA8qSBgoXN9PaP8jKmtdqg=="
-  "resolved" "https://registry.npmmirror.com/@web3-react/abstract-connector/-/abstract-connector-6.0.7.tgz"
-  "version" "6.0.7"
-  dependencies:
-    "@web3-react/types" "^6.0.7"
 
 "@web3-react/coinbase-wallet@^8.0.34-beta.0":
   "integrity" "sha512-eGgtGtAqcRL64U1lcWeICB9CmpUycVl/mWD/b2Nd7yE0hXFUbPGLZHNvBTpnOpkANkjHI5ufFoyDGzzoxdw12A=="
@@ -1252,15 +1277,6 @@
     "@gnosis.pm/safe-apps-sdk" "^7.5.0"
     "@web3-react/types" "^8.0.20-beta.0"
 
-"@web3-react/injected-connector@^6.0.7":
-  "integrity" "sha512-Y7aJSz6pg+MWKtvdyuqyy6LWuH+4Tqtph1LWfiyVms9II9ar/9B/de4R8wh4wjg91wmHkU+D75yP09E/Soh2RA=="
-  "resolved" "https://registry.npmmirror.com/@web3-react/injected-connector/-/injected-connector-6.0.7.tgz"
-  "version" "6.0.7"
-  dependencies:
-    "@web3-react/abstract-connector" "^6.0.7"
-    "@web3-react/types" "^6.0.7"
-    "tiny-warning" "^1.0.3"
-
 "@web3-react/metamask@^8.0.28-beta.0":
   "integrity" "sha512-IXuVyj6vhRAhfGQ/sN4qgET8EEdqX844pB4kCDG9kjPD3LLm5kq47ykBosgTr9YCUtdHAXN0UaUimD0TbLMRFg=="
   "resolved" "https://registry.npmmirror.com/@web3-react/metamask/-/metamask-8.0.28-beta.0.tgz"
@@ -1286,11 +1302,6 @@
     "@web3-react/types" "^8.0.20-beta.0"
     "zustand" "^4.0.0-rc.0"
 
-"@web3-react/types@^6.0.7":
-  "integrity" "sha512-ofGmfDhxmNT1/P/MgVa8IKSkCStFiyvXe+U5tyZurKdrtTDFU+wJ/LxClPDtFerWpczNFPUSrKcuhfPX1sI6+A=="
-  "resolved" "https://registry.npmmirror.com/@web3-react/types/-/types-6.0.7.tgz"
-  "version" "6.0.7"
-
 "@web3-react/types@^8.0.20-beta.0":
   "integrity" "sha512-qOZYMyUmsm3Um6t6Pg3OgnE86ufhWZpB5/VxsooB8cdpXc/C/f8KMyYSeM63GoKSMScOKwfqV6yODFL7g/Qc8g=="
   "resolved" "https://registry.npmmirror.com/@web3-react/types/-/types-8.0.20-beta.0.tgz"
@@ -1305,17 +1316,6 @@
   dependencies:
     "@ethersproject/providers" "^5"
     "@web3-react/types" "^8.0.20-beta.0"
-
-"@web3-react/walletconnect-connector@^6.2.13":
-  "integrity" "sha512-rTsYLv2UpQZ92Yv5kyIwzrG+2aQkzE8ki2ElotJ6GmSl3yF9WSaGNfKpE8XI5+aPvbAk4mMn8lIy+os3a9gJgw=="
-  "resolved" "https://registry.npmmirror.com/@web3-react/walletconnect-connector/-/walletconnect-connector-6.2.13.tgz"
-  "version" "6.2.13"
-  dependencies:
-    "@walletconnect/ethereum-provider" "^1.7.1"
-    "@walletconnect/types" "^1.7.1"
-    "@web3-react/abstract-connector" "^6.0.7"
-    "@web3-react/types" "^6.0.7"
-    "tiny-invariant" "^1.0.6"
 
 "@web3-react/walletconnect@^8.0.35-beta.0":
   "integrity" "sha512-fUrqcnwAr5oecZ6VUE/7+RSVURrohbAgWMLKYxd8Zo47AtTPzgJ1t5Lydh/EX4xJPLhfK1LqX5YgMwiys3DvhQ=="
@@ -3009,7 +3009,7 @@
     "ethereum-cryptography" "^0.1.3"
     "rlp" "^2.2.4"
 
-"ethers@^5.6.8", "ethers@^5.6.9":
+"ethers@^5.6.8", "ethers@^5.6.9", "ethers@>=5.5.1":
   "integrity" "sha512-lMGC2zv9HC5EC+8r429WaWu3uWJUCgUCt8xxKCFqkrFuBDZXDYIdzDUECxzjf2BMF8IVBByY1EBoGSL3RTm8RA=="
   "resolved" "https://registry.npmmirror.com/ethers/-/ethers-5.6.9.tgz"
   "version" "5.6.9"
@@ -5286,7 +5286,7 @@
     "rc-resize-observer" "^1.0.0"
     "rc-util" "^5.15.0"
 
-"react-dom@*", "react-dom@^16.8 || ^17.0 || ^18.0", "react-dom@^17.0.2 || ^18.0.0-0", "react-dom@^18.2.0", "react-dom@>=16.0.0", "react-dom@>=16.11.0", "react-dom@>=16.9.0":
+"react-dom@*", "react-dom@^16.8 || ^17.0 || ^18.0", "react-dom@^16.8.0 || ^17.0.0 || ^18.0.0", "react-dom@^17.0.2 || ^18.0.0-0", "react-dom@^18.2.0", "react-dom@>=16.0.0", "react-dom@>=16.11.0", "react-dom@>=16.9.0":
   "integrity" "sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g=="
   "resolved" "https://registry.npmmirror.com/react-dom/-/react-dom-18.2.0.tgz"
   "version" "18.2.0"
@@ -5316,7 +5316,7 @@
     "react-is" "^18.0.0"
     "use-sync-external-store" "^1.0.0"
 
-"react@*", "react@^16.8 || ^17.0 || ^18.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^16.9.0 || ^17.0.0 || ^18", "react@^17.0.2 || ^18.0.0-0", "react@^18.2.0", "react@>= 16.8.0 || 17.x.x || ^18.0.0-0", "react@>=16.0.0", "react@>=16.11.0", "react@>=16.8", "react@>=16.9.0":
+"react@*", "react@^16.8 || ^17.0 || ^18.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^16.9.0 || ^17.0.0 || ^18", "react@^17.0.2 || ^18.0.0-0", "react@^18.2.0", "react@>= 16.8.0 || 17.x.x || ^18.0.0-0", "react@>=16.0.0", "react@>=16.11.0", "react@>=16.8", "react@>=16.9.0", "react@>=17.0.0":
   "integrity" "sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ=="
   "resolved" "https://registry.npmmirror.com/react/-/react-18.2.0.tgz"
   "version" "18.2.0"
@@ -5896,16 +5896,6 @@
   "resolved" "https://registry.npmmirror.com/timed-out/-/timed-out-4.0.1.tgz"
   "version" "4.0.1"
 
-"tiny-invariant@^1.0.6":
-  "integrity" "sha512-1Uhn/aqw5C6RI4KejVeTg6mIS7IqxnLJ8Mv2tV5rTc0qWobay7pDUz6Wi392Cnc8ak1H0F2cjoRzb2/AW4+Fvg=="
-  "resolved" "https://registry.npmmirror.com/tiny-invariant/-/tiny-invariant-1.2.0.tgz"
-  "version" "1.2.0"
-
-"tiny-warning@^1.0.3":
-  "integrity" "sha512-lBN9zLN/oAf68o3zNXYrdCt1kP8WsiGW8Oo2ka41b2IM5JL/S1CTyX1rW0mb/zSuJun0ZUrDxx4sqvYS2FWzPA=="
-  "resolved" "https://registry.npmmirror.com/tiny-warning/-/tiny-warning-1.0.3.tgz"
-  "version" "1.0.3"
-
 "to-fast-properties@^2.0.0":
   "integrity" "sha512-/OaKK0xYrs3DmxRYqL/yDc+FxFUVYhDlXMhRmv3z915w2HF1tnN1omB354j8VUGO/hbRzyD6Y3sA7v7GS/ceog=="
   "resolved" "https://registry.npmmirror.com/to-fast-properties/-/to-fast-properties-2.0.0.tgz"
@@ -6092,7 +6082,7 @@
   "resolved" "https://registry.npmmirror.com/url-to-options/-/url-to-options-1.0.1.tgz"
   "version" "1.0.1"
 
-"use-sync-external-store@^1.0.0", "use-sync-external-store@1.2.0":
+"use-sync-external-store@^1.0.0", "use-sync-external-store@^1.2.0", "use-sync-external-store@1.2.0":
   "integrity" "sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA=="
   "resolved" "https://registry.npmmirror.com/use-sync-external-store/-/use-sync-external-store-1.2.0.tgz"
   "version" "1.2.0"
@@ -6164,6 +6154,19 @@
     "assert-plus" "^1.0.0"
     "core-util-is" "1.0.2"
     "extsprintf" "^1.2.0"
+
+"wagmi@^0.6.4":
+  "integrity" "sha512-obP1t+nfdfB0Y7eIVPrpWw8tVftF5HHdtwi214En7yubuU5cbV+AMkI8z8Mj0NteHo805frShnss9L1jzMqNuQ=="
+  "resolved" "https://registry.npmmirror.com/wagmi/-/wagmi-0.6.4.tgz"
+  "version" "0.6.4"
+  dependencies:
+    "@coinbase/wallet-sdk" "^3.3.0"
+    "@tanstack/query-sync-storage-persister" "^4.0.10"
+    "@tanstack/react-query" "^4.0.10"
+    "@tanstack/react-query-persist-client" "^4.0.10"
+    "@wagmi/core" "^0.5.4"
+    "@walletconnect/ethereum-provider" "^1.7.8"
+    "use-sync-external-store" "^1.2.0"
 
 "web3-bzz@1.7.5":
   "integrity" "sha512-Z53sY0YK/losqjJncmL4vP0zZI9r6tiXg6o7R6e1JD2Iy7FH3serQvU+qXmPjqEBzsnhf8wTG+YcBPB3RHpr0Q=="
@@ -6577,7 +6580,7 @@
     "y18n" "^4.0.0"
     "yargs-parser" "^13.1.2"
 
-"zustand@^4.0.0-rc.0":
+"zustand@^4.0.0", "zustand@^4.0.0-rc.0":
   "integrity" "sha512-OrsfQTnRXF1LZ9/vR/IqN9ws5EXUhb149xmPjErZnUrkgxS/gAHGy2dPNIVkVvoxrVe1sIydn4JjF0dYHmGeeQ=="
   "resolved" "https://registry.npmmirror.com/zustand/-/zustand-4.0.0.tgz"
   "version" "4.0.0"

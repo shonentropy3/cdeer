@@ -10,7 +10,20 @@ import InitConnect from '../../redux/initConnect';
 import DisConnect from '../../components/disConnect';
 import axios from 'axios';
 
+import {
+    useAccount,
+    useConnect,
+    useDisconnect,
+    useEnsAvatar,
+    useEnsName,
+    useProvider
+  } from 'wagmi'
+
 function Header() {
+    const { address, connector, isConnected } = useAccount()
+    const { data: ensAvatar } = useEnsAvatar({ addressOrName: address })
+    const { data: ensName } = useEnsName({ address })
+
 
     const [isModalVisible, setIsModalVisible] = useState(false);
     const redux = useSelector(state => state.web3_react.value)
@@ -142,6 +155,18 @@ function Header() {
                     ) : (
                         <Button className='connect' type="primary" onClick={() => showModal()}>connect</Button>
                     )
+                }
+                {
+                    isConnected ? 
+                    <div>
+                        <img src={ensAvatar} alt="ENS Avatar" />
+                        <div>{ensName ? `${ensName} (${address})` : address}</div>
+                        {/* <div>Connected to {connector.name}</div> */}
+                        {/* <button onClick={disconnect}>Disconnect</button> */}
+
+                    </div>
+                    :
+                    ''
                 }
 
             </div>
