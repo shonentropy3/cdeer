@@ -4,15 +4,10 @@ import { Dropdown, Menu, Button, Modal, Divider } from 'antd';
 
 import { useEffect, useState } from 'react';
 import Card from '../../components/Card';
-import DisConnect from '../../components/disConnect';
 
 import {
     useAccount,
-    useConnect,
     useDisconnect,
-    useEnsAvatar,
-    useEnsName,
-    useProvider
   } from 'wagmi'
 
 
@@ -21,8 +16,6 @@ import {
 function Header() {
     const { address, connector, isConnected } = useAccount()
     const { disconnect } = useDisconnect()
-    const { data: ensAvatar } = useEnsAvatar({ addressOrName: address })
-    const { data: ensName } = useEnsName({ address })
     const [isModalVisible, setIsModalVisible] = useState(false);
     let [wagmi,setWagmi] = useState({})
 
@@ -62,6 +55,15 @@ function Header() {
           ]}
         />
       );
+
+    const inspection = (url) => {
+        // 检测登陆状态
+        if (!wagmi.isActive) {
+            setIsModalVisible(true);
+            return
+        }
+        Router.push({pathname: url, query: {}})
+    }    
 
 
 

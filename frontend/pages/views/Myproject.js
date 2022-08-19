@@ -5,17 +5,22 @@ import ProjectList from '../../components/ProjectList';
 import style from '../../styles/utils.module.scss'
 import { getMyDemand,getApplyinfo } from '../../http/api';
 import { translatedPjc, translatedRole, sToDays } from '../../utils/translated'
-import { useSelector } from 'react-redux'
 
+import {
+  useAccount,
+  useDisconnect,
+} from 'wagmi'
 
 export default function Myproject() {
     const _data = require("../../data/data.json")
-    const [account,setAccount] = useState('')
     const [visible, setVisible] = useState(false);
     const [title, setTitle] = useState('0');
     const [test, setTest] = useState('');
     const [selectItem,setSelectItem] = useState('item-1')
-    const web3_react = useSelector(state => state.web3_react.value)
+
+    const { address, connector, isConnected } = useAccount()
+    let [account,setAccount] = useState()
+
 
     let [pjcList,setPjcList] = useState([])
     let [applyList,setApplyList] = useState([])
@@ -48,7 +53,7 @@ export default function Myproject() {
 
     // 我发布的需求
     const getIssue = async() => {
-      getMyDemand({hash: web3_react.accounts[0]})
+      getMyDemand({hash: account})
       .then(res => {
           Array.from(res).forEach((e,i) => {
             res[i].roleNew = translatedRole(e.role)
@@ -72,7 +77,7 @@ export default function Myproject() {
     }
     // 我开发的项目
     const getExploitation = () => {
-      getApplyinfo({id: web3_react.accounts[0]})
+      getApplyinfo({id: account})
         .then(res => {
           if (res.data.length > 0) {
             let arr = []
@@ -117,21 +122,21 @@ export default function Myproject() {
     }
 
     useEffect(() => {
-      if (!web3_react.accounts) {
-        return
+      if (isConnected) {
+        account = address;
+        setAccount(account)
       }
-
       switch (selectItem) {
-          case 'item-1':
-              getIssue()
-              break;
-          case 'item-2':
-              getExploitation()
-              break;
-          default:
-              break;
+        case 'item-1':
+            getIssue()
+            break;
+        case 'item-2':
+            getExploitation()
+            break;
+        default:
+            break;
       }
-    },[selectItem,web3_react])
+  },[isConnected])
 
     return(
       <>
