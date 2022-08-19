@@ -20,7 +20,7 @@ export default function Card(props) {
             <div className='strong'>Sign-in to get started</div>
 
             {
-                connectors.map(connector => <Button className="li" onClick={() => {connect({ connector }), cancel()}} >{connector.name}</Button>)
+                connectors.map((connector,i) => <Button key={i} className="li" onClick={() => {connect({ connector }), cancel()}} >{connector.name}</Button>)
             }
             
 

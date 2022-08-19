@@ -15,51 +15,55 @@ import {
     useProvider
   } from 'wagmi'
 
-  const menu = (
-    <Menu
-      items={[
-        {
-            type: 'group',
-            label: (
-                // <p value={web3_react.accounts}>Hello, <em>{account}</em></p>
-                '账号'
-            )
-        },
-        {
-            type: 'divider',
-        },
-        {
-          key: '1',
-          label: (
-            <Link href="/views/My">
-              个人中心
-            </Link>
-          ),
-        },
-        {
-            type: 'divider',
-        },
-        {
-          key: '2',
-          danger: true,
-          label: (
-            // <DisConnect provider={ provider } />
-            '退出登陆'
-          ),
-        }
-      ]}
-    />
-  );
+
 
 
 function Header() {
     const { address, connector, isConnected } = useAccount()
+    const { disconnect } = useDisconnect()
     const { data: ensAvatar } = useEnsAvatar({ addressOrName: address })
     const { data: ensName } = useEnsName({ address })
-
-
     const [isModalVisible, setIsModalVisible] = useState(false);
-    let [account,setAccount] = useState('');
+    let [wagmi,setWagmi] = useState({})
+
+
+    const menu = (
+        <Menu
+          items={[
+            {
+                type: 'group',
+                label: (
+                    <p>Hello, <em>{wagmi.account}</em></p>
+                )
+            },
+            {
+                type: 'divider',
+            },
+            {
+              key: '1',
+              label: (
+                <Link href="/views/My">
+                  个人中心
+                </Link>
+              ),
+            },
+            {
+                type: 'divider',
+            },
+            {
+              key: '2',
+              danger: true,
+              label: (
+                <p onClick={ disconnect }>
+                    退出登陆
+                </p>
+              ),
+            }
+          ]}
+        />
+      );
+
+
 
     const showModal = () => {
         setIsModalVisible(true);
@@ -72,11 +76,19 @@ function Header() {
     const handleCancel = () => {
       setIsModalVisible(false);
     };
-
     useEffect(() => {
-        account = address;
-        setAccount(account)
-    },[address])
+        if (isConnected) {
+            wagmi = {
+                account: address.slice(0,5) + '...' + address.slice(38,42), 
+                isActive: isConnected
+            }
+        }else{
+            wagmi = {
+                isActive: isConnected
+            }
+        }
+        setWagmi({...wagmi})
+    },[isConnected])
 
     return (
         <>
@@ -113,8 +125,8 @@ function Header() {
                         </div>
                     </Link>
                 </div>
-                {/* {
-                    web3_react.isActive ? (
+                {
+                    wagmi.isActive ? (
                         <>
                         <Dropdown overlay={menu}>
                         <div className="avt">
@@ -125,8 +137,7 @@ function Header() {
                     ) : (
                         <Button className='connect' type="primary" onClick={() => showModal()}>connect</Button>
                     )
-                } */}
-                {account}
+                }
             </div>
         </div>
         </>
