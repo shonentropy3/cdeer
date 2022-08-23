@@ -5,6 +5,9 @@ import { message, Popconfirm } from 'antd';
 
 import Modify from "./Modify";
 import { cancelApply, deleteDemand, getMyApplylist } from '../http/api';
+import { useAccount } from "wagmi";
+import getOrderStatus from "../utils/getOrderStatus";
+
 
 function ProjectList(props) {
     const {data} = props
@@ -13,6 +16,7 @@ function ProjectList(props) {
     const goDetail = () => {
         Router.push({pathname:'/views/details/Order',search: data.id})
     }
+    const { address, connector, isConnected } = useAccount()
     let [maskStatus,setMaskStatus] = useState(false)
     let [currentAccount, setCurrentAccount] = useState(null);
     let [pjcStatus, setPjcStatus] = useState(false)
@@ -72,30 +76,31 @@ function ProjectList(props) {
     }
 
     const initialize = async() => {
+
+        if (type === 'demand') {
+            // 获取报名列表
+            getMyApplylist({demandId: data.id})
+            .then(res => {
+                if (res.length > 0) {
+                    pjcStatus = true
+                    setPjcStatus(pjcStatus)
+                }
+            })
+        }
         
-        return
-        // 获取报名列表
-        getMyApplylist({demandId: data.id})
+        // 获取订单状态
+        let obj = {
+            demand_id: Number(data.id),
+            apply_addr: currentAccount
+        }
+        obj = JSON.stringify(obj)
+        getOrderStatus(obj)
         .then(res => {
-            if (res.length > 0) {
+            if (res.length === 3) {
                 pjcStatus = true
                 setPjcStatus(pjcStatus)
             }
         })
-        // 获取订单状态
-        // let obj = {
-        //     demand_id: Number(data.id),
-        //     apply_addr: currentAccount
-        // }
-        // obj = JSON.stringify(obj)
-        // getOrderStatus(obj)
-        // .then(res => {
-        //     console.log(res,'res==>');
-        //     if (res.length === 3) {
-        //         pjcStatus = true
-        //         setPjcStatus(pjcStatus)
-        //     }
-        // })
     }
 
     useEffect(() => {
