@@ -2,34 +2,31 @@ import { useEffect, useState, useRef } from 'react';
 import { createDemand,getHash } from '../../http/api';
 import { Input, Form, message, Button, Upload, notification, InputNumber, Modal } from 'antd';
 import { UploadOutlined, WarningOutlined, InfoCircleOutlined } from '@ant-design/icons';
-import { Demand } from '../../controller/task';
 import { useRouter } from 'next/router'
-import { useWeb3React } from "@web3-react/core"
-import task from '../../../deployments/abi/Task.json'
-import taskAddr from '../../contracts/deployments/Task.json'
-import hello from '../../../deployments/abi/Hello.json'
-import helloAddr from '../../contracts/deployments/Hello.json'
 
 import Card from '../../components/Card';
 
 import { ethers } from 'ethers'
-import { useSelector } from 'react-redux'
 import { BitOperation } from '../../utils/BitOperation';
 
-// import useProvider//
+import { useAccount } from 'wagmi'
+import { useContracts } from '../../controller/index';
+
 
 function Publish() {
-
+  
 
     const _data = require("../../data/data.json")
     const router = useRouter();
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const web3_react = useSelector(state => state.web3_react.value)
+    const { address, connector, isConnected } = useAccount();
+    const { useTaskContractWrite } = useContracts('createTask');
+
     let [inner,setInner] = useState(_data.inner)
     let [suffix,setSuffix] = useState("")
-
-      // 附件
+    let [account,setAccount] = useState()
     let [form_Data,form_DataSet] = useState()
+    let [params,setParams] = useState({})
 
     useEffect(() => {
       inner[5].list = _data.market_role;
@@ -87,14 +84,14 @@ function Publish() {
           pjc += e
         })
         
-        let data = {
+        params = {
           pro_content: `${inner[3].value}`,
           recruiting_role: `'{${role}}'`,
           demand_type: `'{${pjc}}'`,
           title: `${inner[0].value}`,
           period: Number(inner[2].value),
           budget: Number(inner[1].value) * 100,
-          u_address: `${web3_react.accounts[0]}`,
+          u_address: `${account}`,
           categories: BitOperation(inner[6].index),
           skills: BitOperation(inner[5].index),
           suffix: suffix,
@@ -104,43 +101,41 @@ function Publish() {
         if (form_Data) {
           await getHash(form_Data)
             .then((res) => {
-              data.hash = res
+              params.hash = res
             })
             .catch(err => {
               console.log(err);
               return err
             })
         }
-        data = JSON.stringify(data)
-        let para = {"proLabel":data}
+        setParams({...params})
         let tradeStatus = true
-        // await web3_react.provider.getSigner(web3_react.accounts[0]).signMessage('👋')
-        // .then((res) => {
-        //  console.log(res);
-        // })
-        // return
-
 
         // 交易
-        await Demand(para)
-        .then(res => {
-          if (res) {
-            data = JSON.parse(data)
-            data.payhash = res.hash
-            data = JSON.stringify(data)
-            para = {"proLabel":data}
-            if (res.code) {
-              tradeStatus = false
-              message.error('交易失败!');
-            }else{
-              tradeStatus = true
+        useTaskContractWrite.write({
+          recklesslySetUnpreparedArgs: [
+            account,
+            {
+              title: params.title,
+              desc: params.pro_content,
+              attachment: params.hash,
+              currency: 1,  //  币种,x10000,保留四位小数,前端只展示两位小数
+              budget: params.budget,
+              period: params.period * 24 * 60 * 60,
+              categories: params.categories,
+              skills: params.skills,  //  原role,职业为1,2,3...整数型
+            },
+            {
+                value: ethers.utils.parseEther("1")
             }
-          }
+          ]
         })
+    }
 
-        // 2、创建项目
-        if (tradeStatus) {
-          createDemand(para)
+    const writeSuccess = () => {
+      params.payhash = useTaskContractWrite.data.hash;
+      let para= {"proLabel": JSON.stringify(params)}
+      createDemand(para)
             .then(res => {
               if (res.code == '200') {
                 message.success('创建成功');
@@ -155,14 +150,18 @@ function Publish() {
               console.log(err);
               message.error('创建失败');
             })
-        }
-
     }
 
+    useEffect(() => {
+      useTaskContractWrite.isSuccess ? 
+        writeSuccess()
+        :
+        ''
+    },[useTaskContractWrite.isSuccess])
 
     // 登陆/下单按钮
     const buttonModel = () => {
-      if (web3_react.accounts !== undefined) {
+      if (account !== undefined) {
         return <button onClick={mintNftHandler} className='btn login'> Mint NFT </button>
       } else {
         return <button onClick={() => showModal()} className='btn connect'> Connect Wallet </button>
@@ -290,6 +289,13 @@ function Publish() {
       })
       inner[i].index = arr
       }
+
+      useEffect(() => {
+        if (isConnected) {
+          account = address;
+          setAccount(account)
+        }
+    },[isConnected])
 
     return(
       <>

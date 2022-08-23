@@ -1,20 +1,50 @@
-import orderAddr from '../contracts/deployments/Order.json'
-import order from '../../deployments/abi/Order.json'
+import { useContractWrite, useProvider, useSigner, usePrepareContractWrite, useContractRead } from 'wagmi';
 import task from '../../deployments/abi/Task.json'
 import taskAddr from '../contracts/deployments/Task.json'
-import { ethers } from 'ethers'
-import store from '../redux/store'
+import order from '../../deployments/abi/Order.json'
+import orderAddr from '../contracts/deployments/Order.json'
+import hello from '../../deployments/abi/Hello.json'
+import helloAddr from '../contracts/deployments/Hello.json'
 
-export const taskContract = () => {
-    const web3 = store.getState().web3_react.value;
-    const signer = web3.provider.getSigner(web3.accounts[0])
-    const fun = new ethers.Contract(taskAddr.address, task.abi, signer);
-    return fun;
-}
+export function useContracts(functionName) {
 
-export const orderContract = () => {
-    const web3 = store.getState().web3_react.value;
-    const signer = web3.provider.getSigner(web3.accounts[0])
-    const fun = new ethers.Contract(orderAddr.address, order.abi, signer);
-    return fun;
+  // const signer = useSigner();
+  // const provider = useProvider();
+  const taskConfig = {
+      addressOrName: taskAddr.address,
+      contractInterface: task.abi,
+      functionName: functionName,
+  }
+  const orderConfig = {
+      addressOrName: orderAddr.address,
+      contractInterface: order.abi,
+      functionName: functionName,
+  }
+  // const helloConfig = {
+  //   addressOrName: helloAddr.address,
+  //   contractInterface: hello.abi,
+  //   functionName: functionName
+  // }
+  // const contract = useContract({
+  //     ...taskConfig,
+  //     signerOrProvider: signer.data || provider,
+  //   });
+
+  const useTaskContractWrite = useContractWrite(taskConfig)
+
+  const useTaskContractRead = useContractRead(taskConfig)
+
+  const useOrderContractWrite = useContractWrite(orderConfig)
+
+  const useOrderContractRead = useContractRead(orderConfig)
+
+
+  return { 
+    useTaskContractWrite, 
+    useTaskContractRead, 
+    taskConfig, 
+    useOrderContractWrite, 
+    useOrderContractRead, 
+    orderConfig 
+  }
 }

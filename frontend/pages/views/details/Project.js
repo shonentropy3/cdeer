@@ -32,25 +32,25 @@ export default function Project_detail(params) {
         }
     }
 
-    let [stateNum,setStateNum] = useState(0);
+    let [stateNum,setStateNum] = useState(1);
     let [oid,setOid] = useState()
     let [amoumt,setAmoumt] = useState()
     
     const init = async() => {
-        let obj = {
-            demand_id: Number(demand_id),
-            apply_addr: `${await checkWalletIsConnected()}`
-        }
-        obj = JSON.stringify(obj)
-        await getOrderStatus(obj)
-        .then(res => {
-            stateNum = res.state;
-            oid = res.oid;
-            res.amoumt ? amoumt = res.amoumt : '';
-        })
-        setStateNum(stateNum)
-        setOid(oid)
-        setAmoumt(amoumt)
+        // let obj = {
+        //     demand_id: Number(demand_id),
+        //     apply_addr: `${await checkWalletIsConnected()}`
+        // }
+        // obj = JSON.stringify(obj)
+        // await getOrderStatus(obj)
+        // .then(res => {
+        //     stateNum = res.state;
+        //     oid = res.oid;
+        //     res.amoumt ? amoumt = res.amoumt : '';
+        // })
+        // setStateNum(stateNum)
+        // setOid(oid)
+        // setAmoumt(amoumt)
     }
 
     useEffect(() => {

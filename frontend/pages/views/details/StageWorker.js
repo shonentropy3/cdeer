@@ -4,13 +4,16 @@ import { orderStage, withdraw } from "../../../controller/order";
 import { checkWalletIsConnected } from "../../../utils/checkWalletIsConnected";
 import getOrderStatus from "../../../utils/getOrderStatus";
 import { useSelector } from 'react-redux'
-
+import {
+    useAccount,
+    useDisconnect,
+  } from 'wagmi'
 export default function StageWorker() {
     
     let [oid,setOid] = useState('');
     let [task_id,setTask_id] = useState('');
     let [arr,setArr] = useState([])
-    const web3_react = useSelector(state => state.web3_react.value)
+    const { address, connector, isConnected } = useAccount()
 
     const getOid = async() => {
         let obj = {
@@ -37,9 +40,10 @@ export default function StageWorker() {
     }
 
     const getStage = async() => {
+        console.log(oid);
         await orderStage(oid)
         .then(res => {
-            res.forEach((e,i) => {
+            res.forEach((e,i) => { 
                 
                 let price = Number(e[0].toString()) / 1000000000000000000;
 
@@ -77,7 +81,7 @@ export default function StageWorker() {
     
     useEffect(() => {
         async function init() {
-            if (!web3_react.accounts) {
+            if (!address) {
                 return
             }
             task_id = location.search.replace('?','');
@@ -86,7 +90,7 @@ export default function StageWorker() {
             getStage();
         }
         init()
-    },[web3_react])
+    },[address])
 
     return <div className="StageContainer">
             <div className="list">

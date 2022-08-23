@@ -55,9 +55,14 @@ function RegistrationList(params) {
         case 1:
             return  <button onClick={() => showModal()}>修改订单</button>
         case 2:
-            return  <Link href={{pathname:"/views/details/Stage",query:{address: data.apply_addr,task_id: Number(data.task_id)}}}>
+            return  <div>
+                <button onClick={() => showModal()}>确认合作</button>
+                <button onClick={() => showModal()}>修改订单</button>
+                    <Link href={{pathname:"/views/details/Stage",query:{address: data.apply_addr,task_id: Number(data.task_id)}}}>
                         <button>阶段详情</button>
                     </Link>
+            </div>
+            
     }
   }
     //  TODO:1、是否确认合作 ==> 2、展示取消订单和修改订单

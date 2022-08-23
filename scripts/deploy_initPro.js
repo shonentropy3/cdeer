@@ -17,26 +17,25 @@ async function main() {
     await task.connect(owner).setOrder(orderJson.address);
     // console.log(owner.address,'============>');
     // //创建需求
-    // await task.connect(accounts[3]).createTask(
-    //   '0x5f2CC90663c2599c306984c43E7C93F7FD8E773e',
-    //   {
-    //     title: "test",
-    //     desc: "desc",
-    //     attachment: "",
-    //     currency: 1,  //  币种,x10000,保留四位小数,前端只展示两位小数
-    //     budget: ethers.utils.parseEther("5"),
-    //     period: 123213,
-    //     categories: 1,
-    //     skills: 1,  //  原role,职业为1,2,3...整数型
-    //   }
-    //   ,
-    //   {
-    //       value: ethers.utils.parseEther("1"),
-    //   }).then(res => {
-    //     // console.log(res);
-    //   }).catch(err => {
-    //     // console.log('=====>>>>>>>>>>>',err);
-    //   })
+    await task.connect(accounts[3]).createTask(
+      '0x5f2CC90663c2599c306984c43E7C93F7FD8E773e',
+      {
+        title: "test",
+        desc: "desc",
+        attachment: "",
+        currency: 1,  //  币种,x10000,保留四位小数,前端只展示两位小数
+        budget: 222,
+        period: 123213,
+        categories: 1,
+        skills: 1,  //  原role,职业为1,2,3...整数型
+      },
+      {
+          value: ethers.utils.parseEther("1"),
+      }).then(res => {
+        console.log(res);
+      }).catch(err => {
+        console.log('=====>>>>>>>>>>>',err);
+      })
 
 
     // // 订单模块

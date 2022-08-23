@@ -9,7 +9,7 @@ import { translatedPjc, translatedRole, sToDays } from '../../utils/translated'
 import {
   useAccount,
   useDisconnect,
-} from 'wagmi'
+} from 'wagmi' 
 
 export default function Myproject() {
     const _data = require("../../data/data.json")
@@ -77,6 +77,7 @@ export default function Myproject() {
     }
     // 我开发的项目
     const getExploitation = () => {
+      console.log(account);
       getApplyinfo({id: account})
         .then(res => {
           if (res.data.length > 0) {

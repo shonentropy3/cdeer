@@ -17,10 +17,14 @@ import '../styles/globals.css'
 import {
   WagmiConfig,
   createClient,
-  defaultChains,
   configureChains,
-  chain
+  chain,
+  defaultChains
 } from 'wagmi'
+
+import { alchemyProvider } from 'wagmi/providers/alchemy'
+import { publicProvider } from 'wagmi/providers/public'
+import { infuraProvider } from 'wagmi/providers/infura'
 
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
@@ -28,17 +32,17 @@ import { InjectedConnector } from 'wagmi/connectors/injected'
 import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 
+import { useEffect } from 'react'
 
-const { chains, provider, webSocketProvider } = configureChains(
-  [chain.mainnet, chain.polygon, chain.goerli],
+const { chains, provider, webSocketProvider } = configureChains([chain.mainnet,chain.goerli,chain.hardhat],
   [
+    infuraProvider({ apiKey: 'd3fe47cdbf454c9584113d05a918694f' }),
     jsonRpcProvider({
-      rpc: (chain) => ({
-        http: `https://goerli.infura.io/v3/d3fe47cdbf454c9584113d05a918694f`,
-      }),
+      rpc: (chain) => ({ http: chain.rpcUrls.default }),
     }),
   ],
 )
+
 
 // Set up client
 const client = createClient({
@@ -72,7 +76,9 @@ const client = createClient({
 
 function MyApp({ Component, pageProps }) {
 
-
+  useEffect(() => {
+    // console.log(chain);
+},[])
   return(
         <WagmiConfig client={client}>
             <Header></Header>

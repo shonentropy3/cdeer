@@ -5,9 +5,6 @@ import { message, Popconfirm } from 'antd';
 
 import Modify from "./Modify";
 import { cancelApply, deleteDemand, getMyApplylist } from '../http/api';
-import { CancelApply } from "../controller/task";
-import { checkWalletIsConnected } from "../utils/checkWalletIsConnected";
-import getOrderStatus from "../utils/getOrderStatus";
 
 function ProjectList(props) {
     const {data} = props
@@ -44,16 +41,16 @@ function ProjectList(props) {
             demandId: e,
             applyAddr: currentAccount
         }
-        await CancelApply(obj)
-        .then(res => {
-            if (res.code) {
-              tradeStatus = false
-              message.error('交易失败!');
-            }else{
-              tradeStatus = true;
-              obj.hash = res.hash
-            }
-        })
+        // await CancelApply(obj)
+        // .then(res => {
+        //     if (res.code) {
+        //       tradeStatus = false
+        //       message.error('交易失败!');
+        //     }else{
+        //       tradeStatus = true;
+        //       obj.hash = res.hash
+        //     }
+        // })
         if (tradeStatus) {
             cancelApply(obj)
               .then(res => {

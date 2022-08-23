@@ -2,24 +2,22 @@ import { useEffect, useState } from "react"
 import { getDemandInfo, applyFor, getFile } from '../../../http/api';
 import NavigationBar from "../../../components/NavigationBar";
 import { translatedPjc, translatedRole, sToDays } from '../../../utils/translated';
-import { ApplyProject } from '../../../controller/task';
 import { Modal, InputNumber, message, Button } from 'antd';
-import { checkWalletIsConnected } from '../../../utils/checkWalletIsConnected';
 import { useRouter } from 'next/router'
 
-import task from '../../../../deployments/abi/Task.json'
-import taskAddr from '../../../contracts/deployments/Task.json'
-import { ethers, logger } from 'ethers'
-import { useSelector } from "react-redux";
-
+import {
+  useAccount,
+} from 'wagmi' 
+import { useContracts } from '../../../controller/index';
 
 export default function ProjectDetail() {
-
-    const web3_react = useSelector(state => state.web3_react.value)
+    const { address, connector, isConnected } = useAccount()
+    const { useTaskContractWrite } = useContracts('applyFor')
     const [isModalVisible, setIsModalVisible] = useState(false);
     const router = useRouter()
     let [detail,detailSet] = useState({})
     let [count,setCount] = useState(null);
+    let [params,setParams] = useState({})
 
     const navbar = [
         { label: '找项目', url: '/'},
@@ -27,8 +25,7 @@ export default function ProjectDetail() {
     ]
     
     useEffect(()=>{
-        
-        async function init(params) {
+        async function init() {
             // 获取项目详情
             let oid = location.search
             oid = oid.replace('?','')
@@ -51,7 +48,7 @@ export default function ProjectDetail() {
     },[])
 
     const showModal = () => {
-        if (!web3_react.isActive) {
+        if (!address) {
             alert('请登陆')
             return
         }
@@ -64,31 +61,35 @@ export default function ProjectDetail() {
     }
 
     const handleOk = async() => {
-        let obj = {
+        params = {
             demandId: detail.id,
             valuation: count,
-            address: web3_react.accounts[0]
+            address: address
         }
-        obj = JSON.stringify(obj)
-        let tradeStatus = false
+        setParams({...params})
+        useTaskContractWrite.write({
+          recklesslySetUnpreparedArgs: [ params.demandId, params.valuation * 100, address ]
+        })
 
-        await ApplyProject(obj)
-        .then(res => {
-            if (res) {
-                if (res.code) {
-                  tradeStatus = false
-                  message.error('交易失败!');
-                }else{
-                  tradeStatus = true
-                  obj = JSON.parse(obj)
-                  obj.hash = res
-                  obj = JSON.stringify(obj)
-                }
-            }
-        })
-        .catch(err => {
-            console.log('err==>',err);
-        })
+        return
+        // await ApplyProject(obj)
+        // .then(res => {
+        //     if (res) {
+        //         if (res.code) {
+        //           tradeStatus = false
+        //           message.error('交易失败!');
+        //         }else{
+        //           tradeStatus = true
+        //           obj = JSON.parse(obj)
+        //           obj.hash = res
+        //           obj = JSON.stringify(obj)
+        //         }
+        //     }
+        // })
+        // .catch(err => {
+        //     console.log('err==>',err);
+        // })
+        return
   
         if (tradeStatus) {
             applyFor({proLabel: obj})
@@ -102,6 +103,17 @@ export default function ProjectDetail() {
         }
         setIsModalVisible(false);
       };
+
+      useEffect(() => {
+        useTaskContractWrite.isSuccess ?
+          writeSuccess()
+          :
+          message.error('交易失败!');
+      },[useTaskContractWrite.isSuccess])
+
+      const writeSuccess = () => {
+
+      }
     
       const handleCancel = () => {
         setIsModalVisible(false);
