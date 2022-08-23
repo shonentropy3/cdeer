@@ -13,8 +13,8 @@ export default function Stage(params){
         {title: '以太坊', value: '0x0000000000000000000000000000000000000000'},
         {title: '比特', value: '0x0000000000000000000000000000000000000000'},
     ]
-    const [budget,setBudget] = useState(0)
-    let [stageNum,setStageNum] = useState(1)
+    let [budget,setBudget] = useState(0)
+    let [stageNum,setStageNum] = useState()
     let [stage,setStage] = useState([])
     let [token,setToken] = useState('0x0000000000000000000000000000000000000000')
     
@@ -107,15 +107,9 @@ export default function Stage(params){
 
     useEffect(() => {
         init()
-        setBudget(amoumt)
-        
-        let task_id = location.search.replace('?','')
-        getOrderAmount(task_id)
-        .then(res => {
-            console.log(res.toString());
-        })
-        // console.log(task_id);
-    },[])
+        budget = amoumt
+        setBudget(budget)
+    },[amoumt])
 
     return(
         <div className="Stage">
