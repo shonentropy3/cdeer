@@ -72,8 +72,8 @@ function ProjectList(props) {
     }
 
     const initialize = async() => {
-        currentAccount = await checkWalletIsConnected()
-        setCurrentAccount(currentAccount)
+        
+        return
         // 获取报名列表
         getMyApplylist({demandId: data.id})
         .then(res => {

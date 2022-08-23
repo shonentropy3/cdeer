@@ -8,7 +8,6 @@ import { translatedPjc, translatedRole, sToDays } from '../../utils/translated'
 
 import {
   useAccount,
-  useDisconnect,
 } from 'wagmi' 
 
 export default function Myproject() {
@@ -77,7 +76,6 @@ export default function Myproject() {
     }
     // 我开发的项目
     const getExploitation = () => {
-      console.log(account);
       getApplyinfo({id: account})
         .then(res => {
           if (res.data.length > 0) {
@@ -126,6 +124,9 @@ export default function Myproject() {
       if (isConnected) {
         account = address;
         setAccount(account)
+      }else{
+        alert('请连接钱包!')
+        return
       }
       switch (selectItem) {
         case 'item-1':
@@ -137,7 +138,7 @@ export default function Myproject() {
         default:
             break;
       }
-  },[isConnected])
+  },[selectItem])
 
     return(
       <>

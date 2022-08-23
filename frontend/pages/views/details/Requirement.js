@@ -67,53 +67,46 @@ export default function ProjectDetail() {
             address: address
         }
         setParams({...params})
-        useTaskContractWrite.write({
-          recklesslySetUnpreparedArgs: [ params.demandId, params.valuation * 100, address ]
-        })
 
-        return
-        // await ApplyProject(obj)
-        // .then(res => {
-        //     if (res) {
-        //         if (res.code) {
-        //           tradeStatus = false
-        //           message.error('交易失败!');
-        //         }else{
-        //           tradeStatus = true
-        //           obj = JSON.parse(obj)
-        //           obj.hash = res
-        //           obj = JSON.stringify(obj)
-        //         }
-        //     }
-        // })
-        // .catch(err => {
-        //     console.log('err==>',err);
-        // })
-        return
-  
-        if (tradeStatus) {
-            applyFor({proLabel: obj})
+        useTaskContractWrite.write({
+          recklesslySetUnpreparedArgs: [ 
+            address, 
+            Number(params.demandId), 
+            params.valuation * 100, 
+          ]
+        })
+      };
+
+      useEffect(() => {
+          useTaskContractWrite.isSuccess ?
+          writeSuccess()
+          :
+          ''
+      },[useTaskContractWrite.isSuccess])
+
+      useEffect(() => {
+        useTaskContractWrite.error !== null ?
+          message.error('交易失败')
+          :
+          ''
+      },[useTaskContractWrite.error])
+
+      const writeSuccess = () => {
+        params.hash = useTaskContractWrite.data.hash
+        applyFor({proLabel: JSON.stringify(params)})
               .then(res => {
                 message.success('报名成功!')
-                router.push('/')
+                setTimeout(() => {
+                  router.push('/')
+                }, 500);
               })
               .catch(err => {
                 console.log(err);
               })
-        }
         setIsModalVisible(false);
-      };
-
-      useEffect(() => {
-        useTaskContractWrite.isSuccess ?
-          writeSuccess()
-          :
-          message.error('交易失败!');
-      },[useTaskContractWrite.isSuccess])
-
-      const writeSuccess = () => {
-
       }
+
+
     
       const handleCancel = () => {
         setIsModalVisible(false);
