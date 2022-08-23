@@ -5,7 +5,7 @@ import { Menu, message, Switch, Empty } from 'antd';
 import NavigationBar from "../../../components/NavigationBar";
 import { getDemandInfo, modifyApplySwitch, getMyApplylist } from "../../../http/api";
 import { translatedPjc, translatedRole, sToDays } from '../../../utils/translated'
-import { getFirstStatus, getSecondStatus } from "../../../controller/order";
+import { useContracts } from "../../../controller";
 
 export default function OrderDetail(oid) {
 
@@ -13,6 +13,7 @@ export default function OrderDetail(oid) {
     let [selectItem,setSelectItem] = useState('item-1')
     let [checked,setChecked] = useState(null)
     let [applylist,setApplylist] = useState([])
+    const { useOrderContractWrite, orderConfig } = useContracts('applyOrderIds')
 
     const items = [
         { label: '项目详情', key: 'item-1'}, // 菜单项务必填写 key
@@ -71,32 +72,8 @@ export default function OrderDetail(oid) {
         // 获取报名列表
         await getMyApplylist({demandId: data.id})
         .then(res => {
-            res.forEach(async(ele,index) => {
-                let obj = {
-                    demand_id: ele.task_id,
-                    apply_addr: ele.apply_addr
-                }
-                obj = JSON.stringify(obj);
-                await getFirstStatus({proLabel: obj})
-                .then(async(stage) => {
-                    if (stage.toString() === '0') {
-                        res[index].stage = 0
-                    }else{
-                        await getSecondStatus(stage.toString())
-                        .then(stage => {
-                            if (stage.check === 0) {
-                                res[index].stage = 1
-                            }else{
-                                res[index].stage = 2
-                            }
-                        })
-                    }
-                    applylist = res 
-                    setApplylist([...applylist])
-                })
-            });
-            
-
+            applylist = res 
+            setApplylist([...applylist])
         })
         .catch(err => {
             console.log(err);
