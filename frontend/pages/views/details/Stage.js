@@ -14,8 +14,6 @@ function OrderDetail({router}) {
     let [arr,setArr] = useState([]);
     let [amount,setAmount] = useState(0);
     let [status,setStatus] = useState(false);
-    // const web3_react = useSelector(state => state.web3_react.value)
-
     
     const getStage = async() => {
         let obj = {
@@ -129,14 +127,11 @@ function OrderDetail({router}) {
     }
 
     useEffect(() => {
-        // if (!web3_react.accounts) {
-        //     return
-        // }
-        // task_id = Number(router.query.task_id);
-        // address = router.query.address;
-        // setAddress(address);
-        // setTask_id(task_id);
-        // getStage()
+        task_id = Number(router.query.task_id);
+        address = router.query.address;
+        setAddress(address);
+        setTask_id(task_id);
+        getStage()
     },[])
 
     return <div className="OrderDetail">

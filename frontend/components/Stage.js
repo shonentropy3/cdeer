@@ -3,12 +3,14 @@ import { InputNumber, Button, message, notification, Input } from 'antd';
 import { useEffect, useState } from 'react';
 import { getOrderAmount } from '../controller/order';
 import { divideStage } from '../controller/order';
-
+import { useContracts } from '../controller';
+import { ethers } from 'ethers';
 export default function Stage(params){
     
     const { oid } = params;
     const { amoumt } = params;
     const { TextArea } = Input;
+    const { useOrderContractWrite } = useContracts('setStage')
     const tokenlist = [
         {title: '以太坊', value: '0x0000000000000000000000000000000000000000'},
         {title: '比特', value: '0x0000000000000000000000000000000000000000'},
@@ -81,7 +83,7 @@ export default function Stage(params){
             return
         }
 
-        // 将天转换为毫秒
+        // 将天转换为秒
         periods.forEach((e,i) => {
             periods[i] = e * 24 * 60 * 60
         })
@@ -93,17 +95,34 @@ export default function Stage(params){
             _periods: periods,
             _desc: desc
         }
-        obj = JSON.stringify(obj)
-        await divideStage({proLabel: obj})
-        .then(res => {
-            if (res == 200) {
-                message.success('设置阶段成功')
-                setTimeout(() => {
-                    history.go(0);
-                }, 1000);
-            }
+        let arr = []
+        obj._amounts.forEach(ele => {
+            arr.push(ethers.utils.parseEther(`${ele}`))
+        });
+        useOrderContractWrite.write({
+            recklesslySetUnpreparedArgs: [
+                oid, 
+                token, 
+                arr, 
+                desc, 
+                periods
+            ]
         })
     }
+
+    const writeSuccess = () => {
+        message.success('设置阶段成功!3秒后自动刷新')
+        setTimeout(() => {
+            history.go(0);
+        }, 3000);
+    }
+
+    useEffect(() => {
+        useOrderContractWrite.isSuccess ? 
+            writeSuccess()
+            :
+            ''
+    },[useOrderContractWrite.isSuccess])
 
     useEffect(() => {
         init()
