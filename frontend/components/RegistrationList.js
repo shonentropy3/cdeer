@@ -1,12 +1,13 @@
-import { useState } from "react"
-import { Order } from "../controller/order";
+import { useEffect, useState } from "react"
+import { useContracts } from "../controller/index"
 import Link from "next/link";
 import { Button, Modal, InputNumber, message } from 'antd';
+import { ethers } from "ethers";
 
 function RegistrationList(params) {
 
+    const { useOrderContractWrite } = useContracts('createOrder')
     const {data} = params
-
     const [isModalVisible, setIsModalVisible] = useState(false);
     let [count,setCount] = useState(null);
 
@@ -20,29 +21,44 @@ function RegistrationList(params) {
   }
 
   const handleOk = async() => {
-    let obj = {
+      let obj = {
         demandId: Number(data.task_id),
         applyAddr: data.apply_addr,
         amount: Number(count),
         token: '0x90f79bf6eb2c4f870365e785982e1f101e93b906'
       }
-      obj = JSON.stringify(obj)
-      await Order({proLabel:obj})
-      .then(res => {
-          if (res.code === 200) {
-            setIsModalVisible(false);
-            message.success('操作成功!')
-            setTimeout(() => {
-                history.go(0)
-            }, 500);
-          }else{
-            message.error('操作失败!')
-          }
-      })
-      .catch(err => {
-          console.log(err);
+      useOrderContractWrite.write({
+          recklesslySetUnpreparedArgs: [{
+            taskId: obj.demandId,
+            worker: obj.applyAddr,
+            token: obj.token,
+            amount: ethers.utils.parseEther(`${obj.amount}`),
+            checked: 1,     // default
+            startDate: 123423   //  TODO >>>>
+          }]
       })
   };
+
+  useEffect(() => {
+    useOrderContractWrite.isSuccess ? 
+        writeSuccess()
+        :
+        ''
+  },[useOrderContractWrite.isSuccess])
+
+  useEffect(() => [
+    useOrderContractWrite.error !== null ?
+        message.error('交易失败')
+      :
+      ''
+  ],[useOrderContractWrite.error])
+ 
+  const writeSuccess = () => {
+    message.success('操作成功!')
+    setTimeout(() => {
+        history.go(0)
+    }, 500);
+  }
 
   const handleCancel = () => {
     setIsModalVisible(false);
