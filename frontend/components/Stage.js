@@ -147,7 +147,7 @@ export default function Stage(params){
                         }
                     </select>
                 </div>
-                <Button type="primary" onClick={submit} >提交</Button>
+                <Button disabled={useOrderContractWrite.isLoading} type="primary" onClick={submit} >提交</Button>
             </div>
             
             <div className="list">

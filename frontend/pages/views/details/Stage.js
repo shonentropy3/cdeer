@@ -19,8 +19,10 @@ function OrderDetail({router}) {
 
     const { useOrderContractRead: getOid } = useContractsRead('applyOrderIds',[task_id, address])
     const { useOrderContractRead: getStages } = useContractsRead('getOrderStages',oid)
+    const { useOrderContractRead: getStatus } = useContractsRead('orders',oid)
     const { useOrderContractWrite: contract } = useContracts('confirmOrder')
-    // 
+    const { useOrderContractWrite: stageComfirm } = useContracts('confirmOrderStage')
+    const { useOrderContractWrite: stageReject } = useContracts('terminateStage')
     
     useEffect(() => {
         if (getOid.data !== undefined) {
@@ -44,6 +46,18 @@ function OrderDetail({router}) {
             })
             setAmount(amount)
             setArr([...arr])
+        }
+    },[oid])
+
+    useEffect(() => {
+        if (getStages.data !== undefined) {
+            if (getStatus.data.checked === 1) {
+                status = false
+            }
+            if (getStatus.data.checked === 2) {
+                status = true
+            }
+            setStatus(status)
         }
     },[oid])
 
@@ -73,39 +87,30 @@ function OrderDetail({router}) {
     }
 
     const confirmStage = async(i) => {
-        let obj = {
-            orderId: oid,
-            stageIndex: i
-        }
-        obj = JSON.stringify(obj)
-        await confirmOrderStage({proLabel: obj})
-        .then(res => {
-            if (res.code == 200) {
-                message.success('阶段交付成功!')
-            }else{
-                message.error('阶段交付失败!')
-            }
+        stageComfirm.write({
+            recklesslySetUnpreparedArgs: [ oid, i ]
         })
     }
 
+    useEffect(() => {
+        stageComfirm.isSuccess ? 
+            message.success('阶段交付成功!')
+            :
+            ''
+    },[stageComfirm.isSuccess])
+
     const rejectStage = async(i) => {
-        let obj = {
-            orderId: oid,
-            stageIndex: i
-        }
-        obj = JSON.stringify(obj)
-        await terminateStage({proLabel: obj})
-        .then(res => {
-            if (res.code == 200) {
-                message.success('终止交付成功!');
-                setTimeout(() => {
-                    history.go(0)
-                }, 1000);
-            }else{
-                message.error('终止交付失败!');
-            }
+        stageReject.write({
+            recklesslySetUnpreparedArgs:[ oid, i ]
         })
     }
+
+    useEffect(() => {
+        stageReject.isSuccess ?
+            message.success('终止交付成功!')
+            :
+            ''
+    },[stageReject.isSuccess])
 
     useEffect(() => {
         task_id = Number(router.asPath.split('=')[2]);
@@ -145,8 +150,8 @@ function OrderDetail({router}) {
                                     {
                                         status ? 
                                             <>
-                                                <Button type="primary" onClick={() => confirmStage(i)}>确认交付</Button>
-                                                <Button onClick={() => rejectStage(i)} >拒绝交付</Button>
+                                                <Button type="primary" disabled={stageComfirm.isLoading} onClick={() => confirmStage(i)}>确认交付</Button>
+                                                <Button disabled={stageReject.isLoading} onClick={() => rejectStage(i)} >拒绝交付</Button>
                                             </>
                                         :
                                         ''
