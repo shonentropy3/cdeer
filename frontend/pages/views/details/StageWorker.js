@@ -8,25 +8,42 @@ import {
     useAccount,
     useDisconnect,
   } from 'wagmi'
+import { useContracts, useContractsRead } from "../../../controller";
 export default function StageWorker() {
     
     let [oid,setOid] = useState('');
     let [task_id,setTask_id] = useState('');
     let [arr,setArr] = useState([])
     const { address, connector, isConnected } = useAccount()
+    const { useOrderContractRead: getOid } = useContractsRead('applyOrderIds',[task_id, address])
+    const { useOrderContractRead: getStages } = useContractsRead('getOrderStages',oid)
+    const { useOrderContractWrite: withdraw } = useContracts('withdraw')
 
-    const getOid = async() => {
-        let obj = {
-            demand_id: task_id,
-            apply_addr: await checkWalletIsConnected()
-        };
-        obj = JSON.stringify(obj);
-        await getOrderStatus(obj)
-        .then(res => {
-            oid = res.oid;
-            setOid(oid);
-        })
-    }
+    // withdraw
+    useEffect(() => {
+        if (getOid.data !== undefined) {
+            oid = getOid.data.toString();
+            setOid(oid)
+        }
+    },[task_id])
+
+    useEffect(() => {
+        if (getStages.data !== undefined) {
+            getStages.data.forEach((e,i) => { 
+                
+                let price = Number(e.amount.toString()) / 1000000000000000000;
+
+                arr[i] = {
+                    price: price,
+                    date: getDate(e[4].toString()),
+                    dsc: e[1],
+                    withdrawed: e[3]
+                }
+            })
+            setArr([...arr])
+            console.log(arr);
+        }
+    },[oid])
 
     const getDate = (params) => {
         var date = new Date(params * 1000);  // 参数需要毫秒数，所以这里将秒数乘于 1000
@@ -39,58 +56,33 @@ export default function StageWorker() {
         return Y+M+D+h+m+s
     }
 
-    const getStage = async() => {
-        console.log(oid);
-        await orderStage(oid)
-        .then(res => {
-            res.forEach((e,i) => { 
-                
-                let price = Number(e[0].toString()) / 1000000000000000000;
-
-                arr[i] = {
-                    price: price,
-                    date: getDate(e[4].toString()),
-                    dsc: e[1],
-                    withdrawed: e[3]
-                }
-            })
-            setArr([...arr])
-        })
-    }
-
     const getWithdraw = async(i) => {
-        let obj = {
-            orderId: oid,
-            stageIndex: i
-        }
-        obj = JSON.stringify(obj);
-        await withdraw({proLabel: obj})
-        .then(res => {
-            if (res.code == 200) {
-                message.success('提款成功!')
-                setTimeout(() => {
-                    history.go(0)
-                }, 1000);
-            }else{
-                message.success('提款失败!')
-            }
-
+        withdraw.write({
+            recklesslySetUnpreparedArgs:[ oid, i ]
         })
-        console.log(i);
     }
+
+    const writeSuccess = () => {
+        message.success('提款成功!')   
+        setTimeout(() => {
+            history.go(0)
+        }, 1000);
+    }
+
+    useEffect(() => {
+        withdraw.isSuccess ? 
+            writeSuccess()
+            :
+            ''
+    },[withdraw.isSuccess])
     
     useEffect(() => {
         async function init() {
-            if (!address) {
-                return
-            }
             task_id = location.search.replace('?','');
             setTask_id(task_id);
-            await getOid();
-            getStage();
         }
         init()
-    },[address])
+    },[])
 
     return <div className="StageContainer">
             <div className="list">
@@ -111,7 +103,7 @@ export default function StageWorker() {
                                 </div>
                                 <div className="r">
                                     {
-                                        e.withdrawed ? <Button disabled>已提款</Button> : <Button type="primary" onClick={() => getWithdraw(i)}>阶段{i+1}提款</Button>
+                                        e.withdrawed ? <Button disabled>已提款</Button> : <Button type="primary" disabled={withdraw.isLoading} onClick={() => getWithdraw(i)}>阶段{i+1}提款</Button>
                                     }
                                 </div>
                              </div>
