@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { ModifyDemand } from '../controller/task';
 import { modifyDemand } from '../http/api';
 import { BitOperation } from '../utils/BitOperation';
-
+import { useContracts } from '../controller';
 
 export default function Modify(params) {
     const { TextArea } = Input;
@@ -11,6 +11,7 @@ export default function Modify(params) {
     const { setParent } = params
     const { detail } = params
     const _data = require("../data/data.json")
+    const { useTaskContractWrite: contracts } = useContracts('modifyTask');
 
     let [role,setRole] = useState([])
     let [pjc,setPjc] = useState([])
@@ -22,6 +23,7 @@ export default function Modify(params) {
         {title: '项目周期', type: Number, value: detail.period}
     ])
     let [text,setText] = useState(detail.desc)
+    let [obj,setObj] = useState({})
 
     const change = (arr,index,set,element,list,checked) => {
         arr[index] = !arr[index];
@@ -82,7 +84,7 @@ export default function Modify(params) {
         pjcList.forEach((e,i) => {
             e ? categories.push(i) : ""
         });
-        let obj = {
+        obj = {
             u_address: detail.issuer,
             title: input[0].value,
             budget: input[1].value,
@@ -95,38 +97,45 @@ export default function Modify(params) {
             skills: BitOperation(skills),
             categories: BitOperation(categories)
         }
-        obj = JSON.stringify(obj)
-        let tradeStatus = false
-        await ModifyDemand(obj)
-        .then(res => {
-          if (res) {
-            if (res.code) {
-              tradeStatus = false
-              message.error('交易失败!');
-            }else{
-              tradeStatus = true
-            }
-          }
+        setObj({...obj})
+        contracts.write({
+            recklesslySetUnpreparedArgs: [
+                obj.demand_id,
+                {
+                title: obj.title,
+                desc: obj.pro_content,
+                attachment: obj.attachment,
+                currency: 1,  //  币种,x10000,保留四位小数,前端只展示两位小数
+                budget: obj.budget * 100,
+                period: obj.period,
+                categories: obj.categories,
+                skills: obj.skills,  //  原role,职业为1,2,3...整数型
+                }
+            ]
         })
-        .catch(err => {
-            console.log('err==>',err);
-        })
+    }
 
-        if (tradeStatus) {
-            modifyDemand({proLabel: obj})
-              .then(res => {
-                cancel()
-                message.success('修改成功');
-                setTimeout(() => {
-                    window.location.reload()
-                }, 500);
-              })
-              .catch(err => {
-                console.log(err);
-                cancel()
-                message.error('修改失败');
-              })
-          }
+    useEffect(() => {
+        contracts.isSuccess ? 
+            writeSuccess()
+            :
+            ''
+    },[contracts.isSuccess])
+
+    const writeSuccess = () => {
+        modifyDemand({proLabel: JSON.stringify(obj)})
+          .then(res => {
+            cancel()
+            message.success('修改成功');
+            setTimeout(() => {
+                history.go(0)
+            }, 500);
+          })
+          .catch(err => {
+            console.log(err);
+            cancel()
+            message.error('修改失败');
+          })
     }
 
     const Check = (arr, list, check, set) => {
@@ -211,9 +220,8 @@ export default function Modify(params) {
             </div>
             <div className="btn">
                 <Button danger onClick={() => cancel()}>取消</Button>
-                <Button type="primary" onClick={() => modify()}>确认</Button>
+                <Button type="primary" disabled={contracts.isLoading} onClick={() => modify()}>确认</Button>
             </div>
-            
         </div>
     )
 }
