@@ -46,12 +46,12 @@ export function useContracts(functionName) {
 }
 
 export function useContractsRead(functionName,params) {
-  const taskConfig = {
-    addressOrName: taskAddr.address,
-    contractInterface: task.abi,
-    functionName: functionName,
-    args: params
-  }
+  // const taskConfig = {
+  //   addressOrName: taskAddr.address,
+  //   contractInterface: task.abi,
+  //   functionName: functionName,
+  //   args: params
+  // }
   const orderConfig = {
       addressOrName: orderAddr.address,
       contractInterface: order.abi,
@@ -59,11 +59,11 @@ export function useContractsRead(functionName,params) {
       args: params
   }
 
-  const useTaskContractRead = useContractRead(taskConfig)
+  // const useTaskContractRead = useContractRead(taskConfig)
   const useOrderContractRead = useContractRead(orderConfig)
 
   return {
-    useTaskContractRead,
+    // useTaskContractRead,
     useOrderContractRead
   }
 }

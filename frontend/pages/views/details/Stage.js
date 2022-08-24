@@ -5,6 +5,8 @@ import { orderStage, confirmOrder, confirmOrderStage, terminateStage, getSecondS
 import { Button, message } from "antd";
 import { useSelector } from 'react-redux'
 import { getDate } from "../../../utils/getDate";
+import { useContractsRead, useContracts } from "../../../controller";
+import { ethers } from "ethers";
 
 function OrderDetail({router}) {
 
@@ -14,37 +16,23 @@ function OrderDetail({router}) {
     let [arr,setArr] = useState([]);
     let [amount,setAmount] = useState(0);
     let [status,setStatus] = useState(false);
-    
-    const getStage = async() => {
-        let obj = {
-            demand_id: task_id,
-            apply_addr: `${ address }`
-        }
-        obj = JSON.stringify(obj)
-        await getOrderStatus(obj)
-        .then(res => {
-            console.log(res.oid);
-            oid = res.oid;
-            setOid(oid);
-        })
 
-        await getSecondStatus(oid)
-        .then(res => {
-            if (res.check === 1) {
-                status = false
-            }
-            if (res.check === 2) {
-                status = true
-            }
-            setStatus(status);
-        })
-        
-        // return
-        await orderStage(oid)
-        .then(res => {
-            amount = 0
-            res.forEach((e,i) => {
-                
+    const { useOrderContractRead: getOid } = useContractsRead('applyOrderIds',[task_id, address])
+    const { useOrderContractRead: getStages } = useContractsRead('getOrderStages',oid)
+    const { useOrderContractWrite: contract } = useContracts('confirmOrder')
+    // 
+    
+    useEffect(() => {
+        if (getOid.data !== undefined) {
+            oid = getOid.data.toString();
+            setOid(oid)
+        }
+    },[address])
+
+    useEffect(() => {
+        if (getStages.data !== undefined) {
+            let data = getStages.data;
+            data.forEach((e, i) => {
                 let price = Number(e[0].toString()) / 1000000000000000000;
                 amount += price;
 
@@ -56,37 +44,31 @@ function OrderDetail({router}) {
             })
             setAmount(amount)
             setArr([...arr])
-        })
+        }
+    },[oid])
+
+    useEffect(() => {
+        contract.isSuccess ? 
+            writeSuccess()
+            :
+            ''
+    },[contract.isSuccess])
+
+    const writeSuccess = () => {
+        message.success('确认订单成功')
+            setTimeout(() => {
+                history.go(0)
+            }, 1000);
     }
 
-    // const getDate = (params) => {
-    //     var date = new Date(params * 1000);  // 参数需要毫秒数，所以这里将秒数乘于 1000
-    //     let Y = date.getFullYear() + '-';
-    //     let M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
-    //     let D = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ' ';
-    //     let h = date.getHours() + ':';
-    //     let m = date.getMinutes();
-    //     // let s = date.getSeconds();
-    //     return Y+M+D+h+m
-    // }
-
     const confirmOrd = async() => {
-        let obj = {
-            oid: oid,
-            amount: amount
-        }
-        obj = JSON.stringify(obj)
-        await confirmOrder({proLabel: obj})
-        .then(res => {
-            console.log(res);
-            if (res.code == 200) {
-                message.success('确认订单成功')
-                setTimeout(() => {
-                    history.go(0)
-                }, 1000);
-            }else{
-                message.error('确认订单失败')
-            }
+        contract.write({
+            recklesslySetUnpreparedArgs: [
+                oid,
+                {
+                    value: ethers.utils.parseEther(`${amount}`),
+                }
+            ]
         })
     }
 
@@ -98,7 +80,6 @@ function OrderDetail({router}) {
         obj = JSON.stringify(obj)
         await confirmOrderStage({proLabel: obj})
         .then(res => {
-            // console.log(res);
             if (res.code == 200) {
                 message.success('阶段交付成功!')
             }else{
@@ -127,11 +108,10 @@ function OrderDetail({router}) {
     }
 
     useEffect(() => {
-        task_id = Number(router.query.task_id);
-        address = router.query.address;
+        task_id = Number(router.asPath.split('=')[2]);
+        address = router.asPath.split('=')[1].split('&')[0];
         setAddress(address);
         setTask_id(task_id);
-        getStage()
     },[])
 
     return <div className="OrderDetail">

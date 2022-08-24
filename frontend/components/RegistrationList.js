@@ -9,7 +9,8 @@ function RegistrationList(params) {
     const {data} = params
     const [isModalVisible, setIsModalVisible] = useState(false);
     let [count,setCount] = useState(null);
-    let [oid,setOid] = useState(null)
+    let [oid,setOid] = useState(null);
+    let [stage,setStage] = useState();
     const { useOrderContractWrite } = useContracts('createOrder')
     const { useOrderContractRead: getOid } = useContractsRead('applyOrderIds',[data.task_id, data.apply_addr])
     const { useOrderContractRead: getStage } = useContractsRead('orders',oid)
@@ -61,7 +62,7 @@ function RegistrationList(params) {
     };
 
     const print = () => {
-      switch (data.stage) {
+      switch (stage) {
           case 0:
               return  <button onClick={() => showModal()}>确认合作</button>
           case 1:
@@ -77,18 +78,19 @@ function RegistrationList(params) {
         oid = getOid.data.toString();
         setOid(oid)
         if (oid === "0") {
-          data.stage = 0
+          stage = 0
+          setStage(stage)
         }
     },[])
 
     useEffect(() => {
-        if (getStage.data !== undefined) {
-            console.log();
+        if (getStage.data !== undefined && oid !== "0") {
           if (getStage.data.checked === 0) {
-              data.stage = 1
+              stage = 1
           }else{
-              data.stage = 2
+              stage = 2
           }
+          setStage(stage)
         }
     },[oid])
 
