@@ -1,13 +1,104 @@
 import { useEffect, useState, } from 'react';
 import Link from "next/link"
-import { Spin, BackTop, Divider, Empty } from 'antd';
+import { Spin, BackTop, Divider, Empty, Button } from 'antd';
 import { getDemand, getFilter } from '../http/api';
 import style from '../styles/utils.module.scss'
 import { translatedPjc, translatedRole, sToDays } from '../utils/translated';
 import store from '../redux/store';
-
+import { useSignTypedData, useAccount, useNetwork } from 'wagmi'
 
 export default function Home() {
+
+  const { address, isConnecting, isDisconnected } = useAccount()
+  const { chain, chains } = useNetwork()
+
+  let [account,setAccount] = useState()
+
+  useEffect(() => {
+    account = address;
+    setAccount(account);
+    console.log(chain);
+  },[])
+
+  const domain = {
+    name: 'Ether Mail',
+    version: '1',
+    chainId: chain.id,
+    verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
+  }
+  
+  // The named list of all type definitions
+  const types = {
+    Person: [
+      { name: 'name', type: 'string' },
+      { name: 'wallet', type: 'address' },
+    ],
+    Mail: [
+      { name: 'from', type: 'Person' },
+      { name: 'to', type: 'Person' },
+      { name: 'contents', type: 'string' },
+    ],
+  }
+  
+  const value = {
+    from: {
+      name: 'Cow',
+      wallet: account,
+    },
+    to: {
+      name: 'Bob',
+      wallet: "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+    },
+    contents: 'Hello, Bob!',
+  }
+
+  const { data: signData, isError, isLoading, isSuccess, signTypedData } =
+    useSignTypedData({
+      domain: {
+        name: 'Ether Mail',
+        version: '1',
+        chainId: chain.id,
+        verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
+      },
+      types: {
+        Person: [
+          { name: 'name', type: 'string' },
+          { name: 'wallet', type: 'address' },
+        ],
+        Mail: [
+          { name: 'from', type: 'Person' },
+          { name: 'to', type: 'Person' },
+          { name: 'contents', type: 'string' },
+        ],
+      },
+      value: {
+        from: {
+          name: 'Cow',
+          wallet: account,
+        },
+        to: {
+          name: 'Bob',
+          wallet: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
+        },
+        contents: 'Hello, Bob!',
+      },
+      onError(error) {
+        console.log('Error', error)
+      },
+      onSuccess(data) {
+        console.log('Success', data)
+      },
+    })
+
+    useEffect(() => {
+      isSuccess ? 
+      console.log(signData)
+      :
+      ''
+    },[isSuccess])
+
+
+
   const responseDate = () => {
     if (data.status === 0) {
         return <>
@@ -157,6 +248,9 @@ export default function Home() {
     
   return (
     <div className="market">
+            <Button disabled={isLoading} onClick={() => signTypedData()}>
+              Sign typed data
+            </Button>
             <div className="filter">
               <div className="_box">
                 <div className="title">

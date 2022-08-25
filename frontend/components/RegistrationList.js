@@ -75,11 +75,13 @@ function RegistrationList(params) {
     }
 
     useEffect(() => {
-        oid = getOid.data.toString();
-        setOid(oid)
-        if (oid === "0") {
-          stage = 0
-          setStage(stage)
+        if (getOid.data !== undefined) {
+            oid = getOid.data.toString();
+            setOid(oid)
+            if (oid === "0") {
+            stage = 0
+            setStage(stage)
+            }
         }
     },[])
 
