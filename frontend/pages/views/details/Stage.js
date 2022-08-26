@@ -124,7 +124,10 @@ function OrderDetail({router}) {
             <div className="title">
                 {
                     !status ? 
-                    <Button type="primary" onClick={() => confirmOrd()}> 确认订单 </Button>
+                    <>
+                        <Button type="primary" onClick={() => confirmOrd()}> 确认订单 </Button>
+                        <Button type="dashed"> 修改阶段 </Button>
+                    </>
                     :
                     ''
                 }
