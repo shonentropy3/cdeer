@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import getOrderStatus from "../../../utils/getOrderStatus";
 import { withRouter } from 'next/router'
 import { orderStage, confirmOrder, confirmOrderStage, terminateStage, getSecondStatus } from "../../../controller/order";
-import { Button, message } from "antd";
+import { Button, message, Modal } from "antd";
 import { useSelector } from 'react-redux'
 import { getDate } from "../../../utils/getDate";
 import { useContractsRead, useContracts } from "../../../controller";
 import { ethers } from "ethers";
-
+import Stage from "../../../components/Stage"
 function OrderDetail({router}) {
 
     let [address,setAddress] = useState('');
@@ -16,7 +16,7 @@ function OrderDetail({router}) {
     let [arr,setArr] = useState([]);
     let [amount,setAmount] = useState(0);
     let [status,setStatus] = useState(false);
-
+    const [isModalVisible, setIsModalVisible] = useState(false);
     const { useOrderContractRead: getOid } = useContractsRead('applyOrderIds',[task_id, address])
     const { useOrderContractRead: getStages } = useContractsRead('getOrderStages',oid)
     const { useOrderContractRead: getStatus } = useContractsRead('orders',oid)
@@ -119,14 +119,31 @@ function OrderDetail({router}) {
         setTask_id(task_id);
     },[])
 
+    const showModal = () => {
+        setIsModalVisible(true);
+      };
+    
+      const handleOk = () => {
+        setIsModalVisible(false);
+      };
+    
+      const handleCancel = () => {
+        setIsModalVisible(false);
+      };
+
+
+
     return <div className="OrderDetail">
+        <Modal title="Basic Modal" className="Modal" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+            <Stage></Stage>
+        </Modal>
         <div className="StageContainer">
             <div className="title">
                 {
                     !status ? 
                     <>
                         <Button type="primary" onClick={() => confirmOrd()}> 确认订单 </Button>
-                        <Button type="dashed"> 修改阶段 </Button>
+                        <Button type="dashed" onClick={showModal}> 修改阶段 </Button>
                     </>
                     :
                     ''
