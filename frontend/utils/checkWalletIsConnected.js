@@ -2,8 +2,6 @@
 
 export const checkWalletIsConnected = async() => {
     const { ethereum } = window;
-    
-    
   
     if (!ethereum) {
       console.log("Make sure you have Metamask installed!");

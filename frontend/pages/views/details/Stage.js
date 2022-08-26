@@ -121,21 +121,17 @@ function OrderDetail({router}) {
 
     const showModal = () => {
         setIsModalVisible(true);
-      };
+    };
     
-      const handleOk = () => {
-        setIsModalVisible(false);
-      };
-    
-      const handleCancel = () => {
-        setIsModalVisible(false);
-      };
+    const handleCancel = () => {
+      setIsModalVisible(false);
+    };
 
 
 
     return <div className="OrderDetail">
-        <Modal title="Basic Modal" className="Modal" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-            <Stage></Stage>
+        <Modal footer={null} className="Modal" visible={isModalVisible} onCancel={handleCancel}>
+            <Stage modifyStages={ arr }></Stage>
         </Modal>
         <div className="StageContainer">
             <div className="title">

@@ -1,14 +1,6 @@
 
 import { Button } from 'antd';
-import {
-    useAccount,
-    useConnect,
-    useDisconnect,
-    useEnsAvatar,
-    useEnsName,
-    useProvider
-  } from 'wagmi'
-import { useEffect } from 'react';
+import { useConnect } from 'wagmi'
 
 export default function Card(props) {
 

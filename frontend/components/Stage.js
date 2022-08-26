@@ -11,6 +11,7 @@ export default function Stage(params){
     const { amoumt } = params;
     const { TextArea } = Input;
     const { useOrderContractWrite } = useContracts('setStage')
+    const { modifyStages } = params;
     const tokenlist = [
         {title: '以太坊', value: '0x0000000000000000000000000000000000000000'},
         {title: '比特', value: '0x0000000000000000000000000000000000000000'},
@@ -118,6 +119,23 @@ export default function Stage(params){
     }
 
     useEffect(() => {
+        if (modifyStages.length !== 0) {
+            stageNum = modifyStages.length;
+            setStageNum(stageNum)
+        }
+    },[modifyStages])
+
+    useEffect(() => {
+        if (modifyStages.length !== 0 && stage.length !== 0) {
+            modifyStages.map((e,i) => {
+                stage[i].price = e.price;
+                stage[i].dsc = e.dsc;
+                setStage([...stage])
+            })
+        }
+    },[stageNum])
+
+    useEffect(() => {
         useOrderContractWrite.isSuccess ? 
             writeSuccess()
             :
@@ -151,7 +169,6 @@ export default function Stage(params){
             </div>
             
             <div className="list">
-                {/* {init()} */}
                 {
                     stage.map((e,i) => 
                         <div className="li" key={i}>
