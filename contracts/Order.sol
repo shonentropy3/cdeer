@@ -6,12 +6,10 @@ import "./interface/ITask.sol";
 import "./interface/IOrder.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import '@uniswap/lib/contracts/libraries/TransferHelper.sol';
-import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import './libs/TransferHelper.sol';
+import "./libs/ECDSA.sol";
 
-import "hardhat/console.sol";
 
 // TODO:考虑阶段甲方确认后，修改后续阶段的问题
 contract Order is IOrder, Ownable {
@@ -57,7 +55,6 @@ contract Order is IOrder, Ownable {
     uint8 private maxStages = 12;
     address private task;
 
-    using SafeERC20 for IERC20;
     using Counters for Counters.Counter;
 
     event OrderCreated(uint indexed orderId, uint indexed taskId, address indexed issuer, address worker, address token, uint amount);
@@ -138,18 +135,16 @@ contract Order is IOrder, Ownable {
         Order storage order = orders[orderId];
         require(ITask(task).ownerOf(order.taskId) == msg.sender, "No permission.");
 
-        uint needPayAnount = order.amount - order.payed;
+        uint needPayAmount = order.amount - order.payed;
         address token = order.token;
 
         if (token == address(0)) {
             order.payed += msg.value;
         } else {
-            IERC20(token).safeTransferFrom(msg.sender, address(this), needPayAnount);
+            TransferHelper.safeTransferFrom(token, msg.sender, address(this), needPayAmount);
             order.payed += amount;
         }
     }
-
-
 
     function setStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods, string[] memory _milestones) external {
         Order storage order = orders[_orderId];
@@ -212,25 +207,32 @@ contract Order is IOrder, Ownable {
     }
 
 
-    function permitStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods, uint deadline, bytes memory _signature) public {
+    function permitStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods,
+        uint deadline,
+        uint8 v,
+        bytes32 r,
+        bytes32 s) public {
         bytes32 structHash = keccak256(abi.encode(PERMITSTAGE_TYPEHASH, _orderId, _amounts, _periods, deadline));
         bytes32 digest = ECDSA.toTypedDataHash(DOMAIN_SEPARATOR, structHash);
 
-        address recoveredAddress = ECDSA.recover(digest, _signature);
+        address recoveredAddress = ECDSA.recover(digest, v, r, s);
+        require(recoveredAddress == address(0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266), "Invalid Signature");
+        
+        // Order storage order = orders[_orderId];
+        // require(order.worker == recoveredAddress, "Invalid Worker Signature");
+        
+        // Stage[] storage stages = orderStages[_orderId];
 
-        Order storage order = orders[_orderId];
-        require(order.worker == recoveredAddress, "Invalid Worker Signature");
+        // require(stages.length == _periods.length && _periods.length == _amounts.length, "mismatch");
         
-        Stage[] storage stages = orderStages[_orderId];
+        // for ( uint i = 0; i < stages.length; i++) {
+        //     require(_amounts[i] == stages[i].amount, "mismatch amount");
+        //     require(_periods[i] == stages[i].period, "mismatch period");
+        // }
 
-        require(stages.length == _periods.length && _periods.length == _amounts.length, "mismatch");
-        
-        for ( uint i = 0; i < stages.length; i++) {
-            require(_amounts[i] == stages[i].amount, "mismatch amount");
-            require(_periods[i] == stages[i].period, "mismatch period");
-        }
-        
-        order.progress = OrderProgess.Staged;
+        // order.progress = OrderProgess.Staged;
+        // console.log("recoveredAddress", recoveredAddress);
+
     }
 
 
@@ -241,14 +243,14 @@ contract Order is IOrder, Ownable {
         require(order.progress == OrderProgess.Staged, "Need worker confirm");
         checkAmount(_orderId, order);
 
-        uint needPayAnount = order.amount - order.payed;
+        uint needPayAmount = order.amount - order.payed;
         address _token = order.token;
 
-        if (needPayAnount > 0) {
+        if (needPayAmount > 0) {
             if (_token == address(0)) {
-                require(needPayAnount == msg.value, "pay error");
+                require(needPayAmount == msg.value, "pay error");
             } else {
-                IERC20(_token).safeTransferFrom(msg.sender, address(this), needPayAnount);
+                TransferHelper.safeTransferFrom(_token, msg.sender, address(this), needPayAmount);
             }
             order.payed = order.amount;
         }
@@ -422,7 +424,7 @@ contract Order is IOrder, Ownable {
         if (address(0) == _token) {
             TransferHelper.safeTransferETH(_to, _amount);
         } else {
-            IERC20(_token).safeTransfer(_to, _amount);
+            TransferHelper.safeTransfer(_token, _to, _amount);
         }
     }
 
