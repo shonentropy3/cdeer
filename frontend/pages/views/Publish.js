@@ -374,7 +374,8 @@ function Publish() {
                                   </div>
                         }
                         else{
-                          return <div key={index} className={`upload`}>
+                          return <>
+                            <div key={index} className={`upload`}>
                               <p>相关文档<span>(选填)</span></p>
                               <InfoCircleOutlined className='mr20' onClick={()=>tips()} />
                               <Upload
@@ -386,12 +387,16 @@ function Publish() {
                               >
                                 <Button icon={<UploadOutlined />}>Upload (Max: 1)</Button>
                               </Upload>
-                          
+
                           </div>
+                          <div className="currency">
+                            币种<Cascader options={options} onChange={(e) => changeCurrency(e)} placeholder="Please select" />
+                          </div>
+                          </>
+                          
                         }
                       })
                     }
-                    <Cascader options={options} onChange={(e) => changeCurrency(e)} placeholder="Please select" />
 
                     {buttonModel()}
 
