@@ -6,6 +6,10 @@
     background-color: #f0f2f5;
     // margin-bottom: 100px;
     padding-bottom: 100px;
+    .ant-modal-body{
+        display: flex;
+        flex-direction: column;
+    }
 
     .container{
         box-shadow: 0 1px 3px rgb(0 0 0 / 20%);

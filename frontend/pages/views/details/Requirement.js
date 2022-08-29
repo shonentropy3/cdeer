@@ -16,7 +16,7 @@ export default function ProjectDetail() {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const router = useRouter()
     let [detail,detailSet] = useState({})
-    let [count,setCount] = useState(null);
+    let [param,setParam] = useState({count: '', phone: ''});
     let [params,setParams] = useState({})
 
     const navbar = [
@@ -55,19 +55,24 @@ export default function ProjectDetail() {
         setIsModalVisible(true);
     };
 
-    const onChange = (e) => {
-        count = e;
-        setCount(count);
+    const onChange = (e,type) => {
+      if (type === "phone") {
+        param.phone = e
+      }else{
+        param.count = e
+      }
+        setParam(param);
     }
 
     const handleOk = async() => {
         params = {
             demandId: detail.id,
-            valuation: count,
+            valuation: param,
             address: address
         }
         setParams({...params})
-
+        console.log(params);
+        return
         useTaskContractWrite.write({
           recklesslySetUnpreparedArgs: [ 
             address, 
@@ -145,7 +150,12 @@ export default function ProjectDetail() {
     return(
         <>
             <Modal title="报名项目" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-                项目估价: <InputNumber size="large" min="1" onChange={onChange} />
+              <div className="box">
+                项目估价: <InputNumber size="large" min="1" onChange={(e) => onChange(e,'count')} />
+              </div>
+              <div className="box">
+                联系方式: <InputNumber size="large" min="1" onChange={(e) => onChange(e,'phone')} />
+              </div>
             </Modal>
             <div className="pjc_detail">
                 <NavigationBar data={navbar} />
