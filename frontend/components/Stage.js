@@ -1,12 +1,12 @@
 // import { PlusSquareOutlined } from '@ant-design/icons';
-import { InputNumber, Button, message, notification, Input } from 'antd';
+import { InputNumber, Button, message, notification, Input, DatePicker } from 'antd';
 import { useEffect, useState } from 'react';
 import { getOrderAmount } from '../controller/order';
 import { divideStage } from '../controller/order';
 import { useContracts } from '../controller';
 import { ethers } from 'ethers';
 export default function Stage(params){
-    
+    const { RangePicker } = DatePicker;
     const { oid } = params;
     const { amoumt } = params;
     const { TextArea } = Input;
@@ -52,6 +52,10 @@ export default function Stage(params){
         setStage([...stage])
     };
 
+    const setDate = (date, dateString, index, type) =>{
+        
+    }
+
     const getToken = (e) => {
         token = e.target.value;
         setToken(token)
@@ -64,6 +68,8 @@ export default function Stage(params){
         let periods = [];
         let desc = [];
         
+        console.log(stage);
+        return
         stage.forEach(ele => {
             amounts.push(ele.price);
             periods.push(ele.date);
@@ -119,6 +125,9 @@ export default function Stage(params){
     }
 
     useEffect(() => {
+        if (modifyStages === undefined) {
+            return
+        }
         if (modifyStages.length !== 0) {
             stageNum = modifyStages.length;
             setStageNum(stageNum)
@@ -126,6 +135,9 @@ export default function Stage(params){
     },[modifyStages])
 
     useEffect(() => {
+        if (modifyStages === undefined) {
+            return
+        }
         if (modifyStages.length !== 0 && stage.length !== 0) {
             modifyStages.map((e,i) => {
                 stage[i].price = e.price;
@@ -175,7 +187,7 @@ export default function Stage(params){
                             <div className="inner">
                                 <h2>P{i+1}</h2>
                                 <div className="box">
-                                    周期: <InputNumber min={1} value={e.date} onChange={(event) => onChange(i,event,'date')} />
+                                    周期: <RangePicker onChange={(date,dateString) => onChange(i, dateString, 'date')}/>
                                 </div>
                                 <div className="box">
                                     计划金额: <InputNumber min={1} value={e.price} onChange={(event) => onChange(i,event,'price')} />

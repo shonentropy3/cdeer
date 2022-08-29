@@ -20,7 +20,7 @@ function OrderDetail({router}) {
     const { useOrderContractRead: getOid } = useContractsRead('applyOrderIds',[task_id, address])
     const { useOrderContractRead: getStages } = useContractsRead('getOrderStages',oid)
     const { useOrderContractRead: getStatus } = useContractsRead('orders',oid)
-    const { useOrderContractWrite: contract } = useContracts('confirmOrder')
+    const { useOrderContractWrite: contract, orderConfig } = useContracts('confirmOrder')
     const { useOrderContractWrite: stageComfirm } = useContracts('confirmOrderStage')
     const { useOrderContractWrite: stageReject } = useContracts('terminateStage')
     
@@ -29,11 +29,13 @@ function OrderDetail({router}) {
             oid = getOid.data.toString();
             setOid(oid)
         }
+        console.log(orderConfig);
     },[address])
 
     useEffect(() => {
         if (getStages.data !== undefined) {
             let data = getStages.data;
+            console.log("data==>",data);
             data.forEach((e, i) => {
                 let price = Number(e[0].toString()) / 1000000000000000000;
                 amount += price;

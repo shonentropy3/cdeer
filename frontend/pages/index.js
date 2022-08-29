@@ -17,13 +17,12 @@ export default function Home() {
   useEffect(() => {
     account = address;
     setAccount(account);
-    console.log(chain);
   },[])
 
   const domain = {
     name: 'Ether Mail',
     version: '1',
-    chainId: chain.id,
+    chainId: 31337,
     verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
   }
   
@@ -57,7 +56,7 @@ export default function Home() {
       domain: {
         name: 'Ether Mail',
         version: '1',
-        chainId: chain.id,
+        chainId: 31337,
         verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
       },
       types: {
