@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { createDemand,getHash } from '../../http/api';
-import { Input, Form, message, Button, Upload, notification, InputNumber, Modal } from 'antd';
+import { Input, Form, message, Button, Upload, notification, InputNumber, Modal, Cascader } from 'antd';
 import { UploadOutlined, WarningOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router'
 
@@ -27,12 +27,29 @@ function Publish() {
     let [account,setAccount] = useState()
     let [form_Data,form_DataSet] = useState()
     let [params,setParams] = useState({})
+    let [currency,setCurrency] = useState()
 
     useEffect(() => {
       inner[5].list = _data.market_role;
       inner[6].list = _data.pjc;
       setInner([...inner])
     },[])
+
+    const options = [
+      {
+        value: '1',
+        label: 'ETH'
+      },
+      {
+        value: '2',
+        label: 'BTC'
+      }
+    ]
+
+    const changeCurrency = (e) => {
+      currency = e[0] - 0;
+      setCurrency(currency);
+    }
 
     const showModal = () => {
       setIsModalVisible(true);
@@ -374,6 +391,7 @@ function Publish() {
                         }
                       })
                     }
+                    <Cascader options={options} onChange={(e) => changeCurrency(e)} placeholder="Please select" />
 
                     {buttonModel()}
 
