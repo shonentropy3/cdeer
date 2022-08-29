@@ -6,7 +6,8 @@ import { Modal, InputNumber, message, Button } from 'antd';
 import { useRouter } from 'next/router'
 
 import {
-  useAccount,
+  useAccount, 
+  useWaitForTransaction,
 } from 'wagmi' 
 import { useContracts } from '../../../controller/index';
 
@@ -15,6 +16,11 @@ export default function ProjectDetail() {
     const { useTaskContractWrite } = useContracts('applyFor')
     const [isModalVisible, setIsModalVisible] = useState(false);
     const router = useRouter()
+    let [hash,setHash] = useState('');
+
+    const { data, isError, isLoading } = useWaitForTransaction({
+      hash: hash,
+    })
     let [detail,detailSet] = useState({})
     let [param,setParam] = useState({count: '', phone: ''});
     let [params,setParams] = useState({})
@@ -67,12 +73,10 @@ export default function ProjectDetail() {
     const handleOk = async() => {
         params = {
             demandId: detail.id,
-            valuation: param,
+            valuation: param.count,
             address: address
         }
         setParams({...params})
-        console.log(params);
-        return
         useTaskContractWrite.write({
           recklesslySetUnpreparedArgs: [ 
             address, 
@@ -96,8 +100,16 @@ export default function ProjectDetail() {
           ''
       },[useTaskContractWrite.error])
 
+      useEffect(() => {
+        if (data !== undefined) {
+          console.log('===>',data);
+        }
+      },[data])
+
       const writeSuccess = () => {
         params.hash = useTaskContractWrite.data.hash
+        hash = params.hash;
+        setHash(hash)
         applyFor({proLabel: JSON.stringify(params)})
               .then(res => {
                 message.success('报名成功!')
@@ -187,7 +199,7 @@ export default function ProjectDetail() {
                             :
                             ''
                         }
-                        <p>项目描述: {detail.desc}</p>
+                        <p>项目描述: {detail.desc} {isLoading}</p>
                     </div>
                 </div>
             </div>
