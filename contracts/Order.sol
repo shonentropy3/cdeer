@@ -212,7 +212,10 @@ contract Order is IOrder, Ownable {
         uint8 v,
         bytes32 r,
         bytes32 s) public {
-        bytes32 structHash = keccak256(abi.encode(PERMITSTAGE_TYPEHASH, _orderId, _amounts, _periods, deadline));
+
+
+        bytes32 structHash = keccak256(abi.encode(PERMITSTAGE_TYPEHASH, _orderId,
+            keccak256(abi.encodePacked(_amounts)), keccak256(abi.encodePacked(_periods)), deadline));
         bytes32 digest = ECDSA.toTypedDataHash(DOMAIN_SEPARATOR, structHash);
 
         address recoveredAddress = ECDSA.recover(digest, v, r, s);

@@ -24,6 +24,7 @@ describe("Token", function () {
     let amounts = ["1"]
     let periods = ["1"] 
     let deadline = "99999999999"
+
     const sig = await signPermitStage(
       chainId,
       contract.address,
@@ -31,6 +32,7 @@ describe("Token", function () {
       orderId,
       amounts,
       periods,
+      // content,
       deadline,
     );
 
@@ -48,15 +50,5 @@ describe("Token", function () {
     await contract.permitStage(orderId,amounts,periods, deadline, v, r, s);
   });
 
-  // it("Should not allow minting if whitelist is not enabled in the contract (missing whitelist address in contract)", async function () {
-  //   let { chainId } = await ethers.provider.getNetwork();
-  //   const sig = signPermitStage(
-  //     chainId,
-  //     contract.address,
-  //     whitelistKey,
-  //     mintingKey.address
-  //   );
-  //   await expectRevert(contract.whitelistMint(sig), "whitelist not enabled");
-  // });
 
 });
