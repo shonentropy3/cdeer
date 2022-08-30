@@ -30,6 +30,7 @@ contract TaskMetadata is IMetadata {
         taskAddr = ITask(_task);
     }
 
+
     function tokenURI(uint256 tokenId) external view override returns (string memory) {
         string memory svgFormat = generateSVG(tokenId);
         return generateTokenUri(svgFormat);
