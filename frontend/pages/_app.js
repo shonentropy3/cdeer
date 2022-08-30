@@ -1,5 +1,5 @@
 import '../styles/globals.css'
-import Header from '../components/Header';
+import Header from './views/Header';
 import 'antd/dist/antd.css'
 // import '~antd/dist/antd.css';
 import '../styles/header.scss'

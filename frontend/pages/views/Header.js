@@ -2,7 +2,7 @@ import Link from 'next/link'
 import Router from "next/router"
 import { Dropdown, Menu, Button, Modal, Divider } from 'antd';
 import { useEffect, useState } from 'react';
-import Card from './Card';
+import Card from '../../components/Card';
 import {
     useAccount,
     useDisconnect,

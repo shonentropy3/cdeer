@@ -18,14 +18,14 @@ export class CommonController {
          })
     }
 
-    // @Get('download') //   下载文件
-    // async downloadFile(@Request() request: any){
-    //     let hash = request.query.hash;
-    //     return this.commonService.downloadFile(hash)
-    // }
     @Post('download') //   下载文件
     async downloadFile(@Body() body: any){
         this.commonService.downloadFile(body)
+    }
+
+    @Post('getHash') //   上传stage 获取hash
+    async getHash(@Body() body: any){
+        return await this.commonService.getStage(body)
     }
 
 }

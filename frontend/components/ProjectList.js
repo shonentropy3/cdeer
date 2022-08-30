@@ -45,16 +45,6 @@ function ProjectList(props) {
             demandId: e,
             applyAddr: currentAccount
         }
-        // await CancelApply(obj)
-        // .then(res => {
-        //     if (res.code) {
-        //       tradeStatus = false
-        //       message.error('交易失败!');
-        //     }else{
-        //       tradeStatus = true;
-        //       obj.hash = res.hash
-        //     }
-        // })
         if (tradeStatus) {
             cancelApply(obj)
               .then(res => {

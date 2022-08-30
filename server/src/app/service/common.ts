@@ -74,7 +74,8 @@ export class CommonService {
         return obj.hash
     }
 
-    downloadFile(body){     
+    // 下载
+    downloadFile(body: any){     
         const saveTo = fs.createWriteStream(join('Download', body.suffix))
 
         
@@ -88,6 +89,44 @@ export class CommonService {
         .catch(err => {
             return 'error'
         })
+    }
+
+    // Get stage hash
+    getStage(body: any){
+        return new Promise((resolve, reject) => {
+        let time = Date.now()+'.json'
+        let path = './cache_area'+'/'+time
+        fs.writeFile(path, body.obj, function (err) {
+            if (err) {
+                console.error(err);
+            }else{
+                let res = 'cache_area/'+ time
+                    
+                    ipfs.add(fs.readFileSync(res), function (err, files) {
+                        
+                        if (err || typeof files == "undefined") {
+                            console.log('Ipfs writeStream err==>', err);
+                        } else {
+                            let obj = {
+                                hash: files[0].hash,
+                                path: res
+                            }
+                            fs.unlink(res, (err) => {
+                                if (err) throw err;
+                            });
+                            resolve(obj)
+                        }
+                    })
+            }
+            
+        })
+    }).then(res=>{
+        return res
+    }).catch(() => {
+        return false
+    })
+        // return
+        // return body
     }
 
     // AxiosErrorTip

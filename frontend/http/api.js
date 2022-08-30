@@ -153,3 +153,13 @@ export const getMyNftlist = (data) => {
         data,
     })
 }
+
+
+// 获取stage hash
+export const getStagesHash = (data) => {
+    return serviceAxios({
+        url: "/common/getHash",
+        method: "post",
+        data
+    })
+}

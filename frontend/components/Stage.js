@@ -5,6 +5,7 @@ import { getOrderAmount } from '../controller/order';
 import { divideStage } from '../controller/order';
 import { useContracts } from '../controller';
 import { ethers } from 'ethers';
+import { getStagesHash } from '../http/api';
 export default function Stage(params){
     const { RangePicker } = DatePicker;
     const { oid } = params;
@@ -63,7 +64,10 @@ export default function Stage(params){
 
     const submit = async() => {
 
-        
+        let stageDetail = {
+            orderId: oid,
+            stages: []
+        };
         let amounts = [];
         let periods = [];
         let desc = [];
@@ -72,9 +76,28 @@ export default function Stage(params){
         // return
         stage.forEach(ele => {
             amounts.push(ele.price);
-            // periods.push(ele.date);
+            periods.push(1*24*60*60);
             desc.push(ele.dsc)
+            stageDetail.stages.push(
+                {
+                    milestone: {
+                        type: 'raw',
+                        content: ele.dsc
+                    },
+                    delivery: {
+                        type: 'ipfs',    //  暂时为ipfs
+                        hash: '',
+                        content: ''
+                    }
+                }
+            )
         })
+        getStagesHash({obj: JSON.stringify(stageDetail)})
+        .then(res => {
+            console.log(res.hash);
+        })
+        // console.log(stageDetail);
+        return
 
         // 遍历确认目前金额&&周期未超标
         let total = 0;
@@ -99,8 +122,7 @@ export default function Stage(params){
             _orderId: oid,
             _token: token,
             _amounts: amounts,
-            // _periods: periods,
-            _periods: [1*24*60*60],
+            _periods: periods,
             _desc: desc
         }
         let arr = []
