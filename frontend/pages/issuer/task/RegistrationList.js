@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useContracts, useContractsRead } from "../controller/index"
+import { useContracts, useContractsRead } from "../../../controller/index"
 import Link from "next/link";
 import { Button, Modal, InputNumber, message } from 'antd';
 import { ethers } from "ethers";

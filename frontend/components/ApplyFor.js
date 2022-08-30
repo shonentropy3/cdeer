@@ -56,26 +56,6 @@ export default function Attend(props) {
 
         currentAccount = await checkWalletIsConnected()
         setCurrentAccount(currentAccount)
-        // await ApplyProject(obj)
-        // .then(res => {
-        //     if (res) {
-        //         if (res.code) {
-        //           tradeStatus = false
-        //           message.error('交易失败!');
-        //         }else{
-                  
-        //           tradeStatus = true
-        //           obj = JSON.parse(obj)
-        //           obj.hash = res.hash
-        //           obj.applyAddr = currentAccount;
-        //           obj = JSON.stringify(obj)
-        //         }
-        //     }
-        // })
-        // .catch(err => {
-        //     console.log('err==>',err);
-        //     console.log('交易失败==>');
-        // })
 
         if (tradeStatus) {
             console.log('交易完成==>',obj);

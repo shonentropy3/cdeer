@@ -1,16 +1,12 @@
 import Link from 'next/link'
 import Router from "next/router"
 import { Dropdown, Menu, Button, Modal, Divider } from 'antd';
-
 import { useEffect, useState } from 'react';
-import Card from '../../components/Card';
-
+import Card from './Card';
 import {
     useAccount,
     useDisconnect,
   } from 'wagmi'
-
-
 
 
 function Header() {

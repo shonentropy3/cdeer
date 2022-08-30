@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import RegistrationList from '../../../components/RegistrationList'
+import RegistrationList from '../../issuer/task/RegistrationList'
 import style from '../../../styles/utils.module.scss'
 import { Menu, message, Switch, Empty } from 'antd';
 import NavigationBar from "../../../components/NavigationBar";
