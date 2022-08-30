@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react"
-import RegistrationList from '../../issuer/task/RegistrationList'
-import style from '../../../styles/utils.module.scss'
+import RegistrationList from './task/RegistrationList'
+import style from '../../styles/utils.module.scss'
 import { Menu, message, Switch, Empty } from 'antd';
-import NavigationBar from "../../../components/NavigationBar";
-import { getDemandInfo, modifyApplySwitch, getMyApplylist } from "../../../http/api";
-import { translatedPjc, translatedRole, sToDays } from '../../../utils/translated'
-import { useContracts } from "../../../controller";
+import NavigationBar from "../../components/NavigationBar";
+import { getDemandInfo, modifyApplySwitch, getMyApplylist } from "../../http/api";
+import { translatedPjc, translatedRole, sToDays } from '../../utils/translated'
+import { useContracts } from "../../controller";
 
 export default function OrderDetail(oid) {
 
