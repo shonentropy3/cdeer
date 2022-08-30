@@ -46,8 +46,6 @@ contract Order is IOrder, Ownable {
         uint amount;        // pay amount
         uint period;        // second
         StageStatus status;
-        // string milestone;   // TODO: only as event
-        string delivery;    // TODO: only as event
     }
 
     uint8 private maxStages = 12;
@@ -56,11 +54,11 @@ contract Order is IOrder, Ownable {
     event OrderCreated(uint indexed orderId, uint taskId, address issuer, address worker, address token, uint amount);
     event OrderModified(uint indexed orderId, address token, uint amount);
     event SetStage(uint indexed orderId, uint[] amounts, uint[] periods);
+    event AttachmentUpdated(uint indexed orderId, string attachment);
     event OrderStarted(uint taskId, uint orderId, address who);
     event ConfirmOrderStage(uint indexed orderId, uint stageIndex);
     event OrderAbort(uint indexed orderId, address who, uint stageIndex);
     event Withdraw(uint indexed orderId, uint amount);
-    event Delivery(uint indexed orderId, uint stageIndex, string delivery);
 
     uint private currOrderId;
 
@@ -92,22 +90,22 @@ contract Order is IOrder, Ownable {
         );
     }
 
-    function createOrder(Order memory _order) external {
-        require(msg.sender == ITask(task).ownerOf(_order.taskId), "No creating permission.");
-        require(address(0) != _order.worker, "Worker is zero address.");
+    function createOrder(uint _taskId, address _worker, address _token, uint _amount) external {
+        if(msg.sender != ITask(task).ownerOf(_taskId)) revert PermissionsError(); 
+        require(address(0) != _worker, "Worker is zero address.");
 
         currOrderId += 1;
         orders[currOrderId] = Order({
-            taskId: _order.taskId,
-            worker: _order.worker,
-            token: _order.token,
-            amount: _order.amount,
+            taskId: _taskId,
+            worker: _worker,
+            token: _token,
+            amount: _amount,
             progress: OrderProgess.Init,
             startDate: 0,
             payed: 0
         });
 
-        emit OrderCreated(currOrderId, _order.taskId, msg.sender, _order.worker, _order.token, _order.amount);
+        emit OrderCreated(currOrderId, _taskId, msg.sender, _worker, _token, _amount);
     }
 
     function updateOrder(uint orderId, address token, uint amount) external {
@@ -122,6 +120,7 @@ contract Order is IOrder, Ownable {
         orders[orderId].amount = amount;
 
         emit OrderModified(orderId, token, amount);
+        
     }
 
     function payOrder(uint orderId, uint amount) external payable {
@@ -139,25 +138,19 @@ contract Order is IOrder, Ownable {
         }
     }
 
-    function setStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods, string[] memory _milestones) external {
+    function setStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods, string memory _attachment) external {
         Order storage order = orders[_orderId];
         require(order.progress < OrderProgess.Started, "PROG_STARTED");
+        require(_amounts.length == _periods.length && _amounts.length != 0, "Wrong parameter length.");
+        require(maxStages >= _amounts.length, "Wrong parameter length.");
 
         if(order.worker != msg.sender && ITask(task).ownerOf(order.taskId) != msg.sender) revert PermissionsError();
 
-        doSetStage(_orderId, _amounts, _periods, _milestones);
         if (order.worker == msg.sender) {
             order.progress = OrderProgess.Staged;
         } else {
             order.progress = OrderProgess.Staging;
         }
-
-        emit SetStage(_orderId, _amounts, _periods);
-    }
-
-    function doSetStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods, string[] memory _milestones) internal {
-        require(_amounts.length == _periods.length && _amounts.length != 0, "Wrong parameter length.");
-        require(maxStages >= _amounts.length, "Wrong parameter length.");
 
         delete orderStages[_orderId];
         Stage[] storage stages = orderStages[_orderId];
@@ -166,13 +159,16 @@ contract Order is IOrder, Ownable {
             Stage memory pro = Stage ({
                 amount: _amounts[i],
                 period: _periods[i],
-                // milestone: _milestones[i],
-                status: StageStatus.Init,
-                delivery: ""
+                status: StageStatus.Init
             });
             stages.push(pro);
         }
+
+
+        emit SetStage(_orderId, _amounts, _periods);
+        emit AttachmentUpdated(_orderId, _attachment);
     }
+
 
     function appendStage(uint _orderId, uint amount, uint period, string calldata milestone, bytes calldata  _signature) external {
         
@@ -183,10 +179,10 @@ contract Order is IOrder, Ownable {
         
     }
 
-    function stageDelivery(uint _orderId, uint _stageIndex, string calldata delivery) external {
-        Stage[] storage stages = orderStages[_orderId];
-        stages[_stageIndex].delivery = delivery;
-        emit Delivery(_orderId, _stageIndex, delivery);
+    function stageDelivery(uint _orderId, string calldata _attachment) external {
+        Order memory order = orders[_orderId];
+        if(order.worker != msg.sender) revert PermissionsError();
+        emit AttachmentUpdated(_orderId, _attachment);
     }
 
     function checkAmount(uint orderId, Order storage order) internal {
@@ -205,30 +201,26 @@ contract Order is IOrder, Ownable {
         uint8 v,
         bytes32 r,
         bytes32 s) public {
-
+        
 
         bytes32 structHash = keccak256(abi.encode(PERMITSTAGE_TYPEHASH, _orderId,
             keccak256(abi.encodePacked(_amounts)), keccak256(abi.encodePacked(_periods)), deadline));
         bytes32 digest = ECDSA.toTypedDataHash(DOMAIN_SEPARATOR, structHash);
 
         address recoveredAddress = ECDSA.recover(digest, v, r, s);
-        require(recoveredAddress == address(0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266), "Invalid Signature");
         
-        // Order storage order = orders[_orderId];
-        // require(order.worker == recoveredAddress, "Invalid Worker Signature");
+        Order storage order = orders[_orderId];
+        require(order.worker == recoveredAddress, "Invalid Worker Signature");
         
-        // Stage[] storage stages = orderStages[_orderId];
-
-        // require(stages.length == _periods.length && _periods.length == _amounts.length, "mismatch");
+        Stage[] storage stages = orderStages[_orderId];
+        require(stages.length == _periods.length && _periods.length == _amounts.length, "mismatch");
         
-        // for ( uint i = 0; i < stages.length; i++) {
-        //     require(_amounts[i] == stages[i].amount, "mismatch amount");
-        //     require(_periods[i] == stages[i].period, "mismatch period");
-        // }
+        for ( uint i = 0; i < stages.length; i++) {
+            require(_amounts[i] == stages[i].amount, "mismatch amount");
+            require(_periods[i] == stages[i].period, "mismatch period");
+        }
 
-        // order.progress = OrderProgess.Staged;
-        // console.log("recoveredAddress", recoveredAddress);
-
+        order.progress = OrderProgess.Staged;
     }
 
 
