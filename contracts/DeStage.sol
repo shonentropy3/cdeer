@@ -1,7 +1,8 @@
 import "./interface/IOrder.sol";
 import "./libs/ECDSA.sol";
 
-contract Stage {
+//TODO: as upgradeable
+contract DeStage {
     error InvalidCaller();
 
     uint8 private maxStages = 12;
@@ -25,27 +26,11 @@ contract Stage {
     // orderId = >
     mapping(uint => Stage[]) private orderStages;
 
+    event ConfirmOrderStage(uint indexed orderId, uint stageIndex);
     event SetStage(uint indexed orderId, uint[] amounts, uint[] periods);
-
-    bytes32 public DOMAIN_SEPARATOR;
-    bytes32 public constant PERMITSTAGE_TYPEHASH = keccak256("PermitStage(uint256 orderId,uint256[] amounts,uint256[] periods,uint256 deadline)");
-
 
     constructor(address _order) {
         orderAddr = _order; 
-
-        DOMAIN_SEPARATOR = keccak256(
-            abi.encode(
-                keccak256(
-                    "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
-                ),
-                // This should match the domain you set in your client side signing.
-                keccak256(bytes("DetaskStage")),
-                keccak256(bytes("1")),
-                block.chainid,
-                address(this)
-            )
-        );
     }
 
     modifier onlyOrderCall() {
@@ -68,23 +53,17 @@ contract Stage {
             });
             stages.push(pro);
         }
-
-
         emit SetStage(_orderId, _amounts, _periods);
-        
     }
 
 
     function appendStage(uint _orderId, uint amount, uint period, string calldata milestone, bytes calldata  _signature) external {
-        
 
     }
 
     function prolongStage(uint _orderId, uint _stageIndex, uint newPeriod, bytes calldata _signature) external {
         
     }
-
-
 
     function totalAmount(uint orderId) external view returns(uint total)  {
         Stage[] storage stages = orderStages[orderId];
@@ -93,31 +72,15 @@ contract Stage {
         }
     }
 
-    function permitStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods,
-        uint deadline,
-        uint8 v,
-        bytes32 r,
-        bytes32 s) public {
-        
-
-        bytes32 structHash = keccak256(abi.encode(PERMITSTAGE_TYPEHASH, _orderId,
-            keccak256(abi.encodePacked(_amounts)), keccak256(abi.encodePacked(_periods)), deadline));
-        bytes32 digest = ECDSA.toTypedDataHash(DOMAIN_SEPARATOR, structHash);
-
-        address recoveredAddress = ECDSA.recover(digest, v, r, s);
-        
-        Order storage order = orders[_orderId];
-        require(order.worker == recoveredAddress, "Invalid Worker Signature");
-        
+    function checkStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods) external returns (bool) {
         Stage[] storage stages = orderStages[_orderId];
         require(stages.length == _periods.length && _periods.length == _amounts.length, "mismatch");
         
-        for ( uint i = 0; i < stages.length; i++) {
+        for(uint i = 0; i < stages.length; i++) {
             require(_amounts[i] == stages[i].amount, "mismatch amount");
             require(_periods[i] == stages[i].period, "mismatch period");
         }
-
-        order.progress = OrderProgess.Staged;
+        return true;
     }
 
     function startOrder(uint _orderId) external onlyOrderCall {
@@ -127,8 +90,36 @@ contract Stage {
         }
     }
 
-    function abortOrder(uint _orderId, address who) external onlyOrderCall returns(uint currStageIndex, uint issuerAmount, uint workerAmount) {
-        ( currStageIndex, uint stageStartDate) = currStage(_orderId);
+    function pendingWithdraw(uint _orderId) external view returns (uint pending, uint nextStage) {
+        Order memory order = IOrder(orderAddr).orders(_orderId);
+        uint lastStageEnd = order.startDate;
+
+        Stage[] memory stages = orderStages[_orderId];
+        uint nowTs = block.timestamp;
+        for ( uint i = 0; i < stages.length; i++) {
+            Stage memory stage = stages[i];
+            if(stage.status == StageStatus.Accepted || nowTs >= lastStageEnd + stage.period) {
+                pending += stage.amount;
+                nextStage = i+1;
+            }
+            lastStageEnd += stage.period;
+        }
+
+    }
+
+    function withdrawStage(uint _orderId, uint _nextStage) external onlyOrderCall {
+        Stage[] memory stages = orderStages[_orderId];
+
+        for ( uint i = 0; i < stages.length && i < _nextStage; i++) {
+            if (stages[i].status != StageStatus.Done) {
+                stages[i].status = StageStatus.Done;
+            }
+        }
+    }
+
+    function abortOrder(uint _orderId, bool issuerAbort) external onlyOrderCall returns(uint currStageIndex, uint issuerAmount, uint workerAmount) {
+        uint stageStartDate;
+        ( currStageIndex, stageStartDate) = currStage(_orderId);
 
         Stage[] storage stages = orderStages[_orderId];
 
@@ -140,11 +131,11 @@ contract Stage {
         }
 
         Stage storage stage = stages[currStageIndex];
-        if (order.worker == who) {
-            issuerAmount += stage.amount;
-        } else {
+        if (issuerAbort) {
             workerAmount += stage.amount * (block.timestamp - stageStartDate) / stage.period;
             issuerAmount += stage.amount * (stageStartDate + stage.period - block.timestamp) / stage.period;
+        } else {
+            issuerAmount += stage.amount;
         }
         stage.status = StageStatus.Aborted;
 
@@ -170,7 +161,7 @@ contract Stage {
         emit ConfirmOrderStage(_orderId, _stageIndex);
     }
 
-    function getOrderStages(uint _orderId) external view returns(Stage[] memory stages) {
+    function getStages(uint _orderId) external view returns(Stage[] memory stages) {
         return orderStages[_orderId];
     }
 
