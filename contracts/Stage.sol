@@ -1,14 +1,17 @@
+import "./interface/IOrder.sol";
+import "./libs/ECDSA.sol";
+
 contract Stage {
     error InvalidCaller();
 
     uint8 private maxStages = 12;
-    address private order;
+    address private orderAddr;
 
     enum StageStatus {
         Init,
         Delivered,
         Accepted,
-        Refused,
+        Aborted,
         Done       // withdrawed
     }
 
@@ -24,16 +27,14 @@ contract Stage {
 
     event SetStage(uint indexed orderId, uint[] amounts, uint[] periods);
 
-  
-
     bytes32 public DOMAIN_SEPARATOR;
     bytes32 public constant PERMITSTAGE_TYPEHASH = keccak256("PermitStage(uint256 orderId,uint256[] amounts,uint256[] periods,uint256 deadline)");
 
 
     constructor(address _order) {
-      order = _order; 
+        orderAddr = _order; 
 
-      DOMAIN_SEPARATOR = keccak256(
+        DOMAIN_SEPARATOR = keccak256(
             abi.encode(
                 keccak256(
                     "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
@@ -48,7 +49,7 @@ contract Stage {
     }
 
     modifier onlyOrderCall() {
-        if(msg.sender == order) revert InvalidCaller(); 
+        if(msg.sender == orderAddr) revert InvalidCaller(); 
         _;
     }
 
@@ -119,10 +120,37 @@ contract Stage {
         order.progress = OrderProgess.Staged;
     }
 
-    function startState(uint _orderId) external onlyOrderCall {
+    function startOrder(uint _orderId) external onlyOrderCall {
         Stage[] storage stages = orderStages[_orderId];
         if (stages[0].period == 0) {
             stages[0].status = StageStatus.Accepted;
+        }
+    }
+
+    function abortOrder(uint _orderId, address who) external onlyOrderCall returns(uint currStageIndex, uint issuerAmount, uint workerAmount) {
+        ( currStageIndex, uint stageStartDate) = currStage(_orderId);
+
+        Stage[] storage stages = orderStages[_orderId];
+
+        for (uint i = 0; i < currStageIndex; i++) {
+            if(stages[i].status != StageStatus.Done) {
+                workerAmount += stages[i].amount;
+                stages[i].status == StageStatus.Done;
+            }
+        }
+
+        Stage storage stage = stages[currStageIndex];
+        if (order.worker == who) {
+            issuerAmount += stage.amount;
+        } else {
+            workerAmount += stage.amount * (block.timestamp - stageStartDate) / stage.period;
+            issuerAmount += stage.amount * (stageStartDate + stage.period - block.timestamp) / stage.period;
+        }
+        stage.status = StageStatus.Aborted;
+
+        for (uint i = currStageIndex + 1; i < stages.length; i++) {
+            issuerAmount += stages[i].amount;
+            stages[i].status == StageStatus.Aborted;
         }
     }
 
@@ -146,9 +174,9 @@ contract Stage {
         return orderStages[_orderId];
     }
 
-    function getOngoingOrderStage(uint _orderId) public view returns (uint stageIndex, uint lastStageEnd) {
-        Order memory order = orders[_orderId];
-        lastStageEnd = order.startDate;
+    function currStage(uint _orderId) public view returns (uint stageIndex, uint stageStartDate) {
+        Order memory order = IOrder(orderAddr).orders(_orderId);
+        stageStartDate = order.startDate;
         require(order.progress == OrderProgess.Started, "UnOngoing");
 
         Stage[] storage stages = orderStages[_orderId];
@@ -156,11 +184,11 @@ contract Stage {
         uint i = 0;
         for (; i < stages.length; i++) {
             Stage storage stage = stages[i];
-            if(stage.status != StageStatus.Accepted && nowTs < lastStageEnd + stage.period) {
+            if(stage.status != StageStatus.Accepted && nowTs < stageStartDate + stage.period) {
                 stageIndex = i;
-                return (stageIndex, lastStageEnd);
+                return (stageIndex, stageStartDate);
             }
-            lastStageEnd += stage.period;
+            stageStartDate += stage.period;
         }
         revert("Order Ended");
     }

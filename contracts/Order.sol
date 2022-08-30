@@ -13,25 +13,7 @@ import "./libs/ECDSA.sol";
 contract Order is IOrder, Ownable {
     error PermissionsError();
 
-    enum OrderProgess {
-        Init,
-        Staging,   // Issuer Stage
-        Staged,    // Worker Stage
-        Started,
-        IssuerAbort,
-        WokerAbort,
-        Done
-    }
 
-    struct Order {
-        uint taskId;
-        address worker;
-        address token;
-        uint amount;
-        uint payed;
-        OrderProgess progress;   // PROG_*
-        uint startDate;
-    }
 
     address private task;
     address private stage;
@@ -53,7 +35,6 @@ contract Order is IOrder, Ownable {
 
     // taskId = > orderId
     mapping(uint => uint[]) private taskOrders;
-
 
 
     constructor(address _task, address _stage) {
@@ -125,9 +106,9 @@ contract Order is IOrder, Ownable {
     }
 
 
-    function stageDelivery(uint _orderId, string calldata _attachment) external {
+    function updateAttachment(uint _orderId, string calldata _attachment) external {
         Order memory order = orders[_orderId];
-        if(order.worker != msg.sender) revert PermissionsError();
+        if(order.worker != msg.sender && msg.sender != ITask(task).ownerOf(taskId)) revert PermissionsError();
         emit AttachmentUpdated(_orderId, _attachment);
     }
 
@@ -176,46 +157,25 @@ contract Order is IOrder, Ownable {
         taskOrders[order.taskId].push(_orderId);
         emit OrderStarted(order.taskId, _orderId, msg.sender);
         
-        IStage(stage).startState(_orderId);
+        IStage(stage).startOrder(_orderId);
     }
 
     // Abort And Settle
     function abortOrder(uint _orderId) external {
         Order storage order = orders[_orderId];
         address issuer = ITask(task).ownerOf(order.taskId);
-        if(order.worker != msg.sender && issuer != msg.sender) revert PermissionsError(); 
-
-        (uint currStageIndex, uint lastStageEnd) = getOngoingOrderStage(_orderId);
-
-        Stage[] storage stages = orderStages[_orderId];
-        uint forWorkerAmount;
-        uint forIssuerAmount;
-
-        for (uint i = 0; i < currStageIndex; i++) {
-            if(stages[i].status != StageStatus.Done) {
-                forWorkerAmount += stages[i].amount;
-                stages[i].status == StageStatus.Done;
-            }
-        }
-
-        Stage storage stage = stages[currStageIndex];
-        if (order.worker == msg.sender) {
-            forIssuerAmount += stage.amount;
+        if(order.worker == msg.sender) {
             order.progress = OrderProgess.WokerAbort;
-        } else {
-            forWorkerAmount += stage.amount * (block.timestamp - lastStageEnd) / stage.period;
-            forIssuerAmount += stage.amount * (lastStageEnd + stage.period - block.timestamp) / stage.period;
+        } else if (issuer != msg.sender) 
             order.progress = OrderProgess.IssuerAbort;
-        }
-        stage.status = StageStatus.Refused;
+        else {
+            revert PermissionsError(); 
+        } 
 
-        for (uint i = currStageIndex; i < stages.length; i++) {
-            forIssuerAmount += stages[i].amount;
-            stages[i].status == StageStatus.Refused;
-        }
+        (uint currStageIndex, uint issuerAmount, uint workerAmount) = IStage(stage).startOrder(_orderId);
 
         doTransfer(order.token, issuer, forIssuerAmount);
-        doTransfer(order.token, order.worker, forWorkerAmount);
+        doTransfer(order.token, order.worker, workerAmount);
 
         emit OrderAbort(_orderId, msg.sender, currStageIndex);
     }
