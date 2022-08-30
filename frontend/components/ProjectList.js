@@ -128,17 +128,17 @@ function ProjectList(props) {
         }else{
             // 我开发的项目
             return <>
-                        <Link href={{pathname:"/views/details/Project",search:data.id}}>
+                        <Link href={{pathname:"/developer/order/Info",search:data.id}}>
                         <button>项目详情</button>
                         </Link>
                         {<>
-                                <Popconfirm
-                                    title="Are you sure to delete this task?"
-                                    onConfirm={() => deletExploitation(data.id)}
-                                    okText="Yes"
-                                    cancelText="No" >
-                                    <button>取消报名</button>
-                                </Popconfirm>
+                            <Popconfirm
+                                title="Are you sure to delete this task?"
+                                onConfirm={() => deletExploitation(data.id)}
+                                okText="Yes"
+                                cancelText="No" >
+                                <button>取消报名</button>
+                            </Popconfirm>
                         </>}
                   </>
         }

@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react';
 import NavigationBar from "../../../components/NavigationBar";
 import Stage from '../../../components/Stage';
 import { useContractsRead } from "../../../controller/index"
-import StageWorker from './StageWorker';
+import StageWorker from '../../views/details/StageWorker';
 import { useAccount } from 'wagmi'
-import ComfirmStage from '../../developer/order/ConfirmStage';
+import ComfirmStage from './ConfirmStage';
 
 export default function Project_detail(params) {
 
