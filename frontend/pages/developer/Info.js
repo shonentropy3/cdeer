@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
-import { getDemandInfo, applyFor, getFile } from '../../../http/api';
-import NavigationBar from "../../../components/NavigationBar";
-import { translatedPjc, translatedRole, sToDays } from '../../../utils/translated';
+import { getDemandInfo, applyFor, getFile } from '../../http/api';
+import NavigationBar from "../../components/NavigationBar";
+import { translatedPjc, translatedRole, sToDays } from '../../utils/translated';
 import { Modal, InputNumber, message, Button } from 'antd';
 import { useRouter } from 'next/router'
 
@@ -9,7 +9,7 @@ import {
   useAccount, 
   useWaitForTransaction,
 } from 'wagmi' 
-import { useContracts } from '../../../controller/index';
+import { useContracts } from '../../controller/index';
 
 export default function ProjectDetail() {
     const { address, connector, isConnected } = useAccount()
