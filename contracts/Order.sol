@@ -4,15 +4,13 @@ pragma solidity ^0.8.0;
 
 import "./interface/ITask.sol";
 import "./interface/IOrder.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import './libs/TransferHelper.sol';
 import "./libs/ECDSA.sol";
 
 
-// TODO:考虑阶段甲方确认后，修改后续阶段的问题
 contract Order is IOrder, Ownable {
+    error PermissionsError();
 
     enum OrderProgess {
         Init,
@@ -48,27 +46,23 @@ contract Order is IOrder, Ownable {
         uint amount;        // pay amount
         uint period;        // second
         StageStatus status;
-        string milestone;   // TODO: only as event
+        // string milestone;   // TODO: only as event
         string delivery;    // TODO: only as event
     }
 
     uint8 private maxStages = 12;
     address private task;
 
-    using Counters for Counters.Counter;
-
-    event OrderCreated(uint indexed orderId, uint indexed taskId, address indexed issuer, address worker, address token, uint amount);
-    event OrderModified(uint orderId, address token, uint amount);
-    event SetStage(uint indexed orderId, address worker, uint[] amounts, uint[] periods);
+    event OrderCreated(uint indexed orderId, uint taskId, address issuer, address worker, address token, uint amount);
+    event OrderModified(uint indexed orderId, address token, uint amount);
+    event SetStage(uint indexed orderId, uint[] amounts, uint[] periods);
     event OrderStarted(uint taskId, uint orderId, address who);
-    event ConfirmOrderStage(uint indexed orderId, address issuer, uint stageIndex);
-    event OrderAbort(uint indexed orderId, address user, uint stageIndex);
-    event Withdraw(uint indexed orderId, address worker, uint amount);
-    event Delivery(address worker, uint orderId, uint stageIndex, string delivery);
+    event ConfirmOrderStage(uint indexed orderId, uint stageIndex);
+    event OrderAbort(uint indexed orderId, address who, uint stageIndex);
+    event Withdraw(uint indexed orderId, uint amount);
+    event Delivery(uint indexed orderId, uint stageIndex, string delivery);
 
-    Counters.Counter private orderIds;
-
-
+    uint private currOrderId;
 
     // orderId  = > 
     mapping(uint => Order) public orders;
@@ -102,9 +96,8 @@ contract Order is IOrder, Ownable {
         require(msg.sender == ITask(task).ownerOf(_order.taskId), "No creating permission.");
         require(address(0) != _order.worker, "Worker is zero address.");
 
-        orderIds.increment();
-        uint orderId = orderIds.current();
-        orders[orderId] = Order({
+        currOrderId += 1;
+        orders[currOrderId] = Order({
             taskId: _order.taskId,
             worker: _order.worker,
             token: _order.token,
@@ -114,13 +107,13 @@ contract Order is IOrder, Ownable {
             payed: 0
         });
 
-        emit OrderCreated(orderId, _order.taskId, msg.sender, _order.worker, _order.token, _order.amount);
+        emit OrderCreated(currOrderId, _order.taskId, msg.sender, _order.worker, _order.token, _order.amount);
     }
 
     function updateOrder(uint orderId, address token, uint amount) external {
         Order storage order = orders[orderId];
         require(order.progress < OrderProgess.Started, "PROG_STARTED");
-        require(msg.sender == ITask(task).ownerOf(order.taskId), "No creating permission.");
+        if(msg.sender != ITask(task).ownerOf(order.taskId)) revert PermissionsError(); 
 
         if (order.payed > 0 && orders[orderId].token != token) {
             refund(orderId, msg.sender, order.payed);
@@ -133,7 +126,7 @@ contract Order is IOrder, Ownable {
 
     function payOrder(uint orderId, uint amount) external payable {
         Order storage order = orders[orderId];
-        require(ITask(task).ownerOf(order.taskId) == msg.sender, "No permission.");
+        if(msg.sender != ITask(task).ownerOf(order.taskId)) revert PermissionsError(); 
 
         uint needPayAmount = order.amount - order.payed;
         address token = order.token;
@@ -150,7 +143,7 @@ contract Order is IOrder, Ownable {
         Order storage order = orders[_orderId];
         require(order.progress < OrderProgess.Started, "PROG_STARTED");
 
-        require(order.worker == msg.sender || ITask(task).ownerOf(order.taskId) == msg.sender, "No permission.");
+        if(order.worker != msg.sender && ITask(task).ownerOf(order.taskId) != msg.sender) revert PermissionsError();
 
         doSetStage(_orderId, _amounts, _periods, _milestones);
         if (order.worker == msg.sender) {
@@ -159,7 +152,7 @@ contract Order is IOrder, Ownable {
             order.progress = OrderProgess.Staging;
         }
 
-        emit SetStage(_orderId, msg.sender, _amounts, _periods);
+        emit SetStage(_orderId, _amounts, _periods);
     }
 
     function doSetStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods, string[] memory _milestones) internal {
@@ -173,7 +166,7 @@ contract Order is IOrder, Ownable {
             Stage memory pro = Stage ({
                 amount: _amounts[i],
                 period: _periods[i],
-                milestone: _milestones[i],
+                // milestone: _milestones[i],
                 status: StageStatus.Init,
                 delivery: ""
             });
@@ -193,7 +186,7 @@ contract Order is IOrder, Ownable {
     function stageDelivery(uint _orderId, uint _stageIndex, string calldata delivery) external {
         Stage[] storage stages = orderStages[_orderId];
         stages[_stageIndex].delivery = delivery;
-        emit Delivery(msg.sender, _orderId, _stageIndex, delivery);
+        emit Delivery(_orderId, _stageIndex, delivery);
     }
 
     function checkAmount(uint orderId, Order storage order) internal {
@@ -242,7 +235,7 @@ contract Order is IOrder, Ownable {
     function issuerStartOrder(uint _orderId) external payable {
         Order storage order = orders[_orderId];
         uint taskId = order.taskId;
-        require(msg.sender == ITask(task).ownerOf(taskId), "No permission.");
+        if(msg.sender != ITask(task).ownerOf(taskId)) revert PermissionsError(); 
         require(order.progress == OrderProgess.Staged, "Need worker confirm");
         checkAmount(_orderId, order);
 
@@ -264,7 +257,7 @@ contract Order is IOrder, Ownable {
     function workerStartOrder(uint _orderId) external {
         Order storage order = orders[_orderId];
         uint taskId = order.taskId;
-        require(order.worker == msg.sender, "No permission.");
+        if(msg.sender != order.worker ) revert PermissionsError(); 
         require(order.progress == OrderProgess.Staging, "Need Issuer confirm");
         require(order.payed >= order.amount, "Need Pay");
 
@@ -290,7 +283,7 @@ contract Order is IOrder, Ownable {
     // confirm must continuous
     function confirmOrderStage(uint _orderId, uint _stageIndex) external {
         uint taskId = orders[_orderId].taskId;
-        require(msg.sender == ITask(task).ownerOf(taskId), "No confirming permission.");
+        if(msg.sender != ITask(task).ownerOf(taskId)) revert PermissionsError(); 
         require(orderStages[_orderId][_stageIndex].status != StageStatus.Done, "Done");
 
         if (_stageIndex == 0) {
@@ -300,7 +293,7 @@ contract Order is IOrder, Ownable {
             orderStages[_orderId][_stageIndex].status = StageStatus.Accepted;
         }
         
-        emit ConfirmOrderStage(_orderId, msg.sender, _stageIndex);
+        emit ConfirmOrderStage(_orderId, _stageIndex);
     }
 
     function getOrderStages(uint _orderId) external view returns(Stage[] memory stages) {
@@ -330,7 +323,7 @@ contract Order is IOrder, Ownable {
     function abortOrder(uint _orderId) external {
         Order storage order = orders[_orderId];
         address issuer = ITask(task).ownerOf(order.taskId);
-        require(order.worker == msg.sender || issuer == msg.sender, "No terminate permission.");
+        if(order.worker != msg.sender && issuer != msg.sender) revert PermissionsError(); 
 
         (uint currStageIndex, uint lastStageEnd) = getOngoingOrderStage(_orderId);
 
@@ -369,7 +362,7 @@ contract Order is IOrder, Ownable {
 
     function refund(uint _orderId, address _to, uint _amount) public {
         Order storage order = orders[_orderId];
-        require(msg.sender == ITask(task).ownerOf(order.taskId), "No permission.");
+        if(msg.sender != ITask(task).ownerOf(order.taskId)) revert PermissionsError(); 
 
         order.payed -= _amount;
         doTransfer(order.token, _to, _amount);
@@ -382,7 +375,7 @@ contract Order is IOrder, Ownable {
     // TODO:项目需要抽成
     function withdraw(uint _orderId) external {
         Order storage order = orders[_orderId];
-        require(order.worker == msg.sender, "No permission.");
+        if(order.worker != msg.sender) revert PermissionsError(); 
         require(order.progress >= OrderProgess.Started, "order Unstarted");
 
 
@@ -403,7 +396,7 @@ contract Order is IOrder, Ownable {
 
         doTransfer(order.token, msg.sender, pendingWithdraw);
 
-        emit Withdraw(_orderId, msg.sender, pendingWithdraw);
+        emit Withdraw(_orderId, pendingWithdraw);
     }
 
     function hasTaskOrders(uint taskId) external view override  returns (bool hasTaskOrders_){
