@@ -68,11 +68,11 @@ export default function Stage(params){
         let periods = [];
         let desc = [];
         
-        console.log(stage);
-        return
+        // console.log(stage);
+        // return
         stage.forEach(ele => {
             amounts.push(ele.price);
-            periods.push(ele.date);
+            // periods.push(ele.date);
             desc.push(ele.dsc)
         })
 
@@ -91,15 +91,16 @@ export default function Stage(params){
         }
 
         // 将天转换为秒
-        periods.forEach((e,i) => {
-            periods[i] = e * 24 * 60 * 60
-        })
+        // periods.forEach((e,i) => {
+        //     periods[i] = e * 24 * 60 * 60
+        // })
         
         let obj = {
             _orderId: oid,
             _token: token,
             _amounts: amounts,
-            _periods: periods,
+            // _periods: periods,
+            _periods: [1*24*60*60],
             _desc: desc
         }
         let arr = []
@@ -111,10 +112,10 @@ export default function Stage(params){
                 oid, 
                 token, 
                 arr, 
-                desc, 
-                periods
+                desc,
+                [1*24*60*60]
             ]
-        })
+        })  
     }
 
     const writeSuccess = () => {

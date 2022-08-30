@@ -5,6 +5,7 @@ import Stage from '../../../components/Stage';
 import { useContractsRead } from "../../../controller/index"
 import StageWorker from './StageWorker';
 import { useAccount } from 'wagmi'
+import ComfirmStage from '../../developer/order/ConfirmStage';
 
 export default function Project_detail(params) {
 
@@ -26,7 +27,7 @@ export default function Project_detail(params) {
             case 1:
                 return <Stage oid={oid} amoumt={amoumt} />
             case 2:
-                return <Button onClick={() => {setStateNum(1)}}>修改阶段</Button>
+                return <ComfirmStage />
             default:
                 return <StageWorker />
         }
