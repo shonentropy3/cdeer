@@ -69,7 +69,7 @@ function RegistrationList(params) {
               return  <button onClick={() => showModal()}>修改订单</button>
           case 2:
               return  <div>
-                    <Link href={{pathname:"/views/details/Stage",query:{address: data.apply_addr,task_id: Number(data.task_id)}}}>
+                    <Link href={{pathname:"/issuer/order/Info",query:{address: data.apply_addr,task_id: Number(data.task_id)}}}>
                         <button>阶段详情</button>
                     </Link>
               </div>
@@ -94,6 +94,7 @@ function RegistrationList(params) {
           }else{
               stage = 2
           }
+          console.log(stage);
           setStage(stage)
         }
     },[oid])
