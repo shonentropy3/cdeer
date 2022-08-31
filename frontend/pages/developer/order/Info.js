@@ -6,6 +6,7 @@ import { useContractsRead } from "../../../controller/index"
 import StageWorker from './StageWorker';
 import { useAccount } from 'wagmi'
 import ComfirmStage from './ConfirmStage';
+import { getDemandInfo } from '../../../http/api';
 
 export default function Project_detail(params) {
 
@@ -25,9 +26,9 @@ export default function Project_detail(params) {
             case 0:
                 return <h1>等待需求方确认</h1>
             case 1:
-                return <Stage oid={oid} amoumt={amoumt} />
+                return <Stage oid={oid} amoumt={amoumt} taskInfo={taskInfo} />
             case 2:
-                return <ComfirmStage />
+                return <ComfirmStage taskInfo={taskInfo}/>
             default:
                 return <StageWorker />
         }
@@ -38,11 +39,13 @@ export default function Project_detail(params) {
     let [oid,setOid] = useState()
     let [account,setAccount] = useState()
     let [amoumt,setAmoumt] = useState()
+    let [taskInfo,setTaskInfo] = useState({})
     const { address } = useAccount()
     const { useOrderContractRead: getOid } = useContractsRead('applyOrderIds',[demand_id, account])
     const { useOrderContractRead: getStage } = useContractsRead('orders',oid)
     
     useEffect(() => {
+        
         if (getOid.data !== undefined) {
             oid = getOid.data.toString();
             setOid(oid)
@@ -50,6 +53,11 @@ export default function Project_detail(params) {
                 stateNum = 0
                 setStateNum(stateNum)
             }
+            getDemandInfo({id: demand_id})
+            .then(res => {
+                taskInfo = res.data[0];
+                setTaskInfo({...taskInfo})
+            })
         }
     },[demand_id])
 

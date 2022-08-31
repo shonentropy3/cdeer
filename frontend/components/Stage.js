@@ -8,6 +8,7 @@ import { ethers } from 'ethers';
 import { getStagesHash } from '../http/api';
 export default function Stage(params){
     const { RangePicker } = DatePicker;
+    const { taskInfo } = params;
     const { oid } = params;
     const { amoumt } = params;
     const { TextArea } = Input;
@@ -63,10 +64,15 @@ export default function Stage(params){
     }
 
     const submit = async() => {
-
         let stageDetail = {
             orderId: oid,
-            stages: []
+            stages: [],
+            task: {
+                id: taskInfo.id,
+                title: taskInfo.title,
+                desc: taskInfo.desc,
+                attachment: taskInfo.attachment
+            }
         };
         let amounts = [];
         let periods = [];
@@ -94,10 +100,10 @@ export default function Stage(params){
         })
         getStagesHash({obj: JSON.stringify(stageDetail)})
         .then(res => {
-            console.log(res.hash);
+            console.log(res.hash);  // ipfs ==> TODO: 存入链上
         })
         // console.log(stageDetail);
-        return
+        // return
 
         // 遍历确认目前金额&&周期未超标
         let total = 0;
@@ -135,7 +141,7 @@ export default function Stage(params){
                 token, 
                 arr, 
                 desc,
-                [1*24*60*60]
+                periods
             ]
         })  
     }
