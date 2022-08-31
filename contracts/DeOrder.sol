@@ -50,9 +50,14 @@ contract DeOrder is IOrder, Ownable {
         );
     }
 
+    // TODO: 
+    function createOrderWithERC20Permit() external {
+
+    }
+
     function createOrder(uint _taskId, address _issuer, address _worker, address _token, uint _amount) external {
         require(address(0) != _worker, "Worker is zero address.");
-        require(address(0) != _issuer, "Worker is zero address.");
+        require(address(0) != _issuer, "Issuer is zero address.");
 
         currOrderId += 1;
         orders[currOrderId] = Order({
@@ -86,7 +91,7 @@ contract DeOrder is IOrder, Ownable {
         emit OrderModified(orderId, token, amount);
     }
 
-    function setStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods, string memory _attachment) external {
+    function setStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods) external {
         Order storage order = orders[_orderId];
         require(order.progress < OrderProgess.Started, "PROG_STARTED");
 
@@ -97,9 +102,8 @@ contract DeOrder is IOrder, Ownable {
         } else {
             order.progress = OrderProgess.Staging;
         }
-        emit AttachmentUpdated(_orderId, _attachment);
         
-        IStage(stage).setStage(_orderId, _amounts,_periods);
+        IStage(stage).setStage(_orderId, _amounts, _periods);
     }
 
     function permitStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods,
@@ -115,10 +119,13 @@ contract DeOrder is IOrder, Ownable {
         address recoveredAddress = ECDSA.recover(digest, v, r, s);
         
         Order storage order = orders[_orderId];
-        require(order.worker == recoveredAddress, "Invalid Worker Signature");
         
         if(IStage(stage).checkStage(_orderId, _amounts, _periods)) {
-            order.progress = OrderProgess.Staged;
+            if(order.worker == recoveredAddress) {
+                order.progress = OrderProgess.Staged;
+            } else {
+                order.progress = OrderProgess.Staging;
+            }
         }
     }
 

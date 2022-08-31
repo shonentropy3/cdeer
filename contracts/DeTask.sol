@@ -40,7 +40,6 @@ contract DeTask is SBTBase, Ownable {
     //报名信息: taskId => worker
     mapping(uint => mapping(address => uint)) private applyCosts;
 
-    //TODO: 项目NFT名称
     constructor() SBTBase("DeTask", "DeTask") {
         feeReceiver = msg.sender;
     }
