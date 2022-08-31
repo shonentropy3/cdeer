@@ -1,4 +1,5 @@
-import { Button, message } from "antd";
+import { Button, message, Modal, Upload, Input } from "antd";
+import { InfoCircleOutlined, UploadOutlined } from '@ant-design/icons';
 import { useEffect, useState } from "react"
 import { orderStage, withdraw } from "../../../controller/order";
 import { checkWalletIsConnected } from "../../../utils/checkWalletIsConnected";
@@ -10,6 +11,8 @@ import {
   } from 'wagmi'
 import { useContracts, useContractsRead } from "../../../controller";
 export default function StageWorker() {
+
+    const { TextArea } = Input;
     
     let [oid,setOid] = useState('');
     let [task_id,setTask_id] = useState('');
@@ -18,6 +21,22 @@ export default function StageWorker() {
     const { useOrderContractRead: getOid } = useContractsRead('applyOrderIds',[task_id, address])
     const { useOrderContractRead: getStages } = useContractsRead('getOrderStages',oid)
     const { useOrderContractWrite: withdraw } = useContracts('withdraw')
+
+    const [isModalVisible, setIsModalVisible] = useState(false);
+
+
+    const showModal = () => {
+      setIsModalVisible(true);
+    };
+  
+    const handleOk = () => {
+      setIsModalVisible(false);
+    };
+  
+    const handleCancel = () => {
+      setIsModalVisible(false);
+    };
+  
 
     // withdraw
     useEffect(() => {
@@ -85,6 +104,26 @@ export default function StageWorker() {
     },[])
 
     return <div className="StageContainer">
+            <Modal title="阶段交付" visible={isModalVisible} footer={null} onCancel={handleCancel}>
+                <div className="space">
+                    <p>相关文档<span>(选填)</span></p>
+                    <Upload
+                    listType="picture"
+                    maxCount={1}
+                    name="file"
+                    // onChange={handleChange}
+                    // customRequest={upload}
+                    >
+                        <Button icon={<UploadOutlined />}>Upload (Max: 1)</Button>
+                    </Upload>
+                </div>
+                <div className="space">
+                    <p>描述</p>
+                    <TextArea rows={4} placeholder="maxLength is 6" maxLength={6} />
+                </div>
+                
+                <Button type="primary">确认交付</Button>
+            </Modal>
             <div className="list">
                 {
                     arr.map((e,i) => 
@@ -105,6 +144,7 @@ export default function StageWorker() {
                                     {
                                         e.withdrawed ? <Button disabled>已提款</Button> : <Button type="primary" disabled={withdraw.isLoading} onClick={() => getWithdraw(i)}>阶段{i+1}提款</Button>
                                     }
+                                    <Button type="primary" onClick={showModal}>阶段{i+1}交付</Button>
                                 </div>
                              </div>
                         </div> )

@@ -54,10 +54,6 @@ export default function Stage(params){
         setStage([...stage])
     };
 
-    const setDate = (date, dateString, index, type) =>{
-        
-    }
-
     const getToken = (e) => {
         token = e.target.value;
         setToken(token)
@@ -71,8 +67,10 @@ export default function Stage(params){
                 id: taskInfo.id,
                 title: taskInfo.title,
                 desc: taskInfo.desc,
-                attachment: taskInfo.attachment
-            }
+                attachment: taskInfo.attachment,
+            },
+            last: '', //  jsonhash
+            version: '1.0'
         };
         let amounts = [];
         let periods = [];
@@ -91,8 +89,8 @@ export default function Stage(params){
                         content: ele.dsc
                     },
                     delivery: {
-                        type: 'ipfs',    //  暂时为ipfs
-                        hash: '',
+                        attachment: '',
+                        fileType: '',
                         content: ''
                     }
                 }
@@ -100,7 +98,7 @@ export default function Stage(params){
         })
         getStagesHash({obj: JSON.stringify(stageDetail)})
         .then(res => {
-            console.log(res.hash);  // ipfs ==> TODO: 存入链上
+            console.log(res.hash);  // ipfs ==> TODO: 存入链上 && 存入stageDetail.last
         })
         // console.log(stageDetail);
         // return
