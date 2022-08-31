@@ -1,11 +1,12 @@
 import "./interface/IOrder.sol";
-import "./libs/ECDSA.sol";
+
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 //TODO: as upgradeable
-contract DeStage {
+contract DeStage is Ownable {
     error InvalidCaller();
 
-    uint8 private maxStages = 12;
+    uint public maxStages = 12;
     address private orderAddr;
 
     enum StageStatus {
@@ -91,7 +92,7 @@ contract DeStage {
     }
 
     function pendingWithdraw(uint _orderId) external view returns (uint pending, uint nextStage) {
-        Order memory order = IOrder(orderAddr).orders(_orderId);
+        Order memory order = IOrder(orderAddr).getOrder(_orderId);
         uint lastStageEnd = order.startDate;
 
         Stage[] memory stages = orderStages[_orderId];
@@ -146,9 +147,7 @@ contract DeStage {
     }
 
         // confirm must continuous
-    function confirmStage(uint _orderId, uint _stageIndex) external {
-        uint taskId = orders[_orderId].taskId;
-        if(msg.sender != ITask(task).ownerOf(taskId)) revert PermissionsError(); 
+    function confirmStage(uint _orderId, uint _stageIndex) external onlyOrderCall {
         require(orderStages[_orderId][_stageIndex].status != StageStatus.Done, "Done");
 
         if (_stageIndex == 0) {
@@ -166,7 +165,7 @@ contract DeStage {
     }
 
     function currStage(uint _orderId) public view returns (uint stageIndex, uint stageStartDate) {
-        Order memory order = IOrder(orderAddr).orders(_orderId);
+        Order memory order = IOrder(orderAddr).getOrder(_orderId);
         stageStartDate = order.startDate;
         require(order.progress == OrderProgess.Started, "UnOngoing");
 
@@ -182,6 +181,10 @@ contract DeStage {
             stageStartDate += stage.period;
         }
         revert("Order Ended");
+    }
+
+    function modifyMaxStages(uint8 _maxStages) external onlyOwner {
+        maxStages = _maxStages;
     }
 
 }

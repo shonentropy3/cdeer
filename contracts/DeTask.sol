@@ -2,7 +2,6 @@
 
 pragma solidity ^0.8.0;
 
-import "./interface/IOrder.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./SBTBase.sol";
@@ -12,7 +11,7 @@ import "./interface/IMetadata.sol";
 import './libs/TransferHelper.sol';
 
 //TODO:1.报名限制数量(暂时取消了)，乙方，时间久远后考虑废弃之前报名数 
-contract Task is SBTBase, Ownable {
+contract DeTask is SBTBase, Ownable {
     // 手续费
     // uint private taskFee  = 1*10**17;
     uint private taskFee  = 0;
@@ -42,7 +41,7 @@ contract Task is SBTBase, Ownable {
     mapping(uint => mapping(address => uint)) private applyCosts;
 
     //TODO: 项目NFT名称
-    constructor() SBTBase("UpChain", "UpChain") {
+    constructor() SBTBase("DeTask", "DeTask") {
         feeReceiver = msg.sender;
     }
 
@@ -69,7 +68,6 @@ contract Task is SBTBase, Ownable {
 
     function modifyTask(uint taskId, TaskInfo memory task) external {
         require(msg.sender == ownerOf(taskId), "No permission.");
-        require(!IOrder(order).hasTaskOrders(taskId), "Existing orders.");
 
         TaskInfo storage taskInfo = tasks[taskId];
 

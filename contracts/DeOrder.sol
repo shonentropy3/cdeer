@@ -7,7 +7,7 @@ import "./interface/IOrder.sol";
 import "./interface/IStage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import './libs/TransferHelper.sol';
-
+import "./libs/ECDSA.sol";
 
 
 contract DeOrder is IOrder, Ownable {
@@ -27,10 +27,7 @@ contract DeOrder is IOrder, Ownable {
     uint private currOrderId;
 
     // orderId  = > 
-    mapping(uint => Order) public orders;
-
-    // taskId = > orderId
-    mapping(uint => uint[]) private taskOrders;
+    mapping(uint => Order) private orders;
 
     bytes32 public DOMAIN_SEPARATOR;
     bytes32 public constant PERMITSTAGE_TYPEHASH = keccak256("PermitStage(uint256 orderId,uint256[] amounts,uint256[] periods,uint256 deadline)");
@@ -69,6 +66,10 @@ contract DeOrder is IOrder, Ownable {
         });
 
         emit OrderCreated(currOrderId, _taskId, msg.sender, _worker, _token, _amount);
+    }
+
+    function getOrder(uint orderId) external view override returns (Order memory) {
+        return orders[orderId];
     }
 
     function updateOrder(uint orderId, address token, uint amount) external {
@@ -138,7 +139,7 @@ contract DeOrder is IOrder, Ownable {
 
     function updateAttachment(uint _orderId, string calldata _attachment) external {
         Order memory order = orders[_orderId];
-        if(order.worker != msg.sender && msg.sender != ITask(task).ownerOf(taskId)) revert PermissionsError();
+        if(order.worker != msg.sender && msg.sender != ITask(task).ownerOf(order.taskId)) revert PermissionsError();
         emit AttachmentUpdated(_orderId, _attachment);
     }
 
@@ -182,10 +183,17 @@ contract DeOrder is IOrder, Ownable {
         order.progress = OrderProgess.Started;
         order.startDate = block.timestamp;
 
-        taskOrders[order.taskId].push(_orderId);
         emit OrderStarted(order.taskId, _orderId, msg.sender);
         
         IStage(stage).startOrder(_orderId);
+    }
+
+    function confirmStage(uint _orderId, uint[] memory _stageIndexs) external {
+        uint taskId = orders[_orderId].taskId;
+        if(msg.sender != ITask(task).ownerOf(taskId)) revert PermissionsError(); 
+        for (uint i = 0; i < _stageIndexs.length; i++) {
+            IStage(stage).confirmStage(_orderId, _stageIndexs[i]);
+        }
     }
 
     // Abort And Settle
@@ -205,7 +213,7 @@ contract DeOrder is IOrder, Ownable {
         (uint currStageIndex, uint issuerAmount, uint workerAmount) = 
             IStage(stage).abortOrder(_orderId, issuerAbort);
 
-        doTransfer(order.token, issuer, forIssuerAmount);
+        doTransfer(order.token, issuer, issuerAmount);
         doTransfer(order.token, order.worker, workerAmount);
 
         emit OrderAbort(_orderId, msg.sender, currStageIndex);
@@ -239,21 +247,6 @@ contract DeOrder is IOrder, Ownable {
 
         emit Withdraw(_orderId, pending);
     }
-
-    function hasTaskOrders(uint taskId) external view override  returns (bool hasTaskOrders_){
-        uint[] memory ordersLength;
-        ordersLength = taskOrders[taskId];
-        if (ordersLength.length > 0) { 
-            hasTaskOrders_ = true;
-        } else {
-            hasTaskOrders_ = false;
-        } 
-    }
-
-    function modifyMaxStages(uint8 _maxStages) external onlyOwner {
-        maxStages = _maxStages;
-    }
-
 
     function doTransfer(address _token, address _to, uint _amount) private {
         if (_amount == 0) return;

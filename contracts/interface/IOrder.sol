@@ -23,6 +23,5 @@ struct Order {
 }
 
 interface IOrder {
-    function orders(uint _taskId) external view returns (Order memory);
-    function hasTaskOrders(uint _taskId) external view returns (bool);
+    function getOrder(uint _taskId) external view returns (Order memory);
 }
