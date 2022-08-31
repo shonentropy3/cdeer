@@ -13,7 +13,7 @@ enum OrderProgess {
 }
 
 struct Order {
-    uint taskId;
+    address issuer;
     address worker;
     address token;
     uint amount;
@@ -23,5 +23,5 @@ struct Order {
 }
 
 interface IOrder {
-    function getOrder(uint _taskId) external view returns (Order memory);
+    function getOrder(uint orderId) external view returns (Order memory);
 }

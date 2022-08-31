@@ -16,9 +16,9 @@ contract DeOrder is IOrder, Ownable {
     address private task;
     address private stage;
 
-    event OrderCreated(uint indexed orderId, uint taskId, address issuer, address worker, address token, uint amount);
+    event OrderCreated(uint indexed taskId, uint indexed orderId,  address issuer, address worker, address token, uint amount);
     event OrderModified(uint indexed orderId, address token, uint amount);
-    event OrderStarted(uint taskId, uint orderId, address who);
+    event OrderStarted(uint orderId, address who);
     event OrderAbort(uint indexed orderId, address who, uint stageIndex);
     event Withdraw(uint indexed orderId, uint amount);
 
@@ -50,13 +50,13 @@ contract DeOrder is IOrder, Ownable {
         );
     }
 
-    function createOrder(uint _taskId, address _worker, address _token, uint _amount) external {
-        if(msg.sender != ITask(task).ownerOf(_taskId)) revert PermissionsError(); 
+    function createOrder(uint _taskId, address _issuer, address _worker, address _token, uint _amount) external {
         require(address(0) != _worker, "Worker is zero address.");
+        require(address(0) != _issuer, "Worker is zero address.");
 
         currOrderId += 1;
         orders[currOrderId] = Order({
-            taskId: _taskId,
+            issuer: _issuer,
             worker: _worker,
             token: _token,
             amount: _amount,
@@ -65,7 +65,7 @@ contract DeOrder is IOrder, Ownable {
             payed: 0
         });
 
-        emit OrderCreated(currOrderId, _taskId, msg.sender, _worker, _token, _amount);
+        emit OrderCreated(_taskId, currOrderId, _issuer, _worker, _token, _amount);
     }
 
     function getOrder(uint orderId) external view override returns (Order memory) {
@@ -75,7 +75,7 @@ contract DeOrder is IOrder, Ownable {
     function updateOrder(uint orderId, address token, uint amount) external {
         Order storage order = orders[orderId];
         require(order.progress < OrderProgess.Started, "PROG_STARTED");
-        if(msg.sender != ITask(task).ownerOf(order.taskId)) revert PermissionsError(); 
+        if(msg.sender != order.issuer) revert PermissionsError(); 
 
         if (order.payed > 0 && orders[orderId].token != token) {
             refund(orderId, msg.sender, order.payed);
@@ -90,7 +90,7 @@ contract DeOrder is IOrder, Ownable {
         Order storage order = orders[_orderId];
         require(order.progress < OrderProgess.Started, "PROG_STARTED");
 
-        if(order.worker != msg.sender && ITask(task).ownerOf(order.taskId) != msg.sender) revert PermissionsError();
+        if(order.worker != msg.sender && order.issuer != msg.sender) revert PermissionsError();
 
         if (order.worker == msg.sender) {
             order.progress = OrderProgess.Staged;
@@ -122,9 +122,9 @@ contract DeOrder is IOrder, Ownable {
         }
     }
 
+    // anyone can pay for this order
     function payOrder(uint orderId, uint amount) external payable {
         Order storage order = orders[orderId];
-        if(msg.sender != ITask(task).ownerOf(order.taskId)) revert PermissionsError(); 
 
         uint needPayAmount = order.amount - order.payed;
         address token = order.token;
@@ -139,14 +139,13 @@ contract DeOrder is IOrder, Ownable {
 
     function updateAttachment(uint _orderId, string calldata _attachment) external {
         Order memory order = orders[_orderId];
-        if(order.worker != msg.sender && msg.sender != ITask(task).ownerOf(order.taskId)) revert PermissionsError();
+        if(order.worker != msg.sender && msg.sender != order.issuer) revert PermissionsError();
         emit AttachmentUpdated(_orderId, _attachment);
     }
 
     function issuerStartOrder(uint _orderId) external payable {
         Order storage order = orders[_orderId];
-        uint taskId = order.taskId;
-        if(msg.sender != ITask(task).ownerOf(taskId)) revert PermissionsError(); 
+        if(msg.sender != order.issuer) revert PermissionsError(); 
         require(order.progress == OrderProgess.Staged, "Need worker confirm");
         require(order.amount == IStage(stage).totalAmount(_orderId), "amount mismatch");
         
@@ -166,9 +165,9 @@ contract DeOrder is IOrder, Ownable {
         doStartOrder(_orderId, order);
     }
 
+    //TODO: transferFrom;
     function workerStartOrder(uint _orderId) external {
         Order storage order = orders[_orderId];
-        uint taskId = order.taskId;
         if(msg.sender != order.worker ) revert PermissionsError(); 
         require(order.progress == OrderProgess.Staging, "Need Issuer confirm");
         require(order.payed >= order.amount, "Need Pay");
@@ -183,14 +182,13 @@ contract DeOrder is IOrder, Ownable {
         order.progress = OrderProgess.Started;
         order.startDate = block.timestamp;
 
-        emit OrderStarted(order.taskId, _orderId, msg.sender);
+        emit OrderStarted(_orderId, msg.sender);
         
         IStage(stage).startOrder(_orderId);
     }
 
     function confirmStage(uint _orderId, uint[] memory _stageIndexs) external {
-        uint taskId = orders[_orderId].taskId;
-        if(msg.sender != ITask(task).ownerOf(taskId)) revert PermissionsError(); 
+        if(msg.sender != orders[_orderId].issuer) revert PermissionsError(); 
         for (uint i = 0; i < _stageIndexs.length; i++) {
             IStage(stage).confirmStage(_orderId, _stageIndexs[i]);
         }
@@ -199,11 +197,10 @@ contract DeOrder is IOrder, Ownable {
     // Abort And Settle
     function abortOrder(uint _orderId) external {
         Order storage order = orders[_orderId];
-        address issuer = ITask(task).ownerOf(order.taskId);
         bool issuerAbort;
         if(order.worker == msg.sender) {
             order.progress = OrderProgess.WokerAbort;
-        } else if (issuer != msg.sender) {
+        } else if (order.issuer == msg.sender) {
             order.progress = OrderProgess.IssuerAbort;
             issuerAbort = true;
         } else {
@@ -213,7 +210,7 @@ contract DeOrder is IOrder, Ownable {
         (uint currStageIndex, uint issuerAmount, uint workerAmount) = 
             IStage(stage).abortOrder(_orderId, issuerAbort);
 
-        doTransfer(order.token, issuer, issuerAmount);
+        doTransfer(order.token, order.issuer, issuerAmount);
         doTransfer(order.token, order.worker, workerAmount);
 
         emit OrderAbort(_orderId, msg.sender, currStageIndex);
@@ -221,7 +218,7 @@ contract DeOrder is IOrder, Ownable {
 
     function refund(uint _orderId, address _to, uint _amount) public {
         Order storage order = orders[_orderId];
-        if(msg.sender != ITask(task).ownerOf(order.taskId)) revert PermissionsError(); 
+        if(msg.sender != order.issuer) revert PermissionsError(); 
 
         order.payed -= _amount;
         doTransfer(order.token, _to, _amount);

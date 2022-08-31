@@ -104,11 +104,11 @@ contract DeTask is SBTBase, Ownable {
         emit CancelApply(taskId, msg.sender);
     }
 
-    function applyAndCancel(address who, uint[] memory taskIds, uint[] memory costs, uint[] memory cancelIds) external payable { 
-        uint applyNum = taskIds.length; 
+    function applyAndCancel(address who, uint[] memory _taskIds, uint[] memory costs, uint[] memory cancelIds) external payable { 
+        uint applyNum = _taskIds.length; 
         require(msg.value >= applyFee * applyNum, "low fee");
         for( uint i=0; i < applyNum; i++) {
-            doApply(who, taskIds[i], costs[i]);
+            doApply(who, _taskIds[i], costs[i]);
         }
 
         for( uint i=0; i < cancelIds.length; i++) {
