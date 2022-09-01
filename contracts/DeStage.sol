@@ -7,7 +7,7 @@ contract DeStage is Ownable {
     error InvalidCaller();
 
     uint public maxStages = 12;
-    address private orderAddr;
+    address public deOrder;
 
     enum StageStatus {
         Init,
@@ -28,17 +28,20 @@ contract DeStage is Ownable {
 
     event ConfirmOrderStage(uint indexed orderId, uint stageIndex);
     event SetStage(uint indexed orderId, uint[] amounts, uint[] periods);
+    event SetDeorder(address deorder);
+    event SetMaxStages(uint max);
 
     constructor(address _order) {
-        orderAddr = _order; 
+        deOrder = _order; 
+        emit SetDeorder(_order);
     }
 
-    modifier onlyOrderCall() {
-        if(msg.sender == orderAddr) revert InvalidCaller(); 
+    modifier onlyDeorder() {
+        if(msg.sender == deOrder) revert InvalidCaller(); 
         _;
     }
 
-    function setStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods) external onlyOrderCall {
+    function setStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods) external onlyDeorder {
         require(_amounts.length == _periods.length && _amounts.length != 0, "Wrong parameter length.");
         require(maxStages >= _amounts.length, "Wrong parameter length.");
 
@@ -60,7 +63,7 @@ contract DeStage is Ownable {
 
     }
 
-    function prolongStage(uint _orderId, uint _stageIndex, uint newPeriod) external onlyOrderCall {
+    function prolongStage(uint _orderId, uint _stageIndex, uint newPeriod) external onlyDeorder {
         Stage storage stage = orderStages[_orderId][_stageIndex];
         require(stage.status == StageStatus.Init, "invalid status");
         stage.period += newPeriod;
@@ -84,7 +87,7 @@ contract DeStage is Ownable {
         return true;
     }
 
-    function startOrder(uint _orderId) external onlyOrderCall {
+    function startOrder(uint _orderId) external onlyDeorder {
         Stage[] storage stages = orderStages[_orderId];
         if (stages[0].period == 0) {
             stages[0].status = StageStatus.Accepted;
@@ -92,7 +95,7 @@ contract DeStage is Ownable {
     }
 
     function pendingWithdraw(uint _orderId) external view returns (uint pending, uint nextStage) {
-        Order memory order = IOrder(orderAddr).getOrder(_orderId);
+        Order memory order = IOrder(deOrder).getOrder(_orderId);
         uint lastStageEnd = order.startDate;
 
         Stage[] memory stages = orderStages[_orderId];
@@ -108,7 +111,7 @@ contract DeStage is Ownable {
 
     }
 
-    function withdrawStage(uint _orderId, uint _nextStage) external onlyOrderCall {
+    function withdrawStage(uint _orderId, uint _nextStage) external onlyDeorder {
         Stage[] storage stages = orderStages[_orderId];
 
         for ( uint i = 0; i < stages.length && i < _nextStage; i++) {
@@ -118,7 +121,7 @@ contract DeStage is Ownable {
         }
     }
 
-    function abortOrder(uint _orderId, bool issuerAbort) external onlyOrderCall returns(uint currStageIndex, uint issuerAmount, uint workerAmount) {
+    function abortOrder(uint _orderId, bool issuerAbort) external onlyDeorder returns(uint currStageIndex, uint issuerAmount, uint workerAmount) {
         uint stageStartDate;
         ( currStageIndex, stageStartDate) = ongoingStage(_orderId);
 
@@ -147,7 +150,7 @@ contract DeStage is Ownable {
     }
 
         // confirm must continuous
-    function confirmStage(uint _orderId, uint _stageIndex) external onlyOrderCall {
+    function confirmStage(uint _orderId, uint _stageIndex) external onlyDeorder {
         require(orderStages[_orderId][_stageIndex].status != StageStatus.Withdrawed, "Done");
 
         if (_stageIndex == 0) {
@@ -169,7 +172,7 @@ contract DeStage is Ownable {
     }
 
     function ongoingStage(uint _orderId) public view returns (uint stageIndex, uint stageStartDate) {
-        Order memory order = IOrder(orderAddr).getOrder(_orderId);
+        Order memory order = IOrder(deOrder).getOrder(_orderId);
         stageStartDate = order.startDate;
         require(order.progress == OrderProgess.Ongoing, "UnOngoing");
 
@@ -188,8 +191,14 @@ contract DeStage is Ownable {
         revert("Order Ended");
     }
 
-    function modifyMaxStages(uint8 _maxStages) external onlyOwner {
+    function setMaxStages(uint8 _maxStages) external onlyOwner {
         maxStages = _maxStages;
+        emit SetMaxStages(_maxStages);
+    }
+
+    function setDeOrder(address _order) external onlyOwner {
+        deOrder = _order;
+        emit SetDeorder(_order);
     }
 
 }

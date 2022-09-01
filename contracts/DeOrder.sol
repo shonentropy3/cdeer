@@ -2,7 +2,6 @@
 
 pragma solidity ^0.8.0;
 
-import "./interface/ITask.sol";
 import "./interface/IOrder.sol";
 import "./interface/IStage.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/draft-IERC20Permit.sol";
@@ -19,8 +18,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
     uint public fee = 500;
     address public feeTo;
 
-    address private task;
-    address private stage;
+    address public deStage;
 
     event OrderCreated(uint indexed taskId, uint indexed orderId,  address issuer, address worker, address token, uint amount);
     event OrderModified(uint indexed orderId, address token, uint amount);
@@ -29,6 +27,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
     event Withdraw(uint indexed orderId, uint amount, uint stageIndex);
     event AttachmentUpdated(uint indexed orderId, string attachment);
     event FeeUpdated(uint fee, address feeTo);
+    event StageUpdated(address stage);
 
     uint private currOrderId;
 
@@ -42,9 +41,8 @@ contract DeOrder is IOrder, Multicall, Ownable {
 
     mapping(address => uint) public nonces;
 
-    constructor(address _task, address _stage) {
-        task = _task;
-        stage = _stage;
+    constructor() {
+        
         feeTo = msg.sender;
 
         DOMAIN_SEPARATOR = keccak256(
@@ -110,7 +108,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
             order.progress = OrderProgess.Staging;
         }
         
-        IStage(stage).setStage(_orderId, _amounts, _periods);
+        IStage(deStage).setStage(_orderId, _amounts, _periods);
     }
 
     function permitStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods,
@@ -138,7 +136,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
             revert("invalid user");
         }
         
-        require(IStage(stage).checkStage(_orderId, _amounts, _periods) == true, "mismatch amount");
+        require(IStage(deStage).checkStage(_orderId, _amounts, _periods) == true, "mismatch amount");
     }
 
 
@@ -160,7 +158,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
         } else if(order.issuer == msg.sender) {
             require(recoveredAddress == order.worker, "invalid user");
         } 
-        IStage(stage).prolongStage(_orderId, _stageIndex, _appendPeriod);
+        IStage(deStage).prolongStage(_orderId, _stageIndex, _appendPeriod);
     }
 
     function payOrderWithPermit(uint orderId, uint amount, uint deadline, uint8 v, bytes32 r, bytes32 s) external {
@@ -199,7 +197,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
             revert PermissionsError();
         }
         
-        require(order.amount == IStage(stage).totalAmount(_orderId), "amount mismatch");
+        require(order.amount == IStage(deStage).totalAmount(_orderId), "amount mismatch");
         // do pay
         if (order.payed < order.amount) {
             uint needPayAmount = order.amount - order.payed;
@@ -217,7 +215,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
         order.startDate = block.timestamp;
         emit OrderStarted(_orderId, msg.sender);
         
-        IStage(stage).startOrder(_orderId);
+        IStage(deStage).startOrder(_orderId);
     }
 
     function confirmStage(uint _orderId, uint[] memory _stageIndexs) external {
@@ -225,7 +223,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
 
         if(msg.sender != orders[_orderId].issuer) revert PermissionsError(); 
         for (uint i = 0; i < _stageIndexs.length; i++) {
-            IStage(stage).confirmStage(_orderId, _stageIndexs[i]);
+            IStage(deStage).confirmStage(_orderId, _stageIndexs[i]);
         }
     }
 
@@ -245,7 +243,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
         } 
 
         (uint currStageIndex, uint issuerAmount, uint workerAmount) = 
-            IStage(stage).abortOrder(_orderId, issuerAbort);
+            IStage(deStage).abortOrder(_orderId, issuerAbort);
 
         doTransfer(order.token, order.issuer, issuerAmount);
         doTransfer(order.token, order.worker, workerAmount);
@@ -271,7 +269,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
         require(order.progress == OrderProgess.Ongoing, "UnOngoing");
 
 
-        (uint pending, uint nextStage) = IStage(stage).pendingWithdraw(_orderId);
+        (uint pending, uint nextStage) = IStage(deStage).pendingWithdraw(_orderId);
         if (pending > 0) {
             if (fee > 0) {
                 uint feeAmount = pending * fee / FEE_BASE;
@@ -281,14 +279,14 @@ contract DeOrder is IOrder, Multicall, Ownable {
                 doTransfer(order.token, to, pending);
             }
             
-            IStage(stage).withdrawStage(_orderId, nextStage);
+            IStage(deStage).withdrawStage(_orderId, nextStage);
         }
         
         if (nextStage > 0) {
             emit Withdraw(_orderId, pending, nextStage - 1);
         }
         
-        if (nextStage >= IStage(stage).stagesLength(_orderId)) {
+        if (nextStage >= IStage(deStage).stagesLength(_orderId)) {
             order.progress = OrderProgess.Done;
         }
     }
@@ -312,5 +310,10 @@ contract DeOrder is IOrder, Multicall, Ownable {
         feeTo = _feeTo;
         emit FeeUpdated(_fee, _feeTo);
     } 
+
+    function setDeStage(address _stage) external onlyOwner {
+        deStage = _stage;
+        emit StageUpdated(_stage);
+    }
 
 }
