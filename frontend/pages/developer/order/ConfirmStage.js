@@ -1,12 +1,13 @@
 import { Button } from "antd";
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 import Stage from "../../../components/Stage";
 
 
 
 export default function comfirmStage(params) {
     
-    let [isWhom,setIsWhom] = useState(false);
+    // let [isWhom,setIsWhom] = useState(false);
+    const isWhom = true;
     
     return <div className="comfirmStage">
         <div className="content">

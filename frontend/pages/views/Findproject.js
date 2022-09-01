@@ -1,12 +1,12 @@
 import { useEffect, useState, } from 'react';
 import Link from "next/link"
 import { Spin, BackTop, Divider, Empty, Button } from 'antd';
-import { getDemand, getFilter } from '../http/api';
-import style from '../styles/utils.module.scss'
-import { translatedPjc, translatedRole, sToDays } from '../utils/translated';
+import { getDemand, getFilter } from '../../http/api';
+import style from '../../styles/utils.module.scss'
+import { translatedPjc, translatedRole, sToDays } from '../../utils/translated';
 import { useSignTypedData, useAccount, useNetwork } from 'wagmi'
 
-export default function Home() {
+export default function Findproject() {
 
   const { address, isConnecting, isDisconnected } = useAccount()
   const { chain, chains } = useNetwork()
@@ -218,7 +218,7 @@ export default function Home() {
   }
 
   // ============常量==>
-  const _data = require('../data/data.json')
+  const _data = require('../../data/data.json')
   const role = _data.market_role
   const pjc = _data.pjc
 

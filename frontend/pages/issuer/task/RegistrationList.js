@@ -11,8 +11,10 @@ function RegistrationList(params) {
     let [count,setCount] = useState(null);
     let [oid,setOid] = useState(null);
     let [stage,setStage] = useState();
+    let [taskID,setTaskID] = useState('');
+    let [applyAccount,setApplyAccount] = useState('');
     const { useOrderContractWrite } = useContracts('createOrder')
-    const { useOrderContractRead: getOid } = useContractsRead('applyOrderIds',[data.task_id, data.apply_addr])
+    const { useOrderContractRead: getOid } = useContractsRead('applyOrderIds',[taskID, applyAccount])
     const { useOrderContractRead: getStage } = useContractsRead('orders',oid)
 
     const showModal = () => {
@@ -49,6 +51,20 @@ function RegistrationList(params) {
           :
           ''
     },[useOrderContractWrite.isSuccess])
+
+    useEffect(() => {
+        data !== undefined ?
+            getData()
+            :
+            ''
+    },[data])
+
+    const getData = () => {
+        taskID = data.task_id
+        applyAccount = data.apply_addr
+        setTaskID(taskID)
+        setApplyAccount(applyAccount)
+    }
   
     const writeSuccess = () => {
       message.success('操作成功!')
@@ -94,7 +110,6 @@ function RegistrationList(params) {
           }else{
               stage = 2
           }
-          console.log(stage);
           setStage(stage)
         }
     },[oid])
@@ -108,16 +123,27 @@ function RegistrationList(params) {
             <div className="RegistrationList">
                 <div className="left">
                     <div>
-                        {data.apply_addr}
+                        {
+                            data !== undefined ? 
+                                data.apply_addr
+                                :
+                                ''
+                        }
                     </div>
                     <div>
-                        预估价:{data.price}
+                        预估价:
+                        {
+                            data !== undefined ? 
+                                data.price
+                                :
+                                ''
+                        }
                     </div>
                 </div>
                 <div className="right">
                     {print()}
                 </div>
-            </div>
+            </div>                                                                                                                                                                                                              
         </>
     )
 }
