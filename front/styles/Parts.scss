@@ -1,0 +1,83 @@
+.Header{
+    width: 100%;
+    .content{
+        width: 1280px;
+        height: 64px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        position: relative;
+        // background-color: aquamarine;
+        .header-logo{
+            width: 250px;
+            height: 100%;
+            // background-color: skyblue;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            .img{
+                width: 120px;
+                height: 64px;
+                background-color: black;
+                cursor: pointer;
+            }
+            p{
+                font-size: 35px;
+                font-style: italic;
+                font-weight: 800;
+                font-family: Tahoma,Helvetica,Arial,'宋体',sans-serif;;
+            }
+        }
+        .header-nav{
+            width: 300px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-left: 100px;
+            .li{
+                width: 120px;
+                height: 48px;
+                text-align: center;
+                line-height: 48px;
+                color: gray;
+                position: relative;
+                .line{
+                    // position: absolute;
+                    left: 10%;
+                    width: 0%;
+                    margin: 0 auto;
+                    height: 5px;
+                    border-radius: 5px;
+                    background-color: yellowgreen;
+                }
+            }
+            .li-active{
+                color: black;
+                font-weight: 500;
+            }
+        }
+        .header-info{
+            width: 170px;
+            position: absolute;
+            right: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            .img{
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                background-color: greenyellow;
+                cursor: pointer;
+            }
+            .btn{
+                width: 120px;
+                height: 48px;
+                border-radius: 4px;
+                background-color: black;
+                color: white;
+            }
+        }
+    }
+}
