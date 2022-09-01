@@ -9,9 +9,10 @@ import "@openzeppelin/contracts/token/ERC20/extensions/draft-IERC20Permit.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import './libs/TransferHelper.sol';
 import "./libs/ECDSA.sol";
+import './Multicall.sol';
 
 
-contract DeOrder is IOrder, Ownable {
+contract DeOrder is IOrder, Multicall, Ownable {
     error PermissionsError();
 
     uint public constant FEE_BASE = 10000;
@@ -184,8 +185,7 @@ contract DeOrder is IOrder, Ownable {
 
     // 提交交付
     function updateAttachment(uint _orderId, string calldata _attachment) external {
-        Order memory order = orders[_orderId];
-        if(order.worker != msg.sender && msg.sender != order.issuer) revert PermissionsError();
+        if(orders[_orderId].worker != msg.sender && orders[_orderId].issuer != msg.sender  ) revert PermissionsError();
         emit AttachmentUpdated(_orderId, _attachment);
     }
 
@@ -221,10 +221,9 @@ contract DeOrder is IOrder, Ownable {
     }
 
     function confirmStage(uint _orderId, uint[] memory _stageIndexs) external {
-        Order memory order = orders[_orderId];
-        require(order.progress == OrderProgess.Ongoing, "Progress Invalid");
+        require(orders[_orderId].progress == OrderProgess.Ongoing, "Progress Invalid");
 
-        if(msg.sender != order.issuer) revert PermissionsError(); 
+        if(msg.sender != orders[_orderId].issuer) revert PermissionsError(); 
         for (uint i = 0; i < _stageIndexs.length; i++) {
             IStage(stage).confirmStage(_orderId, _stageIndexs[i]);
         }
