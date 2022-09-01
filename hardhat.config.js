@@ -1,5 +1,6 @@
 require("@nomiclabs/hardhat-waffle");
-
+// npx hardhat size-contracts
+require('hardhat-contract-sizer');
 
 
 const fs = require('fs');
@@ -24,10 +25,20 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
  */
 module.exports = {
   solidity: "0.8.4",
+  // {
+  //   version: "0.8.15",
+  //   settings: {
+  //     optimizer: {
+  //       enabled: true,
+  //       // runs: 1000,
+  //     },
+  //   },
+  // },
   networks: {
     dev: {
       url: "http://127.0.0.1:8545",
       chainId: 31337,
+      gas: 12000000,
     },
     ropsten: {
       url: `https://ropsten.infura.io/v3/${infurakey}`,

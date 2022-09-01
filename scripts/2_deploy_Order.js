@@ -3,22 +3,21 @@
 const hre = require("hardhat");
 const { writeAbiAddr } = require('./artifact_log.js');
 
-const TaskAddr = require(`../deployments/${hre.network.name}/Task.json`);
+const TaskAddr = require(`../deployments/${hre.network.name}/DeTask.json`);
 
 async function main() {
     await hre.run('compile');
     const [owner] = await hre.ethers.getSigners();
 
-    const contractFactory = await hre.ethers.getContractFactory("Order");
+    const contractFactory = await hre.ethers.getContractFactory("DeOrder");
 
-    console.log("task address:", TaskAddr.address);
-    const order = await contractFactory.deploy(TaskAddr.address);
+    const order = await contractFactory.deploy();
 
     await order.deployed();
-    console.log("Order deployed to:", order.address);
+    console.log("DeOrder deployed to:", order.address);
 
-    let artifact = await artifacts.readArtifact("Order");
-    await writeAbiAddr(artifact, order.address, "Order", network.name);
+    let artifact = await artifacts.readArtifact("DeOrder");
+    await writeAbiAddr(artifact, order.address, "DeOrder", network.name);
 
 }
 

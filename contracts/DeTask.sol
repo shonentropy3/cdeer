@@ -2,7 +2,6 @@
 
 pragma solidity ^0.8.0;
 
-import "./interface/IOrder.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./SBTBase.sol";
@@ -11,8 +10,8 @@ import "./interface/ITask.sol";
 import "./interface/IMetadata.sol";
 import './libs/TransferHelper.sol';
 
-//TODO:1.报名限制数量(暂时取消了)，乙方，时间久远后考虑废弃之前报名数 
-contract Task is SBTBase, Ownable {
+
+contract DeTask is SBTBase, Ownable {
     // 手续费
     // uint private taskFee  = 1*10**17;
     uint private taskFee  = 0;
@@ -41,8 +40,7 @@ contract Task is SBTBase, Ownable {
     //报名信息: taskId => worker
     mapping(uint => mapping(address => uint)) private applyCosts;
 
-    //TODO: 项目NFT名称
-    constructor() SBTBase("UpChain", "UpChain") {
+    constructor() SBTBase("DeTask", "DeTask") {
         feeReceiver = msg.sender;
     }
 
@@ -69,7 +67,6 @@ contract Task is SBTBase, Ownable {
 
     function modifyTask(uint taskId, TaskInfo memory task) external {
         require(msg.sender == ownerOf(taskId), "No permission.");
-        require(!IOrder(order).hasTaskOrders(taskId), "Existing orders.");
 
         TaskInfo storage taskInfo = tasks[taskId];
 
@@ -106,11 +103,11 @@ contract Task is SBTBase, Ownable {
         emit CancelApply(taskId, msg.sender);
     }
 
-    function applyAndCancel(address who, uint[] memory taskIds, uint[] memory costs, uint[] memory cancelIds) external payable { 
-        uint applyNum = taskIds.length; 
+    function applyAndCancel(address who, uint[] memory _taskIds, uint[] memory costs, uint[] memory cancelIds) external payable { 
+        uint applyNum = _taskIds.length; 
         require(msg.value >= applyFee * applyNum, "low fee");
         for( uint i=0; i < applyNum; i++) {
-            doApply(who, taskIds[i], costs[i]);
+            doApply(who, _taskIds[i], costs[i]);
         }
 
         for( uint i=0; i < cancelIds.length; i++) {
