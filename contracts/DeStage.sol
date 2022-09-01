@@ -11,10 +11,9 @@ contract DeStage is Ownable {
 
     enum StageStatus {
         Init,
-        Delivered,
         Accepted,
         Aborted,
-        Done       // withdrawed
+        Withdrawed
     }
 
     //交付阶段
@@ -57,13 +56,14 @@ contract DeStage is Ownable {
         emit SetStage(_orderId, _amounts, _periods);
     }
 
-
     function appendStage(uint _orderId, uint amount, uint period, string calldata milestone, bytes calldata  _signature) external {
 
     }
 
-    function prolongStage(uint _orderId, uint _stageIndex, uint newPeriod, bytes calldata _signature) external {
-        
+    function prolongStage(uint _orderId, uint _stageIndex, uint newPeriod) external onlyOrderCall {
+        Stage storage stage = orderStages[_orderId][_stageIndex];
+        require(stage.status == StageStatus.Init, "invalid status");
+        stage.period += newPeriod;
     }
 
     function totalAmount(uint orderId) external view returns(uint total)  {
@@ -73,8 +73,8 @@ contract DeStage is Ownable {
         }
     }
 
-    function checkStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods) external returns (bool) {
-        Stage[] storage stages = orderStages[_orderId];
+    function checkStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods) external view returns (bool) {
+        Stage[] memory stages = orderStages[_orderId];
         require(stages.length == _periods.length && _periods.length == _amounts.length, "mismatch");
         
         for(uint i = 0; i < stages.length; i++) {
@@ -109,25 +109,25 @@ contract DeStage is Ownable {
     }
 
     function withdrawStage(uint _orderId, uint _nextStage) external onlyOrderCall {
-        Stage[] memory stages = orderStages[_orderId];
+        Stage[] storage stages = orderStages[_orderId];
 
         for ( uint i = 0; i < stages.length && i < _nextStage; i++) {
-            if (stages[i].status != StageStatus.Done) {
-                stages[i].status = StageStatus.Done;
+            if (stages[i].status != StageStatus.Withdrawed) {
+                stages[i].status = StageStatus.Withdrawed;
             }
         }
     }
 
     function abortOrder(uint _orderId, bool issuerAbort) external onlyOrderCall returns(uint currStageIndex, uint issuerAmount, uint workerAmount) {
         uint stageStartDate;
-        ( currStageIndex, stageStartDate) = currStage(_orderId);
+        ( currStageIndex, stageStartDate) = ongoingStage(_orderId);
 
         Stage[] storage stages = orderStages[_orderId];
 
         for (uint i = 0; i < currStageIndex; i++) {
-            if(stages[i].status != StageStatus.Done) {
+            if(stages[i].status != StageStatus.Withdrawed) {
                 workerAmount += stages[i].amount;
-                stages[i].status == StageStatus.Done;
+                stages[i].status == StageStatus.Withdrawed;
             }
         }
 
@@ -148,7 +148,7 @@ contract DeStage is Ownable {
 
         // confirm must continuous
     function confirmStage(uint _orderId, uint _stageIndex) external onlyOrderCall {
-        require(orderStages[_orderId][_stageIndex].status != StageStatus.Done, "Done");
+        require(orderStages[_orderId][_stageIndex].status != StageStatus.Withdrawed, "Done");
 
         if (_stageIndex == 0) {
             orderStages[_orderId][_stageIndex].status = StageStatus.Accepted;
@@ -160,26 +160,31 @@ contract DeStage is Ownable {
         emit ConfirmOrderStage(_orderId, _stageIndex);
     }
 
-    function getStages(uint _orderId) external view returns(Stage[] memory stages) {
-        return orderStages[_orderId];
+    function stagesLength(uint orderId) external view returns(uint len)  {
+        len = orderStages[orderId].length; 
     }
 
-    function currStage(uint _orderId) public view returns (uint stageIndex, uint stageStartDate) {
+    function getStages(uint _orderId) external view returns(Stage[] memory stages) {
+        stages = orderStages[_orderId];
+    }
+
+    function ongoingStage(uint _orderId) public view returns (uint stageIndex, uint stageStartDate) {
         Order memory order = IOrder(orderAddr).getOrder(_orderId);
         stageStartDate = order.startDate;
-        require(order.progress == OrderProgess.Started, "UnOngoing");
+        require(order.progress == OrderProgess.Ongoing, "UnOngoing");
 
         Stage[] storage stages = orderStages[_orderId];
         uint nowTs = block.timestamp;
         uint i = 0;
         for (; i < stages.length; i++) {
             Stage storage stage = stages[i];
-            if(stage.status != StageStatus.Accepted && nowTs < stageStartDate + stage.period) {
+            if(stage.status == StageStatus.Init && nowTs < stageStartDate + stage.period) {
                 stageIndex = i;
                 return (stageIndex, stageStartDate);
             }
             stageStartDate += stage.period;
         }
+        
         revert("Order Ended");
     }
 

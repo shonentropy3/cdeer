@@ -6,7 +6,7 @@ enum OrderProgess {
     Init,
     Staging,   // Issuer Stage
     Staged,    // Worker Stage
-    Started,
+    Ongoing,
     IssuerAbort,
     WokerAbort,
     Done

@@ -10,7 +10,7 @@ import "./interface/ITask.sol";
 import "./interface/IMetadata.sol";
 import './libs/TransferHelper.sol';
 
-//TODO:1.报名限制数量(暂时取消了)，乙方，时间久远后考虑废弃之前报名数 
+
 contract DeTask is SBTBase, Ownable {
     // 手续费
     // uint private taskFee  = 1*10**17;
