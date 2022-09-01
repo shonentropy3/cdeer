@@ -8,16 +8,16 @@ async function main() {
     const [owner] = await hre.ethers.getSigners();
     console.log("owner:",owner.address);
     
-    const contractFactory = await hre.ethers.getContractFactory("Task");
+    const contractFactory = await hre.ethers.getContractFactory("DeTask");
     const contract = await contractFactory.deploy();
     await contract.deployed();
-    console.log("Task deployed to:", contract.address);
+    console.log("DeTask deployed to:", contract.address);
     console.log("Owner address:", await contract.owner());
 
-    let artifactT21 = await artifacts.readArtifact("Task");
+    let artifactT21 = await artifacts.readArtifact("DeTask");
     task = new ethers.Contract(contract.address, 
         artifactT21.abi, owner);
-    await writeAbiAddr(artifactT21, contract.address, "Task", network.name);
+    await writeAbiAddr(artifactT21, contract.address, "DeTask", network.name);
 
 }
 
