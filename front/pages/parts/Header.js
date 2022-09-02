@@ -1,6 +1,6 @@
 import { Button } from 'antd';
 import Link from 'next/link'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Header() {
     
@@ -18,6 +18,16 @@ export default function Header() {
         })
         setSelectItem([...selectItem]);
     }
+
+    useEffect(() => {
+        selectItem.map(e => {
+            e.checked = false;
+            if (e.url === location.pathname) {
+                e.checked = true;
+            }
+        })
+        setSelectItem([...selectItem])
+    },[])
 
     return <div className="Header">
         <div className="content">

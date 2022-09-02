@@ -2,6 +2,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import { Button } from 'antd';
+import Link from 'next/link'
 
 export default function Home() {
   return (
@@ -18,8 +19,12 @@ export default function Home() {
           <div className="banner">
             <p className="banner-title">帮助你发现可信赖的开发者保障开发者的费用</p>
             <div className="banner-info">
-              <Button className="btn">发布需求</Button>
-              <Button className="btn">寻找项目</Button>
+              <Link href={{pathname:'/publish'}}>
+                <Button className="btn">发布需求</Button>
+              </Link>
+              <Link href={{pathname:'/projects'}}>
+                <Button className="btn">寻找项目</Button>
+              </Link>
             </div>
           </div>
 
