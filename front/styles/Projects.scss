@@ -1,0 +1,112 @@
+.Projects{
+    width: 1280px;
+    margin: 0 auto;
+    .search{
+        margin: 55px auto 20px;
+        position: relative;
+        .ant-input{
+            height: 68px;
+            border-radius: 8px;
+            font-size: 16px;
+            color: #999999;
+        }
+        .search-btn{
+            font-size: 30px;
+            color: #777777;
+            position: absolute;
+            right: 0;
+            top: 0;
+            cursor: pointer;
+            box-sizing: content-box;
+            padding: 19px 36px 19px 10px;
+        }
+    }
+    .tags{
+        
+        .tags-list{
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+           .tags-li{
+                width: 120px;
+                height: 48px;
+                text-align: center;
+                line-height: 48px;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+            .tags-li-active{
+                background-color: #EDEDED;
+            } 
+        }
+        
+    }
+    .items{
+        margin-top: 55px;
+        .item{
+            height: 154px;
+            padding: 27px;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: space-between;
+            border: 1px solid #777777;
+            .info{
+                display: flex;
+                align-items: center;
+                .info-img{
+                    width: 100px;
+                    height: 100px;
+                    background-color: cadetblue;
+                    margin-right: 21px;
+                }
+                .info-detail{
+                    .title{
+                        font-size: 24px;
+                        margin-bottom: 16px;
+                    }
+                    .tags{
+                        font-size: 18px;
+                        color: #666666;
+                        display: flex;
+                        align-items: center;
+                        span{
+                            font-size: 14px;
+                            background-color: #F0F0F0;
+                            border-radius: 4px;
+                            box-sizing: content-box;
+                            padding: 3px 5px;
+                            margin-left: 10px;
+                        }
+                    }
+                    .date{
+                        color: #FFBF82;
+                        font-size: 16px;
+                    }
+                }
+
+            }
+            .price{
+                p{
+                    font-size: 24px;
+                    color: #0049FF;
+                    font-weight: 500;
+                    margin-bottom: 21px;
+                }
+                .time{
+                    color: #999999;
+                    font-size: 18px;
+                    padding: 7px 10px;
+                    background-color: #F7F7F7;
+                    border-radius: 11px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-around;
+                    .time-icon{
+                        font-size: 24px;
+                    }
+                }
+            }
+        }
+    }
+}
