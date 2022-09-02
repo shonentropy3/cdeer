@@ -85,7 +85,7 @@ export default function Publish() {
                 return <Input className="inner" />;
 
             case 'textarea':
-                return <TextArea className="inner" autoSize />;
+                return <TextArea className="inner h150"  />;
 
             case 'model':
             return multiSelect(i)
@@ -139,6 +139,7 @@ export default function Publish() {
             }
             <Button type="primary" className="container-btn">确认发布</Button>
         </div>
+        <div className="mb80"></div>
 
         <Modal className="modal" title={projectType.title} footer={null} visible={isModalVisibleA} onCancel={handleCancelA}>
             <p>{projectType.subtitle}</p>
@@ -151,6 +152,7 @@ export default function Publish() {
                     )
                 }
             </div>
+            <Button className="btn" type="primary">保存</Button>
         </Modal>
 
         <Modal 

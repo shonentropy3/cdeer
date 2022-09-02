@@ -30,7 +30,7 @@
         padding: 44px 44px 30px;
         background-color: white;
         z-index: 222;
-        border: 1px solid #000;
+        border: 1px solid #777777;
         .container-li{
             margin-bottom: 21px;
             .li-title{
@@ -44,6 +44,9 @@
                 input{
                     min-height: 50px;
                 }
+            }
+            .h150{
+                height: 150px;
             }
             .w100{
                 width: 100%;
@@ -63,6 +66,9 @@
             width: 100%;
             height: 50px;
         }
+    }
+    .mb80{
+        height: 80px;
     }
 }
 
