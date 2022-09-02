@@ -42,6 +42,8 @@
                 line-height: 48px;
                 color: gray;
                 position: relative;
+                cursor: pointer;
+                transition: color 0.3s;
                 .line{
                     // position: absolute;
                     left: 10%;
@@ -50,11 +52,21 @@
                     height: 5px;
                     border-radius: 5px;
                     background-color: yellowgreen;
+                    transition: width 0.3s;
+                }
+                &:hover{
+                    color: rgb(25, 25, 133);
+                    .line{
+                        width: 80%;
+                    }
                 }
             }
             .li-active{
                 color: black;
                 font-weight: 500;
+                .line{
+                    width: 80% !important;
+                }
             }
         }
         .header-info{
