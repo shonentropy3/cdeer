@@ -2,16 +2,24 @@ import { Button, Modal } from 'antd';
 import Link from 'next/link'
 import { useEffect, useState } from 'react';
 
+import { Connector, useConnect, useAccount } from 'wagmi';
+
 export default function Header() {
+
+    const {connect,chainId,connectors,error,isLoading,pendingConnector} = useConnect()
+    const {isConnected, address} = useAccount()
     
     let [selectItem,setSelectItem] = useState([
         {title: '首页', url: '/', checked: true},
         {title: '寻找项目', url: '/projects', checked: false}
     ])
     const [isModalVisible, setIsModalVisible] = useState(false);
+    let [wagmi,setWagmi] = useState({})
+
 
     const showModal = () => {
       setIsModalVisible(true);
+
     };
   
     const handleCancel = () => {
@@ -38,6 +46,22 @@ export default function Header() {
         setSelectItem([...selectItem])
     },[])
 
+    useEffect(()=>{
+        if(isConnected){
+            wagmi = {
+                account: address.slice(0,5)+"..."+address.slice(38,42),
+                isActive: isConnected
+            }
+        }else{
+            wagmi = {
+                isActive: isConnected
+            }
+        }
+        setWagmi({...wagmi})
+    },[isConnected])
+
+
+
     return <div className="Header">
         <div className="content">
             <div className="header-logo">
@@ -59,7 +83,7 @@ export default function Header() {
             </div>
             <div className="header-info">
                 <div className="img"></div>
-                <Button className="btn" onClick={showModal}>连接钱包</Button>
+                <Button className="btn" onClick={showModal}>{wagmi.isActive?wagmi.account:"连接钱包"}</Button>
             </div>
         </div>
         <Modal 
@@ -69,8 +93,24 @@ export default function Header() {
             closable={false}
             onCancel={handleCancel}
         >
-            <Button>MetaMask</Button>
-            <Button>WalletConnect</Button>
+            
+            {/* <Button>MetaMask</Button> */}
+            {/* {
+                connectors.map((connector)=>{
+                    <Button key={connector.id} onClick={()=>connect({connector})}>
+                        {connector.name}
+                    </Button>
+                })
+            } */}
+            {connectors.map((connector) => (
+                <button
+                key={connector.id}
+                onClick={() => connect({ connector })}
+                >
+                {connector.name}
+                </button>
+            ))}
+            {/* <Button>WalletConnect</Button> */}
             {/* <Button>MetaMask</Button> */}
         </Modal>
     </div>

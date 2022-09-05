@@ -2,7 +2,6 @@ import { HttpService } from '@nestjs/axios';
 import { BadRequestException, Body, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { AxiosError } from 'axios';
 import { createWriteStream } from 'fs';
-import { join } from 'path/posix';
 import { from, map, Observable, tap, throwError, lastValueFrom } from 'rxjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';

@@ -20,7 +20,6 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "db": "rm -rf entities & npx typeorm-model-generator -h localhost -d code_market -p 5432 -u postgres -x yu123456 -e postgres -o src/entity --noConfig true --ce pascal --cp camel"
-
   },
   "dependencies": {
     "@nestjs/common": "^9.0.3",

@@ -154,12 +154,14 @@ function Publish() {
       let para= {"proLabel": JSON.stringify(params)}
       createDemand(para)
             .then(res => {
+              console.log(res.code);
               if (res.code == '200') {
                 message.success('创建成功');
                 setTimeout(() => {
                   router.push('/')
                 }, 500);
               }else{
+                // console.log(res);
                 message.error('连接超时');
               }
             })
