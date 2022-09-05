@@ -1,4 +1,4 @@
-import { Button } from 'antd';
+import { Button, Modal } from 'antd';
 import Link from 'next/link'
 import { useEffect, useState } from 'react';
 
@@ -8,6 +8,15 @@ export default function Header() {
         {title: '首页', url: '/', checked: true},
         {title: '寻找项目', url: '/projects', checked: false}
     ])
+    const [isModalVisible, setIsModalVisible] = useState(false);
+
+    const showModal = () => {
+      setIsModalVisible(true);
+    };
+  
+    const handleCancel = () => {
+      setIsModalVisible(false);
+    };
 
     const onchange = (title) => {
         selectItem.map((e,i) => {
@@ -50,8 +59,19 @@ export default function Header() {
             </div>
             <div className="header-info">
                 <div className="img"></div>
-                <Button className="btn">连接钱包</Button>
+                <Button className="btn" onClick={showModal}>连接钱包</Button>
             </div>
         </div>
+        <Modal 
+            title="连接钱包" 
+            footer={null} 
+            visible={isModalVisible} 
+            closable={false}
+            onCancel={handleCancel}
+        >
+            <Button>MetaMask</Button>
+            <Button>WalletConnect</Button>
+            {/* <Button>MetaMask</Button> */}
+        </Modal>
     </div>
 }
