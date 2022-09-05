@@ -17,6 +17,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
     error AmountError(uint reason); // 0: mismatch , 1: need pay
     error ParamError();
     error NonceError();
+    error Expired();
 
     uint public constant FEE_BASE = 10000;
     uint public fee = 500;
@@ -30,9 +31,9 @@ contract DeOrder is IOrder, Multicall, Ownable {
     mapping(address => uint) public nonces;
 
     bytes32 public DOMAIN_SEPARATOR;
-    bytes32 public constant PERMITSTAGE_TYPEHASH = keccak256("PermitStage(uint256 orderId,uint256[] amounts,uint256[] periods,uint256 nonce)");
-    bytes32 public constant PERMITPROSTAGE_TYPEHASH = keccak256("PermitProStage(uint256 orderId,uint256 stageIndex,uint256 period,uint256 nonce)");
-    bytes32 public constant PERMITAPPENDSTAGE_TYPEHASH = keccak256("PermitAppendStage(uint256 orderId,uint256 amount,uint256 period,uint256 nonce)");
+    bytes32 public constant PERMITSTAGE_TYPEHASH = keccak256("PermitStage(uint256 orderId,uint256[] amounts,uint256[] periods,uint256 nonce,uint deadline)");
+    bytes32 public constant PERMITPROSTAGE_TYPEHASH = keccak256("PermitProStage(uint256 orderId,uint256 stageIndex,uint256 period,uint256 nonce,uint deadline)");
+    bytes32 public constant PERMITAPPENDSTAGE_TYPEHASH = keccak256("PermitAppendStage(uint256 orderId,uint256 amount,uint256 period,uint256 nonce,uint deadline)");
 
     event OrderCreated(uint indexed taskId, uint indexed orderId,  address issuer, address worker, address token, uint amount);
     event OrderModified(uint indexed orderId, address token, uint amount);
@@ -113,6 +114,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
 
     function permitStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods,
         uint nonce,
+        uint deadline,
         uint8 v,
         bytes32 r,
         bytes32 s) public {
@@ -121,8 +123,8 @@ contract DeOrder is IOrder, Multicall, Ownable {
         if(order.progress >= OrderProgess.Ongoing) revert ProgressError();
 
         bytes32 structHash  = keccak256(abi.encode(PERMITSTAGE_TYPEHASH, _orderId,
-                keccak256(abi.encodePacked(_amounts)), keccak256(abi.encodePacked(_periods)), nonce));
-        address signAddr =recoverVerify(structHash, nonce, v , r, s);
+                keccak256(abi.encodePacked(_amounts)), keccak256(abi.encodePacked(_periods)), nonce, deadline));
+        address signAddr =recoverVerify(structHash, nonce, deadline, v , r, s);
 
         if(order.worker == signAddr && msg.sender == order.issuer) {
             order.progress = OrderProgess.Staged;
@@ -136,14 +138,14 @@ contract DeOrder is IOrder, Multicall, Ownable {
     }
 
     function prolongStage(uint _orderId, uint _stageIndex, uint _appendPeriod,
-        uint nonce, uint8 v, bytes32 r, bytes32 s) external {
+        uint nonce, uint deadline, uint8 v, bytes32 r, bytes32 s) external {
         Order memory order = orders[_orderId];
         if(order.progress != OrderProgess.Ongoing) revert ProgressError();
 
 
         bytes32 structHash = keccak256(abi.encode(PERMITPROSTAGE_TYPEHASH, _orderId,
-            _stageIndex, _appendPeriod, nonce));
-        address signAddr = recoverVerify(structHash, nonce, v , r, s);
+            _stageIndex, _appendPeriod, nonce, deadline));
+        address signAddr = recoverVerify(structHash, nonce, deadline, v , r, s);
 
         if((order.worker == msg.sender && signAddr == order.issuer) ||
             (order.issuer == msg.sender && signAddr == order.worker)) {
@@ -153,13 +155,13 @@ contract DeOrder is IOrder, Multicall, Ownable {
         } 
     }
 
-    function appendStage(uint _orderId, uint amount, uint period, uint nonce, uint8 v, bytes32 r, bytes32 s) external payable {
+    function appendStage(uint _orderId, uint amount, uint period, uint nonce, uint deadline, uint8 v, bytes32 r, bytes32 s) external payable {
         Order storage order = orders[_orderId];
         if(order.progress != OrderProgess.Ongoing) revert ProgressError();
 
         bytes32 structHash = keccak256(abi.encode(PERMITAPPENDSTAGE_TYPEHASH, _orderId,
-            amount, period, nonce));
-        address signAddr = recoverVerify(structHash, nonce, v , r, s);
+            amount, period, nonce, deadline));
+        address signAddr = recoverVerify(structHash, nonce, deadline, v , r, s);
 
         if((order.worker == msg.sender && signAddr == order.issuer) ||
             (order.issuer == msg.sender && signAddr == order.worker)) {
@@ -174,11 +176,12 @@ contract DeOrder is IOrder, Multicall, Ownable {
         IStage(deStage).appendStage(_orderId, amount, period);
     }
 
-    function recoverVerify(bytes32 structHash, uint nonce, uint8 v, bytes32 r, bytes32 s) internal returns (address signAddr){
+    function recoverVerify(bytes32 structHash, uint nonce, uint deadline, uint8 v, bytes32 r, bytes32 s) internal returns (address signAddr){
         bytes32 digest = ECDSA.toTypedDataHash(DOMAIN_SEPARATOR, structHash);
         signAddr = ECDSA.recover(digest, v, r, s);
 
         if(nonces[signAddr] != nonce) revert NonceError();
+        if(deadline < block.timestamp) revert Expired();
         nonces[signAddr] += 1;
     }
 

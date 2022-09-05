@@ -23,6 +23,7 @@ describe("Token", function () {
     let orderId = "1" 
     let amounts = ["1"]
     let periods = ["1"] 
+    let nonce = 0 // get from  DeOrder.nonces(addr)
     let deadline = "99999999999"
 
     const sig = await signPermitStage(
@@ -33,6 +34,7 @@ describe("Token", function () {
       amounts,
       periods,
       // content,
+      nonce,  
       deadline,
     );
 
