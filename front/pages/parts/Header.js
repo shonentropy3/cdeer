@@ -1,6 +1,46 @@
-import { Button, Modal } from 'antd';
+import { Button, Modal, Dropdown, Menu } from 'antd';
 import Link from 'next/link'
 import { useEffect, useState } from 'react';
+
+const menu = (
+    <Menu
+      items={[
+        {
+          key: '1',
+          label: (
+            <Link href={{pathname: '/myInfo'}}>
+                我的资料
+            </Link>
+          ),
+        },
+        {
+          key: '2',
+          label: (
+            <Link href={{pathname: '/'}}>
+              发布的项目
+            </Link>
+          ),
+        },
+        {
+          key: '3',
+          label: (
+            <Link href={{pathname: '/'}}>
+              参与的项目
+            </Link>
+            ),
+        },
+        {
+          key: '4',
+          label: (
+            <Link href={{pathname: '/'}}>
+                我的NFT
+            </Link>
+          ),
+        }
+      ]}
+    />
+  );
+  
 
 export default function Header() {
     
@@ -58,7 +98,11 @@ export default function Header() {
 
             </div>
             <div className="header-info">
-                <div className="img"></div>
+                <Dropdown overlay={menu} placement="bottom">
+                    {/* <a onClick={(e) => e.preventDefault()}> */}
+                        <div className="img"></div>
+                    {/* </a> */}
+                </Dropdown>
                 <Button className="btn" onClick={showModal}>连接钱包</Button>
             </div>
         </div>
