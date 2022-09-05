@@ -33,6 +33,18 @@
         border: 1px solid #777777;
         .container-li{
             margin-bottom: 21px;
+            button{
+                width: 710px;
+                height: 64px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #999999;
+                .anticon-folder-add{
+                    font-size: 32px;
+                    color: #777777;
+                }
+            }
             .li-title{
                 font-size: 16px;
                 font-weight: 500;

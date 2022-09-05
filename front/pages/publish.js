@@ -1,7 +1,18 @@
 import { useState } from "react"
-import { Input, Select, InputNumber, Button, Modal } from 'antd';
+import { 
+    Input, 
+    Select, 
+    InputNumber, 
+    Button, 
+    Modal, 
+    Upload, 
+    message 
+} from 'antd';
 const { TextArea } = Input;
 const { Option } = Select;
+import {
+    FolderAddOutlined
+  } from '@ant-design/icons';
 export default function Publish() {
 
     const [inner,setInner] = useState([
@@ -16,6 +27,8 @@ export default function Publish() {
     ])
     let [isModalVisibleA, setIsModalVisibleA] = useState(false);
     let [isModalVisibleB, setIsModalVisibleB] = useState(false);
+    let [fromdata,setFromdata] = useState();
+    let [suffix,setSuffix] = useState("");
 
     const skills = {
         title: '技能要求',
@@ -76,8 +89,6 @@ export default function Publish() {
                     }
                 </div>
     }
-    
-
 
     const print = (e,i) => {
         switch (e.type) {
@@ -97,9 +108,52 @@ export default function Publish() {
             return period
 
             default:
-                break;
+                return <Upload
+                            listType="picture"
+                            maxCount={1}
+                            name="file"
+                            onChange={handleChange}
+                            customRequest={upload}
+                        >
+                <Button icon={<FolderAddOutlined />}>上传项目需求文档（Word、Excel、PPT、PDF、图像、视频，20MB以内）</Button>
+              </Upload>
+                // <FolderAddOutlined />
         }
     }
+
+    const upload = async(info) => {
+        console.log(info.onProgress);
+        // info.onProgress()
+        var formData=new FormData();
+        formData.append('files',info.file);
+        fromdata = formData
+        setFromdata(fromdata)
+        return await new Promise ((resolve,reject)=>{
+          resolve(beforeUpload(info))
+       })
+       .then((res)=>{
+          res ? info.onSuccess() : info.onError()
+       })
+    }
+
+    const handleChange = (info) => {
+        suffix = info.file.name;
+        setSuffix(suffix);
+          if (info.file.status === 'done') {
+            message.success(`${info.file.name} file uploaded successfully`);
+          } else if (info.file.status === 'error') {
+            message.error(`${info.file.name} file upload failed.`);
+          } 
+    }
+    
+    const beforeUpload = (info) => {
+        const isLt2M = info.file.size / 1024 / 1024 < 20;
+        if (!isLt2M) {
+          message.error('Must smaller than 20MB!');
+          return false
+        }
+        return true
+    };
 
     const showModalA = () => {
         setIsModalVisibleA(true);
