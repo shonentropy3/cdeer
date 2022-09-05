@@ -9,14 +9,22 @@ import {
     message 
 } from 'antd';
 import { FolderAddOutlined } from '@ant-design/icons';
-
+import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi';
 import { BitOperation } from '../utils/BitOperation';
-
+import task from '../../deployments/abi/DeTask.json'
+import taskaddress from '../../deployments/dev/DeTask.json'
 const { TextArea } = Input;
 const { Option } = Select;
 
 export default function Publish() {
-
+    
+    const {isConnected, address} = useAccount()
+    const config = {
+        addressOrName: taskaddress.address,
+        contractInterface: task.abi,
+        functionName: 'createTask',
+    }
+    const test = useContractWrite(config)
     const [inner,setInner] = useState([
         {title: '项目名称', type: 'input', value: ''},
         {title: '项目描述', type: 'textarea', value: ''},
@@ -232,7 +240,23 @@ export default function Publish() {
 
     const comfirm = () => {
 
-        console.log(inner);
+        console.log(inner,address);
+        let obj = {
+            title: inner[0].value,
+            desc: inner[1].value,
+            attachment: inner[2].value,
+            currency: inner[5].subValue,
+            budget: inner[5].value * 100,
+            period: inner[6].value * 24 * 60 * 60,
+            categories: inner[3].value,
+            skills: inner[4].value,
+        }
+        test.write({
+            recklesslySetUnpreparedArgs: [
+                address,
+                obj
+            ]
+          })
     }
 
     return <div className="Publish">

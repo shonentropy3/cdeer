@@ -1,10 +1,7 @@
 import { Button, Modal, Dropdown, Menu } from 'antd';
 import Link from 'next/link'
 import { useEffect, useState } from 'react';
-
-<<<<<<< HEAD
 import { Connector, useConnect, useAccount } from 'wagmi';
-=======
 const menu = (
     <Menu
       items={[
@@ -44,7 +41,6 @@ const menu = (
     />
   );
   
->>>>>>> 63ff781b8300b394a3d6c4ebec4af18d8c4676bf
 
 export default function Header() {
 
@@ -124,17 +120,12 @@ export default function Header() {
 
             </div>
             <div className="header-info">
-<<<<<<< HEAD
-                <div className="img"></div>
-                <Button className="btn" onClick={showModal}>{wagmi.isActive?wagmi.account:"连接钱包"}</Button>
-=======
                 <Dropdown overlay={menu} placement="bottom">
                     {/* <a onClick={(e) => e.preventDefault()}> */}
                         <div className="img"></div>
                     {/* </a> */}
                 </Dropdown>
-                <Button className="btn" onClick={showModal}>连接钱包</Button>
->>>>>>> 63ff781b8300b394a3d6c4ebec4af18d8c4676bf
+                <Button className="btn" onClick={showModal}>{wagmi.isActive?wagmi.account:"连接钱包"}</Button>
             </div>
         </div>
         <Modal 
@@ -144,15 +135,6 @@ export default function Header() {
             closable={false}
             onCancel={handleCancel}
         >
-            
-            {/* <Button>MetaMask</Button> */}
-            {/* {
-                connectors.map((connector)=>{
-                    <Button key={connector.id} onClick={()=>connect({connector})}>
-                        {connector.name}
-                    </Button>
-                })
-            } */}
             {connectors.map((connector) => (
                 <button
                 key={connector.id}
@@ -161,8 +143,6 @@ export default function Header() {
                 {connector.name}
                 </button>
             ))}
-            {/* <Button>WalletConnect</Button> */}
-            {/* <Button>MetaMask</Button> */}
         </Modal>
     </div>
 }
