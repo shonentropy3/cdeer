@@ -5,6 +5,8 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 //TODO: as upgradeable
 contract DeStage is Ownable {
     error InvalidCaller();
+    error ParamError(uint);
+    error StatusError();
 
     uint public maxStages = 12;
     address public deOrder;
@@ -44,8 +46,8 @@ contract DeStage is Ownable {
     }
 
     function setStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods) external onlyDeorder {
-        require(_amounts.length == _periods.length && _amounts.length != 0, "Wrong parameter length.");
-        require(maxStages >= _amounts.length, "Wrong parameter length.");
+        if(_amounts.length != _periods.length || _amounts.length == 0) revert ParamError(0);
+        if(maxStages < _amounts.length) revert ParamError(1);
 
         delete orderStages[_orderId];
         Stage[] storage stages = orderStages[_orderId];
@@ -63,7 +65,7 @@ contract DeStage is Ownable {
 
     function prolongStage(uint _orderId, uint _stageIndex, uint _appendPeriod) external onlyDeorder {
         Stage storage stage = orderStages[_orderId][_stageIndex];
-        require(stage.status == StageStatus.Init, "invalid status");
+        if(stage.status != StageStatus.Init) revert StatusError();
         stage.period += _appendPeriod;
 
         emit ProlongStage(_orderId, _stageIndex, _appendPeriod);
@@ -90,11 +92,10 @@ contract DeStage is Ownable {
 
     function checkStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods) external view returns (bool) {
         Stage[] memory stages = orderStages[_orderId];
-        require(stages.length == _periods.length && _periods.length == _amounts.length, "mismatch");
+        if(stages.length != _periods.length || _periods.length != _amounts.length) revert ParamError(0);
         
         for(uint i = 0; i < stages.length; i++) {
-            require(_amounts[i] == stages[i].amount, "mismatch amount");
-            require(_periods[i] == stages[i].period, "mismatch period");
+            if(_amounts[i] != stages[i].amount || _periods[i] != stages[i].period) revert ParamError(1);
         }
         return true;
     }
@@ -162,13 +163,14 @@ contract DeStage is Ownable {
     }
 
         // confirm must continuous
-    function confirmStage(uint _orderId, uint _stageIndex) external onlyDeorder {
-        require(orderStages[_orderId][_stageIndex].status != StageStatus.Withdrawed, "Done");
+    function confirmDelivery(uint _orderId, uint _stageIndex) external onlyDeorder {
+        StageStatus currStatus = orderStages[_orderId][_stageIndex].status;
+        if( currStatus == StageStatus.Withdrawed || currStatus == StageStatus.Aborted ) revert StatusError();
 
         if (_stageIndex == 0) {
             orderStages[_orderId][_stageIndex].status = StageStatus.Accepted;
         } else {
-            require(orderStages[_orderId][_stageIndex-1].status == StageStatus.Accepted, "The previous stage was not accepted");
+            if(orderStages[_orderId][_stageIndex-1].status != StageStatus.Accepted) revert StatusError();
             orderStages[_orderId][_stageIndex].status = StageStatus.Accepted;
         }
         
@@ -186,7 +188,7 @@ contract DeStage is Ownable {
     function ongoingStage(uint _orderId) public view returns (uint stageIndex, uint stageStartDate) {
         Order memory order = IOrder(deOrder).getOrder(_orderId);
         stageStartDate = order.startDate;
-        require(order.progress == OrderProgess.Ongoing, "UnOngoing");
+        if(order.progress != OrderProgess.Ongoing) revert StatusError();
 
         Stage[] storage stages = orderStages[_orderId];
         uint nowTs = block.timestamp;
@@ -200,7 +202,7 @@ contract DeStage is Ownable {
             stageStartDate += stage.period;
         }
         
-        revert("Order Ended");
+        revert StatusError();
     }
 
     function setMaxStages(uint8 _maxStages) external onlyOwner {

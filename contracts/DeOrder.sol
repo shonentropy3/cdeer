@@ -15,6 +15,8 @@ contract DeOrder is IOrder, Multicall, Ownable {
     error PermissionsError();
     error ProgressError();
     error AmountError(uint reason); // 0: mismatch , 1: need pay
+    error ParamError();
+    error NonceError();
 
     uint public constant FEE_BASE = 10000;
     uint public fee = 500;
@@ -60,8 +62,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
     }
 
     function createOrder(uint _taskId, address _issuer, address _worker, address _token, uint _amount) external {
-        require(address(0) != _worker, "Worker is zero address.");
-        require(address(0) != _issuer, "Issuer is zero address.");
+        if(address(0) == _worker || address(0) == _issuer || _worker == _issuer) revert ParamError();
 
         currOrderId += 1;
         orders[currOrderId] = Order({
@@ -99,7 +100,6 @@ contract DeOrder is IOrder, Multicall, Ownable {
     function setStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods) external {
         Order storage order = orders[_orderId];
         if(order.progress >= OrderProgess.Ongoing) revert ProgressError();
-
         if(order.worker != msg.sender && order.issuer != msg.sender) revert PermissionsError();
 
         if (order.worker == msg.sender) {
@@ -178,7 +178,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
         bytes32 digest = ECDSA.toTypedDataHash(DOMAIN_SEPARATOR, structHash);
         signAddr = ECDSA.recover(digest, v, r, s);
 
-        require(nonces[signAddr] == nonce, "nonce error");
+        if(nonces[signAddr] != nonce) revert NonceError();
         nonces[signAddr] += 1;
     }
 
@@ -230,7 +230,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
         if(msg.sender != orders[_orderId].issuer) revert PermissionsError();
 
         for (uint i = 0; i < _stageIndexs.length; i++) {
-            IStage(deStage).confirmStage(_orderId, _stageIndexs[i]);
+            IStage(deStage).confirmDelivery(_orderId, _stageIndexs[i]);
         }
     }
 
