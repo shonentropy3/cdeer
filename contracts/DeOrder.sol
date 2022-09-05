@@ -38,6 +38,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
     bytes32 public DOMAIN_SEPARATOR;
     bytes32 public constant PERMITSTAGE_TYPEHASH = keccak256("PermitStage(uint256 orderId,uint256[] amounts,uint256[] periods,uint256 nonce)");
     bytes32 public constant PERMITPROSTAGE_TYPEHASH = keccak256("PermitProStage(uint256 orderId,uint256 stageIndex,uint256 period,uint256 nonce)");
+    bytes32 public constant PERMITAPPENDSTAGE_TYPEHASH = keccak256("PermitAppendStage(uint256 orderId,uint256 amount,uint256 period,uint256 nonce)");
 
     mapping(address => uint) public nonces;
 
@@ -122,15 +123,11 @@ contract DeOrder is IOrder, Multicall, Ownable {
 
         bytes32 structHash  = keccak256(abi.encode(PERMITSTAGE_TYPEHASH, _orderId,
                 keccak256(abi.encodePacked(_amounts)), keccak256(abi.encodePacked(_periods)), nonce));
-        bytes32 digest = ECDSA.toTypedDataHash(DOMAIN_SEPARATOR, structHash);
+        address signAddr =recoverVerify(structHash, nonce, v , r, s);
 
-        address recoveredAddress = ECDSA.recover(digest, v, r, s);
-        require(nonces[recoveredAddress] == nonce, "nonce error");
-        nonces[recoveredAddress] += 1;
-
-        if(order.worker == recoveredAddress && msg.sender == order.issuer) {
+        if(order.worker == signAddr && msg.sender == order.issuer) {
             order.progress = OrderProgess.Staged;
-        } else if (order.issuer == recoveredAddress && msg.sender == order.worker) {
+        } else if (order.issuer == signAddr && msg.sender == order.worker) {
             order.progress = OrderProgess.Staging;
         } else {
             revert("invalid user");
@@ -139,7 +136,6 @@ contract DeOrder is IOrder, Multicall, Ownable {
         require(IStage(deStage).checkStage(_orderId, _amounts, _periods) == true, "mismatch amount");
     }
 
-
     function prolongStage(uint _orderId, uint _stageIndex, uint _appendPeriod,
         uint nonce, uint8 v, bytes32 r, bytes32 s) external {
         Order memory order = orders[_orderId];
@@ -147,19 +143,51 @@ contract DeOrder is IOrder, Multicall, Ownable {
 
         bytes32 structHash = keccak256(abi.encode(PERMITPROSTAGE_TYPEHASH, _orderId,
             _stageIndex, _appendPeriod, nonce));
-        bytes32 digest = ECDSA.toTypedDataHash(DOMAIN_SEPARATOR, structHash);
-        address recoveredAddress = ECDSA.recover(digest, v, r, s);
-
-        require(nonces[recoveredAddress] == nonce, "nonce error");
-        nonces[recoveredAddress] += 1;
+        address signAddr = recoverVerify(structHash, nonce, v , r, s);
 
         if(order.worker == msg.sender) {
-            require(recoveredAddress == order.issuer, "invalid user");
+            require(signAddr == order.issuer, "invalid user");
         } else if(order.issuer == msg.sender) {
-            require(recoveredAddress == order.worker, "invalid user");
+            require(signAddr == order.worker, "invalid user");
         } 
         IStage(deStage).prolongStage(_orderId, _stageIndex, _appendPeriod);
     }
+
+    function appendStage(uint _orderId, uint amount, uint period, uint nonce, uint8 v, bytes32 r, bytes32 s) external payable {
+        Order storage order = orders[_orderId];
+        require(order.progress == OrderProgess.Ongoing, "Progress Invalid");
+
+        bytes32 structHash = keccak256(abi.encode(PERMITAPPENDSTAGE_TYPEHASH, _orderId,
+            amount, period, nonce));
+        address signAddr = recoverVerify(structHash, nonce, v , r, s);
+
+        if(order.worker == msg.sender) {
+            require(signAddr == order.issuer, "invalid user");
+        } else if(order.issuer == msg.sender) {
+            require(signAddr == order.worker, "invalid user");
+        } 
+
+        IStage(deStage).appendStage(_orderId, amount, period);
+        order.amount += amount;
+
+        // pay
+        if (order.token == address(0)) {
+            require(msg.value == amount, "need pay more");
+            require(msg.sender == order.issuer, "issuer pay");
+        } else {
+            TransferHelper.safeTransferFrom(order.token, order.issuer, address(this), amount);
+        }
+        order.payed += amount;
+    }
+
+    function recoverVerify(bytes32 structHash, uint nonce, uint8 v, bytes32 r, bytes32 s) internal returns (address signAddr){
+        bytes32 digest = ECDSA.toTypedDataHash(DOMAIN_SEPARATOR, structHash);
+        signAddr = ECDSA.recover(digest, v, r, s);
+
+        require(nonces[signAddr] == nonce, "nonce error");
+        nonces[signAddr] += 1;
+    }
+
 
     function payOrderWithPermit(uint orderId, uint amount, uint deadline, uint8 v, bytes32 r, bytes32 s) external {
         IERC20Permit(orders[orderId].token).permit(msg.sender, address(this), amount, deadline, v, r, s);
@@ -169,14 +197,12 @@ contract DeOrder is IOrder, Multicall, Ownable {
     // anyone can pay for this order
     function payOrder(uint orderId, uint amount) public payable {
         Order storage order = orders[orderId];
-
-        uint needPayAmount = order.amount - order.payed;
         address token = order.token;
 
         if (token == address(0)) {
             order.payed += msg.value;
         } else {
-            TransferHelper.safeTransferFrom(token, msg.sender, address(this), needPayAmount);
+            TransferHelper.safeTransferFrom(token, msg.sender, address(this), amount);
             order.payed += amount;
         }
     }
@@ -290,6 +316,8 @@ contract DeOrder is IOrder, Multicall, Ownable {
             order.progress = OrderProgess.Done;
         }
     }
+
+
 
     function doTransfer(address _token, address _to, uint _amount) private {
         if (_amount == 0) return;

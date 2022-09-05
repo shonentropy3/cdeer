@@ -28,6 +28,8 @@ contract DeStage is Ownable {
 
     event ConfirmOrderStage(uint indexed orderId, uint stageIndex);
     event SetStage(uint indexed orderId, uint[] amounts, uint[] periods);
+    event ProlongStage(uint indexed orderId, uint stageIndex, uint appendPeriod);
+    event AppendStage(uint indexed orderId, uint amount, uint period);
     event SetDeorder(address deorder);
     event SetMaxStages(uint max);
 
@@ -59,14 +61,24 @@ contract DeStage is Ownable {
         emit SetStage(_orderId, _amounts, _periods);
     }
 
-    function appendStage(uint _orderId, uint amount, uint period, string calldata milestone, bytes calldata  _signature) external {
-
-    }
-
-    function prolongStage(uint _orderId, uint _stageIndex, uint newPeriod) external onlyDeorder {
+    function prolongStage(uint _orderId, uint _stageIndex, uint _appendPeriod) external onlyDeorder {
         Stage storage stage = orderStages[_orderId][_stageIndex];
         require(stage.status == StageStatus.Init, "invalid status");
-        stage.period += newPeriod;
+        stage.period += _appendPeriod;
+
+        emit ProlongStage(_orderId, _stageIndex, _appendPeriod);
+    }
+
+    function appendStage(uint _orderId, uint _amount, uint _period) external onlyDeorder {
+        Stage[] storage stages = orderStages[_orderId];
+        Stage memory pro = Stage ({
+            amount: _amount,
+            period: _period,
+            status: StageStatus.Init
+        });
+
+        stages.push(pro);
+        emit AppendStage(_orderId, _amount, _period);
     }
 
     function totalAmount(uint orderId) external view returns(uint total)  {
