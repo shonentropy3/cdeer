@@ -3,6 +3,7 @@ import '../styles/Index.scss'
 import '../styles/Projects.scss'
 import '../styles/Publish.scss'
 import '../styles/Parts.scss'
+import '../styles/Antd.scss'
 import Header from './parts/Header'
 
 function MyApp({ Component, pageProps }) {
