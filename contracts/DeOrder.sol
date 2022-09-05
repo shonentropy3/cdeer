@@ -13,33 +13,36 @@ import './Multicall.sol';
 
 contract DeOrder is IOrder, Multicall, Ownable {
     error PermissionsError();
+    error ProgressError();
+    error AmountError(uint reason); // 0: mismatch , 1: need pay
+    error ParamError();
+    error NonceError();
+    error Expired();
 
     uint public constant FEE_BASE = 10000;
     uint public fee = 500;
     address public feeTo;
 
     address public deStage;
+    uint private currOrderId;
+
+    // orderId  = > 
+    mapping(uint => Order) private orders;
+    mapping(address => uint) public nonces;
+
+    bytes32 public DOMAIN_SEPARATOR;
+    bytes32 public constant PERMITSTAGE_TYPEHASH = keccak256("PermitStage(uint256 orderId,uint256[] amounts,uint256[] periods,uint256 nonce,uint deadline)");
+    bytes32 public constant PERMITPROSTAGE_TYPEHASH = keccak256("PermitProStage(uint256 orderId,uint256 stageIndex,uint256 period,uint256 nonce,uint deadline)");
+    bytes32 public constant PERMITAPPENDSTAGE_TYPEHASH = keccak256("PermitAppendStage(uint256 orderId,uint256 amount,uint256 period,uint256 nonce,uint deadline)");
 
     event OrderCreated(uint indexed taskId, uint indexed orderId,  address issuer, address worker, address token, uint amount);
     event OrderModified(uint indexed orderId, address token, uint amount);
-    event OrderStarted(uint orderId, address who);
+    event OrderStarted(uint indexed orderId, address who);
     event OrderAbort(uint indexed orderId, address who, uint stageIndex);
     event Withdraw(uint indexed orderId, uint amount, uint stageIndex);
     event AttachmentUpdated(uint indexed orderId, string attachment);
     event FeeUpdated(uint fee, address feeTo);
     event StageUpdated(address stage);
-
-    uint private currOrderId;
-
-
-    // orderId  = > 
-    mapping(uint => Order) private orders;
-
-    bytes32 public DOMAIN_SEPARATOR;
-    bytes32 public constant PERMITSTAGE_TYPEHASH = keccak256("PermitStage(uint256 orderId,uint256[] amounts,uint256[] periods,uint256 nonce)");
-    bytes32 public constant PERMITPROSTAGE_TYPEHASH = keccak256("PermitProStage(uint256 orderId,uint256 stageIndex,uint256 period,uint256 nonce)");
-
-    mapping(address => uint) public nonces;
 
     constructor() {
         
@@ -60,8 +63,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
     }
 
     function createOrder(uint _taskId, address _issuer, address _worker, address _token, uint _amount) external {
-        require(address(0) != _worker, "Worker is zero address.");
-        require(address(0) != _issuer, "Issuer is zero address.");
+        if(address(0) == _worker || address(0) == _issuer || _worker == _issuer) revert ParamError();
 
         currOrderId += 1;
         orders[currOrderId] = Order({
@@ -83,7 +85,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
 
     function modifyOrder(uint orderId, address token, uint amount) external {
         Order storage order = orders[orderId];
-        require(order.progress < OrderProgess.Ongoing, "PROG_STARTED");
+        if(order.progress >= OrderProgess.Ongoing) revert ProgressError();
         if(msg.sender != order.issuer) revert PermissionsError(); 
 
         // if change token , must refund
@@ -98,8 +100,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
 
     function setStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods) external {
         Order storage order = orders[_orderId];
-        require(order.progress < OrderProgess.Ongoing, "PROG_STARTED");
-
+        if(order.progress >= OrderProgess.Ongoing) revert ProgressError();
         if(order.worker != msg.sender && order.issuer != msg.sender) revert PermissionsError();
 
         if (order.worker == msg.sender) {
@@ -113,53 +114,77 @@ contract DeOrder is IOrder, Multicall, Ownable {
 
     function permitStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods,
         uint nonce,
+        uint deadline,
         uint8 v,
         bytes32 r,
         bytes32 s) public {
         
         Order storage order = orders[_orderId];
-        require(order.progress < OrderProgess.Ongoing, "Progress Invalid");
+        if(order.progress >= OrderProgess.Ongoing) revert ProgressError();
 
         bytes32 structHash  = keccak256(abi.encode(PERMITSTAGE_TYPEHASH, _orderId,
-                keccak256(abi.encodePacked(_amounts)), keccak256(abi.encodePacked(_periods)), nonce));
-        bytes32 digest = ECDSA.toTypedDataHash(DOMAIN_SEPARATOR, structHash);
+                keccak256(abi.encodePacked(_amounts)), keccak256(abi.encodePacked(_periods)), nonce, deadline));
+        address signAddr =recoverVerify(structHash, nonce, deadline, v , r, s);
 
-        address recoveredAddress = ECDSA.recover(digest, v, r, s);
-        require(nonces[recoveredAddress] == nonce, "nonce error");
-        nonces[recoveredAddress] += 1;
-
-        if(order.worker == recoveredAddress && msg.sender == order.issuer) {
+        if(order.worker == signAddr && msg.sender == order.issuer) {
             order.progress = OrderProgess.Staged;
-        } else if (order.issuer == recoveredAddress && msg.sender == order.worker) {
+        } else if (order.issuer == signAddr && msg.sender == order.worker) {
             order.progress = OrderProgess.Staging;
         } else {
-            revert("invalid user");
+            revert PermissionsError(); 
         }
         
-        require(IStage(deStage).checkStage(_orderId, _amounts, _periods) == true, "mismatch amount");
+        if(!IStage(deStage).checkStage(_orderId, _amounts, _periods)) revert AmountError(0);
     }
-
 
     function prolongStage(uint _orderId, uint _stageIndex, uint _appendPeriod,
-        uint nonce, uint8 v, bytes32 r, bytes32 s) external {
+        uint nonce, uint deadline, uint8 v, bytes32 r, bytes32 s) external {
         Order memory order = orders[_orderId];
-        require(order.progress == OrderProgess.Ongoing, "Progress Invalid");
+        if(order.progress != OrderProgess.Ongoing) revert ProgressError();
+
 
         bytes32 structHash = keccak256(abi.encode(PERMITPROSTAGE_TYPEHASH, _orderId,
-            _stageIndex, _appendPeriod, nonce));
-        bytes32 digest = ECDSA.toTypedDataHash(DOMAIN_SEPARATOR, structHash);
-        address recoveredAddress = ECDSA.recover(digest, v, r, s);
+            _stageIndex, _appendPeriod, nonce, deadline));
+        address signAddr = recoverVerify(structHash, nonce, deadline, v , r, s);
 
-        require(nonces[recoveredAddress] == nonce, "nonce error");
-        nonces[recoveredAddress] += 1;
-
-        if(order.worker == msg.sender) {
-            require(recoveredAddress == order.issuer, "invalid user");
-        } else if(order.issuer == msg.sender) {
-            require(recoveredAddress == order.worker, "invalid user");
+        if((order.worker == msg.sender && signAddr == order.issuer) ||
+            (order.issuer == msg.sender && signAddr == order.worker)) {
+            IStage(deStage).prolongStage(_orderId, _stageIndex, _appendPeriod);
+        } else {
+            revert PermissionsError();
         } 
-        IStage(deStage).prolongStage(_orderId, _stageIndex, _appendPeriod);
     }
+
+    function appendStage(uint _orderId, uint amount, uint period, uint nonce, uint deadline, uint8 v, bytes32 r, bytes32 s) external payable {
+        Order storage order = orders[_orderId];
+        if(order.progress != OrderProgess.Ongoing) revert ProgressError();
+
+        bytes32 structHash = keccak256(abi.encode(PERMITAPPENDSTAGE_TYPEHASH, _orderId,
+            amount, period, nonce, deadline));
+        address signAddr = recoverVerify(structHash, nonce, deadline, v , r, s);
+
+        if((order.worker == msg.sender && signAddr == order.issuer) ||
+            (order.issuer == msg.sender && signAddr == order.worker)) {
+        } else {
+            revert PermissionsError(); 
+        } 
+
+        order.amount += amount;
+        if(order.payed < order.amount) revert AmountError(1);
+        
+
+        IStage(deStage).appendStage(_orderId, amount, period);
+    }
+
+    function recoverVerify(bytes32 structHash, uint nonce, uint deadline, uint8 v, bytes32 r, bytes32 s) internal returns (address signAddr){
+        bytes32 digest = ECDSA.toTypedDataHash(DOMAIN_SEPARATOR, structHash);
+        signAddr = ECDSA.recover(digest, v, r, s);
+
+        if(nonces[signAddr] != nonce) revert NonceError();
+        if(deadline < block.timestamp) revert Expired();
+        nonces[signAddr] += 1;
+    }
+
 
     function payOrderWithPermit(uint orderId, uint amount, uint deadline, uint8 v, bytes32 r, bytes32 s) external {
         IERC20Permit(orders[orderId].token).permit(msg.sender, address(this), amount, deadline, v, r, s);
@@ -169,14 +194,12 @@ contract DeOrder is IOrder, Multicall, Ownable {
     // anyone can pay for this order
     function payOrder(uint orderId, uint amount) public payable {
         Order storage order = orders[orderId];
-
-        uint needPayAmount = order.amount - order.payed;
         address token = order.token;
 
         if (token == address(0)) {
             order.payed += msg.value;
         } else {
-            TransferHelper.safeTransferFrom(token, msg.sender, address(this), needPayAmount);
+            TransferHelper.safeTransferFrom(token, msg.sender, address(this), amount);
             order.payed += amount;
         }
     }
@@ -189,27 +212,14 @@ contract DeOrder is IOrder, Multicall, Ownable {
 
     function startOrder(uint _orderId) external payable {
         Order storage order = orders[_orderId];
-        if(msg.sender == order.issuer) {
-            require(order.progress == OrderProgess.Staged, "Need worker confirm");
-        } else if (msg.sender == order.worker ) {
-            require(order.progress == OrderProgess.Staging, "Need Issuer confirm");
+        if((msg.sender == order.issuer && order.progress == OrderProgess.Staged) || 
+            msg.sender == order.worker && order.progress == OrderProgess.Staging) {
         } else {
             revert PermissionsError();
         }
         
-        require(order.amount == IStage(deStage).totalAmount(_orderId), "amount mismatch");
-        // do pay
-        if (order.payed < order.amount) {
-            uint needPayAmount = order.amount - order.payed;
-            address _token = order.token;
-
-            if (_token == address(0)) {
-                require(needPayAmount == msg.value, "pay error");
-            } else {
-                TransferHelper.safeTransferFrom(_token, order.issuer, address(this), needPayAmount);
-            }
-            order.payed = order.amount;
-        }
+        if(order.amount != IStage(deStage).totalAmount(_orderId)) revert AmountError(0);
+        if(order.payed < order.amount) revert AmountError(1);
 
         order.progress = OrderProgess.Ongoing;
         order.startDate = block.timestamp;
@@ -218,19 +228,19 @@ contract DeOrder is IOrder, Multicall, Ownable {
         IStage(deStage).startOrder(_orderId);
     }
 
-    function confirmStage(uint _orderId, uint[] memory _stageIndexs) external {
-        require(orders[_orderId].progress == OrderProgess.Ongoing, "Progress Invalid");
+    function confirmDelivery(uint _orderId, uint[] memory _stageIndexs) external {
+        if(orders[_orderId].progress != OrderProgess.Ongoing) revert ProgressError();
+        if(msg.sender != orders[_orderId].issuer) revert PermissionsError();
 
-        if(msg.sender != orders[_orderId].issuer) revert PermissionsError(); 
         for (uint i = 0; i < _stageIndexs.length; i++) {
-            IStage(deStage).confirmStage(_orderId, _stageIndexs[i]);
+            IStage(deStage).confirmDelivery(_orderId, _stageIndexs[i]);
         }
     }
 
     // Abort And Settle
     function abortOrder(uint _orderId) external {
         Order storage order = orders[_orderId];
-        require(order.progress == OrderProgess.Ongoing, "Progress Invalid");
+        if(order.progress != OrderProgess.Ongoing) revert ProgressError();
 
         bool issuerAbort;
         if(order.worker == msg.sender) {
@@ -256,18 +266,18 @@ contract DeOrder is IOrder, Multicall, Ownable {
         if(msg.sender != order.issuer) revert PermissionsError(); 
 
         order.payed -= _amount;
-        doTransfer(order.token, _to, _amount);
-
         if(order.progress >= OrderProgess.Ongoing) {
-            require(order.payed >= order.amount, "refund too much");
+            if(order.payed < order.amount) revert AmountError(1);
         }
+
+        doTransfer(order.token, _to, _amount);
     }
 
+    // worker withdraw the fee.
     function withdraw(uint _orderId, address to) external {
         Order storage order = orders[_orderId];
-        if(order.worker != msg.sender) revert PermissionsError(); 
-        require(order.progress == OrderProgess.Ongoing, "UnOngoing");
-
+        if(order.worker != msg.sender) revert PermissionsError();
+        if(order.progress != OrderProgess.Ongoing) revert ProgressError();
 
         (uint pending, uint nextStage) = IStage(deStage).pendingWithdraw(_orderId);
         if (pending > 0) {

@@ -1,8 +1,50 @@
-import { Button, Modal } from 'antd';
+import { Button, Modal, Dropdown, Menu } from 'antd';
 import Link from 'next/link'
 import { useEffect, useState } from 'react';
 
+<<<<<<< HEAD
 import { Connector, useConnect, useAccount } from 'wagmi';
+=======
+const menu = (
+    <Menu
+      items={[
+        {
+          key: '1',
+          label: (
+            <Link href={{pathname: '/myInfo'}}>
+                我的资料
+            </Link>
+          ),
+        },
+        {
+          key: '2',
+          label: (
+            <Link href={{pathname: '/'}}>
+              发布的项目
+            </Link>
+          ),
+        },
+        {
+          key: '3',
+          label: (
+            <Link href={{pathname: '/'}}>
+              参与的项目
+            </Link>
+            ),
+        },
+        {
+          key: '4',
+          label: (
+            <Link href={{pathname: '/'}}>
+                我的NFT
+            </Link>
+          ),
+        }
+      ]}
+    />
+  );
+  
+>>>>>>> 63ff781b8300b394a3d6c4ebec4af18d8c4676bf
 
 export default function Header() {
 
@@ -82,8 +124,17 @@ export default function Header() {
 
             </div>
             <div className="header-info">
+<<<<<<< HEAD
                 <div className="img"></div>
                 <Button className="btn" onClick={showModal}>{wagmi.isActive?wagmi.account:"连接钱包"}</Button>
+=======
+                <Dropdown overlay={menu} placement="bottom">
+                    {/* <a onClick={(e) => e.preventDefault()}> */}
+                        <div className="img"></div>
+                    {/* </a> */}
+                </Dropdown>
+                <Button className="btn" onClick={showModal}>连接钱包</Button>
+>>>>>>> 63ff781b8300b394a3d6c4ebec4af18d8c4676bf
             </div>
         </div>
         <Modal 

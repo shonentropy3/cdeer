@@ -7,6 +7,7 @@ async function signPermitStage(
   amounts,
   periods,
   nonce,
+  deadline,
 ) {
   const domain = {
     name: "DetaskOrder",
@@ -20,6 +21,7 @@ async function signPermitStage(
     { name: "amounts", type: "uint256[]" },
     { name: "periods", type: "uint256[]" },
     { name: "nonce", type: "uint256" },
+    { name: "deadline", type: "uint256" },
   ],
   };
 
@@ -28,6 +30,7 @@ async function signPermitStage(
     amounts: amounts,
     periods: periods,
     nonce: nonce,
+    deadline: deadline,
   });
 
   return sig

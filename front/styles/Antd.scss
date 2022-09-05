@@ -1,0 +1,106 @@
+.Modify_personal_information{
+    width: 950px !important;
+    .ant-modal-close-x{
+        font-size: 30px;
+    }
+    .ant-modal-header{
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #F8F8F8;
+        .ant-modal-title{
+            font-size: 26px;
+        }
+    }
+    .ant-modal-body{
+        .avatar{
+            width: 128px;
+            height: 128px;
+            border-radius: 50%;
+            background-color: black;
+            margin-bottom: 51px;
+        }
+        .box{
+            display: flex;
+            flex-direction: column;
+            .title{
+                margin-bottom: 15px;
+                font-size: 16px;
+                color: #333333;
+            }
+            .inners{
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                .inner{
+                    background-color: #F8F8F8;
+                    width: 284px;
+                    height: 50px;
+                    margin-bottom: 30px;
+                }
+            }
+            .list{
+                display: flex;
+                flex-wrap: wrap;
+                .li{
+                    box-sizing: content-box;
+                    padding: 15px 10px;
+                    border-radius: 4px;
+                    background-color: #F7F7F7;
+                    margin-right: 20px;
+                }
+                .active{
+                    background-color: black;
+                    color: white;
+                }
+            }
+        }
+        .btn{
+            width: 100%;
+            background-color: #2256FF;
+            color: white;
+            height: 60px;
+            border-radius: 4px;
+            margin-top: 73px;
+        }
+    }
+}
+.Submit_item{
+    width: 800px !important;
+    .modal-title{
+        font-size: 24px !important;
+        text-align: center;
+        margin-bottom: 57px;
+    }
+    .modal-info{
+        padding: 0 40px;
+        .info-full{
+            .title{
+                font-size: 20px;
+                font-weight: 500;
+                margin-bottom: 20px;
+            }
+            .content{
+                font-size: 16px;
+                color: #666666;
+                margin-bottom: 40px;
+            }
+        }
+        .info-half{
+            display: flex;
+            div{
+                &:first-child{
+                    margin-right: 100px;
+                }
+            }
+        }
+        .btn{
+            width: 360px;
+            height: 60px;
+            border-radius: 4px;
+            font-size: 20px;
+            margin-left: calc((100% - 360px) / 2);
+        }
+    }
+}
