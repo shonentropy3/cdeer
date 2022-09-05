@@ -8,11 +8,13 @@ import {
     Upload, 
     message 
 } from 'antd';
+import { FolderAddOutlined } from '@ant-design/icons';
+
+import { BitOperation } from '../utils/BitOperation';
+
 const { TextArea } = Input;
 const { Option } = Select;
-import {
-    FolderAddOutlined
-  } from '@ant-design/icons';
+
 export default function Publish() {
 
     const [inner,setInner] = useState([
@@ -21,17 +23,14 @@ export default function Publish() {
         {title: '', type: 'upload', value: ''},
         {title: '项目类型', type: 'model', value: []},
         {title: '技能要求', type: 'model', value: []},
-        {title: '项目预算', type: 'inputNumber', value: '', subValue: ''},
+        {title: '项目预算', type: 'inputNumber', value: '', subValue: 1},
         {title: '项目周期(预计周期)', type: 'select', value: ''},
         // {title: '技能LOGO', type: 'select', value: []},
     ])
-    let [isModalVisibleA, setIsModalVisibleA] = useState(false);
-    let [isModalVisibleB, setIsModalVisibleB] = useState(false);
     let [isModalVisibleC, setIsModalVisibleC] = useState(false);
     let [fromdata,setFromdata] = useState();
     let [suffix,setSuffix] = useState("");
-
-    const skills = {
+    let [skills,setSkills] = useState({
         title: '技能要求',
         subtitle: '你擅长的技能*(最多6个)',
         list: [
@@ -44,9 +43,8 @@ export default function Publish() {
             {title: 'HTML/CSS', status: false},
             {title: 'IOS', status: false},
         ]
-    }
-
-    const projectType = {
+    })
+    let [projectType,setProjectType] = useState({
         title: '项目类型',
         subtitle: '项目相关类型*(最多6个)',
         list: [
@@ -59,11 +57,12 @@ export default function Publish() {
             {title: 'HTML/CSS', status: false},
             {title: 'IOS', status: false},
         ]
-    }
+    })
 
     const selectAfter = (
         <Select
           defaultValue={1}
+          onChange={(e) => changeSel(e)}
         >
           <Option value={1}>ETH</Option>
           <Option value={2}>BTC</Option>
@@ -71,7 +70,7 @@ export default function Publish() {
     );
 
     const period = (
-        <Select className="w100" defaultValue="预计周期">
+        <Select className="w100" defaultValue="预计周期" onChange={(e) => onchange(e)}>
           <Option value={3}>3天</Option>
           <Option value={7}>1周</Option>
           <Option value={21}>3周</Option>
@@ -81,29 +80,41 @@ export default function Publish() {
     )
 
     const multiSelect = (index) => {
-        
-        return <div className="multiSelect" onClick={index === 3 ? showModalA : showModalB}>
+
+        return (
+            <div className="multiSelect">
+                <div className="list">
                     {
-                        inner[index].value.map((e,i) => 
-                            <span key={i}>{e}</span>
-                        )
+                        index === 3 ? 
+                            projectType.list.map((e,i) => 
+                                <div key={i} className={`li ${e.status ? 'active':''}`} onClick={() => changeSelect(projectType,i,3)}>
+                                    {e.title}
+                                </div>
+                            )
+                            :
+                            skills.list.map((e,i) => 
+                                <div key={i} className={`li ${e.status ? 'active':''}`} onClick={() => changeSelect(skills,i,4)}>
+                                    {e.title}
+                                </div>
+                            )
                     }
                 </div>
-    }
+            </div>
+    )}
 
     const print = (e,i) => {
         switch (e.type) {
             case 'input':
-                return <Input className="inner" />;
+                return <Input className="inner" onChange={(ele)=>changeStr(ele,i)} />;
 
             case 'textarea':
-                return <TextArea className="inner h150"  />;
+                return <TextArea className="inner h150" onChange={(ele)=>changeStr(ele,i)} />;
 
             case 'model':
             return multiSelect(i)
 
             case 'inputNumber':
-            return <InputNumber className="inner w100" addonAfter={selectAfter} defaultValue={100} />;
+            return <InputNumber className="inner w100" onChange={changeNum} addonAfter={selectAfter} />;
 
             case 'select':
             return period
@@ -155,29 +166,74 @@ export default function Publish() {
         return true
     };
 
-    const showModalA = () => {
-        setIsModalVisibleA(true);
-    };
-
-    const showModalB = () => {
-        setIsModalVisibleB(true);
-    };
-
     const showModalC = () => {
         setIsModalVisibleC(true);
-    };
-
-    const handleCancelA = () => {
-        setIsModalVisibleA(false);
-    };
-
-    const handleCancelB = () => {
-        setIsModalVisibleB(false);
     };
 
     const handleCancelC = () => {
         setIsModalVisibleC(false);
     };
+
+    // 获取数据
+    const changeStr = (e,i) => {
+        inner[i].value = e.target.value;
+        setInner([...inner])
+    }
+
+    const changeNum = (e) => {
+        inner[5].value = e;
+        setInner([...inner]);
+    }
+
+    const changeSel = (e) => {
+        inner[5].subValue = e;
+        setInner([...inner]);
+    }
+
+    const changeSelect = (obj, i, index) => {
+        if (limiter(obj.list, i) === false) {
+            message.error('最多可选择6个')
+            return
+        }
+        obj.list[i].status = !obj.list[i].status
+
+        obj.title === "项目类型" ? 
+            set(setProjectType, obj, index)
+            :
+            set(setSkills, obj, index)
+    }
+
+    const limiter = (arr,i) => {
+        let length = 0;
+        arr.map(e => {
+            e.status ? length++ : '';
+        })
+        if (length === 6 && !arr[i].status) {
+            return false
+        }
+    }
+
+    const set = (fun, obj, i) => {
+        let arr = [];
+        obj.list.map((ele,index) => {
+            if (ele.status) {
+                arr.push(index+1)
+            }
+        })
+        fun({...obj});
+        inner[i].value = BitOperation(arr);
+        setInner([...inner]);
+    }
+
+    const onchange = (e) => {
+        inner[6].value = e;
+        setInner([...inner]);
+    }
+
+    const comfirm = () => {
+
+        console.log(inner);
+    }
 
     return <div className="Publish">
         <div className="banner">
@@ -202,47 +258,8 @@ export default function Publish() {
             <Button type="primary" className="container-btn" onClick={showModalC}>确认发布</Button>
         </div>
         <div className="mb80"></div>
-
-        <Modal 
-            className="modal" 
-            title={projectType.title} 
-            footer={null} 
-            visible={isModalVisibleA} 
-            onCancel={handleCancelA}
-        >
-            <p>{projectType.subtitle}</p>
-            <div className="list">
-                {
-                    projectType.list.map((e,i) => 
-                        <div key={i} className="li">
-                            {e.title}
-                        </div>
-                    )
-                }
-            </div>
-            <Button className="btn" type="primary">保存</Button>
-        </Modal>
-        <Modal 
-            className="modal" 
-            title={skills.title} 
-            footer={null} 
-            visible={isModalVisibleB} 
-            onCancel={handleCancelB}
-        >
-            <p className="title">{skills.subtitle}</p>
-            <div className="list">
-                {
-                    skills.list.map((e,i) => 
-                        <div key={i} className="li">
-                            {e.title}
-                        </div>
-                    )
-                }
-            </div>
-            <Button className="btn" type="primary">保存</Button>
-        </Modal>
         <Modal
-            className="modal-submit" 
+            className="Submit_item" 
             footer={null} 
             closable={false}
             visible={isModalVisibleC} 
@@ -280,7 +297,7 @@ export default function Publish() {
                     <p className="title">技能要求</p>
                     <div className="content"></div>
                 </div>
-                <Button className="btn" type="primary">确认发布</Button>
+                <Button className="btn" type="primary" onClick={() => comfirm()}>确认发布</Button>
             </div>
         </Modal>
     </div>
