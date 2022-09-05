@@ -22,7 +22,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
 
     event OrderCreated(uint indexed taskId, uint indexed orderId,  address issuer, address worker, address token, uint amount);
     event OrderModified(uint indexed orderId, address token, uint amount);
-    event OrderStarted(uint orderId, address who);
+    event OrderStarted(uint indexed orderId, address who);
     event OrderAbort(uint indexed orderId, address who, uint stageIndex);
     event Withdraw(uint indexed orderId, uint amount, uint stageIndex);
     event AttachmentUpdated(uint indexed orderId, string attachment);
@@ -170,14 +170,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
         IStage(deStage).appendStage(_orderId, amount, period);
         order.amount += amount;
 
-        // pay
-        if (order.token == address(0)) {
-            require(msg.value == amount, "need pay more");
-            require(msg.sender == order.issuer, "issuer pay");
-        } else {
-            TransferHelper.safeTransferFrom(order.token, order.issuer, address(this), amount);
-        }
-        order.payed += amount;
+        require(order.payed >= order.amount, "need pay");
     }
 
     function recoverVerify(bytes32 structHash, uint nonce, uint8 v, bytes32 r, bytes32 s) internal returns (address signAddr){
@@ -224,18 +217,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
         }
         
         require(order.amount == IStage(deStage).totalAmount(_orderId), "amount mismatch");
-        // do pay
-        if (order.payed < order.amount) {
-            uint needPayAmount = order.amount - order.payed;
-            address _token = order.token;
-
-            if (_token == address(0)) {
-                require(needPayAmount == msg.value, "pay error");
-            } else {
-                TransferHelper.safeTransferFrom(_token, order.issuer, address(this), needPayAmount);
-            }
-            order.payed = order.amount;
-        }
+        require(order.payed >= order.amount, "need pay");
 
         order.progress = OrderProgess.Ongoing;
         order.startDate = block.timestamp;
@@ -282,11 +264,11 @@ contract DeOrder is IOrder, Multicall, Ownable {
         if(msg.sender != order.issuer) revert PermissionsError(); 
 
         order.payed -= _amount;
-        doTransfer(order.token, _to, _amount);
-
         if(order.progress >= OrderProgess.Ongoing) {
             require(order.payed >= order.amount, "refund too much");
         }
+
+        doTransfer(order.token, _to, _amount);
     }
 
     function withdraw(uint _orderId, address to) external {
