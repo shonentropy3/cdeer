@@ -13,6 +13,7 @@ import './Multicall.sol';
 
 contract DeOrder is IOrder, Multicall, Ownable {
     error PermissionsError();
+    error ProgressError();
 
     uint public constant FEE_BASE = 10000;
     uint public fee = 500;
@@ -84,7 +85,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
 
     function modifyOrder(uint orderId, address token, uint amount) external {
         Order storage order = orders[orderId];
-        require(order.progress < OrderProgess.Ongoing, "PROG_STARTED");
+        if(order.progress >= OrderProgess.Ongoing) revert ProgressError();
         if(msg.sender != order.issuer) revert PermissionsError(); 
 
         // if change token , must refund
@@ -99,7 +100,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
 
     function setStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods) external {
         Order storage order = orders[_orderId];
-        require(order.progress < OrderProgess.Ongoing, "PROG_STARTED");
+        if(order.progress >= OrderProgess.Ongoing) revert ProgressError();
 
         if(order.worker != msg.sender && order.issuer != msg.sender) revert PermissionsError();
 
@@ -119,7 +120,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
         bytes32 s) public {
         
         Order storage order = orders[_orderId];
-        require(order.progress < OrderProgess.Ongoing, "Progress Invalid");
+        if(order.progress >= OrderProgess.Ongoing) revert ProgressError();
 
         bytes32 structHash  = keccak256(abi.encode(PERMITSTAGE_TYPEHASH, _orderId,
                 keccak256(abi.encodePacked(_amounts)), keccak256(abi.encodePacked(_periods)), nonce));
@@ -139,7 +140,8 @@ contract DeOrder is IOrder, Multicall, Ownable {
     function prolongStage(uint _orderId, uint _stageIndex, uint _appendPeriod,
         uint nonce, uint8 v, bytes32 r, bytes32 s) external {
         Order memory order = orders[_orderId];
-        require(order.progress == OrderProgess.Ongoing, "Progress Invalid");
+        if(order.progress != OrderProgess.Ongoing) revert ProgressError();
+
 
         bytes32 structHash = keccak256(abi.encode(PERMITPROSTAGE_TYPEHASH, _orderId,
             _stageIndex, _appendPeriod, nonce));
@@ -155,7 +157,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
 
     function appendStage(uint _orderId, uint amount, uint period, uint nonce, uint8 v, bytes32 r, bytes32 s) external payable {
         Order storage order = orders[_orderId];
-        require(order.progress == OrderProgess.Ongoing, "Progress Invalid");
+        if(order.progress != OrderProgess.Ongoing) revert ProgressError();
 
         bytes32 structHash = keccak256(abi.encode(PERMITAPPENDSTAGE_TYPEHASH, _orderId,
             amount, period, nonce));
@@ -226,8 +228,8 @@ contract DeOrder is IOrder, Multicall, Ownable {
         IStage(deStage).startOrder(_orderId);
     }
 
-    function confirmStage(uint _orderId, uint[] memory _stageIndexs) external {
-        require(orders[_orderId].progress == OrderProgess.Ongoing, "Progress Invalid");
+    function confirmDelivery(uint _orderId, uint[] memory _stageIndexs) external {
+        if(orders[_orderId].progress != OrderProgess.Ongoing) revert ProgressError();
 
         if(msg.sender != orders[_orderId].issuer) revert PermissionsError(); 
         for (uint i = 0; i < _stageIndexs.length; i++) {
@@ -238,7 +240,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
     // Abort And Settle
     function abortOrder(uint _orderId) external {
         Order storage order = orders[_orderId];
-        require(order.progress == OrderProgess.Ongoing, "Progress Invalid");
+        if(order.progress != OrderProgess.Ongoing) revert ProgressError();
 
         bool issuerAbort;
         if(order.worker == msg.sender) {
@@ -271,11 +273,11 @@ contract DeOrder is IOrder, Multicall, Ownable {
         doTransfer(order.token, _to, _amount);
     }
 
+    // worker withdraw the fee.
     function withdraw(uint _orderId, address to) external {
         Order storage order = orders[_orderId];
-        if(order.worker != msg.sender) revert PermissionsError(); 
-        require(order.progress == OrderProgess.Ongoing, "UnOngoing");
-
+        if(order.worker != msg.sender) revert PermissionsError();
+        if(order.progress != OrderProgess.Ongoing) revert ProgressError();
 
         (uint pending, uint nextStage) = IStage(deStage).pendingWithdraw(_orderId);
         if (pending > 0) {
