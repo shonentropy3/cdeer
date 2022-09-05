@@ -27,6 +27,7 @@ export default function Publish() {
     ])
     let [isModalVisibleA, setIsModalVisibleA] = useState(false);
     let [isModalVisibleB, setIsModalVisibleB] = useState(false);
+    let [isModalVisibleC, setIsModalVisibleC] = useState(false);
     let [fromdata,setFromdata] = useState();
     let [suffix,setSuffix] = useState("");
 
@@ -122,7 +123,6 @@ export default function Publish() {
     }
 
     const upload = async(info) => {
-        console.log(info.onProgress);
         // info.onProgress()
         var formData=new FormData();
         formData.append('files',info.file);
@@ -163,12 +163,20 @@ export default function Publish() {
         setIsModalVisibleB(true);
     };
 
+    const showModalC = () => {
+        setIsModalVisibleC(true);
+    };
+
     const handleCancelA = () => {
         setIsModalVisibleA(false);
     };
 
     const handleCancelB = () => {
         setIsModalVisibleB(false);
+    };
+
+    const handleCancelC = () => {
+        setIsModalVisibleC(false);
     };
 
     return <div className="Publish">
@@ -191,11 +199,17 @@ export default function Publish() {
                     </div>
                 )
             }
-            <Button type="primary" className="container-btn">确认发布</Button>
+            <Button type="primary" className="container-btn" onClick={showModalC}>确认发布</Button>
         </div>
         <div className="mb80"></div>
 
-        <Modal className="modal" title={projectType.title} footer={null} visible={isModalVisibleA} onCancel={handleCancelA}>
+        <Modal 
+            className="modal" 
+            title={projectType.title} 
+            footer={null} 
+            visible={isModalVisibleA} 
+            onCancel={handleCancelA}
+        >
             <p>{projectType.subtitle}</p>
             <div className="list">
                 {
@@ -208,7 +222,6 @@ export default function Publish() {
             </div>
             <Button className="btn" type="primary">保存</Button>
         </Modal>
-
         <Modal 
             className="modal" 
             title={skills.title} 
@@ -227,6 +240,48 @@ export default function Publish() {
                 }
             </div>
             <Button className="btn" type="primary">保存</Button>
+        </Modal>
+        <Modal
+            className="modal-submit" 
+            footer={null} 
+            closable={false}
+            visible={isModalVisibleC} 
+            onCancel={handleCancelC}
+        >
+            <p className="modal-title"> 确认发布项目 </p>
+            <div className="modal-info">
+                <div className="info-full">
+                    <p className="title">项目详情</p>
+                    <div className="content">XDAO运维+数据系统开发</div>
+                </div>
+                <div className="info-full">
+                    <p className="title">项目类型</p>
+                    <div className="content">区块链</div>
+                </div>
+                <div className="info-full info-half">
+                    <div>
+                        <p className="title">项目预算</p>
+                        <div className="content">10 ETH</div>
+                    </div>
+                    <div>
+                        <p className="title">项目周期</p>
+                        <div className="content">20天</div>
+                    </div>
+                </div>
+                <div className="info-full">
+                    <p className="title">项目描述</p>
+                    <div className="content">后台需要一套前端系统来支持数据维护，权限维护，爬虫任务状态控制等工作。后台需要一套前端系统来支持数据维护，权限维护，爬虫任务状态控制等工作。后台需要一套前端系统来支持数据维护，权限维护，爬虫任务状态控制等工作。</div>
+                </div>
+                <div className="info-full">
+                    <p className="title">项目文档</p>
+                    <div className="content">xxxx</div>
+                </div>
+                <div className="info-full">
+                    <p className="title">技能要求</p>
+                    <div className="content"></div>
+                </div>
+                <Button className="btn" type="primary">确认发布</Button>
+            </div>
         </Modal>
     </div>
 }
