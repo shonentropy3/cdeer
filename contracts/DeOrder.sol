@@ -14,12 +14,23 @@ import './Multicall.sol';
 contract DeOrder is IOrder, Multicall, Ownable {
     error PermissionsError();
     error ProgressError();
+    error AmountError(uint reason); // 0: mismatch , 1: need pay
 
     uint public constant FEE_BASE = 10000;
     uint public fee = 500;
     address public feeTo;
 
     address public deStage;
+    uint private currOrderId;
+
+    // orderId  = > 
+    mapping(uint => Order) private orders;
+    mapping(address => uint) public nonces;
+
+    bytes32 public DOMAIN_SEPARATOR;
+    bytes32 public constant PERMITSTAGE_TYPEHASH = keccak256("PermitStage(uint256 orderId,uint256[] amounts,uint256[] periods,uint256 nonce)");
+    bytes32 public constant PERMITPROSTAGE_TYPEHASH = keccak256("PermitProStage(uint256 orderId,uint256 stageIndex,uint256 period,uint256 nonce)");
+    bytes32 public constant PERMITAPPENDSTAGE_TYPEHASH = keccak256("PermitAppendStage(uint256 orderId,uint256 amount,uint256 period,uint256 nonce)");
 
     event OrderCreated(uint indexed taskId, uint indexed orderId,  address issuer, address worker, address token, uint amount);
     event OrderModified(uint indexed orderId, address token, uint amount);
@@ -29,19 +40,6 @@ contract DeOrder is IOrder, Multicall, Ownable {
     event AttachmentUpdated(uint indexed orderId, string attachment);
     event FeeUpdated(uint fee, address feeTo);
     event StageUpdated(address stage);
-
-    uint private currOrderId;
-
-
-    // orderId  = > 
-    mapping(uint => Order) private orders;
-
-    bytes32 public DOMAIN_SEPARATOR;
-    bytes32 public constant PERMITSTAGE_TYPEHASH = keccak256("PermitStage(uint256 orderId,uint256[] amounts,uint256[] periods,uint256 nonce)");
-    bytes32 public constant PERMITPROSTAGE_TYPEHASH = keccak256("PermitProStage(uint256 orderId,uint256 stageIndex,uint256 period,uint256 nonce)");
-    bytes32 public constant PERMITAPPENDSTAGE_TYPEHASH = keccak256("PermitAppendStage(uint256 orderId,uint256 amount,uint256 period,uint256 nonce)");
-
-    mapping(address => uint) public nonces;
 
     constructor() {
         
@@ -131,10 +129,10 @@ contract DeOrder is IOrder, Multicall, Ownable {
         } else if (order.issuer == signAddr && msg.sender == order.worker) {
             order.progress = OrderProgess.Staging;
         } else {
-            revert("invalid user");
+            revert PermissionsError(); 
         }
         
-        require(IStage(deStage).checkStage(_orderId, _amounts, _periods) == true, "mismatch amount");
+        if(!IStage(deStage).checkStage(_orderId, _amounts, _periods)) revert AmountError(0);
     }
 
     function prolongStage(uint _orderId, uint _stageIndex, uint _appendPeriod,
@@ -147,12 +145,12 @@ contract DeOrder is IOrder, Multicall, Ownable {
             _stageIndex, _appendPeriod, nonce));
         address signAddr = recoverVerify(structHash, nonce, v , r, s);
 
-        if(order.worker == msg.sender) {
-            require(signAddr == order.issuer, "invalid user");
-        } else if(order.issuer == msg.sender) {
-            require(signAddr == order.worker, "invalid user");
+        if((order.worker == msg.sender && signAddr == order.issuer) ||
+            (order.issuer == msg.sender && signAddr == order.worker)) {
+            IStage(deStage).prolongStage(_orderId, _stageIndex, _appendPeriod);
+        } else {
+            revert PermissionsError();
         } 
-        IStage(deStage).prolongStage(_orderId, _stageIndex, _appendPeriod);
     }
 
     function appendStage(uint _orderId, uint amount, uint period, uint nonce, uint8 v, bytes32 r, bytes32 s) external payable {
@@ -163,16 +161,17 @@ contract DeOrder is IOrder, Multicall, Ownable {
             amount, period, nonce));
         address signAddr = recoverVerify(structHash, nonce, v , r, s);
 
-        if(order.worker == msg.sender) {
-            require(signAddr == order.issuer, "invalid user");
-        } else if(order.issuer == msg.sender) {
-            require(signAddr == order.worker, "invalid user");
+        if((order.worker == msg.sender && signAddr == order.issuer) ||
+            (order.issuer == msg.sender && signAddr == order.worker)) {
+        } else {
+            revert PermissionsError(); 
         } 
 
-        IStage(deStage).appendStage(_orderId, amount, period);
         order.amount += amount;
+        if(order.payed < order.amount) revert AmountError(1);
+        
 
-        require(order.payed >= order.amount, "need pay");
+        IStage(deStage).appendStage(_orderId, amount, period);
     }
 
     function recoverVerify(bytes32 structHash, uint nonce, uint8 v, bytes32 r, bytes32 s) internal returns (address signAddr){
@@ -210,16 +209,14 @@ contract DeOrder is IOrder, Multicall, Ownable {
 
     function startOrder(uint _orderId) external payable {
         Order storage order = orders[_orderId];
-        if(msg.sender == order.issuer) {
-            require(order.progress == OrderProgess.Staged, "Need worker confirm");
-        } else if (msg.sender == order.worker ) {
-            require(order.progress == OrderProgess.Staging, "Need Issuer confirm");
+        if((msg.sender == order.issuer && order.progress == OrderProgess.Staged) || 
+            msg.sender == order.worker && order.progress == OrderProgess.Staging) {
         } else {
             revert PermissionsError();
         }
         
-        require(order.amount == IStage(deStage).totalAmount(_orderId), "amount mismatch");
-        require(order.payed >= order.amount, "need pay");
+        if(order.amount != IStage(deStage).totalAmount(_orderId)) revert AmountError(0);
+        if(order.payed < order.amount) revert AmountError(1);
 
         order.progress = OrderProgess.Ongoing;
         order.startDate = block.timestamp;
@@ -230,8 +227,8 @@ contract DeOrder is IOrder, Multicall, Ownable {
 
     function confirmDelivery(uint _orderId, uint[] memory _stageIndexs) external {
         if(orders[_orderId].progress != OrderProgess.Ongoing) revert ProgressError();
+        if(msg.sender != orders[_orderId].issuer) revert PermissionsError();
 
-        if(msg.sender != orders[_orderId].issuer) revert PermissionsError(); 
         for (uint i = 0; i < _stageIndexs.length; i++) {
             IStage(deStage).confirmStage(_orderId, _stageIndexs[i]);
         }
@@ -267,7 +264,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
 
         order.payed -= _amount;
         if(order.progress >= OrderProgess.Ongoing) {
-            require(order.payed >= order.amount, "refund too much");
+            if(order.payed < order.amount) revert AmountError(1);
         }
 
         doTransfer(order.token, _to, _amount);
@@ -300,8 +297,6 @@ contract DeOrder is IOrder, Multicall, Ownable {
             order.progress = OrderProgess.Done;
         }
     }
-
-
 
     function doTransfer(address _token, address _to, uint _amount) private {
         if (_amount == 0) return;
