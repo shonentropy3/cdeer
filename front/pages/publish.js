@@ -14,6 +14,7 @@ import { BitOperation } from '../utils/BitOperation';
 import task from '../../deployments/abi/DeTask.json'
 import taskaddress from '../../deployments/dev/DeTask.json'
 import { getHash } from "../http/api";
+import { ethers } from "ethers";
 const { TextArea } = Input;
 const { Option } = Select;
 
@@ -251,6 +252,9 @@ export default function Publish() {
             categories: inner[3].value,
             skills: inner[4].value,
         }
+        let fee = {
+            value: ethers.utils.parseEther("1")
+        }
         if (fromdata) {
             await getHash(fromdata)
               .then((res) => {
@@ -262,10 +266,7 @@ export default function Publish() {
               })
           }
         test.write({
-            recklesslySetUnpreparedArgs: [
-                address,
-                obj
-            ]
+            recklesslySetUnpreparedArgs: [address, obj, fee]
           })
     }
 
