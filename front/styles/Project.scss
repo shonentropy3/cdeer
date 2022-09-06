@@ -1,0 +1,101 @@
+.project{
+    width: 950px;
+    margin: 113px auto 0;
+    .project-nav{
+        height: 154px;
+        border: 1px solid #000;
+        padding: 27px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        .nav-left{
+            display: flex;
+            .img{
+                width: 100px;
+                height: 100px;
+                border: 1px solid #000;
+                margin-right: 20px;
+            }
+            .info{
+                margin-top: 3px;
+                .title{
+                    font-size: 24px;
+                    margin-bottom: 20px;
+                }
+                .skills{
+                    font-size: 18px;
+                    color: #666666;
+                    span{
+                        background-color: #F0F0F0;
+                        font-size: 14px;
+                        border-radius: 4px;
+                        box-sizing: content-box;
+                        padding: 4px;
+                    }
+                }
+            }
+        }
+        .btn{
+
+        }
+    }
+    .project-content{
+        margin-top: 14px;
+        border: 1px solid #000;
+        padding: 30px;
+        .content-li, .content-list{
+            margin-bottom: 40px;
+            .li-title{
+                font-size: 20px;
+                font-weight: 800;
+                margin-bottom: 15px;
+            }
+            .li-box{
+                font-size: 16px;
+                color: #666666;
+                .detail{
+                    font-size: 16px;
+                    color: #666666;
+                }
+                .content{
+                    font-weight: 500;
+                }
+                .upload{
+                    width: 888px;
+                    height: 70px;
+                    background-color: #F8F8F8;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 10px 20px;
+                    p{
+                        color: #0096FF;
+                        cursor: pointer;
+                        &:first-child{
+                            text-decoration-line: underline;
+                        }
+                    }
+                }
+            }
+            .boxs{
+                display: flex;
+                .box{
+                    box-sizing: content-box;
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                    background-color: #F0F0F0;
+                    margin-right: 10px;
+                }
+            }
+        }
+        .content-list{
+            width: 500px;
+            display: flex;
+            justify-content: space-between;
+            .list-li{
+                width: 250px;
+            }
+        }
+        
+    }
+}
