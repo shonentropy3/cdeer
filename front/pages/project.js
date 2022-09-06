@@ -5,7 +5,8 @@ export default function project(params) {
 
 
     return <div className="project">
-        <div className="project-nav">
+        <div className="project-content">
+        <div className="content-nav">
             <div className="nav-left">
                 <div className="img">
 
@@ -17,7 +18,7 @@ export default function project(params) {
             </div>
             <Button className="btn">报名参与</Button>
         </div>
-        <div className="project-content">
+        <div className="content-container">
             <div className="content-li">
                 <p className="li-title">项目类型</p>
                 <div className="li-box boxs">
@@ -65,5 +66,7 @@ export default function project(params) {
             </div>
 
         </div>
+        </div>
+        <Button type="primary" className="project-btn">报名参加</Button>
     </div>
 }
