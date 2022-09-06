@@ -54,7 +54,8 @@ export default function Header() {
         {title: '我的项目', url: '/projects', checked: false}
     ])
     const [isModalVisible, setIsModalVisible] = useState(false);
-    let [wagmi,setWagmi] = useState({})
+    let [wagmi,setWagmi] = useState({});
+    let [isScroll,setIsScroll] = useState(false);
 
 
     const showModal = () => {
@@ -100,10 +101,27 @@ export default function Header() {
         setWagmi({...wagmi})
     },[isConnected])
 
+    useEffect(() => {
+        window.addEventListener("scroll", handleScroll)
+        handleScroll()
+        return () => {
+            window.removeEventListener("scroll", handleScroll)
+        }
+    })
+    const handleScroll = () =>{
+        let scrollY = window.scrollY;
+        if(scrollY >= 30){
+            isScroll = true;
+        }else{
+            isScroll = false
+        }
+        setIsScroll(isScroll);
+    }
+
 
 
     return <div className="Header">
-        <div className="content">
+        <div className={`content ${isScroll ? 'scroll':''}`}>
             <div className="header-logo">
                 <Image src="/logo1.png" alt="" layout="fill" objectFit="cover" />
             </div>

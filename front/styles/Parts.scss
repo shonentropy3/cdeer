@@ -9,11 +9,10 @@
         display: flex;
         align-items: center;
         position: relative;
-        // background-color: aquamarine;
+        transition: background-color 0.3s;
         .header-logo{
             width: 230px;
             height: 80px;
-            // background-color: black;
             cursor: pointer;
             margin-left: 4.5%;
             position: relative;
@@ -84,6 +83,9 @@
                 font-weight: 200;
             }
         }
+    }
+    .scroll{
+        background-color: rgba(255, 255, 255, 0.94);
     }
 }
 .MyInfo{
