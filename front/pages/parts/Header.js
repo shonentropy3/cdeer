@@ -74,6 +74,10 @@ export default function Header() {
         setSelectItem([...selectItem]);
     }
 
+    const handlerCancel = ()=>{
+        setIsModalVisible(false)
+    }
+
     useEffect(() => {
         selectItem.map(e => {
             e.checked = false;
@@ -136,12 +140,12 @@ export default function Header() {
             onCancel={handleCancel}
         >
             {connectors.map((connector) => (
-                <button
+                <Button
                 key={connector.id}
-                onClick={() => connect({ connector })}
+                onClick={() => {connect({ connector }), handlerCancel()}}
                 >
                 {connector.name}
-                </button>
+                </Button>
             ))}
         </Modal>
     </div>
