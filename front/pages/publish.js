@@ -19,17 +19,12 @@ import { ethers } from "ethers";
 import Modal_comfirmTask from "../components/Modal_comfirmTask";
 const { TextArea } = Input;
 const { Option } = Select;
-
+import { useContracts } from '../controller/index';
 export default function Publish() {
     
     const router = useRouter();
     const { address } = useAccount()
-    const config = {
-        addressOrName: taskaddress.address,
-        contractInterface: task.abi,
-        functionName: 'createTask',
-    }
-    const test = useContractWrite(config)
+    const { useTaskContractWrite: Task } = useContracts('createTask');
     const [inner,setInner] = useState([
         {title: '项目名称', type: 'input', value: ''},
         {title: '项目描述', type: 'textarea', value: ''},
@@ -272,7 +267,7 @@ export default function Publish() {
               })
         }
         setData({...data})
-        test.write({
+        Task.write({
             recklesslySetUnpreparedArgs: [address, data, fee]
         })
     }
@@ -288,7 +283,7 @@ export default function Publish() {
             u_address: `${address}`,
             suffix: suffix,
             hash: data.attachment,
-            payhash: test.data.hash,
+            payhash: Task.data.hash,
           }
         // return
         createDemand({"proLabel": JSON.stringify(obj)})
@@ -309,11 +304,11 @@ export default function Publish() {
       }
 
     useEffect(() => {
-        test.isSuccess ? 
+        Task.isSuccess ? 
           writeSuccess()
           :
           ''
-      },[test.isSuccess])
+      },[Task.isSuccess])
 
     return <div className="Publish">
         <div className="banner">
