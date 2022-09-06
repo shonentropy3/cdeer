@@ -47,34 +47,37 @@ export default function Home() {
           </div>
 
           <div className="ucan">
-            <p className="ucan-title font-Title">你可以</p>
-
-            <div className="ucan-li">
-              <div className="li-info">
-                <p className="title">发布需求</p>
-                <div className="content">
-                  <p>发布项目需求，寻找可信赖的开发者。</p>
-                  <p>在这里，通过开发者的NFT，评估开发者能力。</p>
-                  <p>获得项目NFT，提高你的公信力。</p>
-                </div>
-                <Button className="btn">了解更多</Button>
-              </div>
-              <div className="li-img"></div>
+            <div className="ucan-title">
+              <div className="img"></div>
+              <p className="font-Title">You can</p>
+              <div className="point"/>
             </div>
-
-            <div className="ucan-li">
-              <div className="li-img"></div>
-              <div className="li-info">
-                <p className="title">发布需求</p>
-                <div className="content">
-                  <p>发布项目需求，寻找可信赖的开发者。</p>
-                  <p>在这里，通过开发者的NFT，评估开发者能力。</p>
-                  <p>获得项目NFT，提高你的公信力。</p>
+            <div className="ucan-list">
+              <div className="list-li">
+                <div className="li-info">
+                  <div className="img"></div>
+                  <p className="title">Release requirements</p>
+                  <div className="content">
+                    <p>Release project requirements and find reliable developers。</p>
+                    <p>Here, through the developer's NFT, evaluate the developer's ability。</p>
+                    <p>Get project NFT and improve your credibility</p>
+                  </div>
+                  <Button className="btn">Learn more</Button>
                 </div>
-                <Button className="btn">了解更多</Button>
+              </div>
+              <div className="list-li">
+                <div className="li-info">
+                  <div className="img"></div>
+                  <p className="title">Release requirements</p>
+                  <div className="content">
+                    <p>Release project requirements and find reliable developers。</p>
+                    <p>Here, through the developer's NFT, evaluate the developer's ability。</p>
+                    <p>Get project NFT and improve your credibility</p>
+                  </div>
+                  <Button className="btn">Learn more</Button>
+                </div>
               </div>
             </div>
-
           </div>
 
           <div className="introduction">
