@@ -125,7 +125,12 @@ export default function Header() {
                         <div className="img"></div>
                     {/* </a> */}
                 </Dropdown>
-                <Button className="btn" onClick={showModal}>{wagmi.isActive?wagmi.account:"连接钱包"}</Button>
+                {
+                    wagmi.isActive ? 
+                        <p className="btn">{wagmi.account}</p>
+                        :
+                        <Button className="btn" onClick={showModal}>连接钱包</Button>
+                }
             </div>
         </div>
         <Modal 
@@ -135,14 +140,12 @@ export default function Header() {
             closable={false}
             onCancel={handleCancel}
         >
-            {connectors.map((connector) => (
-                <button
-                key={connector.id}
-                onClick={() => connect({ connector })}
-                >
-                {connector.name}
-                </button>
-            ))}
+            {
+                connectors.map((connector,i) => 
+                    <Button key={i} onClick={() => {connect({ connector }),setIsModalVisible(false)}} >
+                        {connector.name}
+                    </Button>)
+            }
         </Modal>
     </div>
 }

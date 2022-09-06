@@ -13,6 +13,7 @@ import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi';
 import { BitOperation } from '../utils/BitOperation';
 import task from '../../deployments/abi/DeTask.json'
 import taskaddress from '../../deployments/dev/DeTask.json'
+import { getHash } from "../http/api";
 const { TextArea } = Input;
 const { Option } = Select;
 
@@ -238,9 +239,8 @@ export default function Publish() {
         setInner([...inner]);
     }
 
-    const comfirm = () => {
+    const comfirm = async() => {
 
-        console.log(inner,address);
         let obj = {
             title: inner[0].value,
             desc: inner[1].value,
@@ -251,6 +251,16 @@ export default function Publish() {
             categories: inner[3].value,
             skills: inner[4].value,
         }
+        if (fromdata) {
+            await getHash(fromdata)
+              .then((res) => {
+                obj.attachment = res
+              })
+              .catch(err => {
+                console.log(err);
+                return err
+              })
+          }
         test.write({
             recklesslySetUnpreparedArgs: [
                 address,
