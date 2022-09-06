@@ -9,17 +9,18 @@ import {
     message 
 } from 'antd';
 import { FolderAddOutlined } from '@ant-design/icons';
-import { useAccount, useContractWrite } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { useRouter } from 'next/router'
-import { BitOperation } from '../utils/BitOperation';
-import task from '../../deployments/abi/DeTask.json'
-import taskaddress from '../../deployments/dev/DeTask.json'
-import { createDemand, getHash } from "../http/api";
 import { ethers } from "ethers";
+
+// 自定义部分
 import Modal_comfirmTask from "../components/Modal_comfirmTask";
+import { useContracts } from '../controller/index';
+import { createDemand, getHash } from "../http/api";
+import { BitOperation } from '../utils/BitOperation';
+
 const { TextArea } = Input;
 const { Option } = Select;
-import { useContracts } from '../controller/index';
 export default function Publish() {
     
     const router = useRouter();
