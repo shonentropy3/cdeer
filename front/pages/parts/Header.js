@@ -1,5 +1,6 @@
 import { Button, Modal, Dropdown, Menu } from 'antd';
-import Link from 'next/link'
+import Image from 'next/image';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Connector, useConnect, useAccount } from 'wagmi';
 const menu = (
@@ -49,7 +50,8 @@ export default function Header() {
     
     let [selectItem,setSelectItem] = useState([
         {title: '首页', url: '/', checked: true},
-        {title: '寻找项目', url: '/projects', checked: false}
+        {title: '寻找项目', url: '/projects', checked: false},
+        {title: '我的项目', url: '/projects', checked: false}
     ])
     const [isModalVisible, setIsModalVisible] = useState(false);
     let [wagmi,setWagmi] = useState({})
@@ -103,8 +105,7 @@ export default function Header() {
     return <div className="Header">
         <div className="content">
             <div className="header-logo">
-                <div className="img"></div>
-                <p>LOGO</p>
+                <Image src="/logo1.png" alt="" layout="fill" objectFit="cover" />
             </div>
             <div className="header-nav">
                 {
@@ -129,7 +130,7 @@ export default function Header() {
                     wagmi.isActive ? 
                         <p className="btn">{wagmi.account}</p>
                         :
-                        <Button className="btn" onClick={showModal}>连接钱包</Button>
+                        <Button className="btn" onClick={showModal}>链接钱包</Button>
                 }
             </div>
         </div>
