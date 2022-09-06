@@ -1,6 +1,7 @@
 import '../styles/globals.css'
 import '../styles/Index.scss'
 import '../styles/Projects.scss'
+import '../styles/Project.scss'
 import '../styles/Publish.scss'
 import '../styles/Parts.scss'
 import '../styles/Antd.scss'

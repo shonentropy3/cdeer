@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { 
     Input, 
     Select, 
@@ -9,61 +9,63 @@ import {
     message 
 } from 'antd';
 import { FolderAddOutlined } from '@ant-design/icons';
-import { useAccount, useContractWrite, usePrepareContractWrite } from 'wagmi';
+import { useAccount } from 'wagmi';
+import { useRouter } from 'next/router'
+import { ethers } from "ethers";
+
+// 自定义部分
+import Modal_comfirmTask from "../components/Modal_comfirmTask";
+import { useContracts } from '../controller/index';
+import { createDemand, getHash } from "../http/api";
 import { BitOperation } from '../utils/BitOperation';
-import task from '../../deployments/abi/DeTask.json'
-import taskaddress from '../../deployments/dev/DeTask.json'
+
 const { TextArea } = Input;
 const { Option } = Select;
-
 export default function Publish() {
     
-    const {isConnected, address} = useAccount()
-    const config = {
-        addressOrName: taskaddress.address,
-        contractInterface: task.abi,
-        functionName: 'createTask',
-    }
-    const test = useContractWrite(config)
+    const router = useRouter();
+    const { address } = useAccount()
+    const { useTaskContractWrite: Task } = useContracts('createTask');
     const [inner,setInner] = useState([
         {title: '项目名称', type: 'input', value: ''},
         {title: '项目描述', type: 'textarea', value: ''},
         {title: '', type: 'upload', value: ''},
-        {title: '项目类型', type: 'model', value: []},
-        {title: '技能要求', type: 'model', value: []},
+        {title: '项目类型', type: 'model', value: [], subValue: []},
+        {title: '技能要求', type: 'model', value: [], subValue: []},
         {title: '项目预算', type: 'inputNumber', value: '', subValue: 1},
         {title: '项目周期(预计周期)', type: 'select', value: ''},
         // {title: '技能LOGO', type: 'select', value: []},
     ])
     let [isModalVisibleC, setIsModalVisibleC] = useState(false);
+    let [data,setData] = useState({});
     let [fromdata,setFromdata] = useState();
     let [suffix,setSuffix] = useState("");
     let [skills,setSkills] = useState({
         title: '技能要求',
         subtitle: '你擅长的技能*(最多6个)',
         list: [
-            {title: 'solidity', status: false},
-            {title: 'javascript', status: false},
-            {title: 'python', status: false},
-            {title: 'Go', status: false},
-            {title: 'C/C++', status: false},
-            {title: 'Android', status: false},
-            {title: 'HTML/CSS', status: false},
-            {title: 'IOS', status: false},
+            {title: 'solidity', status: false, value: '101'},
+            {title: 'javascript', status: false, value: '102'},
+            {title: 'python', status: false, value: '103'},
+            {title: 'Go', status: false, value: '104'},
+            {title: 'C/C++', status: false, value: '105'},
+            {title: 'Android', status: false, value: '106'},
+            {title: 'HTML/CSS', status: false, value: '107'},
+            {title: 'IOS', status: false, value: '108'},
         ]
     })
     let [projectType,setProjectType] = useState({
         title: '项目类型',
         subtitle: '项目相关类型*(最多6个)',
         list: [
-            {title: 'solidity', status: false},
-            {title: 'javascript', status: false},
-            {title: 'python', status: false},
-            {title: 'Go', status: false},
-            {title: 'C/C++', status: false},
-            {title: 'Android', status: false},
-            {title: 'HTML/CSS', status: false},
-            {title: 'IOS', status: false},
+            {title: 'solidity', status: false, value: '201'},
+            {title: 'javascript', status: false, value: '202'},
+            {title: 'python', status: false, value: '203'},
+            {title: 'Go', status: false, value: '204'},
+            {title: 'C/C++', status: false, value: '205'},
+            {title: 'Android', status: false, value: '206'},
+            {title: 'HTML/CSS', status: false, value: '207'},
+            {title: 'IOS', status: false, value: '208'},
         ]
     })
 
@@ -223,13 +225,16 @@ export default function Publish() {
 
     const set = (fun, obj, i) => {
         let arr = [];
+        let value = '';
         obj.list.map((ele,index) => {
             if (ele.status) {
                 arr.push(index+1)
+                value += ele.value + ','
             }
         })
         fun({...obj});
-        inner[i].value = BitOperation(arr);
+        inner[i].subValue = BitOperation(arr);
+        inner[i].value = "'{"+ value.substring(0,value.lastIndexOf(',')) + "}'"
         setInner([...inner]);
     }
 
@@ -238,26 +243,73 @@ export default function Publish() {
         setInner([...inner]);
     }
 
-    const comfirm = () => {
-
-        console.log(inner,address);
-        let obj = {
+    const comfirm = async() => {
+        data = {
             title: inner[0].value,
             desc: inner[1].value,
             attachment: inner[2].value,
             currency: inner[5].subValue,
             budget: inner[5].value * 100,
             period: inner[6].value * 24 * 60 * 60,
-            categories: inner[3].value,
-            skills: inner[4].value,
+            categories: inner[3].subValue,
+            skills: inner[4].subValue,
         }
-        test.write({
-            recklesslySetUnpreparedArgs: [
-                address,
-                obj
-            ]
-          })
+        let fee = {
+            value: ethers.utils.parseEther("1")
+        }
+        if (fromdata) {
+            await getHash(fromdata)
+              .then((res) => {
+                data.attachment = res
+              })
+              .catch(err => {
+                console.log(err);
+                return err
+              })
+        }
+        setData({...data})
+        Task.write({
+            recklesslySetUnpreparedArgs: [address, data, fee]
+        })
     }
+
+    const writeSuccess = () => {
+        let obj = {
+            title: data.title,
+            pro_content: data.desc,
+            recruiting_role: inner[4].value,
+            demand_type: inner[3].value,
+            period: data.period,
+            budget: data.budget,
+            u_address: `${address}`,
+            suffix: suffix,
+            hash: data.attachment,
+            payhash: Task.data.hash,
+          }
+        // return
+        createDemand({"proLabel": JSON.stringify(obj)})
+              .then(res => {
+                if (res.code == '200') {
+                  message.success('创建成功');
+                  setTimeout(() => {
+                    router.push('/')
+                  }, 500);
+                }else{
+                  message.error('连接超时');
+                }
+              })
+              .catch(err => {
+                console.log(err);
+                message.error('创建失败');
+              })
+      }
+
+    useEffect(() => {
+        Task.isSuccess ? 
+          writeSuccess()
+          :
+          ''
+      },[Task.isSuccess])
 
     return <div className="Publish">
         <div className="banner">
@@ -289,40 +341,7 @@ export default function Publish() {
             visible={isModalVisibleC} 
             onCancel={handleCancelC}
         >
-            <p className="modal-title"> 确认发布项目 </p>
-            <div className="modal-info">
-                <div className="info-full">
-                    <p className="title">项目详情</p>
-                    <div className="content">XDAO运维+数据系统开发</div>
-                </div>
-                <div className="info-full">
-                    <p className="title">项目类型</p>
-                    <div className="content">区块链</div>
-                </div>
-                <div className="info-full info-half">
-                    <div>
-                        <p className="title">项目预算</p>
-                        <div className="content">10 ETH</div>
-                    </div>
-                    <div>
-                        <p className="title">项目周期</p>
-                        <div className="content">20天</div>
-                    </div>
-                </div>
-                <div className="info-full">
-                    <p className="title">项目描述</p>
-                    <div className="content">后台需要一套前端系统来支持数据维护，权限维护，爬虫任务状态控制等工作。后台需要一套前端系统来支持数据维护，权限维护，爬虫任务状态控制等工作。后台需要一套前端系统来支持数据维护，权限维护，爬虫任务状态控制等工作。</div>
-                </div>
-                <div className="info-full">
-                    <p className="title">项目文档</p>
-                    <div className="content">xxxx</div>
-                </div>
-                <div className="info-full">
-                    <p className="title">技能要求</p>
-                    <div className="content"></div>
-                </div>
-                <Button className="btn" type="primary" onClick={() => comfirm()}>确认发布</Button>
-            </div>
+            <Modal_comfirmTask comfirm={() => comfirm()}/>
         </Modal>
     </div>
 }
