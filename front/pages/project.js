@@ -1,8 +1,34 @@
 import { Button } from 'antd';
+import { useEffect, useState } from 'react';
+
+import { getDemandInfo } from '../http/api';
+import { deform_ProjectTypes, deform_Skills } from '../utils/Deform';
 
 export default function project(params) {
     
+    let [taskID,setTaskID] = useState('');
+    let [project,setProject] = useState({});
 
+    const getProject = async() => {
+        await getDemandInfo({id: taskID})
+        .then(res=>{
+            let obj = res.data[0]
+            obj.role = deform_Skills(obj.role);
+            obj.task_type = deform_ProjectTypes(obj.task_type);
+            project = obj;
+            setProject({...project});
+            console.log(project);
+        })
+        .catch(err=>{
+            console.log(err);
+        })
+    }
+
+    useEffect(() => {
+        taskID = location.search.slice('?')[1];
+        setTaskID(taskID);
+        getProject()
+    },[])
 
     return <div className="project">
         <div className="project-content">
@@ -12,8 +38,15 @@ export default function project(params) {
 
                 </div>
                 <div className="info">
-                    <p className="title">XDAO运维+数据系统开发</p>
-                    <p className="skills">技术要求: <span>solidity</span> <span>javascript</span> <span>前端</span></p>
+                    <p className="title">{project.title}</p>
+                    <p className="skills">
+                        技术要求: {
+                            project.role ? 
+                                project.role.map((e,i) => <span key={i}>{e}</span> )
+                                :
+                                ''
+                        } 
+                    </p>
                 </div>
             </div>
             <Button className="btn">报名参与</Button>
@@ -22,36 +55,41 @@ export default function project(params) {
             <div className="content-li">
                 <p className="li-title">项目类型</p>
                 <div className="li-box boxs">
-                    <div className="box">solidity</div>
-                    <div className="box">javascript</div>
-                    <div className="box">python</div>
+                    {
+                        project.task_type ? 
+                        project.task_type.map((e,i) => <div className="box" key={i}>{e}</div> )
+                        :
+                        ''
+                    }
                 </div>
             </div>
             <div className="content-list">
                 <div className="list-li">
                     <p className="li-title">项目费用</p>
                     <div className="li-box">
-                        <p className="detail">10ETH</p>
+                        <p className="detail">{project.budget}ETH</p>
                     </div>
                 </div>
                 <div className="list-li">
                     <p className="li-title">项目周期</p>
                     <div className="li-box">
-                        <p className="detail">20天</p>
+                        <p className="detail">{project.period / 60 / 60 / 24}天</p>
                     </div>
                 </div>
             </div>
             <div className="content-li">
                 <p className="li-title">项目描述</p>
                 <div className="li-box">
-                    <p className="detail content">后台需要一套前端系统来支持数据维护，权限维护，爬虫任务状态控制等工作。后台需要一套前端系统来支持数据维护，权限维护，爬虫任务状态控制等工作。后台需要一套前端系统来支持数据维护，权限维护，爬虫任务状态控制等工作。</p>
+                    <p className="detail content">
+                        {project.desc}
+                    </p>
                 </div>
             </div>
             <div className="content-li">
                 <p className="li-title">项目文档</p>
                 <div className="li-box">
                     <div className="upload">
-                        <p className="upload-title">xxx项目需求.pdf</p>
+                        <p className="upload-title">{project.suffix}</p>
                         <p>下载</p>
                     </div>
                 </div>
@@ -59,9 +97,12 @@ export default function project(params) {
             <div className="content-li">
                 <p className="li-title">技能要求</p>
                 <div className="li-box boxs">
-                    <div className="box">solidity</div>
-                    <div className="box">javascript</div>
-                    <div className="box">python</div>
+                {
+                        project.role ? 
+                        project.role.map((e,i) => <div className="box" key={i}>{e}</div> )
+                        :
+                        ''
+                    }
                 </div>
             </div>
 
