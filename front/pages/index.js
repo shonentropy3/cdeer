@@ -17,14 +17,31 @@ export default function Home() {
         <div className="Index">
 
           <div className="banner">
-            <p className="banner-title">GUARANTEE THE DEVELOPER'S EXPENSES</p>
-            <div className="banner-info">
-              <Link href={{pathname:'/publish'}}>
-                <Button className="btn">发布需求</Button>
-              </Link>
-              <Link href={{pathname:'/projects'}}>
-                <Button className="btn">寻找项目</Button>
-              </Link>
+            <div className="banner-left">
+              <p className="title">GUARANTEE THE DEVELOPER'S EXPENSES</p>
+              <div className="info">
+                <Link href={{pathname:'/publish'}}>
+                  <Button className="btn">发布需求</Button>
+                </Link>
+                <Link href={{pathname:'/projects'}}>
+                  <Button className="btn">寻找项目</Button>
+                </Link>
+              </div>
+            </div>
+            <div className="banner-right">
+              <Image className="img" src="/banner1.png" alt="" layout="fill" objectFit="cover" />
+            </div>
+            <div className="absolute a1">
+              <p className="title">200w</p>
+              <p className="subtitle">Community members</p>
+            </div>
+            <div className="absolute a2">
+              <p className="title">300</p>
+              <p className="subtitle">project</p>
+            </div>
+            <div className="absolute a3">
+              <p className="title">800</p>
+              <p className="subtitle">NFT quantity</p>
             </div>
           </div>
 

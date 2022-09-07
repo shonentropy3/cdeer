@@ -34,48 +34,88 @@
     .banner{
         width: 100%;
         height: 820px;
-        // background-color: skyblue;
         display: flex;
-        flex-direction: column;
-        // justify-content: center;
-        // align-items: center;
-        .banner-title{
-            width: 794px;
-            height: 436px;
-            margin-left: 5.73%;
-            margin-top: 143px;
-            font-size: 92px;
-            line-height: 109px;
-            letter-spacing: 8px;
-            color: #201E2F;
-            font-family: Arial-BoldMT, Arial;
-        }
-        .banner-info{
-            width: 613px;
-            height: 90px;
-            margin-left: 5.73%;
-            margin-top: 76px;
+        justify-content: space-between;
+        position: relative;
+        .absolute{
+            position: absolute;
             display: flex;
-            justify-content: space-between;
-            .btn{
-                width: 280px;
+            flex-direction: column;
+            align-items: center;
+            font-family: PingFangSC-Regular, PingFang SC;
+            .title{
+                font-size: 48px;
+                color: #1F1E2E;
+                letter-spacing: 4.55px;
+            }
+            .subtitle{
+                font-size: 18px;
+                color: #646464;
+                letter-spacing: 1.71px;
+                margin-top: -13px;
+            }
+        }
+        .a1{
+            right: 747px;
+            top: 549px;
+        }
+        .a2{
+            right: 487px;
+            top: 686px;
+        }
+        .a3{
+            right: 129px;
+            top: 613px;
+        }
+        .banner-left{
+            margin-left: 5.73%;
+            .title{
+                width: 794px;
+                height: 436px;
+                margin-top: 143px;
+                font-size: 92px;
+                line-height: 109px;
+                letter-spacing: 8px;
+                color: #201E2F;
+                font-family: Arial-BoldMT, Arial;
+            }
+            .info{
+                width: 613px;
                 height: 90px;
-                border-radius: 45px;
-                border: 2px solid #1F1E2E;
-                box-shadow: 0px 0px 19px -5px #898989;
-                font-size: 28px;
-                letter-spacing: 2.66px;
-                font-family: PingFangSC-Regular, PingFang SC;
-                &:first-child{
-                    background-color: #1F1E2E;
-                    color: white;
+                margin-top: 76px;
+                display: flex;
+                justify-content: space-between;
+                .btn{
+                    width: 280px;
+                    height: 90px;
+                    border-radius: 45px;
+                    border: 2px solid #1F1E2E;
+                    box-shadow: 0px 0px 19px -5px #898989;
+                    font-size: 28px;
+                    letter-spacing: 2.66px;
+                    font-family: PingFangSC-Regular, PingFang SC;
+                    &:first-child{
+                        background-color: #1F1E2E;
+                        color: white;
+                    }
                 }
             }
         }
+        .banner-right{
+            width: 889px;
+            height: 820px;
+            position: relative;
+            overflow: hidden;
+            span{
+                right: -30px !important;
+            }
+        }
+        
+        
     }   
     .data{
         width: 1200px;
-        margin: 0 auto;
+        margin: 90px auto 0;
         display: flex;
         justify-content: space-between;        
         .data-li{
@@ -191,7 +231,7 @@
                     background: greenyellow;
                 }
                 .info{
-                    margin-top: 30px;
+                    margin-top: 25px;
                     .title{
                         font-size: 16px;
                         color: #1F1E2E;
