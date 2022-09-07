@@ -6,11 +6,12 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
+import "./interface/IERC5192.sol";
 
 /**
  * @dev Implementation of Soulbound Token[SBT]: Non-tranable Token
  */
-contract SBTBase is ERC165, IERC721, IERC721Metadata {
+contract SBTBase is ERC165, IERC721, IERC721Metadata, IERC5192 {
     // Token name
     string private _name;
 
@@ -38,6 +39,7 @@ contract SBTBase is ERC165, IERC721, IERC721Metadata {
         return
             interfaceId == type(IERC721).interfaceId ||
             interfaceId == type(IERC721Metadata).interfaceId ||
+            interfaceId == type(IERC5192).interfaceId ||
             super.supportsInterface(interfaceId);
     }
 
@@ -136,10 +138,19 @@ contract SBTBase is ERC165, IERC721, IERC721Metadata {
         _owners[tokenId] = to;
 
         emit Transfer(address(0), to, tokenId);
+        emit Locked(tokenId);
     }
 
     function _requireMinted(uint256 tokenId) internal view virtual {
         require(_exists(tokenId), "ERC721: invalid token ID");
+    }
+
+    function locked(uint256 tokenId) external view override returns (bool) {
+        if (_exists(tokenId)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }
