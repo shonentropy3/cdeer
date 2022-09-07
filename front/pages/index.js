@@ -182,16 +182,40 @@ export default function Home() {
           <div className="evaluation">
             <div className="Index-title">
               <div className="img"></div>
-              <p className="font-Title">Reference case</p>
+              <p className="font-Title">User evaluation</p>
               <div className="point"/>
             </div>
             <div className="evaluation-list">
               <div className="list-li">
-                <div className="li-img"></div>
                 <div className="li-info">
-                  <p className="title">项目名称</p>
-                  <p className="subtitle">项目名称项目名称项目名称项目名称项目名称项目名称</p>
-                  <Button className="btn">进入项目</Button>
+                  <div className="info-img"></div>
+                  <p className="info-name">Mike</p>
+                  <p className="info-role">Designer</p>
+                </div>
+                <div className="li-content">
+                  “I think as detask becomes bigger and bigger, more and more people begin to understand the power of crowdsourcing, which is the way of working in the future. I'm glad to be involved.”
+                </div>
+              </div>
+
+              <div className="list-li">
+                <div className="li-info">
+                  <div className="info-img"></div>
+                  <p className="info-name">Mike</p>
+                  <p className="info-role">Designer</p>
+                </div>
+                <div className="li-content">
+                  “I think as detask becomes bigger and bigger, more and more people begin to understand the power of crowdsourcing, which is the way of working in the future. I'm glad to be involved.”
+                </div>
+              </div>
+
+              <div className="list-li">
+                <div className="li-info">
+                  <div className="info-img"></div>
+                  <p className="info-name">Mike</p>
+                  <p className="info-role">Designer</p>
+                </div>
+                <div className="li-content">
+                  “I think as detask becomes bigger and bigger, more and more people begin to understand the power of crowdsourcing, which is the way of working in the future. I'm glad to be involved.”
                 </div>
               </div>
 
