@@ -9,6 +9,15 @@ export const getDemand = (data) => {
     });
 }
 
+export const getUserApply = (data) => {
+    return serviceAxios({
+        url: "/user/getApply",
+        method: "post",
+        data,
+    });
+}
+
+
 export const createDemand = (data) => {
 
     return serviceAxios({

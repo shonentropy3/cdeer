@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { Empty } from 'antd';
 import { useAccount } from 'wagmi'
 import { useRouter } from "next/router";
-import { getMyDemand } from "../../http/api";
+import { getUserApply } from "../../http/api";
 import { deform_ProjectTypes, deform_Skills } from "../../utils/Deform";
 
 
@@ -11,21 +11,24 @@ export default function Userprojects(params) {
     const { address } = useAccount();
     const router = useRouter();
     let sidbar = [
-        {title: '发布的项目', value: 'tasks', data: []},
-        {title: '进行中', value: 'developping', data: []},
-        {title: '发布的项目', value: 'developend', data: []},
+        {title: '报名中的项目', value: 'apply', data: []},
+        {title: '参与中的项目', value: 'developping', data: []},
+        {title: '已完成的项目', value: 'developend', data: []},
     ]
     
-    let [selectItem,setSelectItem] = useState({item: 'tasks', data: []})
+    let [selectItem,setSelectItem] = useState({item: 'apply', data: []})
 
     const changeItem = value => {
         selectItem.item = value;
         setSelectItem({...selectItem});
     }
 
-    const getTasks = () => {
-        getMyDemand({hash: address})
+    const getApply = () => {
+        console.log('hhh');
+        getUserApply({hash: `'${address}'`})
         .then(res => {
+            console.log(res);
+            return
             res.map(e => {
                 e.role = deform_Skills(e.role);
                 e.task_type = deform_ProjectTypes(e.task_type);
@@ -51,8 +54,8 @@ export default function Userprojects(params) {
 
     useEffect(() => {
         switch (selectItem.item) {
-            case 'tasks':
-                getTasks()
+            case 'apply':
+                getApply()
                 break;
             case 'developping':
                 getDevelopping()

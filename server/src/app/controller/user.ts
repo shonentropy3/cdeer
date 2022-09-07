@@ -12,6 +12,16 @@ export class UserController {
         return await this.userService.getMyDemand(body)
     }
 
+    @Post('getApply')
+    async getApply(@Body() body: any){
+        return await new Promise ((resolve,reject)=>{
+            resolve(this.userService.getApply(body))
+         })
+         .then((res)=>{
+            return this.userService.getApplyList(res)
+         })
+    }
+
     @Post('getMyApplylist')
     async getMyApplylist(@Body() body: any){
         return await this.userService.getMyApplylist(body)

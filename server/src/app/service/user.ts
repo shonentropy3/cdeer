@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Tasks } from '../db/entity/Tasks';	//引入entity
 import { Nfts } from '../db/entity/Nfts';
+import { ApplyInfo } from '../db/entity/ApplyInfo';
 // ipfs/upyun
 const fs  = require('fs');
 var upyun = require("upyun")
@@ -16,7 +17,7 @@ const service = new upyun.Service('ipfs0','upchain', 'upchain123')
 const client = new upyun.Client(service);
 // dbUtils
 import { getMyPjcDBa, getMyPjcDBb } from '../db/sql/demand';
-import { getMyApplylist } from '../db/sql/apply_info';
+import { getApply, getMyApplylist } from '../db/sql/apply_info';
 import { getCacheNfts, hasNft, isOutTime, setNftlist, updateNftlist } from '../db/sql/nft';
 
 @Injectable()
@@ -26,6 +27,8 @@ export class UserService {
         private readonly tasksRepository: Repository<Tasks>,
         @InjectRepository(Nfts)
         private readonly nftsRepository: Repository<Nfts>,
+        @InjectRepository(ApplyInfo)
+        private readonly applyInfoRepository: Repository<Nfts>,
         private httpService: HttpService
     ) {}
 
@@ -37,6 +40,19 @@ export class UserService {
           return await this.tasksRepository.query(getMyPjcDBb(body.demand_id));
         }
     } 
+
+    async getApply(@Body() body: any) {
+        return await this.applyInfoRepository.query(getApply(body.hash));
+    } 
+
+    async getApplyList(@Body() body: any) {
+      let newArr = [];
+      for (let i = 0; i < body.length; i++) {
+        let obj = await this.applyInfoRepository.query(getMyApplylist(body[i].task_id))
+        newArr.push(obj[0])
+      }
+      return newArr
+    }
 
     async getMyApplylist(@Body() body: any) {
       return this.tasksRepository.query(getMyApplylist(body.demandId));

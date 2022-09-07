@@ -13,7 +13,7 @@ export default function Header() {
     let [selectItem,setSelectItem] = useState([
         {title: '首页', url: '/', checked: true},
         {title: '寻找项目', url: '/projects', checked: false},
-        {title: '我的项目', url: '/user/projects', checked: false}
+        {title: '我的项目', url: '/', checked: false}
     ])
     const [isModalVisible, setIsModalVisible] = useState(false);
     let [wagmi,setWagmi] = useState({});
@@ -33,7 +33,7 @@ export default function Header() {
             {
               key: '2',
               label: (
-                <Link href={{pathname: '/'}}>
+                <Link href={{pathname: '/issuer/projects'}}>
                   发布的项目
                 </Link>
               ),
@@ -41,7 +41,7 @@ export default function Header() {
             {
               key: '3',
               label: (
-                <Link href={{pathname: '/'}}>
+                <Link href={{pathname: '/user/projects'}}>
                   参与的项目
                 </Link>
                 ),
