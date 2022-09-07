@@ -47,7 +47,7 @@ export default function Home() {
           </div>
 
           <div className="ucan">
-            <div className="ucan-title">
+            <div className="Index-title">
               <div className="img"></div>
               <p className="font-Title">You can</p>
               <div className="point"/>
@@ -80,19 +80,113 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="introduction">
-            <p className="introduction-title font-Title">
-              信任工具
-            </p>
-            <div className="introduction-img">
-
+          <div className="example">
+            <div className="Index-title">
+              <div className="img"></div>
+              <p className="font-Title">Reference case</p>
+              <div className="point"/>
+            </div>
+            <div className="example-list">
+              <div className="list-li">
+                <div className="img"></div>
+                <div className="info">
+                  <p className="title">Entry name <span>label</span><span>label</span></p>
+                  <p className="content">Project description Project description Project</p>
+                  <div className="more">
+                    <p className="time">3 days ago</p>
+                    <Button className="btn">Learn more</Button>
+                  </div>
+                </div>
+              </div>
+              <div className="list-li">
+                <div className="img"></div>
+                <div className="info">
+                  <p className="title">Entry name <span>label</span><span>label</span></p>
+                  <p className="content">Project description Project description Project</p>
+                  <div className="more">
+                    <p className="time">3 days ago</p>
+                    <Button className="btn">Learn more</Button>
+                  </div>
+                </div>
+              </div>
+              <div className="list-li">
+                <div className="img"></div>
+                <div className="info">
+                  <p className="title">Entry name <span>label</span><span>label</span></p>
+                  <p className="content">Project description Project description Project</p>
+                  <div className="more">
+                    <p className="time">3 days ago</p>
+                    <Button className="btn">Learn more</Button>
+                  </div>
+                </div>
+              </div>
+              <div className="list-li">
+                <div className="img"></div>
+                <div className="info">
+                  <p className="title">Entry name <span>label</span><span>label</span></p>
+                  <p className="content">Project description Project description Project</p>
+                  <div className="more">
+                    <p className="time">3 days ago</p>
+                    <Button className="btn">Learn more</Button>
+                  </div>
+                </div>
+              </div>
+              <div className="list-li">
+                <div className="img"></div>
+                <div className="info">
+                  <p className="title">Entry name <span>label</span><span>label</span></p>
+                  <p className="content">Project description Project description Project</p>
+                  <div className="more">
+                    <p className="time">3 days ago</p>
+                    <Button className="btn">Learn more</Button>
+                  </div>
+                </div>
+              </div>
+              <div className="list-li">
+                <div className="img"></div>
+                <div className="info">
+                  <p className="title">Entry name <span>label</span><span>label</span></p>
+                  <p className="content">Project description Project description Project</p>
+                  <div className="more">
+                    <p className="time">3 days ago</p>
+                    <Button className="btn">Learn more</Button>
+                  </div>
+                </div>
+              </div>
+              <div className="list-li">
+                <div className="img"></div>
+                <div className="info">
+                  <p className="title">Entry name <span>label</span><span>label</span></p>
+                  <p className="content">Project description Project description Project</p>
+                  <div className="more">
+                    <p className="time">3 days ago</p>
+                    <Button className="btn">Learn more</Button>
+                  </div>
+                </div>
+              </div>
+              <div className="list-li">
+                <div className="img"></div>
+                <div className="info">
+                  <p className="title">Entry name <span>label</span><span>label</span></p>
+                  <p className="content">Project description Project description Project</p>
+                  <div className="more">
+                    <p className="time">3 days ago</p>
+                    <Button className="btn">Learn more</Button>
+                  </div>
+                </div>
+              </div>
+              
             </div>
           </div>
 
-          <div className="example">
-            <p className="example-title font-Title">案例</p>
-            <div className="example-list">
-              <div className="example-li">
+          <div className="evaluation">
+            <div className="Index-title">
+              <div className="img"></div>
+              <p className="font-Title">Reference case</p>
+              <div className="point"/>
+            </div>
+            <div className="evaluation-list">
+              <div className="list-li">
                 <div className="li-img"></div>
                 <div className="li-info">
                   <p className="title">项目名称</p>
@@ -101,32 +195,6 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="example-li">
-                <div className="li-img"></div>
-                <div className="li-info">
-                  <p className="title">项目名称</p>
-                  <p className="subtitle">项目名称项目名称项目名称项目名称项目名称项目名称</p>
-                  <Button className="btn">进入项目</Button>
-                </div>
-              </div>
-
-              <div className="example-li">
-                <div className="li-img"></div>
-                <div className="li-info">
-                  <p className="title">项目名称</p>
-                  <p className="subtitle">项目名称项目名称项目名称项目名称项目名称项目名称</p>
-                  <Button className="btn">进入项目</Button>
-                </div>
-              </div>
-
-              <div className="example-li">
-                <div className="li-img"></div>
-                <div className="li-info">
-                  <p className="title">项目名称</p>
-                  <p className="subtitle">项目名称项目名称项目名称项目名称项目名称项目名称</p>
-                  <Button className="btn">进入项目</Button>
-                </div>
-              </div>
             </div>
             
           </div>
