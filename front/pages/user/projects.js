@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Empty } from 'antd';
+import { Empty, Button } from 'antd';
 import { useAccount } from 'wagmi'
 import { useRouter } from "next/router";
 import { getUserApply } from "../../http/api";
@@ -27,8 +27,6 @@ export default function Userprojects(params) {
         console.log('hhh');
         getUserApply({hash: `'${address}'`})
         .then(res => {
-            console.log(res);
-            return
             res.map(e => {
                 e.role = deform_Skills(e.role);
                 e.task_type = deform_ProjectTypes(e.task_type);
@@ -36,7 +34,6 @@ export default function Userprojects(params) {
             sidbar[0].data = res;
             selectItem.data = res;
             setSelectItem({...selectItem});
-            console.log(res);
         })
     }
 
@@ -94,9 +91,9 @@ export default function Userprojects(params) {
                                     <p>项目预算: {e.budget}ETH</p>
                                 </div>
                             </div>
-                            <div className="li-num">
-                                <p>1</p>
-                                <p>报名人数</p>
+                            <div className="li-right">
+                                <Button>取消报名</Button>
+                                <Button type="primary">修改报名信息</Button>
                             </div>
                         </div>
                     )

@@ -16,7 +16,7 @@ const ipfs = ipfsAPI({host: 'localhost', port: '5001', protocol: 'http'});
 const service = new upyun.Service('ipfs0','upchain', 'upchain123')
 const client = new upyun.Client(service);
 // dbUtils
-import { getMyPjcDBa, getMyPjcDBb } from '../db/sql/demand';
+import { getDemandInfoDate, getMyPjcDBa, getMyPjcDBb } from '../db/sql/demand';
 import { getApply, getMyApplylist } from '../db/sql/apply_info';
 import { getCacheNfts, hasNft, isOutTime, setNftlist, updateNftlist } from '../db/sql/nft';
 
@@ -48,7 +48,7 @@ export class UserService {
     async getApplyList(@Body() body: any) {
       let newArr = [];
       for (let i = 0; i < body.length; i++) {
-        let obj = await this.applyInfoRepository.query(getMyApplylist(body[i].task_id))
+        let obj = await this.tasksRepository.query(getDemandInfoDate(body[i].task_id))
         newArr.push(obj[0])
       }
       return newArr
