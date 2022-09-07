@@ -5,6 +5,7 @@ import '../styles/Project.scss'
 import '../styles/Publish.scss'
 import '../styles/Parts.scss'
 import '../styles/Antd.scss'
+import '../styles/All_User.scss'
 import Header from './parts/Header'
 
 import {

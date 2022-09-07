@@ -338,7 +338,7 @@ export default function Publish() {
             className="Submit_item" 
             footer={null} 
             closable={false}
-            visible={isModalVisibleC} 
+            open={isModalVisibleC} 
             onCancel={handleCancelC}
         >
             <Modal_comfirmTask comfirm={() => comfirm()}/>

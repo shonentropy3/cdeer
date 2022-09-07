@@ -51,7 +51,7 @@ export default function Header() {
     let [selectItem,setSelectItem] = useState([
         {title: '首页', url: '/', checked: true},
         {title: '寻找项目', url: '/projects', checked: false},
-        {title: '我的项目', url: '/projects', checked: false}
+        {title: '我的项目', url: '/user/projects', checked: false}
     ])
     const [isModalVisible, setIsModalVisible] = useState(false);
     let [wagmi,setWagmi] = useState({});
@@ -159,7 +159,7 @@ export default function Header() {
         <Modal 
             title="连接钱包" 
             footer={null} 
-            visible={isModalVisible} 
+            open={isModalVisible} 
             closable={false}
             onCancel={handleCancel}
         >
