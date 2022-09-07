@@ -2,39 +2,24 @@
 
 import { Button,Modal,message } from 'antd';
 import { useEffect, useState } from 'react';
-
 import { useAccount } from 'wagmi';
+import { useRouter } from 'next/router';
+
 import { useContracts } from '../controller';
-
-import { ethers } from 'ethers';
-
-import { getDemandInfo } from '../http/api';
+import { applyFor, getDemandInfo } from '../http/api';
 import { deform_ProjectTypes, deform_Skills } from '../utils/Deform';
-
-// import { Button,Modal } from 'antd';
-// import { useEffect, useState } from 'react';
-
-
-// import { getDemandInfo } from '../http/api';
-// import { deform_ProjectTypes, deform_Skills } from '../utils/Deform';
-// import { ApplyProject } from '../controller/task';
-
-
 import Modal_applyTask from '../components/Modal_applyTask';
 
 
-export default function project(params) {
+export default function project() {
     
+    const router = useRouter();
+    const { address } = useAccount();
+    let { useTaskContractWrite: Task } = useContracts("applyFor");
     let [taskID,setTaskID] = useState('');
     let [project,setProject] = useState({});
-
-    const [cost,setCost] = useState("")
-    let {address} = useAccount()
-    let {useTaskContractWrite:Task} = useContracts("applyFor")
-
-    let [isModalOpen,setIsModalOpen] = useState(false)
-
-
+    let [params,setParams] = useState({});
+    let [isModalOpen,setIsModalOpen] = useState(false);
 
 
     const getProject = async() => {
@@ -45,14 +30,11 @@ export default function project(params) {
             obj.task_type = deform_ProjectTypes(obj.task_type);
             project = obj;
             setProject({...project});
-            console.log(project);
         })
         .catch(err=>{
             console.log(err);
         })
     }
-
-
 
     const showModal = ()=>{
         setIsModalOpen(true)
@@ -62,35 +44,44 @@ export default function project(params) {
         setIsModalOpen(false)
     }
 
-    const apply = (cost)=>{
-        let id = Number(taskID)
-        let _cost = Number(cost)
-        console.log(typeof address,id,_cost);
+    const apply = () => {
         Task.write({
-            recklesslySetUnpreparedArgs:[address,id,_cost]
+            recklesslySetUnpreparedArgs:[
+                address,
+                Number(taskID),
+                Number(params.valuation) * 100
+            ]
         })
-        console.log(Task.isSuccess);
+    }
+
+    const writeSuccess = () => {
+        params.demandId = taskID;
+        params.address = address;
+        params.hash = Task.data.hash;
+        params.valuation = params.valuation * 100;
+        applyFor({proLabel: JSON.stringify(params)})
+        .then(res => {
+          message.success('报名成功!')
+          setTimeout(() => {
+            router.push('/')
+          }, 500);
+        })
+        .catch(err => {
+          console.log(err);
+        })
     }
 
     useEffect(() => {
-        console.log(Task.error);
-    },[Task.error])
-
-    useEffect(() => {
         taskID = location.search.slice('?')[1];
         setTaskID(taskID);
         getProject()
     },[])
 
-
     useEffect(() => {
-        taskID = location.search.slice('?')[1];
-        setTaskID(taskID);
-        getProject()
-    },[])
-
-    useEffect(()=>{
-        console.log(Task.isSuccess);
+        Task.isSuccess ? 
+            writeSuccess()
+            :
+            ''
     },[Task.isSuccess])
 
     return <div className="project">
@@ -173,10 +164,11 @@ export default function project(params) {
         </div>
         <Button type="primary" className="project-btn" onClick={showModal}>报名参加</Button>
         <Modal
+            footer={null}
             open={isModalOpen}
             onCancel={handleCancel}
         >
-            <Modal_applyTask apply={apply} taskID={taskID} />
+            <Modal_applyTask setParams={setParams} params={params} submit={apply} />
         </Modal>
     </div>
 }

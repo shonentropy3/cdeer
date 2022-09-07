@@ -2,52 +2,7 @@ import { Button, Modal, Dropdown, Menu } from 'antd';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { Connector, useConnect, useAccount, useDisconnect } from 'wagmi';
-const menu = (
-    <Menu
-      items={[
-        {
-          key: '1',
-          label: (
-            <Link href={{pathname: '/myInfo'}}>
-                我的资料
-            </Link>
-          ),
-        },
-        {
-          key: '2',
-          label: (
-            <Link href={{pathname: '/'}}>
-              发布的项目
-            </Link>
-          ),
-        },
-        {
-          key: '3',
-          label: (
-            <Link href={{pathname: '/'}}>
-              参与的项目
-            </Link>
-            ),
-        },
-        {
-          key: '4',
-          label: (
-            <Link href={{pathname: '/'}}>
-                我的NFT
-            </Link>
-          ),
-        },
-        {
-            key:'5',
-            label:(
-                <div>退出登陆</div>
-            )
-        }
-      ]}
-    />
-  );
-  
+import { useDisconnect, useConnect, useAccount } from 'wagmi';
 
 export default function Header() {
 
@@ -64,7 +19,52 @@ export default function Header() {
     let [wagmi,setWagmi] = useState({});
     let [isScroll,setIsScroll] = useState(false);
 
-
+    const menu = (
+        <Menu
+          items={[
+            {
+              key: '1',
+              label: (
+                <Link href={{pathname: '/myInfo'}}>
+                    我的资料
+                </Link>
+              ),
+            },
+            {
+              key: '2',
+              label: (
+                <Link href={{pathname: '/'}}>
+                  发布的项目
+                </Link>
+              ),
+            },
+            {
+              key: '3',
+              label: (
+                <Link href={{pathname: '/'}}>
+                  参与的项目
+                </Link>
+                ),
+            },
+            {
+              key: '4',
+              label: (
+                <Link href={{pathname: '/'}}>
+                    我的NFT
+                </Link>
+              ),
+            },
+            {
+                key: '5',
+                label: (
+                  <Button type="default" onClick={() => disconnect()}>
+                      退出登陆
+                  </Button>
+                ),
+              }
+          ]}
+        />
+      );
     const showModal = () => {
       setIsModalVisible(true);
 
