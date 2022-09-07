@@ -100,6 +100,7 @@ export class TaskService {
         let latest = await rpcProvider.getBlockNumber();
         
         let last = await this.applyInfoRepository.query(getLastBlock());
+        
         let logBlock = last[0].block;
         if (logBlock >= latest) return; // 区块已监听过了
         logBlock = Math.max(logBlock, (latest - 100)); // 最多往前100区块

@@ -1,13 +1,41 @@
-import { Button } from 'antd';
+
+
+import { Button,Modal,message } from 'antd';
 import { useEffect, useState } from 'react';
+
+import { useAccount } from 'wagmi';
+import { useContracts } from '../controller';
+
+import { ethers } from 'ethers';
 
 import { getDemandInfo } from '../http/api';
 import { deform_ProjectTypes, deform_Skills } from '../utils/Deform';
+
+// import { Button,Modal } from 'antd';
+// import { useEffect, useState } from 'react';
+
+
+// import { getDemandInfo } from '../http/api';
+// import { deform_ProjectTypes, deform_Skills } from '../utils/Deform';
+// import { ApplyProject } from '../controller/task';
+
+
+import Modal_applyTask from '../components/Modal_applyTask';
+
 
 export default function project(params) {
     
     let [taskID,setTaskID] = useState('');
     let [project,setProject] = useState({});
+
+    const [cost,setCost] = useState("")
+    let {address} = useAccount()
+    let {useTaskContractWrite:Task} = useContracts("applyFor")
+
+    let [isModalOpen,setIsModalOpen] = useState(false)
+
+
+
 
     const getProject = async() => {
         await getDemandInfo({id: taskID})
@@ -24,11 +52,46 @@ export default function project(params) {
         })
     }
 
+
+
+    const showModal = ()=>{
+        setIsModalOpen(true)
+    }
+
+    const handleCancel = ()=>{
+        setIsModalOpen(false)
+    }
+
+    const apply = (cost)=>{
+        let id = Number(taskID)
+        let _cost = Number(cost)
+        console.log(typeof address,id,_cost);
+        Task.write({
+            recklesslySetUnpreparedArgs:[address,id,_cost]
+        })
+        console.log(Task.isSuccess);
+    }
+
+    useEffect(() => {
+        console.log(Task.error);
+    },[Task.error])
+
     useEffect(() => {
         taskID = location.search.slice('?')[1];
         setTaskID(taskID);
         getProject()
     },[])
+
+
+    useEffect(() => {
+        taskID = location.search.slice('?')[1];
+        setTaskID(taskID);
+        getProject()
+    },[])
+
+    useEffect(()=>{
+        console.log(Task.isSuccess);
+    },[Task.isSuccess])
 
     return <div className="project">
         <div className="project-content">
@@ -108,6 +171,12 @@ export default function project(params) {
 
         </div>
         </div>
-        <Button type="primary" className="project-btn">报名参加</Button>
+        <Button type="primary" className="project-btn" onClick={showModal}>报名参加</Button>
+        <Modal
+            open={isModalOpen}
+            onCancel={handleCancel}
+        >
+            <Modal_applyTask apply={apply} taskID={taskID} />
+        </Modal>
     </div>
 }

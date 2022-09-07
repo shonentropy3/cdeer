@@ -7,8 +7,39 @@
       "type": "constructor"
     },
     {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "reason",
+          "type": "uint256"
+        }
+      ],
+      "name": "AmountError",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "Expired",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "NonceError",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ParamError",
+      "type": "error"
+    },
+    {
       "inputs": [],
       "name": "PermissionsError",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ProgressError",
       "type": "error"
     },
     {
@@ -157,7 +188,7 @@
       "anonymous": false,
       "inputs": [
         {
-          "indexed": false,
+          "indexed": true,
           "internalType": "uint256",
           "name": "orderId",
           "type": "uint256"
@@ -257,6 +288,19 @@
     },
     {
       "inputs": [],
+      "name": "PERMITAPPENDSTAGE_TYPEHASH",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "PERMITPROSTAGE_TYPEHASH",
       "outputs": [
         {
@@ -302,12 +346,60 @@
           "type": "uint256"
         },
         {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "period",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "nonce",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "deadline",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint8",
+          "name": "v",
+          "type": "uint8"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "r",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "s",
+          "type": "bytes32"
+        }
+      ],
+      "name": "appendStage",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_orderId",
+          "type": "uint256"
+        },
+        {
           "internalType": "uint256[]",
           "name": "_stageIndexs",
           "type": "uint256[]"
         }
       ],
-      "name": "confirmStage",
+      "name": "confirmDelivery",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -593,6 +685,11 @@
           "type": "uint256"
         },
         {
+          "internalType": "uint256",
+          "name": "deadline",
+          "type": "uint256"
+        },
+        {
           "internalType": "uint8",
           "name": "v",
           "type": "uint8"
@@ -633,6 +730,11 @@
         {
           "internalType": "uint256",
           "name": "nonce",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "deadline",
           "type": "uint256"
         },
         {

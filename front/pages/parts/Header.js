@@ -2,7 +2,7 @@ import { Button, Modal, Dropdown, Menu } from 'antd';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { Connector, useConnect, useAccount } from 'wagmi';
+import { Connector, useConnect, useAccount, useDisconnect } from 'wagmi';
 const menu = (
     <Menu
       items={[
@@ -37,6 +37,12 @@ const menu = (
                 我的NFT
             </Link>
           ),
+        },
+        {
+            key:'5',
+            label:(
+                <div>退出登陆</div>
+            )
         }
       ]}
     />
@@ -47,6 +53,7 @@ export default function Header() {
 
     const {connect,chainId,connectors,error,isLoading,pendingConnector} = useConnect()
     const {isConnected, address} = useAccount()
+    const {disconnect} = useDisconnect()
     
     let [selectItem,setSelectItem] = useState([
         {title: '首页', url: '/', checked: true},
