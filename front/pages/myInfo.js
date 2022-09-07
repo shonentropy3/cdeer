@@ -47,7 +47,7 @@ export default function myInfo() {
             <p className="bg">擅长技能</p>
             <Button className="btn">添加擅长的技能</Button>
         </div>
-        <Modal title="修改资料" className="Modify_personal_information" footer={null} visible={isModalVisible} onCancel={handleCancel}>
+        <Modal title="修改资料" className="Modify_personal_information" footer={null} open={isModalVisible} onCancel={handleCancel}>
             <div className="avatar"></div>
             <div className="box">
                 <p className="title">姓名*</p>
