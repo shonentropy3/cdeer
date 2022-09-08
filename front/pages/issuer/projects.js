@@ -45,7 +45,7 @@ export default function Issuerprojects(params) {
     }
 
     const goApplylist = (id) => {
-        router.push({pathname:'/user/applylist',search: id})
+        router.push({pathname:'/issuer/applylist',search: id})
     }
 
     useEffect(() => {

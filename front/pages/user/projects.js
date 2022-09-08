@@ -45,10 +45,6 @@ export default function Userprojects(params) {
         // TODO: 获取已经结束的项目
     }
 
-    const goApplylist = (id) => {
-        router.push({pathname:'/user/applylist',search: id})
-    }
-
     useEffect(() => {
         switch (selectItem.item) {
             case 'apply':
@@ -82,7 +78,7 @@ export default function Userprojects(params) {
                     <Empty />
                     :
                     selectItem.data.map((e,i) => 
-                        <div key={i} className="li" onClick={() => goApplylist(e.id)}>
+                        <div key={i} className="li">
                             <div className="li-info">
                                 <p className="title">{e.title}</p>
                                 <p className="role">技术要求: {e.role.map((ele,index) => <span key={index}>{ele}</span> )}</p>
