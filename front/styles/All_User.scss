@@ -107,12 +107,25 @@
     }
     .product-stage{
         padding-left: 50px;
+        padding-right: 50px;
         margin-top: 30px;
         margin-bottom: 30px;
-        span{
-            display: inline-block;
-            width: 250px;
-            height: 30px;
+        // span{
+        //     display: inline-block;
+        //     width: 250px;
+        //     height: 30px;
+        // }
+        display: flex;
+        .product-stage-text{
+            flex: 1.5;
+            // border: 1px solid red;
+            text-align: center;
+            padding: 0 10px;
+        }
+        .product-stage-border{
+            flex: 2;
+            border-top: 3px solid #ccc;
+            margin-top: 10px;
         }
     }
     .task-list{
@@ -176,6 +189,7 @@
                                 margin-bottom: 10px;
                             }
                             .applicant-mess{
+                                cursor: pointer;
                                 .applicant-mess-item{
                                     margin-right: 40px;
                                 }

@@ -34,11 +34,20 @@ export default function applylist() {
             </div>
         </div>
         <div className="product-stage">
-            <span><Divider orientation="left">发布</Divider></span>
+            {/* <span><Divider orientation="left">发布</Divider></span>
             <span><Divider orientation="left">报名中</Divider></span>
             <span><Divider orientation="left">阶段划分</Divider></span>
             <span><Divider orientation="left">开发中</Divider></span>
-            <span><Divider orientation="right">完成</Divider></span>
+            <span><Divider orientation="right">完成</Divider></span> */}
+            <p className="product-stage-text">发布</p>
+            <p className="product-stage-border"></p>
+            <p className="product-stage-text">报名中</p>
+            <p className="product-stage-border"></p>
+            <p className="product-stage-text">阶段划分</p>
+            <p className="product-stage-border"></p>
+            <p className="product-stage-text">开发中</p>
+            <p className="product-stage-border"></p>
+            <p className="product-stage-text">完成</p>
         </div>
         <div className="task-list">
             <h4>报名列表</h4>
