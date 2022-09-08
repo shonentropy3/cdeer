@@ -7,7 +7,7 @@
     .sidbar{
         width: 450px;
         height: 600px;
-        border: 1px solid #000;
+        border: 2px solid #000;
         padding: 20px;
 
         .li{
@@ -69,4 +69,175 @@
     padding-top: 130px;
     width: 1400px;
     margin: 0 auto;
+    .task-info{
+        height: 150px;
+        border: 1px solid #666;
+        display: flex;
+        padding: 20px;
+        .task-demand{
+            flex: 8;
+            .task-title{
+                font-size: 24px;
+                margin-bottom: 10px;
+            }
+            .task-skill{
+                span{
+                    display: inline-block;
+                    margin-left: 20px;
+                    padding: 2px 10px;
+                    background-color: rgb(229, 224, 224);
+                }
+                margin-bottom: 10px;
+            }
+            .task-cycle{
+                span{
+                    margin: 0 50px 0 10px;
+                }
+            }
+        }
+        .apply-number{
+            flex: 1;
+            text-align: center;
+            font-size: 18px;
+            .a-number{
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+        }
+    }
+    .product-stage{
+        padding-left: 50px;
+        margin-top: 30px;
+        margin-bottom: 30px;
+        span{
+            display: inline-block;
+            width: 250px;
+            height: 30px;
+        }
+    }
+    .task-list{
+
+        .clearfix::after,.clearfix::before{
+            content: "";
+            display: block;
+            height: 0px;
+            visibility: hidden;
+            clear: both;
+        }
+        padding: 25px;
+        border: 2px solid #666;
+        h4{
+            font-size: 24px;
+        }
+        .product-list{
+            min-height: 600px;
+            ul{
+                list-style: none;
+
+                li{
+                    // border: 2px solid #ccc;
+                    margin-top: 20px;
+                    margin-left: -36px;
+                    height: 200px;
+                    display: flex;
+                    .product-list-item{
+                        border: 2px solid #ccc;
+                        flex: 9;
+                        height: 200px;
+                        padding:20px;
+                        margin-right: 20px;
+                        display: flex;
+                        .product-img{
+                            height: 150px;
+                            width: 150px;
+                            background-color: aqua;
+                            border-radius: 50%;
+                            flex: 1.5;
+                            // position: relative;
+                        }
+                        .product-info{
+                            flex: 3;
+                            width: 300px;
+                            height: 150px;
+                            margin-left: 20px;
+                            // background-color: bisque;
+                            .applicant-name{
+                                font-size: 24px;
+                                margin-bottom: 10px;
+                                font-weight: 900;
+                            }
+                            .applicant-info{
+                                span{
+                                    margin-right: 40px;
+                                    cursor: pointer;
+                                    color: blue;
+                                }
+                                margin-top: 10px;
+                                margin-bottom: 10px;
+                            }
+                            .applicant-mess{
+                                .applicant-mess-item{
+                                    margin-right: 40px;
+                                }
+                            }
+                        }
+                        .product-apply{
+                            width: 180px;
+                            flex: 1.5;
+                            height: 150px;
+                            // background-color: blueviolet;
+                            margin-left: 480px;
+                            text-align: right;
+                            .product-apply-price{
+                                font-size: 24px;
+                                font-weight: 700;
+                                padding-right: 10px;
+                            }
+                            .product-apply-he{
+                                padding-right: 10px;
+                            }
+                            .product-apply-time{
+                                font-size: 16px;
+                                .anticon-clock-circle{
+                                    font-size: 24px;
+                                    margin-right: 10px;
+                                }
+                                .product-apply-time-text{
+                                    display: inline-block;
+                                    width: 120px;
+                                    height: 30px;
+                                    line-height: 30px;
+                                    background-color: rgb(245, 241, 241);
+                                    border-radius: 10px;
+                                    padding: 0 2px;
+                                    text-align: center;
+                                    margin-top: 20px;
+                                }
+                            }
+                        }
+                    }
+                    .product-collaborate{
+                        // float: right;
+                        flex: 2;
+                        width: 130px;
+                        height: 200px;
+                        border: 2px solid #666;
+                        p{
+                            height: 99px;
+                            text-align: center;
+                            line-height: 99px;
+                            cursor: pointer;
+                        }
+                        .product-collaborate-no{
+                            border-bottom: 1px solid #ccc;
+                        }
+                    }
+                }
+            }
+        }
+        .task-page{
+            text-align: center;
+            margin-top: 20px;
+        }
+    }
 }
