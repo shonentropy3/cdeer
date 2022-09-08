@@ -27,6 +27,15 @@ export const createDemand = (data) => {
     });
 }
 
+export const createOrder = (data) => {
+
+    return serviceAxios({
+        url: "/demand/createOrder",
+        method: "post",
+        data,
+    });
+}
+
 export const getFilter = (data) => {
 
     return serviceAxios({

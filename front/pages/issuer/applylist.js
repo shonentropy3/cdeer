@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { Steps, Pagination, Modal, InputNumber, Select, Button, message } from "antd";
 import { ClockCircleOutlined, MessageFilled } from "@ant-design/icons"
 import { useAccount } from 'wagmi'
-import { getMyApplylist } from "../../http/api";
+import { createOrder, getMyApplylist } from "../../http/api";
 import { useContracts } from "../../controller/index";
 
 
@@ -11,7 +11,6 @@ export default function applylist() {
     const { Option } = Select;
     const { Step } = Steps;
     const { address } = useAccount();
-    const { useOrderContractWrite } = useContracts('createOrder')
     const selectAfter = (
         <Select
           defaultValue="eth"
@@ -25,7 +24,7 @@ export default function applylist() {
     let [worker,setWorker] = useState();
     let [amount,setAmount] = useState();
     const [isModalOpen, setIsModalOpen] = useState(false);
-
+    const { useOrderContractWrite } = useContracts('createOrder');
       
     const showModal = () => {
       setIsModalOpen(true);
@@ -41,7 +40,6 @@ export default function applylist() {
             res.map(e => {
                 e.address = e.apply_addr.slice(0,5) + "..." + e.apply_addr.slice(38,42)
             })
-            console.log(res);
             data = res;
             setData([...data]);
         })
@@ -65,10 +63,20 @@ export default function applylist() {
     }
 
     const writeSuccess = () => {
-        message.success('操作成功!')
-        setTimeout(() => {
-            history.go(0)
-        }, 500);
+        let obj = {
+            hash: useOrderContractWrite.data.hash,
+            address: address,
+            taskId: taskId
+        }
+        createOrder(obj)
+        .then(res => {
+            if (res.code === 200) {
+                message.success('操作成功!')
+                setTimeout(() => {
+                    history.go(0)
+                }, 500);
+            }
+        })
     }
 
     useEffect(() => {

@@ -110,9 +110,6 @@ export class TaskService {
         
         for (let v of taskHash) {
             const log = await rpcProvider.getTransactionReceipt(v.hash);
-            
-            
-            
             const createTask = new ethers.utils.Interface(
                 ["event TaskCreated(uint256 indexed,address,tuple(string,string,string,uint8,uint64,uint32,uint48,uint48,bool))"]
             );
@@ -141,6 +138,40 @@ export class TaskService {
                     await this.applyInfoRepository.query(sql.sqlUpdateTH);
                 }
                 this.logger.debug('createTasks');
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        // 创建订单以及修改订单
+        let createOrderHash = await this.applyInfoRepository.query(getCreateOrderHash());
+        for (const v of createOrderHash) {
+            const log = await rpcProvider.getTransactionReceipt(v.hash);
+            const createOrder = new ethers.utils.Interface([
+                "event OrderCreated(uint indexed taskId, uint indexed orderId,  address issuer, address worker, address token, uint amount)"
+            ]);
+            let decodedData = createOrder.parseLog(log.logs[0]);
+            const orderId = decodedData.args.orderId.toString();
+            const taskId = decodedData.args.taskId.toString();
+            const worker = decodedData.args.worker;
+            const issuer = decodedData.args.issuer;
+            const amount = decodedData.args.amount.toString();
+            let params = {
+                orderId: orderId,
+                taskId: taskId,
+                hash: v.hash,
+                worker: worker,
+                issuer: issuer,
+                amount: amount
+            }
+            
+            let sql = createOrderSql(params)
+            try {
+                let sqlResult = await this.applyInfoRepository.query(sql.sql);
+                if (-1 != sqlResult[1]) {
+                    await this.applyInfoRepository.query(sql.sqlUpdateTH);
+                }
+                this.logger.debug('createOrders');
             } catch (error) {
                 console.log(error);
             }
@@ -210,36 +241,7 @@ export class TaskService {
         }
 
         // 未同步连上数据
-        // // 创建订单以及修改订单
-        // let createOrderHash = await this.applyInfoRepository.query(getCreateOrderHash());
-        // for (const v of createOrderHash) {
-        //     const log = await rpcProvider.getTransactionReceipt(v.hash);
-        //     const createOrder = new ethers.utils.Interface([
-        //         "event CreateOrder(uint256 indexed taskId, address indexed issuer, address indexed worker, uint256 amount)"
-        //     ]);
-        //     let decodedData = createOrder.parseLog(log.logs[0]);
-        //     const orderId = decodedData.args.orderId.toString();
-        //     const taskId = decodedData.args.taskId.toString();
-        //     const worker = decodedData.args.worker;
-        //     const amount = decodedData.args.amount.toString();
-        //     let params = {
-        //         orderId: orderId,
-        //         taskId: taskId,
-        //         hash: v.hash,
-        //         worker: worker,
-        //         amount: amount
-        //     }
-        //     let sql = createOrderSql(params)
-        //     try {
-        //         let sqlResult = await this.applyInfoRepository.query(sql.sql);
-        //         if (-1 != sqlResult[1]) {
-        //             await this.applyInfoRepository.query(sql.sqlUpdateTH);
-        //         }
-        //         this.logger.debug('createOrders');
-        //     } catch (error) {
-        //         console.log(error);
-        //     }
-        // }
+        
 
 
 }

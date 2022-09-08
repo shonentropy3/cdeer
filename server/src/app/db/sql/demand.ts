@@ -46,8 +46,6 @@ export const getFilter = params => {
 
 
 export const setDemand = params => {
-    console.log(params.suffix);
-    
     let sql = `
             insert into tasks(issuer, hash, "desc", role, task_type, suffix) 
             VALUES ('${params.u_address}','${params.payhash}','${params.pro_content}', ${params.recruiting_role}, ${params.demand_type}, '${params.suffix}');
@@ -61,6 +59,13 @@ export const setDemand = params => {
         sqlHash: sqlHash
     }
     return obj
+}
+
+export const setOrder = params => {
+    return  ` insert into trans_hashes("send_addr", category, hash, task_id) 
+        VALUES ('${params.address}', 6, '${params.hash}', ${params.taskId})`;
+    
+    
 }
 
 export const moDemand = params => {

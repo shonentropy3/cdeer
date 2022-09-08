@@ -62,12 +62,15 @@ export const createTaskSql = (params) => {
 }
 
 export const createOrderSql = (params) => {
-    let sql = `
-        UPDATE orders 
-        SET order_id = temp.orderId,id = temp.taskId, worker = temp.worker, amount = temp.amount, update_time = now() 
-        from (values (${params.orderId},${params.taskId}, '${params.hash}', '${params.worker}', ${params.amount}) as temp (orderId,
-        taskId, hash, worker,  amount) where orders.hash=temp.hash;
-    `
+    let sql = ` insert into orders("order_id", task_id, issuer, worker) 
+    VALUES (${params.orderId}, ${params.taskId}, '${params.issuer}', '${params.worker}')`;
+    // `
+    //     UPDATE orders 
+    //     SET order_id = temp.orderId,id = temp.taskId, worker = temp.worker, amount = temp.amount, update_time = now() 
+    //     from (values (${params.orderId},${params.taskId}, '${params.hash}', '${params.worker}', ${params.amount}) as temp (orderId,
+    //     taskId, hash, worker,  amount) where orders.hash=temp.hash;
+    // `
+    
 
     let sqlUpdateTH = ` 
         UPDATE trans_hashes SET is_update = 1, update_time = now() 

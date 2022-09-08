@@ -41,5 +41,5 @@ export function useContractsRead(functionName,params) {
 
   const useOrderContractRead = useContractRead(orderConfig)
 
-  return { useOrderContractRead }
+  return { useOrderContractRead, orderConfig }
 }
