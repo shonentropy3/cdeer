@@ -1,6 +1,6 @@
 require("@nomiclabs/hardhat-waffle");
 // npx hardhat size-contracts
-require('hardhat-contract-sizer');
+// require('hardhat-contract-sizer');
 
 
 const fs = require('fs');

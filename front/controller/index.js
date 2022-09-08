@@ -1,7 +1,7 @@
 import { useContractWrite, useProvider, useSigner, usePrepareContractWrite, useContractRead } from 'wagmi';
-import task from '../../deployments/abi/Task.json'
+import task from '../../deployments/abi/DeTask.json'
 import taskAddr from '../../deployments/dev/DeTask.json'
-import order from '../../deployments/abi/Order.json'
+import order from '../../deployments/abi/DeOrder.json'
 import orderAddr from '../../deployments/dev/DeOrder.json'
 
 export function useContracts(functionName) {

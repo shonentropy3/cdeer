@@ -1,8 +1,8 @@
 const { ethers } = require("hardhat");
 const hre = require("hardhat");
-const taskJson = require('../deployments/dev/Task.json');
+const taskJson = require('../deployments/dev/DeTask.json');
 const orderJson = require('../deployments/dev/Order.json');
-const { abi } = require('../deployments/abi/Task.json');
+const { abi } = require('../deployments/abi/DeTask.json');
 const orderAbi = require('../deployments/abi/Order.json');
 
 let accounts = [];

@@ -1,14 +1,39 @@
 import { useEffect, useState } from "react"
-import { Steps,Pagination } from "antd";
-import {ClockCircleOutlined,MessageFilled} from "@ant-design/icons"
+import { Steps, Pagination, Modal, InputNumber, Select, Button } from "antd";
+import { ClockCircleOutlined, MessageFilled } from "@ant-design/icons"
+import { useAccount } from 'wagmi'
 import { getMyApplylist } from "../../http/api";
+import { useContracts } from "../../controller/index";
 
 
 export default function applylist() {
-    
+
+    const { Option } = Select;
+    const { Step } = Steps;
+    const { address } = useAccount();
+    const { useOrderContractWrite } = useContracts('createOrder')
+    const selectAfter = (
+        <Select
+          defaultValue="eth"
+        >
+          <Option value="eth">ETH</Option>
+          <Option value="btc">BTC</Option>
+        </Select>
+      );
     let [taskId,setTaskId] = useState(null);
     let [data,setData] = useState([]);
-    const { Step } = Steps;
+    let [worker,setWorker] = useState();
+    let [amount,setAmount] = useState();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+      
+    const showModal = () => {
+      setIsModalOpen(true);
+    };
+  
+    const handleCancel = () => {
+      setIsModalOpen(false);
+    };
 
     const getList = () => {
         getMyApplylist({demandId: taskId})
@@ -22,13 +47,33 @@ export default function applylist() {
         })
     }
 
+    const invitation = () => {
+        useOrderContractWrite.write({
+            recklesslySetUnpreparedArgs: [
+                Number(taskId),
+                address,
+                worker,
+                '0x90f79bf6eb2c4f870365e785982e1f101e93b906',
+                amount
+            ]
+        })
+    }
+
+    const onchange = e => {
+        amount = e;
+        setAmount(amount);
+    }
+
     useEffect(() => {
-        // console.log(taskId);
         taskId !== null ? 
             getList()
             :
             ''
     },[taskId])
+
+    useEffect(() => {
+        console.log(useOrderContractWrite.error);
+    },[useOrderContractWrite.error])
 
     useEffect(() => {
         taskId = location.search.slice('?')[1];
@@ -55,7 +100,6 @@ export default function applylist() {
                 <p>报名人数</p>
             </div>
         </div>
-        
         <div className="product-stage">
             <Steps size="small" current={1}>
                 <Step title="发布" />
@@ -101,7 +145,7 @@ export default function applylist() {
                             <div>
                                 <div className="product-collaborate">
                                     <p className="product-collaborate-no">暂不合作</p>
-                                    <p>邀请合作</p>
+                                    <p onClick={() => {worker = e.apply_addr, setWorker(worker) ,showModal()}}>邀请合作</p>
                                 </div>
                             </div>
                         </li> )
@@ -112,6 +156,10 @@ export default function applylist() {
                 <Pagination defaultCurrent={1} total={50} />
             </div>
         </div>
-        
+        <Modal title="选择接单者" open={isModalOpen} footer={null} onCancel={handleCancel}>
+            给出您的预算
+            <InputNumber addonAfter={selectAfter} onChange={onchange} />
+            <Button className="btn" type="primary" onClick={() => invitation()}>邀请合作</Button>
+        </Modal>
     </div>
 }

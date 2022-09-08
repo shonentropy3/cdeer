@@ -119,7 +119,7 @@ export class TaskService {
             if (!log) {
                 return
             }
-            let decodedData = createTask.parseLog(log.logs[1]);
+            let decodedData = createTask.parseLog(log.logs[2]);
             const taskId = decodedData.args[0].toString();
             const _data = decodedData.args[2];
             
