@@ -1,16 +1,15 @@
 import { useEffect, useState } from "react"
-import { Divider,Pagination } from "antd";
+import { Steps,Pagination } from "antd";
 import {ClockCircleOutlined,MessageFilled} from "@ant-design/icons"
 
 
 export default function applylist() {
     
     let [taskId,setTaskId] = useState('');
-
+    const { Step } = Steps;
     useEffect(() => {
         taskId = location.search.slice('?')[1];
         setTaskId(taskId);
-        console.log(taskId);
     },[])
 
     return <div className="Applylist">
@@ -33,21 +32,15 @@ export default function applylist() {
                 <p>报名人数</p>
             </div>
         </div>
+        
         <div className="product-stage">
-            {/* <span><Divider orientation="left">发布</Divider></span>
-            <span><Divider orientation="left">报名中</Divider></span>
-            <span><Divider orientation="left">阶段划分</Divider></span>
-            <span><Divider orientation="left">开发中</Divider></span>
-            <span><Divider orientation="right">完成</Divider></span> */}
-            <p className="product-stage-text">发布</p>
-            <p className="product-stage-border"></p>
-            <p className="product-stage-text">报名中</p>
-            <p className="product-stage-border"></p>
-            <p className="product-stage-text">阶段划分</p>
-            <p className="product-stage-border"></p>
-            <p className="product-stage-text">开发中</p>
-            <p className="product-stage-border"></p>
-            <p className="product-stage-text">完成</p>
+            <Steps size="small" current={1}>
+                <Step title="发布" />
+                <Step title="报名中" />
+                <Step title="阶段划分" />
+                <Step title="开发中" />
+                <Step title="完成" />
+            </Steps>
         </div>
         <div className="task-list">
             <h4>报名列表</h4>
