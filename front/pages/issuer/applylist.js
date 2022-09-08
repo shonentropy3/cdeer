@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Steps, Pagination, Modal, InputNumber, Select, Button } from "antd";
+import { Steps, Pagination, Modal, InputNumber, Select, Button, message } from "antd";
 import { ClockCircleOutlined, MessageFilled } from "@ant-design/icons"
 import { useAccount } from 'wagmi'
 import { getMyApplylist } from "../../http/api";
@@ -63,6 +63,20 @@ export default function applylist() {
         amount = e;
         setAmount(amount);
     }
+
+    const writeSuccess = () => {
+        message.success('操作成功!')
+        setTimeout(() => {
+            history.go(0)
+        }, 500);
+    }
+
+    useEffect(() => {
+        useOrderContractWrite.isSuccess ? 
+            writeSuccess()
+            :
+            ''
+    },[useOrderContractWrite.isSuccess])
 
     useEffect(() => {
         taskId !== null ? 

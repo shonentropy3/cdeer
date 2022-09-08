@@ -42,6 +42,19 @@ CREATE INDEX "issuer" ON "public"."tasks" USING btree (
   "issuer" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
 );
 
+-- 创建订单表
+CREATE TABLE orders (
+ id serial PRIMARY KEY,
+  "order_id" BIGINT,
+	"task_id" BIGINT, 
+	"issuer" varchar(64),
+  "worker" varchar(64),
+  "attachment" varchar(64),
+  "create_time" date DEFAULT (now()),
+  "update_time" date DEFAULT (now()),
+  UNIQUE("order_id")
+);
+
 -- 创建报名表
 CREATE TABLE apply_info (
  id serial PRIMARY KEY,
