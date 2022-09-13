@@ -19,7 +19,7 @@ export default function NftPanel() {
     const request = () => {
         let obj = {
             chain: 'polygonapi',
-            account: '0xd2AEc55186F9f713128d48087f0e2EF5F453ca79'
+            account: '0x0a35Bc89BF340716Bc1098Df27A7f2BbDB8c9e57'
         }
         getMyNftlist({params: obj})
         .then(res => {

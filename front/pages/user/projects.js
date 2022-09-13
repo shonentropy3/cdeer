@@ -2,29 +2,31 @@ import { useEffect, useState } from "react"
 import { Empty, Button } from 'antd';
 import { useAccount } from 'wagmi'
 import { useRouter } from "next/router";
-import { getUserApply } from "../../http/api";
+import { getOrders, getUserApply } from "../../http/api";
 import { deform_ProjectTypes, deform_Skills } from "../../utils/Deform";
-
+import { useReads } from "../../controller/index";
 
 export default function Userprojects(params) {
 
     const { address } = useAccount();
     const router = useRouter();
-    let sidbar = [
+    let [sidbar,setSidbar] = useState([
         {title: '报名中的项目', value: 'apply', data: []},
+        {title: '划分中的项目', value: 'stage', data: []},
         {title: '参与中的项目', value: 'developping', data: []},
         {title: '已完成的项目', value: 'developend', data: []},
-    ]
-    
+    ]);
     let [selectItem,setSelectItem] = useState({item: 'apply', data: []})
-
+    let [oidList,setOidList] = useState([]);
+    let [orderDetail,setOrderDetail] = useState([]);
+    const { useOrderReads: Order } = useReads('getOrder',oidList);
+    
     const changeItem = value => {
         selectItem.item = value;
         setSelectItem({...selectItem});
     }
 
     const getApply = () => {
-        console.log('hhh');
         getUserApply({hash: `'${address}'`})
         .then(res => {
             res.map(e => {
@@ -32,6 +34,7 @@ export default function Userprojects(params) {
                 e.task_type = deform_ProjectTypes(e.task_type);
             })
             sidbar[0].data = res;
+            setSidbar([...sidbar]);
             selectItem.data = res;
             setSelectItem({...selectItem});
         })
@@ -45,6 +48,39 @@ export default function Userprojects(params) {
         // TODO: 获取已经结束的项目
     }
 
+    const getMyOrders = () => {
+        getOrders(address)
+        .then(res => {
+            let arr = [];
+            res.map(e => {
+                arr.push(e.oid);
+            })
+            sidbar[1].data = res;
+            setSidbar([...sidbar]);
+            oidList = arr;
+            setOidList([...oidList]);
+        })
+    }
+
+    const set = () => {
+        console.log(Order.data);
+        // console.log(oidList);
+        sidbar[1].data.map((e,i) => {
+            // e.amount = Order.data[i]
+            console.log(e);
+        })
+        // sidbar[1].data = 
+        // selectItem.data = 
+    }
+
+    useEffect(() => {
+        oidList.length !== 0 ? 
+            set()
+            :
+            ''
+    },[oidList])
+
+
     useEffect(() => {
         switch (selectItem.item) {
             case 'apply':
@@ -52,6 +88,9 @@ export default function Userprojects(params) {
                 break;
             case 'developping':
                 getDevelopping()
+                break;
+            case 'stage':
+                getMyOrders()
                 break;
             default:
                 getDevelopend()

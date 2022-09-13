@@ -288,7 +288,6 @@ export default function Publish() {
             hash: data.attachment,
             payhash: Task.data.hash,
           }
-        // return
         createDemand({"proLabel": JSON.stringify(obj)})
               .then(res => {
                 if (res.code == '200') {

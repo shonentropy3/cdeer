@@ -1,10 +1,8 @@
 import { useContractWrite, useProvider, useSigner, usePrepareContractWrite, useContractRead } from 'wagmi';
 import task from '../../deployments/abi/Task.json'
 import taskAddr from '../contracts/deployments/Task.json'
-import order from '../../deployments/abi/Order.json'
-import orderAddr from '../contracts/deployments/Order.json'
-import hello from '../../deployments/abi/Hello.json'
-import helloAddr from '../contracts/deployments/Hello.json'
+import order from '../../deployments/abi/DeOrder.json'
+import orderAddr from '../contracts/deployments/DeOrder.json'
 
 export function useContracts(functionName) {
 
@@ -64,6 +62,7 @@ export function useContractsRead(functionName,params) {
 
   return {
     // useTaskContractRead,
-    useOrderContractRead
+    useOrderContractRead,
+    orderConfig
   }
 }

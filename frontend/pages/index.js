@@ -4,19 +4,38 @@ import { Spin, BackTop, Divider, Empty, Button } from 'antd';
 import { getDemand, getFilter } from '../http/api';
 import style from '../styles/utils.module.scss'
 import { translatedPjc, translatedRole, sToDays } from '../utils/translated';
-import { useSignTypedData, useAccount, useNetwork } from 'wagmi'
+import { useSignTypedData, useAccount, useNetwork, useContractRead } from 'wagmi'
+import { useContractsRead } from '../controller';
+
+import order from '../../deployments/abi/DeOrder.json'
+import orderAddr from '../contracts/deployments/DeOrder.json'
 
 export default function Home() {
-
+  const { useOrderContractReadBeta: OrderBeta, orderConfig } = useContractsRead('getOrder',1)
   const { address, isConnecting, isDisconnected } = useAccount()
   const { chain, chains } = useNetwork()
+
+  const { data: test, error: testError } = useContractRead({
+    addressOrName: orderAddr.address,
+    contractInterface: order.abi,
+    functionName: 'getOrder',
+    args: 1,
+    onError(error) {
+        console.log('Error', error)
+    },
+  })
 
   let [account,setAccount] = useState()
 
   useEffect(() => {
     account = address;
     setAccount(account);
+    console.log(test.toString());
   },[])
+
+  // useEffect(() => {
+  //   console.log(OrderBeta.data);
+  // },[OrderBeta.data])
 
   const domain = {
     name: 'Ether Mail',

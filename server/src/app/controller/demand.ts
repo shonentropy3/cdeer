@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Post, Request, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { MarketService } from '../service/demand';
 
@@ -11,7 +11,7 @@ export class MarketController {
     async createProject(@Body() body: any){
         return await this.marketService.createDemand(body)
     }
-
+    
     @Post('createOrder')  // 发布需求
     async createOrder(@Body() body: any){
         return await this.marketService.createOrder(body)
@@ -32,6 +32,17 @@ export class MarketController {
         return await this.marketService.getDemand()
     }
 
+    @Get('getOrder')  // 展示需求列表
+    async getOrder(@Request() request: any){
+        const account = request.query.account;
+        return await new Promise ((resolve,reject)=>{
+            resolve(this.marketService.getOrder(account))
+         })
+         .then((res)=>{
+            return this.marketService.getTask(res)
+         })
+    }
+    
     @Post('getDemandInfo')  // 查看需求详情
     async getDemandInfo(@Body() body: any){
         return await this.marketService.getDemandInfo(body)

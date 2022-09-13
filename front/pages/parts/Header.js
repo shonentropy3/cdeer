@@ -172,8 +172,8 @@ export default function Header() {
         >
             {connectors.map((connector) => (
                 <Button
-                key={connector.id}
-                onClick={() => {connect({ connector }), handlerCancel()}}
+                    key={connector.id}
+                    onClick={() => {connect({ connector }), handlerCancel()}}
                 >
                 {connector.name}
                 </Button>

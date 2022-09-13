@@ -11,8 +11,9 @@ import Header from './parts/Header'
 import {
   WagmiConfig,
   createClient,
-  defaultChains,
+  chain,
   configureChains,
+  defaultChains
 } from 'wagmi'
 
 import { alchemyProvider } from 'wagmi/providers/alchemy'
@@ -26,45 +27,44 @@ import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 
 
-const {chains, provider, webSocketProvider} = configureChains(defaultChains,[
-  infuraProvider({apiKey: 'c1e833d1b315409eb99229632bafb98d'}),
+const {chains, provider, webSocketProvider} = configureChains([chain.mainnet,chain.goerli,chain.hardhat],[
+  infuraProvider({ apiKey: 'd3fe47cdbf454c9584113d05a918694f' }),
   jsonRpcProvider({
-    rpc: (chains)=>(
-      {http: chains.rpcUrls.default}
-    )
-  })
+    rpc: (chain) => ({ http: chain.rpcUrls.default }),
+  }),
 ])
 
 const client = createClient({
   autoConnect: true,
   connectors: [
-    new MetaMaskConnector({chains}),
+    new MetaMaskConnector({ chains }),
     new CoinbaseWalletConnector({
       chains,
       options: {
-        appName:"wagmi"
-      }
+        appName: 'wagmi',
+      },
     }),
     new WalletConnectConnector({
       chains,
       options: {
-        qrcode: true
-      }
+        qrcode: true,
+      },
     }),
     new InjectedConnector({
       chains,
-      options:{
-        name: 'injected',
-        shimDisconnect:true
-      }
-    })
+      options: {
+        name: 'Injected',
+        shimDisconnect: true,
+      },
+    }),
+
   ],
   provider,
-
 })
 
 
 function MyApp({ Component, pageProps }) {
+
   return <WagmiConfig client={client} >
     <Header></Header>
     <Component {...pageProps} />

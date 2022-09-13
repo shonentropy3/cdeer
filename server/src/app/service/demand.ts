@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { Tasks } from '../db/entity/Tasks';	//引入entity
 
 // dbUtils
-import { getDemandDate, getDemandInfoDate, setDemand, moDemand, delDemand, getFilter, setOrder } from '../db/sql/demand';
+import { getDemandDate, getDemandInfoDate, setDemand, moDemand, delDemand, getFilter, setOrder, getOrdersDate } from '../db/sql/demand';
 
 
 @Injectable()
@@ -30,6 +30,39 @@ export class MarketService {
             console.log('getDemand err =>', err)
             return err
         });
+    }
+
+    // 获取未划分阶段订单
+    async getOrder(account) {
+        return await this.tasksRepository.query(getOrdersDate(account))
+        .then(res => {
+            let arr = [];
+            res.map(e => {
+                arr.push({
+                    oid: Number(e.order_id),
+                    tid: Number(e.task_id),
+                });
+            })
+            return arr
+        })
+        
+    }
+
+    async getTask(arr) {
+        return new Promise((resolve, reject) => {
+            arr.map(async(e,i) => {
+                
+                   await this.tasksRepository.query(getDemandInfoDate(e.tid))
+                    .then(task => {
+                        e.data = task[0]
+                        if (i + 1 === arr.length) {
+                            resolve(arr)
+                        }
+                    }) 
+            })
+        }).then(() => {
+            return arr            
+        })
     }
 
     // 获取筛选列表

@@ -5,6 +5,11 @@ export const getDemandDate = () => {
     return sql
 }
 
+export const getOrdersDate = (account) => {
+    let sql = `SELECT * FROM public."orders" WHERE stagejson is null and worker = '${account}' `
+    return sql
+}
+
 export const getDemandInfoDate = params => {
     let sql = `SELECT * FROM public.tasks WHERE id = '${params}' and del = 0`
     return sql
@@ -64,8 +69,6 @@ export const setDemand = params => {
 export const setOrder = params => {
     return  ` insert into trans_hashes("send_addr", category, hash, task_id) 
         VALUES ('${params.address}', 6, '${params.hash}', ${params.taskId})`;
-    
-    
 }
 
 export const moDemand = params => {
