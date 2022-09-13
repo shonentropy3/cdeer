@@ -54,7 +54,7 @@ export class MarketService {
                 
                    await this.tasksRepository.query(getDemandInfoDate(e.tid))
                     .then(task => {
-                        e.data = task[0]
+                        e.data = task[0];
                         if (i + 1 === arr.length) {
                             resolve(arr)
                         }

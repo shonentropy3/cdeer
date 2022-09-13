@@ -42,10 +42,14 @@ export default function Userprojects(params) {
 
     const getDevelopping = () => {
         // TODO: 获取正在进行的项目
+        selectItem.data = sidbar[2].data;
+        setSelectItem({...selectItem});
     }
 
     const getDevelopend = () => {
         // TODO: 获取已经结束的项目
+        selectItem.data = sidbar[3].data;
+        setSelectItem({...selectItem});
     }
 
     const getMyOrders = () => {
@@ -55,6 +59,7 @@ export default function Userprojects(params) {
             res.map(e => {
                 arr.push(e.oid);
             })
+            console.log(res);
             sidbar[1].data = res;
             setSidbar([...sidbar]);
             oidList = arr;
@@ -63,14 +68,79 @@ export default function Userprojects(params) {
     }
 
     const set = () => {
-        console.log(Order.data);
-        // console.log(oidList);
         sidbar[1].data.map((e,i) => {
-            // e.amount = Order.data[i]
-            console.log(e);
+            e.odata = {
+                issuer: Order.data[i].issuer,
+                worker: Order.data[i].worker,
+                token: Order.data[i].token,
+                amount: Order.data[i].amount.toString(),
+                progress: Order.data[i].progress,
+                startDate: Order.data[i].startDate.toString(),
+                payed: Order.data[i].payed.toString()
+            }
         })
-        // sidbar[1].data = 
-        // selectItem.data = 
+        setSidbar([...sidbar])
+    }
+
+    const out = (arr) => {
+        if (arr.length === 0) {
+            return <Empty />
+        }
+        return (
+            arr.map((e,i) => 
+                <div key={i} className="li">
+                    <div className="li-info">
+                        <p className="title">{e.title}</p>
+                        <p className="role">技术要求: {e.role.map((ele,index) => <span key={index}>{ele}</span> )}</p>
+                        <div>
+                            <p>项目周期: {e.period / 60 / 60 / 24}天</p>
+                            <p>项目预算: {e.budget}ETH</p>
+                        </div>
+                    </div>
+                    <div className="li-right">
+                        <Button>取消报名</Button>
+                        <Button type="primary">修改报名信息</Button>
+                    </div>
+                </div>
+            )
+        )
+    }
+    
+    const outStage = (arr) => {
+        if (arr.length === 0 || arr[0].odata === undefined) {
+            return <Empty />
+        }
+        return (
+            arr.map((e,i) => 
+                <div key={i} className="li">
+                    <div className="li-info">
+                        <p className="title">{e.data.title}</p>
+                        <p className="role">技术要求: {e.data.role.map((ele,index) => <span key={index}>{ele}</span> )}</p>
+                        <div>
+                            <p>项目周期: {e.data.period / 60 / 60 / 24}天</p>
+                            <p>项目预算: {e.odata.amount}ETH</p>
+                        </div>
+                    </div>
+                    <div className="li-right">
+                        <Button type="primary">确认合作</Button>
+                        <p>项目方邀请您合作</p>
+                    </div>
+                </div>
+            )
+        )
+    }
+
+    const print = () => {
+        switch (selectItem.item) {
+            case 'apply':
+                return out(sidbar[0].data);
+            case 'stage':
+                return outStage(sidbar[1].data);
+            case 'developping':
+                return out(sidbar[2].data);
+            default:
+                return out(sidbar[3].data);
+        }
     }
 
     useEffect(() => {
@@ -113,25 +183,26 @@ export default function Userprojects(params) {
         </div>
         <div className="content">
             {
-                selectItem.data.length === 0 ?
-                    <Empty />
-                    :
-                    selectItem.data.map((e,i) => 
-                        <div key={i} className="li">
-                            <div className="li-info">
-                                <p className="title">{e.title}</p>
-                                <p className="role">技术要求: {e.role.map((ele,index) => <span key={index}>{ele}</span> )}</p>
-                                <div>
-                                    <p>项目周期: {e.period / 60 / 60 / 24}天</p>
-                                    <p>项目预算: {e.budget}ETH</p>
-                                </div>
-                            </div>
-                            <div className="li-right">
-                                <Button>取消报名</Button>
-                                <Button type="primary">修改报名信息</Button>
-                            </div>
-                        </div>
-                    )
+                print()
+                // selectItem.data.length === 0 ?
+                //     <Empty />
+                //     :
+                    // selectItem.data.map((e,i) => 
+                    //     <div key={i} className="li">
+                    //         <div className="li-info">
+                    //             <p className="title">{e.title}</p>
+                    //             <p className="role">技术要求: {e.role.map((ele,index) => <span key={index}>{ele}</span> )}</p>
+                    //             <div>
+                    //                 <p>项目周期: {e.period / 60 / 60 / 24}天</p>
+                    //                 <p>项目预算: {e.budget}ETH</p>
+                    //             </div>
+                    //         </div>
+                    //         <div className="li-right">
+                    //             <Button>取消报名</Button>
+                    //             <Button type="primary">修改报名信息</Button>
+                    //         </div>
+                    //     </div>
+                    // )
             }
         </div>
     </div>   
