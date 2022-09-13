@@ -26,6 +26,10 @@ export default function Userprojects(params) {
         setSelectItem({...selectItem});
     }
 
+    const goUserProject = () => {
+        router.push({pathname:'/worker/Project'})
+    }
+
     const getApply = () => {
         getUserApply({hash: `'${address}'`})
         .then(res => {
@@ -58,8 +62,10 @@ export default function Userprojects(params) {
             let arr = [];
             res.map(e => {
                 arr.push(e.oid);
+                console.log(e.data);
+                e.data.role = deform_Skills(e.data.role);
+                e.data.task_type = deform_ProjectTypes(e.data.task_type);
             })
-            console.log(res);
             sidbar[1].data = res;
             setSidbar([...sidbar]);
             oidList = arr;
@@ -112,7 +118,7 @@ export default function Userprojects(params) {
         }
         return (
             arr.map((e,i) => 
-                <div key={i} className="li">
+                <div key={i} className="li" onClick={() => goUserProject()}>
                     <div className="li-info">
                         <p className="title">{e.data.title}</p>
                         <p className="role">技术要求: {e.data.role.map((ele,index) => <span key={index}>{ele}</span> )}</p>
@@ -182,28 +188,7 @@ export default function Userprojects(params) {
             }
         </div>
         <div className="content">
-            {
-                print()
-                // selectItem.data.length === 0 ?
-                //     <Empty />
-                //     :
-                    // selectItem.data.map((e,i) => 
-                    //     <div key={i} className="li">
-                    //         <div className="li-info">
-                    //             <p className="title">{e.title}</p>
-                    //             <p className="role">技术要求: {e.role.map((ele,index) => <span key={index}>{ele}</span> )}</p>
-                    //             <div>
-                    //                 <p>项目周期: {e.period / 60 / 60 / 24}天</p>
-                    //                 <p>项目预算: {e.budget}ETH</p>
-                    //             </div>
-                    //         </div>
-                    //         <div className="li-right">
-                    //             <Button>取消报名</Button>
-                    //             <Button type="primary">修改报名信息</Button>
-                    //         </div>
-                    //     </div>
-                    // )
-            }
+            { print() }
         </div>
     </div>   
 }

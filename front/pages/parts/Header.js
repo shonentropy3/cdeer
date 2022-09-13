@@ -33,7 +33,7 @@ export default function Header() {
             {
               key: '2',
               label: (
-                <Link href={{pathname: '/issuer/projects'}}>
+                <Link href={{pathname: '/issuer/Projects'}}>
                   发布的项目
                 </Link>
               ),
@@ -41,7 +41,7 @@ export default function Header() {
             {
               key: '3',
               label: (
-                <Link href={{pathname: '/user/projects'}}>
+                <Link href={{pathname: '/worker/Projects'}}>
                   参与的项目
                 </Link>
                 ),
