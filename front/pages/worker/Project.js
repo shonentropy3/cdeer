@@ -10,12 +10,22 @@ export default function Project(params) {
     const [advance,setAdvance] = useState();
     let [oid,setOid] = useState();
     let [amount,setAmount] = useState();
+    let [total,setTotal] = useState(0);
 
     const { useOrderReads: Order } = useReads('getOrder',[oid]);
 
     const readSuccess = () => {
         amount = Order.data[0].amount.toString();
         setAmount(amount);
+    }
+
+    const count = () => {
+        total = 0;
+        total += advance;
+        stages.map(e => {
+            total += e.budget;
+            setTotal(total);
+        })
     }
 
     useEffect(() => {
@@ -29,6 +39,13 @@ export default function Project(params) {
             :
             ''
     },[Order]) 
+
+    useEffect(() => {
+        stages.length !== 0 ?
+            count()
+            :
+            ''
+    },[stages,advance])
     
     return <div className="WorkerProject">
         <div className="worker-title">
@@ -47,14 +64,14 @@ export default function Project(params) {
             <Panel_stageInfo getStages={setStages} getAdvance={setAdvance} amount={amount} />
         </div>
         <div className="worker-total">
-            <p>预付款: <span>{advance}</span>ETH </p>
+            <p>预付款: <span>{advance}</span>ETH</p>
             {
                 stages.map((e,i) => 
                     <p key={i}>P{i+1}阶段费用: <span>{e.budget}</span>ETH </p>
                 )
             }
             <p>开发周期: <span>2022.08.20</span> </p>
-            <strong>总费用: 11ETH</strong>
+            <strong>总费用: {total}ETH</strong>
         </div>
         <Button type='primary' className='worker-btn'>完成并提交阶段划分</Button>
         <div className="h50"></div>

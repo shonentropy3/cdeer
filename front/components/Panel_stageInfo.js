@@ -36,6 +36,7 @@ export default function Panel_stageInfo(props) {
     const onChange = e => {
         advance = e.target.checked;
         setAdvance(advance);
+        getAdvance(advance)
     }
 
     const addStage = () => {
@@ -59,7 +60,6 @@ export default function Panel_stageInfo(props) {
         editMode = true;
         setEditMode(editMode);
         getStages([...stages]);
-        getAdvance()
     }
     
     return <div className="Panel_stageInfo">
@@ -100,7 +100,7 @@ export default function Panel_stageInfo(props) {
                                         }}
                                     >
                                         {/* {contentList[activeTabKey1]} */}
-                                        <StageCard amount={amount - illM} stage={stages[activeTabKey1]} set={setStages} stages={stages} />
+                                        <StageCard amount={amount} stage={stages[activeTabKey1]} set={setStages} stages={stages} />
                                     </Card>
                                     <div className="btns">
                                         <Button className="btn">取消</Button>
