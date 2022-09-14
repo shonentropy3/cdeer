@@ -10,7 +10,6 @@ export default function Panel_stageInfo(props) {
     const { amount } = props;
     const { getStages } = props;
     const { getAdvance } = props;
-    const { count } = props;
     const { Option } = Select;
     let [advance,setAdvance] = useState(false);
     let [stageList,setStageList] = useState([]);

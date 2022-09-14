@@ -41,7 +41,7 @@ contract DeStage is Ownable {
     }
 
     modifier onlyDeorder() {
-        if(msg.sender == deOrder) revert InvalidCaller(); 
+        if(msg.sender != deOrder) revert InvalidCaller(); 
         _;
     }
 

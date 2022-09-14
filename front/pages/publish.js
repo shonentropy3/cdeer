@@ -257,7 +257,6 @@ export default function Publish() {
         let fee = {
             value: ethers.utils.parseEther("1")
         }
-        console.log(fee);
         if (fromdata) {
             await getHash(fromdata)
               .then((res) => {
@@ -272,7 +271,7 @@ export default function Publish() {
         Task.write({
             recklesslySetUnpreparedArgs: [address, data, fee]
         })
-        console.log(Task.isSuccess);
+        console.log([address, data, fee]);
     }
 
     const writeSuccess = () => {

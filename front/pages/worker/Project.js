@@ -1,10 +1,12 @@
 import Panel_stageInfo from "../../components/Panel_stageInfo";
-import { Steps, Button } from "antd";
+import { Steps, Button, message } from "antd";
 import { useEffect, useState } from "react";
-import { useReads } from "../../controller";
+import { useContracts, useReads } from "../../controller";
+import { ethers } from "ethers";
 
 export default function Project(params) {
 
+    const { useOrderContractWrite: DeOrder, orderConfig } = useContracts('setStage')
     const { Step } = Steps;
     const [stages,setStages] = useState([]);
     const [advance,setAdvance] = useState(0);
@@ -31,6 +33,37 @@ export default function Project(params) {
             setTotal(total);
         })
     }
+
+    const setStage = () => {
+        // 设置阶段
+        let _amounts = [];
+        let _periods = [];
+        stages.map(e => {
+            _amounts.push(ethers.utils.parseEther(`${e.budget}`));
+            _periods.push(e.period * 24 * 60 * 60)
+        })
+        DeOrder.write({
+            recklesslySetUnpreparedArgs: [
+                oid,
+                _amounts,
+                _periods
+            ]
+        })
+    }
+
+    const writeSuccess = () => {
+        message.success('划分阶段成功')
+        setTimeout(() => {
+            history.go(-1);
+        }, 500);
+    }
+
+    useEffect(() => {
+        DeOrder.isSuccess ? 
+            writeSuccess()
+            :
+            ''
+    },[DeOrder.isSuccess])
 
     useEffect(() => {
         oid = location.search.slice('?')[1];
@@ -65,7 +98,7 @@ export default function Project(params) {
             </Steps>
         </div>
         <div className="worker-signInStage">
-            <Panel_stageInfo getStages={setStages} getAdvance={setAdvance} amount={amount} count={count}/>
+            <Panel_stageInfo getStages={setStages} getAdvance={setAdvance} amount={amount}/>
         </div>
         <div className="worker-total">
             {
@@ -82,7 +115,7 @@ export default function Project(params) {
             <p>开发周期: <span>{totalPeriod}</span>DAYS</p>
             <strong>总费用: {total}ETH</strong>
         </div>
-        <Button type='primary' className='worker-btn'>完成并提交阶段划分</Button>
+        <Button type='primary' className='worker-btn' onClick={() => setStage()}>完成并提交阶段划分</Button>
         <div className="h50"></div>
     </div>
 }
