@@ -1,20 +1,38 @@
 import Panel_stageInfo from "../../components/Panel_stageInfo";
 import { Steps, Button } from "antd";
 import { useEffect, useState } from "react";
+import { useReads } from "../../controller";
 
 export default function Project(params) {
 
     const { Step } = Steps;
     const [stages,setStages] = useState([]);
     const [advance,setAdvance] = useState();
+    let [oid,setOid] = useState();
+    let [amount,setAmount] = useState();
+
+    const { useOrderReads: Order } = useReads('getOrder',[oid]);
+
+    const readSuccess = () => {
+        amount = Order.data[0].amount.toString();
+        setAmount(amount);
+    }
 
     useEffect(() => {
-        console.log(stages);
-    },[stages])
+        oid = location.search.slice('?')[1];
+        setOid(Number(oid));
+    },[])
+
+    useEffect(() => {
+        Order.data[0] !== null ? 
+            readSuccess()
+            :
+            ''
+    },[Order]) 
     
     return <div className="WorkerProject">
         <div className="worker-title">
-
+            <h1>{amount}</h1>
         </div>
         <div className="worker-steps">
             <Steps size="small" current={2}>

@@ -26,8 +26,8 @@ export default function Userprojects(params) {
         setSelectItem({...selectItem});
     }
 
-    const goUserProject = () => {
-        router.push({pathname:'/worker/Project'})
+    const goUserProject = (oid) => {
+        router.push({pathname:'/worker/Project', search: oid})
     }
 
     const getApply = () => {
@@ -62,7 +62,6 @@ export default function Userprojects(params) {
             let arr = [];
             res.map(e => {
                 arr.push(e.oid);
-                console.log(e.data);
                 e.data.role = deform_Skills(e.data.role);
                 e.data.task_type = deform_ProjectTypes(e.data.task_type);
             })
@@ -118,7 +117,7 @@ export default function Userprojects(params) {
         }
         return (
             arr.map((e,i) => 
-                <div key={i} className="li" onClick={() => goUserProject()}>
+                <div key={i} className="li" onClick={() => goUserProject(e.oid)}>
                     <div className="li-info">
                         <p className="title">{e.data.title}</p>
                         <p className="role">技术要求: {e.data.role.map((ele,index) => <span key={index}>{ele}</span> )}</p>
