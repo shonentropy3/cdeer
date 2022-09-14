@@ -7,10 +7,11 @@ export default function Project(params) {
 
     const { Step } = Steps;
     const [stages,setStages] = useState([]);
-    const [advance,setAdvance] = useState();
+    const [advance,setAdvance] = useState(0);
     let [oid,setOid] = useState();
     let [amount,setAmount] = useState();
     let [total,setTotal] = useState(0);
+    let [totalPeriod,setTotalPeriod] = useState(0);
 
     const { useOrderReads: Order } = useReads('getOrder',[oid]);
 
@@ -21,9 +22,12 @@ export default function Project(params) {
 
     const count = () => {
         total = 0;
+        totalPeriod = 0;
         total += advance;
         stages.map(e => {
             total += e.budget;
+            totalPeriod += e.period;
+            setTotalPeriod(totalPeriod);
             setTotal(total);
         })
     }
@@ -61,16 +65,21 @@ export default function Project(params) {
             </Steps>
         </div>
         <div className="worker-signInStage">
-            <Panel_stageInfo getStages={setStages} getAdvance={setAdvance} amount={amount} />
+            <Panel_stageInfo getStages={setStages} getAdvance={setAdvance} amount={amount} count={count}/>
         </div>
         <div className="worker-total">
-            <p>预付款: <span>{advance}</span>ETH</p>
+            {
+                advance !== 0 ? 
+                    <p>预付款: <span>{advance}</span>ETH</p>
+                    :
+                    ''
+            }
             {
                 stages.map((e,i) => 
                     <p key={i}>P{i+1}阶段费用: <span>{e.budget}</span>ETH </p>
                 )
             }
-            <p>开发周期: <span>2022.08.20</span> </p>
+            <p>开发周期: <span>{totalPeriod}</span>DAYS</p>
             <strong>总费用: {total}ETH</strong>
         </div>
         <Button type='primary' className='worker-btn'>完成并提交阶段划分</Button>

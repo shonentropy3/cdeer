@@ -10,6 +10,7 @@ export default function Panel_stageInfo(props) {
     const { amount } = props;
     const { getStages } = props;
     const { getAdvance } = props;
+    const { count } = props;
     const { Option } = Select;
     let [advance,setAdvance] = useState(false);
     let [stageList,setStageList] = useState([]);
@@ -40,6 +41,8 @@ export default function Panel_stageInfo(props) {
     }
 
     const addStage = () => {
+        activeTabKey1 = stageList.length;
+        setActiveTabKey1(`${activeTabKey1}`);
         let num = stageList.length + 1;
         stageList.push({
             key: stageList.length,
@@ -50,8 +53,10 @@ export default function Panel_stageInfo(props) {
             title: '',
             budget: '',
             period: '',
-            content: ''
+            content: '',
+            percent: ''
         })
+        
         setStages([...stages]);
         setStageList([...stageList]);
     }
@@ -61,6 +66,21 @@ export default function Panel_stageInfo(props) {
         setEditMode(editMode);
         getStages([...stages]);
     }
+
+    const deleteStage = index => {
+        stageList.splice(index,1);
+        setStageList([...stageList]);
+        stageList.map((e,i) => {
+            e.key = i;
+            e.tab = i+1;
+            e.tab = 'P'+e.tab;
+        })
+        activeTabKey1 = '0';
+        setActiveTabKey1(activeTabKey1);
+        stages.splice(index,1)
+        getStages([...stages]);
+    }
+
     
     return <div className="Panel_stageInfo">
         <div className="stageInfo-title">
@@ -99,8 +119,14 @@ export default function Panel_stageInfo(props) {
                                         onTab1Change(key);
                                         }}
                                     >
-                                        {/* {contentList[activeTabKey1]} */}
-                                        <StageCard amount={amount} stage={stages[activeTabKey1]} set={setStages} stages={stages} />
+                                        <StageCard 
+                                            amount={amount} 
+                                            stage={stages[activeTabKey1]} 
+                                            set={setStages} 
+                                            stages={stages} 
+                                            deleteStage={deleteStage}
+                                            index={activeTabKey1}
+                                        />
                                     </Card>
                                     <div className="btns">
                                         <Button className="btn">取消</Button>
@@ -113,7 +139,7 @@ export default function Panel_stageInfo(props) {
                 <div className="stageInfo-inspection">
                     {
                         stages.map((e,i) => 
-                            <StageInspection key={i} data={e} index={i} set={setEditMode} />
+                            <StageInspection key={i} data={e} index={i} set={setEditMode} setTab={setActiveTabKey1} />
                         )
                     }
                 </div>
