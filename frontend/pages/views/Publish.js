@@ -62,7 +62,7 @@ function Publish() {
     const mintNftHandler = async () => {
         let flag = true
         // 校验一:是否为空
-
+        console.log(ethers.utils.parseEther("1").toString());
         inner.map((e,i) => {
           if (e.value.length === 0 && i < 4) {
             flag = false

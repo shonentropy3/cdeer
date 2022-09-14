@@ -2,8 +2,10 @@ import { useEffect, useState } from "react"
 import { Steps, Pagination, Modal, InputNumber, Select, Button, message } from "antd";
 import { ClockCircleOutlined, MessageFilled } from "@ant-design/icons"
 import { useAccount } from 'wagmi'
-import { createOrder, getMyApplylist } from "../../http/api";
+import { createOrder, getMyApplylist, getMyDemand } from "../../http/api";
 import { useContracts } from "../../controller/index";
+import {useRouter} from "next/router"
+
 
 
 export default function applylist() {
@@ -21,10 +23,26 @@ export default function applylist() {
       );
     let [taskId,setTaskId] = useState(null);
     let [data,setData] = useState([]);
+    let [demandData,setDemandData] = useState({})
     let [worker,setWorker] = useState();
     let [amount,setAmount] = useState();
+    let [skills,setSkills] = useState({
+        "101":"solidity",
+        "102":"javascript",
+        "103":"python",
+        "104":"Go",
+        "105":"C/C++",
+        "106":"Android",
+        "107":"HTML/CSS",
+        "108":"IOS"
+    });
+    let [currencys,setCurrencys] = useState({
+        1 : "ETH",
+        2 : "BTC"
+    })
     const [isModalOpen, setIsModalOpen] = useState(false);
     const { useOrderContractWrite } = useContracts('createOrder');
+    const router = useRouter()
       
     const showModal = () => {
       setIsModalOpen(true);
@@ -34,9 +52,37 @@ export default function applylist() {
       setIsModalOpen(false);
     };
 
+    const getInfo = ()=>{
+        getMyDemand({hash: address})
+        .then(res=>{
+            let deData = {}
+            // console.log(res);
+            res.map(e=>{
+                if(e.id == taskId){
+                    // console.log(e);
+                    deData = {
+                        title: e.title,
+                        desc: e.desc,
+                        currency: e.apply_switch,
+                        budget: e.budget,
+                        period: e.period,
+                        skill: e.role,
+                        applyNum: data.length
+                    }
+                    // console.log(deData);
+                }
+            })
+            // console.log({...deData});
+            setDemandData({...deData})
+            // console.log(demandData);
+            console.log(demandData);
+        })
+    }
+
     const getList = () => {
         getMyApplylist({demandId: taskId})
         .then(res => {
+            // console.log(res);
             res.map(e => {
                 e.address = e.apply_addr.slice(0,5) + "..." + e.apply_addr.slice(38,42)
             })
@@ -79,6 +125,11 @@ export default function applylist() {
         })
     }
 
+    // const routeHandler = ()=>{
+    //     router.push("../publish")
+    // }
+
+
     useEffect(() => {
         useOrderContractWrite.isSuccess ? 
             writeSuccess()
@@ -93,6 +144,13 @@ export default function applylist() {
             ''
     },[taskId])
 
+    useEffect(()=>{
+        taskId !== null ?
+        getInfo()
+        :
+        ""
+    },[demandData.applyNum])
+
     useEffect(() => {
         console.log(useOrderContractWrite.error);
     },[useOrderContractWrite.error])
@@ -105,20 +163,28 @@ export default function applylist() {
     return <div className="Applylist">
         <div className="task-info">
             <div className="task-demand">
-                <p className="task-title">XDAO运维+数据系统开发</p>
+                <p className="task-title">{demandData.title}</p>
                 <p className="task-skill">技术要求:
-                    <span>solidity</span>
-                    <span>javascript</span>
-                    <span>前端</span>
+                    {
+                        demandData.skill?.map((e,i)=>e?(<span key={i}>{skills[e]}</span>):"")
+                    }
                 </p>
                 <p className="task-cycle">项目周期:
-                    <span>30天</span>
+                    <span>{parseInt(demandData.period/86400)}天</span>
                     项目预算:
-                    <span>10ETH</span>
+                    <span>{demandData.budget}{currencys[demandData.currency]}</span>
                 </p>
             </div>
+            <div className="task-changeInfo" onClick={()=>{
+                router.push({
+                    pathname:"../publish",
+                    query:{
+                        taskId:taskId
+                    }
+                })
+            }}>修改信息</div>
             <div className="apply-number">
-                <p className="a-number">3</p>
+                <p className="a-number">{demandData.applyNum}</p>
                 <p>报名人数</p>
             </div>
         </div>
