@@ -7,6 +7,7 @@ import StageInspection from './Stage_inspection';
 
 export default function Panel_stageInfo(props) {
 
+    const { amount } = props;
     const { getStages } = props;
     const { getAdvance } = props;
     const { Option } = Select;
@@ -69,7 +70,7 @@ export default function Panel_stageInfo(props) {
             <Checkbox className={`subtitle-check ${advance ? 'mb10' : ''}`} onChange={onChange}>增加预付款 <span className='check-span'>项目方确认阶段划分后,你将得到预付款</span></Checkbox>
             {
                 advance ? 
-                    <InputNumber min={0} className='subtitle-inner' addonAfter={selectAfter} defaultValue={illM} onChange={e => {getAdvance(e)}} />
+                    <InputNumber min={0} className='subtitle-inner' addonAfter={selectAfter} defaultValue={illM} onChange={e => {getAdvance(e), setIllM(e)}} />
                     :
                     ''
             }
@@ -99,7 +100,7 @@ export default function Panel_stageInfo(props) {
                                         }}
                                     >
                                         {/* {contentList[activeTabKey1]} */}
-                                        <StageCard stage={stages[activeTabKey1]} set={setStages} stages={stages} />
+                                        <StageCard amount={amount - illM} stage={stages[activeTabKey1]} set={setStages} stages={stages} />
                                     </Card>
                                     <div className="btns">
                                         <Button className="btn">取消</Button>

@@ -44,7 +44,7 @@ export default function Project(params) {
             </Steps>
         </div>
         <div className="worker-signInStage">
-            <Panel_stageInfo getStages={setStages} getAdvance={setAdvance} />
+            <Panel_stageInfo getStages={setStages} getAdvance={setAdvance} amount={amount} />
         </div>
         <div className="worker-total">
             <p>预付款: <span>{advance}</span>ETH </p>
