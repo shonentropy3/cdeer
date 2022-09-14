@@ -6,7 +6,8 @@ export const getDemandDate = () => {
 }
 
 export const getOrdersDate = (account) => {
-    let sql = `SELECT * FROM public."orders" WHERE stagejson is null and worker = '${account}' `
+    let sql = `SELECT * FROM public."orders" WHERE worker = '${account}' `
+    // let sql = `SELECT * FROM public."orders" WHERE stagejson is null and worker = '${account}' `
     return sql
 }
 
@@ -121,5 +122,10 @@ export const modifyApplySwitch = params => {
     let sql = `UPDATE tasks SET apply_switch = ${params.buttonSwitch}  WHERE id = '${params.demandId}'`
     console.log(sql,'==>');
     
+    return sql
+}
+
+export const updateStageJson = params => {
+    let sql = `UPDATE orders SET stagejson = '${params.json.hash}'  WHERE order_id = '${params.oid}'`
     return sql
 }

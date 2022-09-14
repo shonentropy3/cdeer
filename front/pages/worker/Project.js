@@ -3,14 +3,18 @@ import { Steps, Button, message } from "antd";
 import { useEffect, useState } from "react";
 import { useContracts, useReads } from "../../controller";
 import { ethers } from "ethers";
+import { getOrders, getStagesHash } from "../../http/api";
+import { useAccount } from 'wagmi'
 
 export default function Project(params) {
 
+    const { address } = useAccount();
     const { useOrderContractWrite: DeOrder, orderConfig } = useContracts('setStage')
     const { Step } = Steps;
     const [stages,setStages] = useState([]);
     const [advance,setAdvance] = useState(0);
-    let [oid,setOid] = useState();
+    let [oid,setOid] = useState(null);
+    let [task,setTask] = useState({});
     let [amount,setAmount] = useState();
     let [total,setTotal] = useState(0);
     let [totalPeriod,setTotalPeriod] = useState(0);
@@ -52,10 +56,55 @@ export default function Project(params) {
     }
 
     const writeSuccess = () => {
-        message.success('划分阶段成功')
-        setTimeout(() => {
-            history.go(-1);
-        }, 500);
+        let stageDetail = {
+            orderId: oid,
+            stages: [],
+            task: {
+                id: task.tid,
+                title: task.data.title,
+                desc: task.data.desc,
+                attachment: task.data.attachment,
+            },
+            last: task.stagejson, //  jsonhash
+            version: '1.0'
+        };
+
+        stages.map(e => {
+            stageDetail.stages.push({
+                milestone: {
+                    type: 'raw',
+                    content: e.content,
+                    title: e.title
+                },
+                delivery: {
+                    attachment: '',
+                    fileType: '',
+                    content: ''
+                }
+            })
+        })
+        getStagesHash({obj: JSON.stringify(stageDetail),oid: oid})
+        .then(res => {
+              // ipfs ==> 存入链上 && 存入stageDetail.last
+              if (res.code === 200) {
+                message.success('划分阶段成功')
+                setTimeout(() => {
+                    history.go(-1);
+                }, 500);
+              }else{
+                message.error('划分阶段失败')
+              }
+        })
+        return
+        
+    }
+
+    const getTaskInfo = () => {
+        getOrders(address)
+        .then(res => {
+            task = res[0];
+            setTask({...task})
+        })
     }
 
     useEffect(() => {
@@ -83,6 +132,13 @@ export default function Project(params) {
             :
             ''
     },[stages,advance])
+
+    useEffect(() => {
+        oid !== null ? 
+            getTaskInfo()
+            :
+            ''
+    },[oid])
     
     return <div className="WorkerProject">
         <div className="worker-title">

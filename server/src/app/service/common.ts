@@ -1,8 +1,11 @@
 import { BadRequestException, Body, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { AxiosError } from 'axios';
 import { createWriteStream } from 'fs';
 import { join } from 'path/posix';
 import { throwError } from 'rxjs';
+import { Repository } from 'typeorm';
+import { Tasks } from '../db/entity/Tasks';
 
 const fs  = require('fs');
 var upyun = require("upyun")
@@ -11,9 +14,14 @@ const ipfs = ipfsAPI({host: 'localhost', port: '5001', protocol: 'http'});
 const service = new upyun.Service('ipfs0','upchain', 'upchain123')
 const client = new upyun.Client(service);
 
+import { updateStageJson } from '../db/sql/demand';
 
 @Injectable()
 export class CommonService {
+    constructor(
+        @InjectRepository(Tasks)
+        private readonly tasksRepository: Repository<Tasks>,
+    ) {}
 
     // Get hash
     getFile(files: any) {
@@ -120,8 +128,18 @@ export class CommonService {
             }
             
         })
-    }).then(res=>{
-        return res
+    }).then(async(res)=>{
+        return await this.tasksRepository.query(updateStageJson({json: res, oid: body.oid}))
+        .then(() => {
+            return {
+                code: 200
+            }
+        })
+        .catch(err => {
+            return {
+                code: 500
+            }
+        })
     }).catch(() => {
         return false
     })
