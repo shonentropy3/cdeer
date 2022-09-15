@@ -11,6 +11,11 @@ export const getOrdersDate = (account) => {
     return sql
 }
 
+export const getOrderInfo = (account) => {
+    let sql = `SELECT * FROM public."orders" WHERE order_id = '${account}' `
+    return sql
+}
+
 export const getDemandInfoDate = params => {
     let sql = `SELECT * FROM public.tasks WHERE id = '${params}' and del = 0`
     return sql

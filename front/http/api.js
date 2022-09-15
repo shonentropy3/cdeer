@@ -16,6 +16,13 @@ export const getOrders = (data) => {
     });
 }
 
+export const getOrdersInfo = (data) => {
+    return serviceAxios({
+        url: "/demand/getOrdersInfo/?oid="+data,
+        method: "get",
+    });
+}
+
 export const getUserApply = (data) => {
     return serviceAxios({
         url: "/user/getApply",

@@ -3,7 +3,7 @@ import { Steps, Button, message } from "antd";
 import { useEffect, useState } from "react";
 import { useContracts, useReads } from "../../controller";
 import { ethers } from "ethers";
-import { getOrders, getStagesHash } from "../../http/api";
+import { getOrders, getOrdersInfo, getStagesHash } from "../../http/api";
 import { useAccount } from 'wagmi'
 
 export default function Project(params) {
@@ -68,7 +68,7 @@ export default function Project(params) {
             last: task.stagejson, //  jsonhash
             version: '1.0'
         };
-
+        console.log(stageDetail);
         stages.map(e => {
             stageDetail.stages.push({
                 milestone: {
@@ -100,7 +100,7 @@ export default function Project(params) {
     }
 
     const getTaskInfo = () => {
-        getOrders(address)
+        getOrdersInfo(oid)
         .then(res => {
             task = res[0];
             setTask({...task})

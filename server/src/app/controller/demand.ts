@@ -42,6 +42,18 @@ export class MarketController {
             return this.marketService.getTask(res)
          })
     }
+
+    @Get('getOrdersInfo')  // 展示需求详情
+    async getOrdersInfo(@Request() request: any){
+        const oid = request.query.oid;
+        return await new Promise ((resolve,reject)=>{
+            resolve(this.marketService.getOrder(oid))
+         })
+         .then((res)=>{
+            return this.marketService.getTask(res)
+         })
+    }
+
     
     @Post('getDemandInfo')  // 查看需求详情
     async getDemandInfo(@Body() body: any){
