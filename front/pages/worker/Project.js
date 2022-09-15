@@ -8,7 +8,6 @@ import { useAccount } from 'wagmi'
 
 export default function Project(params) {
 
-    const { address } = useAccount();
     const { useOrderContractWrite: DeOrder, orderConfig } = useContracts('setStage')
     const { Step } = Steps;
     const [stages,setStages] = useState([]);

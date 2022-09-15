@@ -11,6 +11,7 @@ export default function Issuerprojects(params) {
     const router = useRouter();
     let sidbar = [
         {title: '发布的项目', value: 'tasks', data: []},
+        {title: '划分中的项目', value: 'stage', data: []},
         {title: '进行中', value: 'developping', data: []},
         {title: '发布的项目', value: 'developend', data: []},
     ]
@@ -32,8 +33,13 @@ export default function Issuerprojects(params) {
             sidbar[0].data = res;
             selectItem.data = res;
             setSelectItem({...selectItem});
-            console.log(res);
         })
+    }
+
+    const getStages = () => {
+        sidbar[1].data = [];
+        selectItem.data = [];
+        setSelectItem({...selectItem});
     }
 
     const getDevelopping = () => {
@@ -55,6 +61,9 @@ export default function Issuerprojects(params) {
                 break;
             case 'developping':
                 getDevelopping()
+                break;
+            case 'stage':
+                getStages()
                 break;
             default:
                 getDevelopend()

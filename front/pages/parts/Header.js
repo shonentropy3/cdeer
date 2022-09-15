@@ -121,7 +121,7 @@ export default function Header() {
     })
     const handleScroll = () =>{
         let scrollY = window.scrollY;
-        if(scrollY >= 30){
+        if(scrollY > 0){
             isScroll = true;
         }else{
             isScroll = false
