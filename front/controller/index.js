@@ -3,6 +3,8 @@ import task from '../../deployments/abi/DeTask.json'
 import taskAddr from '../../deployments/dev/DeTask.json'
 import order from '../../deployments/abi/DeOrder.json'
 import orderAddr from '../../deployments/dev/DeOrder.json'
+import stage from '../../deployments/abi/DeStage.json'
+import stageAddr from '../../deployments/dev/DeStage.json'
 
 export function useContracts(functionName) {
 
@@ -18,16 +20,24 @@ export function useContracts(functionName) {
       contractInterface: order.abi,
       functionName: functionName,
   }
+  const stageConfig = {
+    addressOrName: stageAddr.address,
+    contractInterface: stage.abi,
+    functionName: functionName,
+}
 
   const useTaskContractWrite = useContractWrite(taskConfig)
 
   const useOrderContractWrite = useContractWrite(orderConfig)
 
+  const useStageContractWrite = useContractWrite(stageConfig)
+
   return { 
     useTaskContractWrite, 
     taskConfig, 
     useOrderContractWrite, 
-    orderConfig 
+    orderConfig,
+    useStageContractWrite
   }
 }
 
@@ -64,4 +74,26 @@ export function useReads(functionName,list) {
   })
 
   return { useOrderReads }
+}
+
+export function useStageReads(functionName,list) {
+  const stageConfig = {
+      addressOrName: stageAddr.address,
+      contractInterface: stage.abi,
+      functionName: functionName,
+  }
+
+  let arr = [];
+  for (let i = 0; i < list.length; i++) {
+    arr.push({
+      ...stageConfig,
+      args: list[i]
+    })
+  }
+
+  const useStageReads = useContractReads({
+    contracts: arr
+  })
+
+  return { useStageReads }
 }

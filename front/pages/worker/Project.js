@@ -1,7 +1,7 @@
 import Panel_stageInfo from "../../components/Panel_stageInfo";
 import { Steps, Button, message } from "antd";
 import { useEffect, useState } from "react";
-import { useContracts, useReads } from "../../controller";
+import { useContracts, useReads, useStageReads } from "../../controller";
 import { ethers } from "ethers";
 import { getOrders, getOrdersInfo, getStagesHash } from "../../http/api";
 import { useAccount } from 'wagmi'
@@ -20,16 +20,22 @@ export default function Project(params) {
     let [totalPeriod,setTotalPeriod] = useState(0);
 
     const { useOrderReads: Order } = useReads('getOrder',[oid]);
+    const { useStageReads: Stages } = useStageReads('getStages',[oid]);
 
     const readSuccess = () => {
         amount = Order.data[0].amount.toString();
         setAmount(amount);
+        // stages.push({
+        //     budget: '',
+        //     content: ''
+        // })
     }
 
     const count = () => {
         total = 0;
         totalPeriod = 0;
         total += advance;
+        // console.log(stages);
         stages.map(e => {
             total += e.budget;
             totalPeriod += e.period;

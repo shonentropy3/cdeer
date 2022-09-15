@@ -119,6 +119,14 @@ export class CommonService {
                                 hash: files[0].hash,
                                 path: res
                             }
+                            // 上传upyun
+                            client.putFile(obj.hash, fs.readFileSync(res))
+                            .then(res => {
+                                return true
+                            })
+                            .catch(err => {
+                                return false
+                            })
                             fs.unlink(res, (err) => {
                                 if (err) throw err;
                             });
