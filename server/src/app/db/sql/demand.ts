@@ -134,3 +134,8 @@ export const updateStageJson = params => {
     let sql = `UPDATE orders SET stagejson = '${params.json.hash}'  WHERE order_id = '${params.oid}'`
     return sql
 }
+
+export const getStageJson = params => {
+    let sql = `SELECT * FROM public."orders" WHERE order_id = ${params} `
+    return sql
+}

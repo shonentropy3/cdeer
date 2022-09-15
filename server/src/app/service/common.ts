@@ -14,7 +14,13 @@ const ipfs = ipfsAPI({host: 'localhost', port: '5001', protocol: 'http'});
 const service = new upyun.Service('ipfs0','upchain', 'upchain123')
 const client = new upyun.Client(service);
 
-import { updateStageJson } from '../db/sql/demand';
+
+// var fs = require("fs");
+var path = require("path");
+var request = require("request");
+
+
+import { getStageJson, updateStageJson } from '../db/sql/demand';
 
 @Injectable()
 export class CommonService {
@@ -85,14 +91,11 @@ export class CommonService {
     // 下载
     downloadFile(body: any){     
         const saveTo = fs.createWriteStream(join('Download', body.suffix))
-
-        
         client.getFile(body.hash,saveTo)
         .then(res =>{
             // file has been saved to localSample.txt
             // you can pipe the stream to anywhere you want
             console.log(res);
-            
         })
         .catch(err => {
             return 'error'
@@ -153,6 +156,39 @@ export class CommonService {
     })
         // return
         // return body
+    }
+
+    async getStagesJson(body: any){
+      return new Promise(async(resolve, reject) => {
+        await this.tasksRepository.query(getStageJson(body.oid))
+        .then(res => {
+            let hash = res[0].stagejson;
+            let time = `${Date.now()}.json`
+            let path = '../../../cache_area'+'/'+ time
+            let stream = createWriteStream(join(__dirname, path));
+            request(`http://ipfs.learnblockchain.cn/${hash}`).pipe(stream).on("close", function (err) {
+                // 获取json数据
+                if (err) {
+                    console.error(err);
+                }else{
+                    let url = 'cache_area/'+ time;
+                    const data = fs.readFileSync(url, 'utf8');
+                    
+                    let obj = {
+                        data: data,
+                        url: url
+                    }
+                    resolve(obj)
+                }
+            });
+            })
+        })
+        .then((res: any) => {
+            fs.unlink(res.url, (err) => {
+                if (err) throw err;
+            });
+            return res.data
+        })
     }
 
     // AxiosErrorTip

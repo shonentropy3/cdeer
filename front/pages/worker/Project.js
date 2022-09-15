@@ -3,7 +3,7 @@ import { Steps, Button, message } from "antd";
 import { useEffect, useState } from "react";
 import { useContracts, useReads, useStageReads } from "../../controller";
 import { ethers } from "ethers";
-import { getOrders, getOrdersInfo, getStagesHash } from "../../http/api";
+import { getOrders, getOrdersInfo, getStagesHash, getStagesJson } from "../../http/api";
 import { useAccount } from 'wagmi'
 
 export default function Project(params) {
@@ -14,7 +14,7 @@ export default function Project(params) {
     const [stages,setStages] = useState([]);
     const [advance,setAdvance] = useState(0);
     let [oid,setOid] = useState(null);
-    let [task,setTask] = useState({});
+    let [task,setTask] = useState(null);
     let [amount,setAmount] = useState();
     let [total,setTotal] = useState(0);
     let [totalPeriod,setTotalPeriod] = useState(0);
@@ -25,17 +25,12 @@ export default function Project(params) {
     const readSuccess = () => {
         amount = Order.data[0].amount.toString();
         setAmount(amount);
-        // stages.push({
-        //     budget: '',
-        //     content: ''
-        // })
     }
 
     const count = () => {
         total = 0;
         totalPeriod = 0;
         total += advance;
-        // console.log(stages);
         stages.map(e => {
             total += e.budget;
             totalPeriod += e.period;
@@ -45,6 +40,7 @@ export default function Project(params) {
     }
 
     const setStage = () => {
+        console.log(stages);
         // 设置阶段
         let _amounts = [];
         let _periods = [];
@@ -74,7 +70,6 @@ export default function Project(params) {
             last: task.stagejson, //  jsonhash
             version: '1.0'
         };
-        console.log(stageDetail);
         stages.map(e => {
             stageDetail.stages.push({
                 milestone: {
@@ -113,6 +108,17 @@ export default function Project(params) {
         })
     }
 
+    const getChainStages = () => {
+        // 从链上获取阶段划分数据
+        Stages.data.map((e,i) => {
+            let amount = e[0].amount.toString() / Math.pow(10,18);
+            let period = e[0].period / 60 / 60 / 24;
+            stages[i].budget = amount;
+            stages[i].period = period;
+        })
+        count()
+    }
+
     useEffect(() => {
         DeOrder.isSuccess ? 
             writeSuccess()
@@ -123,6 +129,21 @@ export default function Project(params) {
     useEffect(() => {
         oid = location.search.slice('?')[1];
         setOid(Number(oid));
+        getStagesJson({oid: oid})
+        .then(res => {
+            let arr = [];
+            res.stages.map((e,i) => {
+                arr.push({
+                    budget: '',
+                    period: '',
+                    content: e.milestone.content,
+                    percent: '',
+                    stageIndex: i+1,
+                    title: e.milestone.title
+                })
+            })
+            setStages([...arr]);
+        })
     },[])
 
     useEffect(() => {
@@ -145,6 +166,13 @@ export default function Project(params) {
             :
             ''
     },[oid])
+
+    useEffect(() => {
+        stages.length !== 0 ?
+            getChainStages()
+            :
+            ''
+    },[stages])
     
     return <div className="WorkerProject">
         <div className="worker-title">
@@ -160,7 +188,7 @@ export default function Project(params) {
             </Steps>
         </div>
         <div className="worker-signInStage">
-            <Panel_stageInfo getStages={setStages} getAdvance={setAdvance} amount={amount}/>
+            <Panel_stageInfo getStages={setStages} Stages={stages} getAdvance={setAdvance} amount={amount}/>
         </div>
         <div className="worker-total">
             {

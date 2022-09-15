@@ -28,4 +28,10 @@ export class CommonController {
         return await this.commonService.getStage(body)
     }
 
+    // getStagesJson
+    @Post('getStagesJson') //   获取hash 并下载获取内容后,返回内容,删除下载文件
+    async getStagesJson(@Body() body: any){
+        return await this.commonService.getStagesJson(body)
+    }
+
 }

@@ -170,3 +170,12 @@ export const getStagesHash = (data) => {
         data
     })
 }
+
+// 获取库内存储的order => ipfs 并返回json
+export const getStagesJson = (data) => {
+    return serviceAxios({
+        url: "/common/getStagesJson",
+        method: "post",
+        data
+    })
+}

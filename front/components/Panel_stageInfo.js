@@ -1,13 +1,14 @@
 import { Checkbox, Button, Card } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { InputNumber, Select } from 'antd';
 import StageCard from './Stage_card';
 import StageInspection from './Stage_inspection';
 
 
 export default function Panel_stageInfo(props) {
-
+    
     const { amount } = props;
+    const { Stages } = props;
     const { getStages } = props;
     const { getAdvance } = props;
     const { Option } = Select;
@@ -79,6 +80,30 @@ export default function Panel_stageInfo(props) {
         stages.splice(index,1)
         getStages([...stages]);
     }
+
+    const init = () => {
+        let arr = []
+        Stages.map((e,i) => {
+            let num = i+1
+            arr.push({
+                key: arr.length,
+                tab: 'P'+num,
+            });
+        })
+        stageList = arr;
+        stages = Stages;
+        setStageList([...stageList]);
+        setStages([...stages]);
+        setEditMode(true);
+    }
+
+    useEffect(() => {
+        // TODO: stages && stageList push
+        Stages.length > 0 ?
+            init()
+            :
+            ''
+    },[Stages])
 
     
     return <div className="Panel_stageInfo">
