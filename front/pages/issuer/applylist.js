@@ -80,11 +80,8 @@ export default function applylist() {
                         skill: e.role,
                         applyNum: data.length
                     }
-<<<<<<< HEAD
                     setAllInfo({...e})
                     // console.log(deData);
-=======
->>>>>>> e007b286aa4ed5d594fd2c747a2e763ca5ea3ae2
                 }
             })
             setDemandData({...deData})

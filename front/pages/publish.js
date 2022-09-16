@@ -146,6 +146,7 @@ export default function Publish() {
     const upload = async(info) => {
         // info.onProgress()
         var formData=new FormData();
+        console.log(info.file);
         formData.append('files',info.file);
         fromdata = formData
         setFromdata(fromdata)

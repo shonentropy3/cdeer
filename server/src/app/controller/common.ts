@@ -10,6 +10,8 @@ export class CommonController {
     @Post('upload') //   上传文件
     @UseInterceptors(FilesInterceptor('files'))
     async uploadFile(@UploadedFiles() files: any){
+        console.log('xx');
+        
         return await new Promise ((resolve,reject)=>{
             resolve(this.commonService.getFile(files))
          })

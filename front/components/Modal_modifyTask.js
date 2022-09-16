@@ -67,14 +67,9 @@ export  function Modal_ModifyTask (params) {
 
 
     const upload = async (info)=>{
-        console.log(info);
-        var formData = new FormData()
-        // console.log(formData);
-        formData.append('file',info.file)
-        console.log(info.file);
-        // console.log(formData);
-        console.log(formData.get('file'));
-        formData = formData
+        var form_Data = new FormData()
+        form_Data.append('files',info.file)
+        formData = form_Data
         setFormData(formData)
         return await new Promise((resolve,reject)=>{
             resolve(beforeUpload(info))
@@ -140,7 +135,7 @@ export  function Modal_ModifyTask (params) {
             })
             .catch(error => {
                 console.log(error);
-                return error
+                // return error
             })
         }
 
@@ -234,17 +229,17 @@ export  function Modal_ModifyTask (params) {
             value={projectDesc}
             onChange={(e)=>setProjectDesc(e.target.value)}
         ></TextArea>
-        <Dragger 
-            style={{marginTop:20}}
+
+
+        <Upload
             listType="picture"
             maxCount={1}
             name="file"
-            customRequest={upload}
             onChange={uploadChange}
+            customRequest={upload}
         >
-            <FolderAddOutlined style={{fontSize: 36}} />
-            <p className="uploadButton">上传项目需求文档（Word、Excel、PPT、PDF、图像、视频，20MB以内）</p>
-        </Dragger>
+            <Button icon={<FolderAddOutlined />}>上传项目需求文档（Word、Excel、PPT、PDF、图像、视频，20MB以内）</Button>
+        </Upload>
         <p style={{marginTop:20}}>项目类型(最多六个)</p>
         {
 
