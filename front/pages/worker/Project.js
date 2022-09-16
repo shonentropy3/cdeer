@@ -1,14 +1,15 @@
 import Panel_stageInfo from "../../components/Panel_stageInfo";
 import { Steps, Button, message } from "antd";
 import { useEffect, useState } from "react";
-import { useContracts, useReads, useStageReads } from "../../controller";
+import { useContracts, useContractsRead, usePrepareContracts, useReads, useSignData, useStageReads } from "../../controller";
 import { ethers } from "ethers";
-import { getOrders, getOrdersInfo, getStagesHash, getStagesJson } from "../../http/api";
-import { useAccount } from 'wagmi'
+import { getOrdersInfo, getStagesHash, getStagesJson } from "../../http/api";
+import { useAccount, useNetwork } from 'wagmi'
 
-export default function Project(params) {
+export default function Project() {
 
-    const { useOrderContractWrite: DeOrder, orderConfig } = useContracts('setStage')
+    const { chain } = useNetwork();
+    const { address } = useAccount();
     const { Step } = Steps;
     const [stages,setStages] = useState([]);
     const [advance,setAdvance] = useState(0);
@@ -17,9 +18,16 @@ export default function Project(params) {
     let [amount,setAmount] = useState();
     let [total,setTotal] = useState(0);
     let [totalPeriod,setTotalPeriod] = useState(0);
+    let [testObj,setTestObj] = useState({});
+    let [signHash,setSignHash] = useState();
+    let [nonce,setNonce] = useState(null);
 
     const { useOrderReads: Order } = useReads('getOrder',[oid]);
+    const { useOrderReads: nonces } = useReads('nonces',[address]);
+    
     const { useStageReads: Stages } = useStageReads('getStages',[oid]);
+    const { useSign, params, obj } = useSignData(testObj);
+
 
     const readSuccess = () => {
         amount = Order.data[0].amount.toString();
@@ -39,21 +47,25 @@ export default function Project(params) {
     }
 
     const setStage = () => {
-        console.log(stages);
         // 设置阶段
+        let now = parseInt(new Date().getTime()/1000);
+        let setTime = 2 * 24 * 60 * 60;
         let _amounts = [];
         let _periods = [];
         stages.map(e => {
             _amounts.push(ethers.utils.parseEther(`${e.budget}`));
-            _periods.push(e.period * 24 * 60 * 60)
+            _periods.push(`${e.period * 24 * 60 * 60}`)
         })
-        DeOrder.write({
-            recklesslySetUnpreparedArgs: [
-                oid,
-                _amounts,
-                _periods
-            ]
-        })
+        testObj = {
+            amounts: _amounts,
+            periods: _periods,
+            chainId: chain.id,
+            address: address,
+            oid: oid,
+            nonce: nonce,
+            deadline: `${now+setTime}`
+        }
+        setTestObj({...testObj})
     }
 
     const writeSuccess = () => {
@@ -118,12 +130,42 @@ export default function Project(params) {
         count()
     }
 
+    const sendSign = () => {
+        useSign.signTypedData()
+    }
+
+    const signSuccess = () => {
+        signHash = useSign.data;
+        setSignHash(signHash);
+
+        writeSuccess()
+    }
+
+    const getNonces = () => {
+        nonce = nonces.data.toString();
+        setNonce(nonce);
+    }
+
     useEffect(() => {
-        DeOrder.isSuccess ? 
-            writeSuccess()
+        nonces.data ? 
+            getNonces()
             :
             ''
-    },[DeOrder.isSuccess])
+    },[nonces.data])
+
+    useEffect(() => {
+        useSign.data ? 
+            signSuccess()
+            :
+            ''
+    },[useSign.data])
+
+    useEffect(() => {
+        obj.chainId ? 
+            sendSign()
+            :
+            ''
+    },[params])
 
     useEffect(() => {
         oid = location.search.slice('?')[1];
@@ -144,7 +186,6 @@ export default function Project(params) {
                 })
                 setStages([...arr]);
             }
-            
         })
     },[])
 
@@ -169,12 +210,12 @@ export default function Project(params) {
             ''
     },[oid])
 
-    useEffect(() => {
-        stages.length !== 0 ?
-            getChainStages()
-            :
-            ''
-    },[stages])
+    // useEffect(() => {
+    //     stages.length !== 0 ?
+    //         getChainStages()
+    //         :
+    //         ''
+    // },[stages])
     
     return <div className="WorkerProject">
         <div className="worker-title">
