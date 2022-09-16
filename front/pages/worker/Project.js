@@ -131,17 +131,20 @@ export default function Project(params) {
         getStagesJson({oid: oid})
         .then(res => {
             let arr = [];
-            res.stages.map((e,i) => {
-                arr.push({
-                    budget: '',
-                    period: '',
-                    content: e.milestone.content,
-                    percent: '',
-                    stageIndex: i+1,
-                    title: e.milestone.title
+            if (res.stages) {
+                res.stages.map((e,i) => {
+                    arr.push({
+                        budget: '',
+                        period: '',
+                        content: e.milestone.content,
+                        percent: '',
+                        stageIndex: i+1,
+                        title: e.milestone.title
+                    })
                 })
-            })
-            setStages([...arr]);
+                setStages([...arr]);
+            }
+            
         })
     },[])
 

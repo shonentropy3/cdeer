@@ -97,3 +97,10 @@ export function useStageReads(functionName,list) {
 
   return { useStageReads }
 }
+
+export function useSignData(params) {
+
+  const { chain } = useNetwork();
+  
+  return { chain }
+}
