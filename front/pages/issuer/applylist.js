@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react"
-import { Steps, Pagination, Modal, InputNumber, Select, Button, message } from "antd";
-import { ClockCircleOutlined, MessageFilled } from "@ant-design/icons"
+import { Steps, Pagination, Modal, InputNumber, Select, Button, message, } from "antd";
+import { ClockCircleOutlined, MessageFilled, } from "@ant-design/icons"
 import { useAccount } from 'wagmi'
 import { createOrder, getMyApplylist, getMyDemand } from "../../http/api";
 import { useContracts } from "../../controller/index";
 import {useRouter} from "next/router"
+import {Modal_ModifyTask} from "../../components/Modal_modifyTask"
 
 
 
 export default function applylist() {
-
+    
+    
     const { Option } = Select;
     const { Step } = Steps;
     const { address } = useAccount();
@@ -26,6 +28,7 @@ export default function applylist() {
     let [demandData,setDemandData] = useState({})
     let [worker,setWorker] = useState();
     let [amount,setAmount] = useState();
+    let [allInfo,setAllInfo] = useState({})
     let [skills,setSkills] = useState({
         "101":"solidity",
         "102":"javascript",
@@ -41,16 +44,25 @@ export default function applylist() {
         2 : "BTC"
     })
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModifyModal,setIsModifyModal] = useState(false)
     const { useOrderContractWrite } = useContracts('createOrder');
     const router = useRouter()
       
     const showModal = () => {
       setIsModalOpen(true);
     };
+
+    const showModifyModal = () => {
+        setIsModifyModal(true)
+    }
   
     const handleCancel = () => {
       setIsModalOpen(false);
     };
+
+    const ModifyHandler = () =>{
+        setIsModifyModal(false)
+    }
 
     const getInfo = ()=>{
         getMyDemand({hash: address})
@@ -58,7 +70,7 @@ export default function applylist() {
             let deData = {}
             res.map(e=>{
                 if(e.id == taskId){
-                    // console.log(e);
+                    console.log(e);
                     deData = {
                         title: e.title,
                         desc: e.desc,
@@ -68,6 +80,11 @@ export default function applylist() {
                         skill: e.role,
                         applyNum: data.length
                     }
+<<<<<<< HEAD
+                    setAllInfo({...e})
+                    // console.log(deData);
+=======
+>>>>>>> e007b286aa4ed5d594fd2c747a2e763ca5ea3ae2
                 }
             })
             setDemandData({...deData})
@@ -170,14 +187,7 @@ export default function applylist() {
                     <span>{demandData.budget}{currencys[demandData.currency]}</span>
                 </p>
             </div>
-            <div className="task-changeInfo" onClick={()=>{
-                router.push({
-                    pathname:"../publish",
-                    query:{
-                        taskId:taskId
-                    }
-                })
-            }}>修改信息</div>
+            <div className="task-changeInfo" onClick={showModifyModal}>修改信息</div>
             <div className="apply-number">
                 <p className="a-number">{demandData.applyNum}</p>
                 <p>报名人数</p>
@@ -243,6 +253,14 @@ export default function applylist() {
             给出您的预算
             <InputNumber addonAfter={selectAfter} onChange={onchange} />
             <Button className="btn" type="primary" onClick={() => invitation()}>邀请合作</Button>
+        </Modal>
+        <Modal 
+            footer={null}
+            title="修改订单" 
+            open={isModifyModal} 
+            bodyStyle={{height:900}}
+            onCancel={ModifyHandler}>
+            <Modal_ModifyTask allInfo={allInfo} />
         </Modal>
     </div>
 }

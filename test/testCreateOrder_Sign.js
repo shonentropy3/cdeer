@@ -1,5 +1,5 @@
 const { ethers } = require("hardhat");
-// const { expect } = require("chai");
+const { expect } = require("chai");
 const { signPermitStage } = require("./signPermitStage.js");
 
 const DeOrderAddr = require(`../deployments/dev/DeOrder.json`)
@@ -7,9 +7,7 @@ const DeOrderAddr = require(`../deployments/dev/DeOrder.json`)
 // const { expectRevert } = require("@openzeppelin/test-helpers");
 
 
-
-
-describe("Token", function () {
+describe("testCreateOrder&Sign", function () {
   let DeOrder;
   let account1;
   let account2;
@@ -48,7 +46,7 @@ describe("Token", function () {
     let nonce = await DeOrder.nonces(account2.address);  // get from  
     console.log("nonce:" + nonce)
 
-    let amounts = ["1"]
+    let amounts = ["10000"]
     let periods = ["1"] 
     let deadline = "99999999999"
 
