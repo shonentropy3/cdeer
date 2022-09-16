@@ -32,6 +32,12 @@ export class MarketController {
         return await this.marketService.getDemand()
     }
 
+    @Get('getSearch')  // 展示搜索列表
+    async getSearch(@Request() request: any){
+        const name = request.query.name
+        return await this.marketService.getSearch(name)
+    }
+
     @Get('getOrder')  // 展示需求列表
     async getOrder(@Request() request: any){
         const account = request.query.account;

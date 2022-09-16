@@ -1,9 +1,9 @@
-import { Input  } from 'antd';
+import { Input, Empty } from 'antd';
 import { SearchOutlined, HistoryOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router'
 
-import { getDemand } from '../http/api';
+import { getDemand, getSearch } from '../http/api';
 import { deform_Skills, deform_ProjectTypes } from '../utils/Deform'
 
 export default function Projects() {
@@ -26,7 +26,6 @@ export default function Projects() {
     const getProjects = async() => {
         await getDemand()
             .then(res => {
-                console.log(res);
                 let data = res.data;
                 data.map(e => {
                     e.role = deform_Skills(e.role);
@@ -44,6 +43,22 @@ export default function Projects() {
         router.push({pathname:'/project',search: id})
     }
 
+    const searchData = () => {
+        getSearch(search)
+        .then(res => {
+            let data = res.data;
+                data.map(e => {
+                    e.role = deform_Skills(e.role);
+                    e.task_type = deform_ProjectTypes(e.task_type);
+                })
+                projects = data;
+                setProjects([...projects]);
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    }
+
     useEffect(() => {
         getProjects()
     },[])
@@ -51,7 +66,7 @@ export default function Projects() {
     return <div className="Projects">
         <div className="search">
             <Input placeholder="搜索项目" onChange={onChange} />
-            <SearchOutlined className="search-btn"/>
+            <SearchOutlined className="search-btn" onClick={() => searchData()} />
         </div>
         <div className="tags">
             <div className="tags-list">
@@ -107,7 +122,12 @@ export default function Projects() {
                     </div>
                 )
             }
-                
+            {
+                projects.length === 0 ? 
+                    <Empty />
+                    :
+                    ''
+            }
         </div>
     </div>
 }

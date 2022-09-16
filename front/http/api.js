@@ -9,6 +9,13 @@ export const getDemand = (data) => {
     });
 }
 
+export const getSearch = (data) => {
+    return serviceAxios({
+        url: "/demand/getSearch/?name="+data,
+        method: "get"
+    });
+}
+
 export const getOrders = (data) => {
     return serviceAxios({
         url: "/demand/getOrder/?account="+data,

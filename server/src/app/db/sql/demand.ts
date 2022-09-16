@@ -139,3 +139,9 @@ export const getStageJson = params => {
     let sql = `SELECT * FROM public."orders" WHERE order_id = ${params} `
     return sql
 }
+
+// 
+export const getSearchData = params => {
+    let sql = `SELECT * FROM tasks where position('${params}' in title) > 0;`
+    return sql
+}
