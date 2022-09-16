@@ -186,3 +186,12 @@ export const getStagesJson = (data) => {
         data
     })
 }
+
+// 获取orders => stages
+export const getStages = (data) => {
+    return serviceAxios({
+        url: "/common/getStages",
+        method: "post",
+        data
+    })
+}

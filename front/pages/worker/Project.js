@@ -3,7 +3,7 @@ import { Steps, Button, message } from "antd";
 import { useEffect, useState } from "react";
 import { useContracts, useContractsRead, usePrepareContracts, useReads, useSignData, useStageReads } from "../../controller";
 import { ethers } from "ethers";
-import { getOrdersInfo, getStagesHash, getStagesJson } from "../../http/api";
+import { getOrdersInfo, getStages, getStagesHash, getStagesJson } from "../../http/api";
 import { useAccount, useNetwork } from 'wagmi'
 
 export default function Project() {
@@ -95,13 +95,19 @@ export default function Project() {
                 }
             })
         })
+        let a = [];
+        let b = [];
+        stages.map(e => {
+            a.push(e.budget);
+            b.push(e.period)
+        })
         let info = {
             signature: signHash,
             signaddress: address
         }
         let order_Stages = {
-            amount: testObj.amounts,
-            period: testObj.periods,
+            amount: a,
+            period: b,
         }
         getStagesHash({obj: JSON.stringify(stageDetail),oid: oid,info: info,stages: JSON.stringify(order_Stages)})
         .then(res => {
@@ -182,10 +188,10 @@ export default function Project() {
         .then(res => {
             let arr = [];
             if (res.stages) {
-                res.stages.map((e,i) => {
+                res.json.stages.map((e,i) => {
                     arr.push({
-                        budget: '',
-                        period: '',
+                        budget: res.stages.amount[i],
+                        period: res.stages.period[i],
                         content: e.milestone.content,
                         percent: '',
                         stageIndex: i+1,

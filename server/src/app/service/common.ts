@@ -20,7 +20,7 @@ var path = require("path");
 var request = require("request");
 
 
-import { getStageJson, updateStageJson } from '../db/sql/demand';
+import { getStageJson, updateStageJson, getStages } from '../db/sql/demand';
 
 @Injectable()
 export class CommonService {
@@ -162,7 +162,11 @@ export class CommonService {
       return new Promise(async(resolve, reject) => {
         await this.tasksRepository.query(getStageJson(body.oid))
         .then(res => {
+            
             let hash = res[0].attachment;
+            if (!hash) {
+                return null
+            }
             let time = `${Date.now()}.json`
             let path = '../../../cache_area'+'/'+ time
             let stream = createWriteStream(join(__dirname, path));
@@ -187,7 +191,22 @@ export class CommonService {
             fs.unlink(res.url, (err) => {
                 if (err) throw err;
             });
-            return res.data
+            let data = res.data;
+            return this.tasksRepository.query(getStages(body.oid))
+            .then(stages => {
+                let obj = {
+                    json: JSON.parse(data),
+                    stages: stages[0].stages
+                }
+                return obj
+            })
+        })
+    }
+
+    async getStages(body: any){
+        return await this.tasksRepository.query(getStages(body.oid))
+        .then(res => {
+            return res[0].stages
         })
     }
 
