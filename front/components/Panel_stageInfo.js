@@ -1,13 +1,14 @@
 import { Checkbox, Button, Card } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { InputNumber, Select } from 'antd';
 import StageCard from './Stage_card';
 import StageInspection from './Stage_inspection';
 
 
 export default function Panel_stageInfo(props) {
-
+    
     const { amount } = props;
+    const { Stages } = props;
     const { getStages } = props;
     const { getAdvance } = props;
     const { Option } = Select;
@@ -40,6 +41,8 @@ export default function Panel_stageInfo(props) {
     }
 
     const addStage = () => {
+        activeTabKey1 = stageList.length;
+        setActiveTabKey1(`${activeTabKey1}`);
         let num = stageList.length + 1;
         stageList.push({
             key: stageList.length,
@@ -50,8 +53,10 @@ export default function Panel_stageInfo(props) {
             title: '',
             budget: '',
             period: '',
-            content: ''
+            content: '',
+            percent: ''
         })
+        
         setStages([...stages]);
         setStageList([...stageList]);
     }
@@ -61,6 +66,45 @@ export default function Panel_stageInfo(props) {
         setEditMode(editMode);
         getStages([...stages]);
     }
+
+    const deleteStage = index => {
+        stageList.splice(index,1);
+        setStageList([...stageList]);
+        stageList.map((e,i) => {
+            e.key = i;
+            e.tab = i+1;
+            e.tab = 'P'+e.tab;
+        })
+        activeTabKey1 = '0';
+        setActiveTabKey1(activeTabKey1);
+        stages.splice(index,1)
+        getStages([...stages]);
+    }
+
+    const init = () => {
+        let arr = []
+        Stages.map((e,i) => {
+            let num = i+1
+            arr.push({
+                key: arr.length,
+                tab: 'P'+num,
+            });
+        })
+        stageList = arr;
+        stages = Stages;
+        setStageList([...stageList]);
+        setStages([...stages]);
+        setEditMode(true);
+    }
+
+    useEffect(() => {
+        // TODO: stages && stageList push
+        Stages.length > 0 ?
+            init()
+            :
+            ''
+    },[Stages])
+
     
     return <div className="Panel_stageInfo">
         <div className="stageInfo-title">
@@ -99,8 +143,14 @@ export default function Panel_stageInfo(props) {
                                         onTab1Change(key);
                                         }}
                                     >
-                                        {/* {contentList[activeTabKey1]} */}
-                                        <StageCard amount={amount} stage={stages[activeTabKey1]} set={setStages} stages={stages} />
+                                        <StageCard 
+                                            amount={amount} 
+                                            stage={stages[activeTabKey1]} 
+                                            set={setStages} 
+                                            stages={stages} 
+                                            deleteStage={deleteStage}
+                                            index={activeTabKey1}
+                                        />
                                     </Card>
                                     <div className="btns">
                                         <Button className="btn">取消</Button>
@@ -113,7 +163,7 @@ export default function Panel_stageInfo(props) {
                 <div className="stageInfo-inspection">
                     {
                         stages.map((e,i) => 
-                            <StageInspection key={i} data={e} index={i} set={setEditMode} />
+                            <StageInspection key={i} data={e} index={i} set={setEditMode} setTab={setActiveTabKey1} />
                         )
                     }
                 </div>

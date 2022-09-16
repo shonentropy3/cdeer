@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { Tasks } from '../db/entity/Tasks';	//引入entity
 
 // dbUtils
-import { getDemandDate, getDemandInfoDate, setDemand, moDemand, delDemand, getFilter, setOrder, getOrdersDate } from '../db/sql/demand';
+import { getDemandDate, getDemandInfoDate, setDemand, moDemand, delDemand, getFilter, setOrder, getOrdersDate, getOrderInfo, getSearchData } from '../db/sql/demand';
 
 
 @Injectable()
@@ -32,19 +32,53 @@ export class MarketService {
         });
     }
 
+    // 获取搜索列表
+    async getSearch(name: any): Promise<Tasks[]> {
+        return await this.tasksRepository.query(getSearchData(name))
+        .then(res =>{
+            let obj = {
+                code: 200,
+                data: res
+            }
+            return obj
+        })
+        .catch(err => {
+            console.log('getDemand err =>', err)
+            return err
+        });
+    }
+
     // 获取未划分阶段订单
     async getOrder(account) {
-        return await this.tasksRepository.query(getOrdersDate(account))
-        .then(res => {
-            let arr = [];
-            res.map(e => {
-                arr.push({
-                    oid: Number(e.order_id),
-                    tid: Number(e.task_id),
-                });
+        if (account.length === 42) {
+            return await this.tasksRepository.query(getOrdersDate(account))
+            .then(res => {
+                let arr = [];
+                res.map(e => {
+                    arr.push({
+                        oid: Number(e.order_id),
+                        tid: Number(e.task_id),
+                        stagejson: e.attachment
+                    });
+                })
+                return arr
             })
-            return arr
-        })
+        }else{
+            return await this.tasksRepository.query(getOrderInfo(account))
+            .then(res => {
+                let arr = [];
+                res.map(e => {
+                    arr.push({
+                        oid: Number(e.order_id),
+                        tid: Number(e.task_id),
+                        stagejson: e.attachment
+                    });
+                })
+                return arr
+            })
+        }
+        
+        
         
     }
 

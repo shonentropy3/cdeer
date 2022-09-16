@@ -68,7 +68,6 @@ export default function applylist() {
         getMyDemand({hash: address})
         .then(res=>{
             let deData = {}
-            // console.log(res);
             res.map(e=>{
                 if(e.id == taskId){
                     console.log(e);
@@ -81,14 +80,14 @@ export default function applylist() {
                         skill: e.role,
                         applyNum: data.length
                     }
+<<<<<<< HEAD
                     setAllInfo({...e})
                     // console.log(deData);
+=======
+>>>>>>> e007b286aa4ed5d594fd2c747a2e763ca5ea3ae2
                 }
             })
-            // console.log({...deData});
             setDemandData({...deData})
-            // console.log(demandData);
-            console.log(demandData);
         })
     }
 

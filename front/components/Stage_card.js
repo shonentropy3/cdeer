@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 
 export default function StageCard(params) {
 
+    const { deleteStage } = params;
+    const { index } = params;
     const { amount } = params;
     const { TextArea } = Input;
     const { stage } = params;
@@ -28,12 +30,26 @@ export default function StageCard(params) {
     const checkPercent = e => {
         selectPercent = e.title;
         setSelectPercent(selectPercent);
-        console.log(amount,e.value);
         stage.budget = amount * e.value;
+        stage.percent = e.title;
         set([...stages]);
     }
 
+    const changeBudget = e => {
+        stage.budget = e;
+        stage.percent = '';
+        set([...stages]);
+        selectPercent = '';
+        setSelectPercent(selectPercent);
+    }
+
+    const del = () => {
+        deleteStage(index)
+    }
+
     useEffect(() => {
+        selectPercent = stage.percent;
+        setSelectPercent(selectPercent);
     },[stage])
 
     return (
@@ -58,17 +74,18 @@ export default function StageCard(params) {
                         <div 
                             key={i} 
                             className={`li ${selectPercent === e.title ? 'active' : ''}`}
-                            onClick={() => checkPercent(e)}    
+                            onClick={() => checkPercent(e)}
                         >{e.title}</div>
                     )
                 }
             </div>
-            <InputNumber min={1} addonAfter="ETH" value={stage.budget} onChange={e => {stage.budget = e, set([...stages]);}} />
+            <InputNumber min={1} addonAfter="ETH" value={stage.budget} onChange={e => changeBudget(e)} />
         </Form.Item>
 
         <Form.Item label="阶段说明">
             <TextArea rows={4} value={stage.content} onChange={e => {stage.content = e.target.value, set([...stages]);}} />
         </Form.Item>
+        <Button className="btn" onClick={() => del()}>删除该阶段</Button>
 
       </Form>
     )

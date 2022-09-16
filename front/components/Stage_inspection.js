@@ -2,6 +2,7 @@ import { Divider } from 'antd';
 
 export default function Stage_inspection(props) {
 
+    const { setTab } = props;
     const { data } = props;
     const { index } = props;
     const { set } = props;
@@ -10,7 +11,7 @@ export default function Stage_inspection(props) {
     return (
         <div className="Stage_inspection">
             <div className="inspection-info">
-                <p onClick={() => {set(false)}}>修改阶段划分</p>
+                <p onClick={() => {set(false), setTab(`${index}`)}}>修改阶段划分</p>
                 <p>删除</p>
             </div>
             <div className="inspection-nav">

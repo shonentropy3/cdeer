@@ -49,7 +49,10 @@ CREATE TABLE orders (
 	"task_id" BIGINT, 
 	"issuer" varchar(64),
   "worker" varchar(64),
-  "stagejson" varchar(64),
+  "attachment" varchar(64),
+  "signature" varchar(132),
+  "signaddress" varchar(64),
+  "stages" json,
   "create_time" date DEFAULT (now()),
   "update_time" date DEFAULT (now()),
   UNIQUE("order_id")

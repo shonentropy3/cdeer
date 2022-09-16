@@ -27,13 +27,13 @@ export default function Publish() {
     const { address } = useAccount()
     const { useTaskContractWrite: Task } = useContracts('createTask');
     const [inner,setInner] = useState([
-        {title: '项目名称', type: 'input', value: ''},
-        {title: '项目描述', type: 'textarea', value: ''},
+        {title: 'Entry Name', type: 'input', value: ''},
+        {title: 'Project Description', type: 'textarea', value: ''},
         {title: '', type: 'upload', value: ''},
-        {title: '项目类型', type: 'model', value: [], subValue: []},
-        {title: '技能要求', type: 'model', value: [], subValue: []},
-        {title: '项目预算', type: 'inputNumber', value: '', subValue: 1},
-        {title: '项目周期(预计周期)', type: 'select', value: ''},
+        {title: 'Project Type', type: 'model', value: [], subValue: []},
+        {title: 'Skill Requirements', type: 'model', value: [], subValue: []},
+        {title: 'Project Budget', type: 'inputNumber', value: '', subValue: 1},
+        {title: 'Project Cycle', type: 'select', value: ''},
         // {title: '技能LOGO', type: 'select', value: []},
     ])
     let [isModalVisibleC, setIsModalVisibleC] = useState(false);
@@ -257,7 +257,6 @@ export default function Publish() {
         let fee = {
             value: ethers.utils.parseEther("1")
         }
-        console.log(fee);
         if (fromdata) {
             await getHash(fromdata)
               .then((res) => {
@@ -272,7 +271,7 @@ export default function Publish() {
         Task.write({
             recklesslySetUnpreparedArgs: [address, data, fee]
         })
-        console.log(Task.isSuccess);
+        console.log([address, data, fee]);
     }
 
     const writeSuccess = () => {
@@ -314,13 +313,14 @@ export default function Publish() {
       },[Task.isSuccess])
 
     return <div className="Publish">
+        <div className="h100"></div>
         <div className="banner">
             <div className="banner-content">
                 <p className="content-title">
-                    发布你的项目需求
+                Release your project requirements
                 </p>
                 <p className="content-subtitle">
-                    与技术精湛的开发者作为合作伙伴
+                Become a partner with skilled developers
                 </p>
             </div>
         </div>
@@ -333,7 +333,7 @@ export default function Publish() {
                     </div>
                 )
             }
-            <Button type="primary" className="container-btn" onClick={showModalC}>确认发布</Button>
+            <Button className="container-btn" onClick={showModalC}>发布需求</Button>
         </div>
         <div className="mb80"></div>
         <Modal

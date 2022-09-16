@@ -9,9 +9,23 @@ export const getDemand = (data) => {
     });
 }
 
+export const getSearch = (data) => {
+    return serviceAxios({
+        url: "/demand/getSearch/?name="+data,
+        method: "get"
+    });
+}
+
 export const getOrders = (data) => {
     return serviceAxios({
         url: "/demand/getOrder/?account="+data,
+        method: "get",
+    });
+}
+
+export const getOrdersInfo = (data) => {
+    return serviceAxios({
+        url: "/demand/getOrdersInfo/?oid="+data,
         method: "get",
     });
 }
@@ -159,6 +173,15 @@ export const getMyNftlist = (data) => {
 export const getStagesHash = (data) => {
     return serviceAxios({
         url: "/common/getHash",
+        method: "post",
+        data
+    })
+}
+
+// 获取库内存储的order => ipfs 并返回json
+export const getStagesJson = (data) => {
+    return serviceAxios({
+        url: "/common/getStagesJson",
         method: "post",
         data
     })

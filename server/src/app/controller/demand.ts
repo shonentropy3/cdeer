@@ -32,6 +32,12 @@ export class MarketController {
         return await this.marketService.getDemand()
     }
 
+    @Get('getSearch')  // 展示搜索列表
+    async getSearch(@Request() request: any){
+        const name = request.query.name
+        return await this.marketService.getSearch(name)
+    }
+
     @Get('getOrder')  // 展示需求列表
     async getOrder(@Request() request: any){
         const account = request.query.account;
@@ -42,6 +48,18 @@ export class MarketController {
             return this.marketService.getTask(res)
          })
     }
+
+    @Get('getOrdersInfo')  // 展示需求详情
+    async getOrdersInfo(@Request() request: any){
+        const oid = request.query.oid;
+        return await new Promise ((resolve,reject)=>{
+            resolve(this.marketService.getOrder(oid))
+         })
+         .then((res)=>{
+            return this.marketService.getTask(res)
+         })
+    }
+
     
     @Post('getDemandInfo')  // 查看需求详情
     async getDemandInfo(@Body() body: any){

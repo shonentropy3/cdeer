@@ -6,7 +6,13 @@ export const getDemandDate = () => {
 }
 
 export const getOrdersDate = (account) => {
-    let sql = `SELECT * FROM public."orders" WHERE stagejson is null and worker = '${account}' `
+    let sql = `SELECT * FROM public."orders" WHERE worker = '${account}' `
+    // let sql = `SELECT * FROM public."orders" WHERE stagejson is null and worker = '${account}' `
+    return sql
+}
+
+export const getOrderInfo = (account) => {
+    let sql = `SELECT * FROM public."orders" WHERE order_id = '${account}' `
     return sql
 }
 
@@ -17,6 +23,11 @@ export const getDemandInfoDate = params => {
 
 export const getMyPjcDBa = params => {
     let sql = `SELECT * FROM public.tasks WHERE issuer = '${params}' and del = 0 `
+    return sql
+}
+
+export const getTaskApplyCount = params => {
+    let sql = `SELECT * FROM public.apply_info WHERE task_id = '${params}'`
     return sql
 }
 
@@ -75,8 +86,6 @@ export const moDemand = params => {
     let sql = ` update tasks SET title = '${params.title}', budget = ${params.budget}, period = ${params.period} ,
     "desc" = '${params.pro_content}' ,role = '${params.recruiting_role}' ,task_type = '${params.demand_type}',
             attachment = '${params.attachment}', update_time = now() where id = ${params.demand_id} `;
-            console.log(sql);
-            
     return sql
 }
 
@@ -121,5 +130,22 @@ export const modifyApplySwitch = params => {
     let sql = `UPDATE tasks SET apply_switch = ${params.buttonSwitch}  WHERE id = '${params.demandId}'`
     console.log(sql,'==>');
     
+    return sql
+}
+
+export const updateStageJson = params => {
+    let sql = ` update orders SET attachment = '${params.json.hash}', signature = '${params.info.signature}',
+                signaddress = '${params.info.signaddress}', stages = '${params.stages}' where order_id = '${params.oid}'`;
+    return sql
+}
+
+export const getStageJson = params => {
+    let sql = `SELECT * FROM public."orders" WHERE order_id = ${params} `
+    return sql
+}
+
+// 
+export const getSearchData = params => {
+    let sql = `SELECT * FROM tasks where position('${params}' in title) > 0;`
     return sql
 }

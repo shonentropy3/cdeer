@@ -10,7 +10,7 @@ async function main() {
     const [owner] = await hre.ethers.getSigners();
 
     const contractFactory = await hre.ethers.getContractFactory("DeStage");
-
+    console.log(DeOrderAddr.address)
     const stage = await contractFactory.deploy(DeOrderAddr.address);
 
     await stage.deployed();

@@ -61,9 +61,11 @@ export default function Userprojects(params) {
         .then(res => {
             let arr = [];
             res.map(e => {
-                arr.push(e.oid);
-                e.data.role = deform_Skills(e.data.role);
-                e.data.task_type = deform_ProjectTypes(e.data.task_type);
+                if (e.data) {
+                    arr.push(e.oid);
+                    e.data.role = deform_Skills(e.data.role);
+                    e.data.task_type = deform_ProjectTypes(e.data.task_type);
+                }
             })
             sidbar[1].data = res;
             setSidbar([...sidbar]);

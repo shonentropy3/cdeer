@@ -1,8 +1,11 @@
 import { BadRequestException, Body, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { AxiosError } from 'axios';
 import { createWriteStream } from 'fs';
 import { join } from 'path/posix';
 import { throwError } from 'rxjs';
+import { Repository } from 'typeorm';
+import { Tasks } from '../db/entity/Tasks';
 
 const fs  = require('fs');
 var upyun = require("upyun")
@@ -12,8 +15,19 @@ const service = new upyun.Service('ipfs0','upchain', 'upchain123')
 const client = new upyun.Client(service);
 
 
+// var fs = require("fs");
+var path = require("path");
+var request = require("request");
+
+
+import { getStageJson, updateStageJson } from '../db/sql/demand';
+
 @Injectable()
 export class CommonService {
+    constructor(
+        @InjectRepository(Tasks)
+        private readonly tasksRepository: Repository<Tasks>,
+    ) {}
 
     // Get hash
     getFile(files: any) {
@@ -77,14 +91,11 @@ export class CommonService {
     // 下载
     downloadFile(body: any){     
         const saveTo = fs.createWriteStream(join('Download', body.suffix))
-
-        
         client.getFile(body.hash,saveTo)
         .then(res =>{
             // file has been saved to localSample.txt
             // you can pipe the stream to anywhere you want
             console.log(res);
-            
         })
         .catch(err => {
             return 'error'
@@ -111,6 +122,14 @@ export class CommonService {
                                 hash: files[0].hash,
                                 path: res
                             }
+                            // 上传upyun
+                            client.putFile(obj.hash, fs.readFileSync(res))
+                            .then(res => {
+                                return true
+                            })
+                            .catch(err => {
+                                return false
+                            })
                             fs.unlink(res, (err) => {
                                 if (err) throw err;
                             });
@@ -120,13 +139,56 @@ export class CommonService {
             }
             
         })
-    }).then(res=>{
-        return res
+    }).then(async(res)=>{
+        return await this.tasksRepository.query(updateStageJson({json: res, oid: body.oid, info: body.info, stages: body.stages}))
+        .then(() => {
+            return {
+                code: 200
+            }
+        })
+        .catch(err => {
+            return {
+                code: 500
+            }
+        })
     }).catch(() => {
         return false
     })
         // return
         // return body
+    }
+
+    async getStagesJson(body: any){
+      return new Promise(async(resolve, reject) => {
+        await this.tasksRepository.query(getStageJson(body.oid))
+        .then(res => {
+            let hash = res[0].attachment;
+            let time = `${Date.now()}.json`
+            let path = '../../../cache_area'+'/'+ time
+            let stream = createWriteStream(join(__dirname, path));
+            request(`http://ipfs.learnblockchain.cn/${hash}`).pipe(stream).on("close", function (err) {
+                // 获取json数据
+                if (err) {
+                    console.error(err);
+                }else{
+                    let url = 'cache_area/'+ time;
+                    const data = fs.readFileSync(url, 'utf8');
+                    
+                    let obj = {
+                        data: data,
+                        url: url
+                    }
+                    resolve(obj)
+                }
+            });
+            })
+        })
+        .then((res: any) => {
+            fs.unlink(res.url, (err) => {
+                if (err) throw err;
+            });
+            return res.data
+        })
     }
 
     // AxiosErrorTip

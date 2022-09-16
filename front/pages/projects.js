@@ -1,20 +1,24 @@
-import { Input  } from 'antd';
+import { Input, Empty } from 'antd';
 import { SearchOutlined, HistoryOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router'
 
-import { getDemand } from '../http/api';
+import { getDemand, getFilter, getSearch } from '../http/api';
 import { deform_Skills, deform_ProjectTypes } from '../utils/Deform'
 
 export default function Projects() {
+
+    const _data = require('../data/data.json')
     
     let [search,setSearch] = useState();
     let [projects,setProjects] = useState([]);
 
-    let [selectA,setSelectA] = useState(0); //  临时的
-    let [selectB,setSelectB] = useState(0); //  临时的
-    const tagsA = ['全部','后端','全栈','区块链','solidity','DeFi','NFT','Design','Smart Contract'] //  临时的
-    const tagsB = ['全部','后端','全栈','区块链','solidity','DeFi','NFT','Design','Smart Contract'] //  临时的
+    let [selectA,setSelectA] = useState(null); //  临时的
+    let [selectB,setSelectB] = useState(null); //  临时的
+    let [tagsA,setTagsA] = useState([]);
+    let [tagsB,setTagsB] = useState([]);
+    // const tagsA = ['全部','后端','全栈','区块链','solidity','DeFi','NFT','Design','Smart Contract'] //  临时的
+    // const tagsB = ['全部','后端','全栈','区块链','solidity','DeFi','NFT','Design','Smart Contract'] //  临时的
     const router = useRouter();
 
 
@@ -26,7 +30,6 @@ export default function Projects() {
     const getProjects = async() => {
         await getDemand()
             .then(res => {
-                console.log(res);
                 let data = res.data;
                 data.map(e => {
                     e.role = deform_Skills(e.role);
@@ -44,24 +47,66 @@ export default function Projects() {
         router.push({pathname:'/project',search: id})
     }
 
+    const searchData = () => {
+        getSearch(search)
+        .then(res => {
+            let data = res.data;
+                data.map(e => {
+                    e.role = deform_Skills(e.role);
+                    e.task_type = deform_ProjectTypes(e.task_type);
+                })
+                projects = data;
+                setProjects([...projects]);
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    }
+
+    const init = () => {
+        tagsA = _data.skills;
+        setTagsA([...tagsA]);
+        tagsB = _data.projectTypes
+        setTagsB([...tagsB]);
+    }
+
     useEffect(() => {
         getProjects()
+        init()
     },[])
+
+    useEffect(() => {
+        let obj = {
+          role: selectA,
+          task_type: selectB
+        }
+        obj = JSON.stringify(obj)
+        getFilter({obj: obj})
+        .then(res => {
+            let data = res.data;
+            data.map(e => {
+                e.role = deform_Skills(e.role);
+                e.task_type = deform_ProjectTypes(e.task_type);
+            })
+            projects = data;
+            setProjects([...projects]);
+        })
+    },[selectA,selectB])
 
     return <div className="Projects">
         <div className="search">
             <Input placeholder="搜索项目" onChange={onChange} />
-            <SearchOutlined className="search-btn"/>
+            <SearchOutlined className="search-btn" onClick={() => searchData()} />
         </div>
         <div className="tags">
             <div className="tags-list">
                 {
                     tagsA.map((e,i) => <div 
                                         key={i} 
-                                        className={`tags-li ${selectA === i ? 'tags-li-active':''}`}
-                                        onClick={() =>{selectA = i,setSelectA(selectA)}}
+                                        className={`tags-li ${selectA === e.value ? 'tags-li-active':''}`}
+                                        onClick={() =>{selectA = e.value,setSelectA(selectA)}}
                                         >
-                        {e}
+                        {e.name}
                     </div>)
                 }
             </div>
@@ -69,10 +114,10 @@ export default function Projects() {
                 {
                     tagsB.map((e,i) => <div 
                                         key={i} 
-                                        className={`tags-li ${selectB === i ? 'tags-li-active':''}`} 
-                                        onClick={() =>{selectB = i,setSelectB(selectB);}}
+                                        className={`tags-li ${selectB === e.value ? 'tags-li-active':''}`} 
+                                        onClick={() =>{selectB = e.value,setSelectB(selectB);}}
                                         >
-                        {e}
+                        {e.name}
                     </div>)
                 }
             </div>
@@ -107,7 +152,12 @@ export default function Projects() {
                     </div>
                 )
             }
-                
+            {
+                projects.length === 0 ? 
+                    <Empty />
+                    :
+                    ''
+            }
         </div>
     </div>
 }

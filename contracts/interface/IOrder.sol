@@ -4,8 +4,9 @@ pragma solidity ^0.8.0;
 
 enum OrderProgess {
     Init,
-    Staging,   // Issuer Stage
-    Staged,    // Worker Stage
+    StagingByIssuer,   // Issuer Stage
+    StagingByWoker,    // Worker Stage
+    Staged,
     Ongoing,
     IssuerAbort,
     WokerAbort,
