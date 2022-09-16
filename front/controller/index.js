@@ -139,10 +139,10 @@ export function useSignData(params) {
       deadline: obj.deadline,
     },
     onError(error) {
-      console.log('Error', error)
+      // console.log('Error', error)
     },
     onSuccess(data) {
-      console.log('Success', data)
+      // console.log('Success', data)
     },
   })
   

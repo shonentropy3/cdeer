@@ -140,7 +140,7 @@ export class CommonService {
             
         })
     }).then(async(res)=>{
-        return await this.tasksRepository.query(updateStageJson({json: res, oid: body.oid, info: body.info}))
+        return await this.tasksRepository.query(updateStageJson({json: res, oid: body.oid, info: body.info, stages: body.stages}))
         .then(() => {
             return {
                 code: 200

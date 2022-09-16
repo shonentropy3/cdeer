@@ -52,6 +52,7 @@ CREATE TABLE orders (
   "attachment" varchar(64),
   "signature" varchar(132),
   "signaddress" varchar(64),
+  "stages" json,
   "create_time" date DEFAULT (now()),
   "update_time" date DEFAULT (now()),
   UNIQUE("order_id")

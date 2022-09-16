@@ -99,7 +99,11 @@ export default function Project() {
             signature: signHash,
             signaddress: address
         }
-        getStagesHash({obj: JSON.stringify(stageDetail),oid: oid,info: info})
+        let order_Stages = {
+            amount: testObj.amounts,
+            period: testObj.periods,
+        }
+        getStagesHash({obj: JSON.stringify(stageDetail),oid: oid,info: info,stages: JSON.stringify(order_Stages)})
         .then(res => {
               // ipfs ==> 存入链上 && 存入stageDetail.last
               if (res.code === 200) {
@@ -215,11 +219,12 @@ export default function Project() {
     },[oid])
 
     // useEffect(() => {
-    //     stages.length !== 0 ?
-    //         getChainStages()
-    //         :
-    //         ''
-    // },[stages])
+    //     console.log(Stages);
+    //     // Stages.length !== 0 ?
+    //     //     getChainStages()
+    //     //     :
+    //     //     ''
+    // },[Stages])
     
     return <div className="WorkerProject">
         <div className="worker-title">

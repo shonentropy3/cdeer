@@ -135,7 +135,7 @@ export const modifyApplySwitch = params => {
 
 export const updateStageJson = params => {
     let sql = ` update orders SET attachment = '${params.json.hash}', signature = '${params.info.signature}',
-                signaddress = '${params.info.signaddress}' where order_id = '${params.oid}'`;
+                signaddress = '${params.info.signaddress}', stages = '${params.stages}' where order_id = '${params.oid}'`;
     return sql
 }
 
