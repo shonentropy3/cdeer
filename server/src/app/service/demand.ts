@@ -58,7 +58,7 @@ export class MarketService {
                     arr.push({
                         oid: Number(e.order_id),
                         tid: Number(e.task_id),
-                        stagejson: e.stagejson
+                        stagejson: e.attachment
                     });
                 })
                 return arr
@@ -71,7 +71,7 @@ export class MarketService {
                     arr.push({
                         oid: Number(e.order_id),
                         tid: Number(e.task_id),
-                        stagejson: e.stagejson
+                        stagejson: e.attachment
                     });
                 })
                 return arr

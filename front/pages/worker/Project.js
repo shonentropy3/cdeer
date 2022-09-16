@@ -95,7 +95,11 @@ export default function Project() {
                 }
             })
         })
-        getStagesHash({obj: JSON.stringify(stageDetail),oid: oid})
+        let info = {
+            signature: signHash,
+            signaddress: address
+        }
+        getStagesHash({obj: JSON.stringify(stageDetail),oid: oid,info: info})
         .then(res => {
               // ipfs ==> 存入链上 && 存入stageDetail.last
               if (res.code === 200) {

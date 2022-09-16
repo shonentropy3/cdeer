@@ -86,8 +86,6 @@ export const moDemand = params => {
     let sql = ` update tasks SET title = '${params.title}', budget = ${params.budget}, period = ${params.period} ,
     "desc" = '${params.pro_content}' ,role = '${params.recruiting_role}' ,task_type = '${params.demand_type}',
             attachment = '${params.attachment}', update_time = now() where id = ${params.demand_id} `;
-            console.log(sql);
-            
     return sql
 }
 
@@ -136,7 +134,8 @@ export const modifyApplySwitch = params => {
 }
 
 export const updateStageJson = params => {
-    let sql = `UPDATE orders SET stagejson = '${params.json.hash}'  WHERE order_id = '${params.oid}'`
+    let sql = ` update orders SET attachment = '${params.json.hash}', signature = '${params.info.signature}',
+                signaddress = '${params.info.signaddress}' where order_id = '${params.oid}'`;
     return sql
 }
 

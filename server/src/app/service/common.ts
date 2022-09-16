@@ -140,7 +140,7 @@ export class CommonService {
             
         })
     }).then(async(res)=>{
-        return await this.tasksRepository.query(updateStageJson({json: res, oid: body.oid}))
+        return await this.tasksRepository.query(updateStageJson({json: res, oid: body.oid, info: body.info}))
         .then(() => {
             return {
                 code: 200
@@ -162,7 +162,7 @@ export class CommonService {
       return new Promise(async(resolve, reject) => {
         await this.tasksRepository.query(getStageJson(body.oid))
         .then(res => {
-            let hash = res[0].stagejson;
+            let hash = res[0].attachment;
             let time = `${Date.now()}.json`
             let path = '../../../cache_area'+'/'+ time
             let stream = createWriteStream(join(__dirname, path));
