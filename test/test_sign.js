@@ -1,39 +1,64 @@
 const { ethers } = require("hardhat");
+// const { expect } = require("chai");
 const { signPermitStage } = require("./signPermitStage.js");
+
+const DeOrderAddr = require(`../deployments/dev/DeOrder.json`)
 
 // const { expectRevert } = require("@openzeppelin/test-helpers");
 
 
+
+
 describe("Token", function () {
-  let contract;
-  let owner;
+  let DeOrder;
+  let account1;
+  let account2;
+  let orderId;
 
   beforeEach(async function () {
     const accounts = await ethers.getSigners();
-    owner = accounts[0];
-    console.log("owner:" + owner.address);
+    account1 = accounts[0];
+    account2 = accounts[1];
+    
+    console.log("account1:" + account1.address);
+    console.log("account2:" + account2.address);
 
-    const Order = await ethers.getContractFactory("Order");
-    contract = await Order.deploy("0x5FbDB2315678afecb367f032d93F642f64180aa3");
-    await contract.deployed();
+    DeOrder = await ethers.getContractAt("DeOrder", DeOrderAddr.address, account1);
+    
   });
 
-  it("Should Passed", async function () {
+  it("createOrder", async function () {
+    let currOrderId = await DeOrder.currOrderId();
+
+    let tx = await DeOrder.createOrder(0, 
+      account1.address,
+      account2.address, 
+      ethers.constants.AddressZero, 10000);
+    
+    await tx.wait();
+
+    orderId = await DeOrder.currOrderId()
+    console.log("orderId:" + orderId)
+    // expect(orderId).to.equal(currOrderId + 1 );
+
+  });
+
+  it("signPermitStage", async function () {
     let { chainId } = await ethers.provider.getNetwork();
-    let orderId = "1" 
+    let nonce = await DeOrder.nonces(account2.address);  // get from  
+    console.log("nonce:" + nonce)
+
     let amounts = ["1"]
     let periods = ["1"] 
-    let nonce = 0 // get from  DeOrder.nonces(addr)
     let deadline = "99999999999"
 
     const sig = await signPermitStage(
       chainId,
-      contract.address,
-      owner,
+      DeOrderAddr.address,
+      account2,
       orderId,
       amounts,
       periods,
-      // content,
       nonce,  
       deadline,
     );
@@ -43,13 +68,16 @@ describe("Token", function () {
       // s = 签名的第2个32 字节
       // v = 签名的最后一个字节
 
-      console.log(sig);
+      console.log("sig:", sig);
 
       let r = '0x' + sig.substring(2).substring(0, 64);
       let s = '0x' + sig.substring(2).substring(64, 128);
       let v = '0x' + sig.substring(2).substring(128, 130);
 
-    await contract.permitStage(orderId,amounts,periods, deadline, v, r, s);
+    await DeOrder.permitStage(orderId,amounts,periods,nonce, deadline, v, r, s);
+    // let signer = await DeOrder.testPermitStage(orderId,amounts,periods,nonce, deadline, v, r, s);
+    // console.log("signer:", signer);
+
   });
 
 

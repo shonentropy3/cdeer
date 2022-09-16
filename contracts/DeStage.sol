@@ -46,6 +46,7 @@ contract DeStage is Ownable {
     }
 
     function setStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods) external onlyDeorder {
+
         if(_amounts.length != _periods.length || _amounts.length == 0) revert ParamError(0);
         if(maxStages < _amounts.length) revert ParamError(1);
 

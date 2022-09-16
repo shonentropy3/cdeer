@@ -24,16 +24,16 @@ contract DeOrder is IOrder, Multicall, Ownable {
     address public feeTo;
 
     address public deStage;
-    uint private currOrderId;
+    uint public currOrderId;
 
     // orderId  = > 
     mapping(uint => Order) private orders;
     mapping(address => uint) public nonces;
 
     bytes32 public DOMAIN_SEPARATOR;
-    bytes32 public constant PERMITSTAGE_TYPEHASH = keccak256("PermitStage(uint256 orderId,uint256[] amounts,uint256[] periods,uint256 nonce,uint deadline)");
-    bytes32 public constant PERMITPROSTAGE_TYPEHASH = keccak256("PermitProStage(uint256 orderId,uint256 stageIndex,uint256 period,uint256 nonce,uint deadline)");
-    bytes32 public constant PERMITAPPENDSTAGE_TYPEHASH = keccak256("PermitAppendStage(uint256 orderId,uint256 amount,uint256 period,uint256 nonce,uint deadline)");
+    bytes32 public constant PERMITSTAGE_TYPEHASH = keccak256("PermitStage(uint256 orderId,uint256[] amounts,uint256[] periods,uint256 nonce,uint256 deadline)");
+    bytes32 public constant PERMITPROSTAGE_TYPEHASH = keccak256("PermitProStage(uint256 orderId,uint256 stageIndex,uint256 period,uint256 nonce,uint256 deadline)");
+    bytes32 public constant PERMITAPPENDSTAGE_TYPEHASH = keccak256("PermitAppendStage(uint256 orderId,uint256 amount,uint256 period,uint256 nonce,uint256 deadline)");
 
     event OrderCreated(uint indexed taskId, uint indexed orderId,  address issuer, address worker, address token, uint amount);
     event OrderModified(uint indexed orderId, address token, uint amount);
@@ -124,7 +124,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
 
         bytes32 structHash  = keccak256(abi.encode(PERMITSTAGE_TYPEHASH, _orderId,
                 keccak256(abi.encodePacked(_amounts)), keccak256(abi.encodePacked(_periods)), nonce, deadline));
-        address signAddr =recoverVerify(structHash, nonce, deadline, v , r, s);
+        address signAddr = recoverVerify(structHash, nonce, deadline, v , r, s);
 
         if(order.worker == signAddr && msg.sender == order.issuer) {
             order.progress = OrderProgess.Staged;
@@ -133,6 +133,8 @@ contract DeOrder is IOrder, Multicall, Ownable {
         } else {
             revert PermissionsError(); 
         }
+
+        IStage(deStage).setStage(_orderId, _amounts, _periods);
         
         if(!IStage(deStage).checkStage(_orderId, _amounts, _periods)) revert AmountError(0);
     }
