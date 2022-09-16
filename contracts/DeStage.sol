@@ -45,6 +45,7 @@ contract DeStage is Ownable {
         _;
     }
 
+
     function setStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods) external onlyDeorder {
 
         if(_amounts.length != _periods.length || _amounts.length == 0) revert ParamError(0);
@@ -91,15 +92,7 @@ contract DeStage is Ownable {
         }
     }
 
-    function checkStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods) external view returns (bool) {
-        Stage[] memory stages = orderStages[_orderId];
-        if(stages.length != _periods.length || _periods.length != _amounts.length) revert ParamError(0);
-        
-        for(uint i = 0; i < stages.length; i++) {
-            if(_amounts[i] != stages[i].amount || _periods[i] != stages[i].period) revert ParamError(1);
-        }
-        return true;
-    }
+
 
     function startOrder(uint _orderId) external onlyDeorder {
         Stage[] storage stages = orderStages[_orderId];
