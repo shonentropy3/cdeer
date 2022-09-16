@@ -76,22 +76,21 @@ export default function Projects() {
     },[])
 
     useEffect(() => {
-        // fil
-    let obj = {
-      role: selectA,
-      task_type: selectB
-    }
-    obj = JSON.stringify(obj)
-    getFilter({obj: obj})
-    .then(res => {
-        let data = res.data;
-        data.map(e => {
-            e.role = deform_Skills(e.role);
-            e.task_type = deform_ProjectTypes(e.task_type);
+        let obj = {
+          role: selectA,
+          task_type: selectB
+        }
+        obj = JSON.stringify(obj)
+        getFilter({obj: obj})
+        .then(res => {
+            let data = res.data;
+            data.map(e => {
+                e.role = deform_Skills(e.role);
+                e.task_type = deform_ProjectTypes(e.task_type);
+            })
+            projects = data;
+            setProjects([...projects]);
         })
-        projects = data;
-        setProjects([...projects]);
-    })
     },[selectA,selectB])
 
     return <div className="Projects">

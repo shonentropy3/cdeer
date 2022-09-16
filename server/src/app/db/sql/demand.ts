@@ -26,6 +26,11 @@ export const getMyPjcDBa = params => {
     return sql
 }
 
+export const getTaskApplyCount = params => {
+    let sql = `SELECT * FROM public.apply_info WHERE task_id = '${params}'`
+    return sql
+}
+
 export const getMyPjcDBb = params => {
     let sql = `SELECT * FROM public.tasks WHERE id = '${params}' and del = 0 `
     return sql

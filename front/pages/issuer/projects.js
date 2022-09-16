@@ -100,7 +100,7 @@ export default function Issuerprojects(params) {
                             </div>
                         </div>
                         <div className="li-num">
-                            <p>1</p>
+                            <p>{e.apply_count}</p>
                             <p>报名人数</p>
                         </div>
                     </div>

@@ -16,7 +16,7 @@ const ipfs = ipfsAPI({host: 'localhost', port: '5001', protocol: 'http'});
 const service = new upyun.Service('ipfs0','upchain', 'upchain123')
 const client = new upyun.Client(service);
 // dbUtils
-import { getDemandInfoDate, getMyPjcDBa, getMyPjcDBb } from '../db/sql/demand';
+import { getDemandInfoDate, getMyPjcDBa, getMyPjcDBb, getTaskApplyCount } from '../db/sql/demand';
 import { getApply, getMyApplylist } from '../db/sql/apply_info';
 import { getCacheNfts, hasNft, isOutTime, setNftlist, updateNftlist } from '../db/sql/nft';
 
@@ -35,7 +35,23 @@ export class UserService {
     // 查看个人项目
     async getMyDemand(@Body() body: any) {
         if (body.hash) {
-          return await this.tasksRepository.query(getMyPjcDBa(body.hash));
+          return new Promise(async(resolve, reject) => {
+            this.tasksRepository.query(getMyPjcDBa(body.hash))
+            .then(res => {
+              res.map(async(e,i) => {
+                await this.tasksRepository.query(getTaskApplyCount(e.id))
+                .then(arr => {
+                  e.apply_count = arr.length
+                  if (i+1 === res.length) {
+                    resolve(res)
+                  }
+                })
+              })
+            })
+          })
+          .then(res => {
+            return res
+          })
         }else{  
           return await this.tasksRepository.query(getMyPjcDBb(body.demand_id));
         }
