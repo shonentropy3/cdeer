@@ -33,7 +33,7 @@ export default function Header() {
             {
               key: '2',
               label: (
-                <Link href={{pathname: '/issuer/Projects'}}>
+                <Link href={{pathname: '/issuer/projects'}}>
                   发布的项目
                 </Link>
               ),
