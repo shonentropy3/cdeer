@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { Tasks } from '../db/entity/Tasks';	//引入entity
 
 // dbUtils
-import { getDemandDate, getDemandInfoDate, setDemand, moDemand, delDemand, getFilter, setOrder, getOrdersDate, getOrderInfo, getSearchData } from '../db/sql/demand';
+import { getDemandDate, getDemandInfoDate, setDemand, moDemand, delDemand, getFilter, setOrder, getOrdersDate, getOrderInfo, getSearchData, getIssuerOrdersDate } from '../db/sql/demand';
 
 
 @Injectable()
@@ -52,6 +52,20 @@ export class MarketService {
     async getOrder(account) {
         if (account.length === 42) {
             return await this.tasksRepository.query(getOrdersDate(account))
+            .then(res => {
+                let arr = [];
+                res.map(e => {
+                    arr.push({
+                        oid: Number(e.order_id),
+                        tid: Number(e.task_id),
+                        stagejson: e.attachment
+                    });
+                })
+                return arr
+            })
+        }else if(account.length === 43){
+            account = account.replace('_','');
+            return await this.tasksRepository.query(getIssuerOrdersDate(account))
             .then(res => {
                 let arr = [];
                 res.map(e => {

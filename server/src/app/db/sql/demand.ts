@@ -7,7 +7,11 @@ export const getDemandDate = () => {
 
 export const getOrdersDate = (account) => {
     let sql = `SELECT * FROM public."orders" WHERE worker = '${account}' `
-    // let sql = `SELECT * FROM public."orders" WHERE stagejson is null and worker = '${account}' `
+    return sql
+}
+
+export const getIssuerOrdersDate = (account) => {
+    let sql = `SELECT * FROM public."orders" WHERE issuer = '${account}' `
     return sql
 }
 

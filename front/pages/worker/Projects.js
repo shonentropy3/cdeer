@@ -18,7 +18,6 @@ export default function Userprojects(params) {
     ]);
     let [selectItem,setSelectItem] = useState({item: 'apply', data: []})
     let [oidList,setOidList] = useState([]);
-    let [orderDetail,setOrderDetail] = useState([]);
     const { useOrderReads: Order } = useReads('getOrder',oidList);
     
     const changeItem = value => {
@@ -28,7 +27,7 @@ export default function Userprojects(params) {
 
     const goUserProject = (oid) => {
         router.push({pathname:'/worker/Project', search: oid})
-    }
+    }  
 
     const getApply = () => {
         getUserApply({hash: `'${address}'`})
