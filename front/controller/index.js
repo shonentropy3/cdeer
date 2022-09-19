@@ -1,4 +1,4 @@
-import { useContractWrite, useSignTypedData, useAccount, useContractReads, useContractRead, usePrepareContractWrite } from 'wagmi';
+import { useContractWrite, useSignTypedData, useAccount, useContractReads, useContractRead, usePrepareContractWrite, useContract, useProvider } from 'wagmi';
 import task from '../../deployments/abi/DeTask.json'
 import taskAddr from '../../deployments/dev/DeTask.json'
 import order from '../../deployments/abi/DeOrder.json'
@@ -6,7 +6,8 @@ import orderAddr from '../../deployments/dev/DeOrder.json'
 import stage from '../../deployments/abi/DeStage.json'
 import stageAddr from '../../deployments/dev/DeStage.json'
 import { useEffect, useState } from 'react';
-
+var Web3 = require('web3');
+var web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
 export function useContracts(functionName) {
 
   // const signer = useSigner();
@@ -175,4 +176,16 @@ export function usePrepareContracts(functionName) {
   },[address])
 
   return { usePrepare, config }
+}
+
+export function testContract(params) {
+
+  const contract = new web3.eth.Contract(order.abi,orderAddr.address,)
+  let arr = [];
+  
+  params.map(e => {
+    let code = contract.methods[e.functionName](e.params).encodeABI()
+    arr.push(code)
+  })
+  return { arr }
 }

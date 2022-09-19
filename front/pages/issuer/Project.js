@@ -1,10 +1,11 @@
 import Panel_stageInfo from "../../components/Panel_stageInfo";
 import { Steps, Button, message } from "antd";
 import { useEffect, useState } from "react";
-import { useContracts, useContractsRead, usePrepareContracts, useReads, useSignData, useStageReads } from "../../controller";
+import { testContract, useContracts, useReads, useSignData, useStageReads } from "../../controller";
 import { ethers } from "ethers";
-import { getOrdersInfo, getStages, getStagesHash, getStagesJson } from "../../http/api";
+import { getOrdersInfo, getStagesHash, getStagesJson } from "../../http/api";
 import { useAccount, useNetwork } from 'wagmi'
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 export default function Project() {
 
@@ -21,12 +22,17 @@ export default function Project() {
     let [testObj,setTestObj] = useState({});
     let [signHash,setSignHash] = useState();
     let [nonce,setNonce] = useState(null);
+    let [multicall,setMulticall] = useState([]);
+    let [deadLine,setDeadLine] = useState('');
+    let [btnStatus,setBtnStatus] = useState(true);      //  true: permit || false: setStage
 
     const { useOrderReads: Order } = useReads('getOrder',[oid]);
     const { useOrderReads: nonces } = useReads('nonces',[address]);
     
     const { useStageReads: Stages } = useStageReads('getStages',[oid]);
     const { useSign, params, obj } = useSignData(testObj);
+    const { useOrderContractWrite: OrderWirte } = useContracts('multicall');
+    const { contract } = testContract(multicall);
 
 
     const readSuccess = () => {
@@ -46,10 +52,34 @@ export default function Project() {
         })
     }
 
-    const setStage = () => {
+    const permit = () => {
+                
+        console.log(stages);
+        let _amounts = [];
+        let _periods = [];
+        stages.map(e => {
+            _amounts.push(ethers.utils.parseEther(`${e.budget}`));
+            _period.push(`${e.period * 24 * 60 * 60}`);
+        })
+        let r = '0x' + sig.substring(2).substring(0, 64);
+        let s = '0x' + sig.substring(2).substring(64, 128);
+        let v = '0x' + sig.substring(2).substring(128, 130);
+        return
+        multicall.push([{
+            functionName: 'permitStage',
+            params: [
+                oid, _amounts, _periods, nonce, v, s, r
+            ]
+        }])
+        console.log(contract);
+    }
+
+    const setStage = async() => {
         // 设置阶段
         let now = parseInt(new Date().getTime()/1000);
         let setTime = 2 * 24 * 60 * 60;
+        deadLine = now+setTime;
+        setDeadLine(deadLine);
         let _amounts = [];
         let _periods = [];
         stages.map(e => {
@@ -108,8 +138,9 @@ export default function Project() {
         let order_Stages = {
             amount: a,
             period: b,
+            deadline: deadLine
         }
-        getStagesHash({obj: JSON.stringify(stageDetail),oid: oid,info: info,stages: JSON.stringify(order_Stages)})
+        getStagesHash({obj: JSON.stringify(stageDetail), oid: oid, info: info, stages: JSON.stringify(order_Stages)})
         .then(res => {
               // ipfs ==> 存入链上 && 存入stageDetail.last
               if (res.code === 200) {
@@ -276,7 +307,16 @@ export default function Project() {
             <p>开发周期: <span>{totalPeriod}</span>DAYS</p>
             <strong>总费用: {total}ETH</strong>
         </div>
-        <Button type='primary' className='worker-btn' onClick={() => setStage()}>完成并提交阶段划分</Button>
+        {
+            btnStatus ? 
+                <>
+                    <p className="tips"><ExclamationCircleOutlined style={{color: 'red', marginRight: '10px'}} />同意后,项目正式启动.并按照阶段划分作为项目交付计划和付款计划</p>
+                    <Button type='primary' className='worker-btn' onClick={() => permit()}>同意阶段划分</Button>
+                </>
+                :
+                <Button type='primary' className='worker-btn' onClick={() => setStage()}>完成并提交阶段划分</Button>
+        }
+
         <div className="h50"></div>
     </div>
 }

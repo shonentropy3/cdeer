@@ -14,6 +14,8 @@ async function main() {
     owner = accounts[0];
     // console.log(owner,"owner")
     const task = new ethers.Contract(taskJson.address, abi, owner);
+    
+    console.log(task.methods.tokenURI(1).encodeABI());
     await task.connect(owner).setOrder(orderJson.address);
     // console.log(owner.address,'============>');
     // //创建需求
