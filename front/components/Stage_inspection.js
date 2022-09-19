@@ -9,7 +9,10 @@ export default function Stage_inspection(props) {
 
     
     return (
-        <div className="Stage_inspection">
+        data.period === 0 ? 
+            ''
+            :
+            <div className="Stage_inspection">
             <div className="inspection-info">
                 <p onClick={() => {set(false), setTab(`${index}`)}}>修改阶段划分</p>
                 <p>删除</p>

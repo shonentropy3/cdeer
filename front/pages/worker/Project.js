@@ -21,6 +21,7 @@ export default function Project() {
     let [testObj,setTestObj] = useState({});
     let [signHash,setSignHash] = useState();
     let [nonce,setNonce] = useState(null);
+    let [deadLine,setDeadLine] = useState('');
 
     const { useOrderReads: Order } = useReads('getOrder',[oid]);
     const { useOrderReads: nonces } = useReads('nonces',[address]);
@@ -48,24 +49,26 @@ export default function Project() {
 
     const setStage = () => {
         // 设置阶段
-        let now = parseInt(new Date().getTime()/1000);
-        let setTime = 2 * 24 * 60 * 60;
-        let _amounts = [];
-        let _periods = [];
-        stages.map(e => {
-            _amounts.push(ethers.utils.parseEther(`${e.budget}`));
-            _periods.push(`${e.period * 24 * 60 * 60}`)
-        })
-        testObj = {
-            amounts: _amounts,
-            periods: _periods,
-            chainId: chain.id,
-            address: address,
-            oid: oid,
-            nonce: nonce,
-            deadline: `${now+setTime}`
-        }
-        setTestObj({...testObj})
+            let now = parseInt(new Date().getTime()/1000);
+            let setTime = 2 * 24 * 60 * 60;
+            deadLine = now+setTime;
+            setDeadLine(deadLine);
+            let _amounts = [ethers.utils.parseEther(`${advance}`)];
+            let _periods = ['0'];
+            stages.map(e => {
+                _amounts.push(ethers.utils.parseEther(`${e.budget}`));
+                _periods.push(`${e.period * 24 * 60 * 60}`)
+            })
+            testObj = {
+                amounts: _amounts,
+                periods: _periods,
+                chainId: chain.id,
+                address: address,
+                oid: oid,
+                nonce: nonce,
+                deadline: `${now+setTime}`
+            }
+            setTestObj({...testObj})
     }
 
     const writeSuccess = () => {
@@ -81,6 +84,20 @@ export default function Project() {
             last: task.stagejson, //  jsonhash
             version: '1.0'
         };
+        if (advance !== 0) {
+            stageDetail.stages.push({
+                milestone: {
+                    type: 'raw',
+                    content: '',
+                    title: 'advance'
+                },
+                delivery: {
+                    attachment: '',
+                    fileType: '',
+                    content: ''
+                }
+            })
+        }
         stages.map(e => {
             stageDetail.stages.push({
                 milestone: {
@@ -95,8 +112,8 @@ export default function Project() {
                 }
             })
         })
-        let a = [];
-        let b = [];
+        let a = [advance];
+        let b = [0];
         stages.map(e => {
             a.push(e.budget);
             b.push(e.period)
@@ -108,6 +125,7 @@ export default function Project() {
         let order_Stages = {
             amount: a,
             period: b,
+            deadline: deadLine
         }
         getStagesHash({obj: JSON.stringify(stageDetail),oid: oid,info: info,stages: JSON.stringify(order_Stages)})
         .then(res => {

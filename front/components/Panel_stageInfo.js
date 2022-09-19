@@ -83,6 +83,7 @@ export default function Panel_stageInfo(props) {
 
     const init = () => {
         let arr = []
+        
         Stages.map((e,i) => {
             let num = i+1
             arr.push({
@@ -92,6 +93,15 @@ export default function Panel_stageInfo(props) {
         })
         stageList = arr;
         stages = Stages;
+        if (Stages[0].period === 0) {
+            getAdvance(Stages[0].budget);
+            illM = Stages[0].budget;
+            setIllM(illM);
+            advance = true;
+            setAdvance(advance);
+            Stages.splice(0,1);
+            setStages([...Stages]);
+        }
         setStageList([...stageList]);
         setStages([...stages]);
         setEditMode(true);
@@ -102,7 +112,7 @@ export default function Panel_stageInfo(props) {
         Stages.length > 0 ?
             init()
             :
-            ''
+            console.log(Stages);
     },[Stages])
 
     
@@ -111,10 +121,10 @@ export default function Panel_stageInfo(props) {
             项目阶段划分
         </div>
         <div className="stageInfo-subtitle">
-            <Checkbox className={`subtitle-check ${advance ? 'mb10' : ''}`} onChange={onChange}>增加预付款 <span className='check-span'>项目方确认阶段划分后,你将得到预付款</span></Checkbox>
+            <Checkbox checked={advance} className={`subtitle-check ${advance ? 'mb10' : ''}`} onChange={onChange}>增加预付款 <span className='check-span'>项目方确认阶段划分后,你将得到预付款</span></Checkbox>
             {
                 advance ? 
-                    <InputNumber min={0} className='subtitle-inner' addonAfter={selectAfter} defaultValue={illM} onChange={e => {getAdvance(e), setIllM(e)}} />
+                    <InputNumber min={0} className='subtitle-inner' addonAfter={selectAfter} value={illM} onChange={e => {getAdvance(e), setIllM(e)}} />
                     :
                     ''
             }

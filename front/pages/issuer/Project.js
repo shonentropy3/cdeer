@@ -59,7 +59,7 @@ export default function Project() {
         let _periods = [];
         stages.map(e => {
             _amounts.push(ethers.utils.parseEther(`${e.budget}`));
-            _period.push(`${e.period * 24 * 60 * 60}`);
+            _periods.push(`${e.period * 24 * 60 * 60}`);
         })
         let r = '0x' + sig.substring(2).substring(0, 64);
         let s = '0x' + sig.substring(2).substring(64, 128);
@@ -80,8 +80,8 @@ export default function Project() {
         let setTime = 2 * 24 * 60 * 60;
         deadLine = now+setTime;
         setDeadLine(deadLine);
-        let _amounts = [];
-        let _periods = [];
+        let _amounts = [ethers.utils.parseEther(`${advance}`)];
+        let _periods = ['0'];
         stages.map(e => {
             _amounts.push(ethers.utils.parseEther(`${e.budget}`));
             _periods.push(`${e.period * 24 * 60 * 60}`)
