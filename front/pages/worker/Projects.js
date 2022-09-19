@@ -118,7 +118,7 @@ export default function Userprojects(params) {
         }
         return (
             arr.map((e,i) => 
-                <div key={i} className="li" onClick={() => goUserProject(e.oid)}>
+                <div key={i} className="li">
                     <div className="li-info">
                         <p className="title">{e.data.title}</p>
                         <p className="role">技术要求: {e.data.role.map((ele,index) => <span key={index}>{ele}</span> )}</p>
@@ -128,7 +128,7 @@ export default function Userprojects(params) {
                         </div>
                     </div>
                     <div className="li-right">
-                        <Button type="primary">确认合作</Button>
+                        <Button type="primary" onClick={() => goUserProject(e.oid)}>确认合作</Button>
                         <p>项目方邀请您合作</p>
                     </div>
                 </div>

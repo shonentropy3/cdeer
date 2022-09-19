@@ -20,6 +20,10 @@ export default function Issuerprojects(params) {
     let [selectItem,setSelectItem] = useState({item: 'tasks', data: []})
     const { useOrderReads: Order } = useReads('getOrder',oidList);
 
+    const goUserProject = (oid) => {
+        router.push({pathname:'/issuer/Project', search: oid})
+    }  
+
     const changeItem = value => {
         selectItem.item = value;
         setSelectItem({...selectItem});
@@ -103,7 +107,7 @@ export default function Issuerprojects(params) {
                             <Empty />
                             :
                             arr.map((e,i) => 
-                                <div key={i} className="li" onClick={() => goUserProject(e.oid)}>
+                                <div key={i} className="li">
                                     <div className="li-info">
                                         <p className="title">{e.data.title}</p>
                                         <p className="role">技术要求: {e.data.role.map((ele,index) => <span key={index}>{ele}</span> )}</p>
@@ -113,7 +117,7 @@ export default function Issuerprojects(params) {
                                         </div>
                                     </div>
                                     <div className="li-right">
-                                        <Button type="primary">阶段详情</Button>
+                                        <Button type="primary" onClick={() => goUserProject(e.oid)}>阶段详情</Button>
                                     </div>
                                 </div>
                             )
