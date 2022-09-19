@@ -223,14 +223,6 @@ export default function Project() {
             :
             ''
     },[oid])
-
-    // useEffect(() => {
-    //     console.log(Stages);
-    //     // Stages.length !== 0 ?
-    //     //     getChainStages()
-    //     //     :
-    //     //     ''
-    // },[Stages])
     
     return <div className="WorkerProject">
         <div className="worker-title">
@@ -244,6 +236,17 @@ export default function Project() {
                 <Step title="开发中" />
                 <Step title="完成" />
             </Steps>
+        </div>
+        <div className="issuer-workerInfo">
+            <div className="workerInfo-title">接单者信息</div>
+            <div className="workerInfo-content">
+                <div className="img"></div>
+                <div className="info">
+                    <p className="title"></p>
+                    <p className="subtitle"></p>
+                    <p className="detail">查看他的信息</p>
+                </div>
+            </div>
         </div>
         <div className="worker-signInStage">
             <Panel_stageInfo getStages={setStages} Stages={stages} getAdvance={setAdvance} amount={amount}/>

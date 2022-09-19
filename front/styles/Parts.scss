@@ -89,7 +89,7 @@
     }
 }
 .MyInfo{
-    margin: 100px auto 0;
+    margin: 0 auto 0;
     width: 1080px;
     height: 510px;
     padding: 50px 40px;
@@ -97,6 +97,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    
     .myInfo-top{
         height: 128px;
         display: flex;

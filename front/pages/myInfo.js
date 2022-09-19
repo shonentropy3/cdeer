@@ -32,7 +32,9 @@ export default function myInfo() {
     };
   
     
-    return <div className="MyInfo">
+    return <>
+    <div style={{height: '100px'}} ></div>
+<div className="MyInfo">
         <div className="myInfo-top">
             <div className="top">
                 <div className="img"></div>
@@ -82,4 +84,6 @@ export default function myInfo() {
             <Button className="btn">保存</Button>
         </Modal>
     </div>
+    </>
+    
 }
