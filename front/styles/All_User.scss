@@ -278,10 +278,44 @@
             height: auto;
             border: 1px solid #000;
             padding: 20px;
+            display: flex;
             .img{
-                width: 100px;
-                height: 100px;
-                border: 1px solid #000;
+                width: 120px;
+                height: 120px;
+                border-radius: 50%;
+                background-color: chartreuse;
+                margin-right: 30px;
+            }
+            .info{
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                .title{
+                    font-size: 20px;
+                }
+                .subtitle{
+                    color: gray;
+                }
+                .detail{
+                    color: #37a0fc;
+                    cursor: pointer;
+                }
+                .boxs{
+                    width: 230px;
+                    display: flex;
+                    justify-content: space-between;
+                    .box{
+                        display: flex;
+                        align-items: center;
+                        .icon{
+                            margin-right: 5px;
+                            width: 20px;
+                            height: 20px;
+                            background-color: greenyellow;
+                            border-radius: 50%;
+                        }
+                    }
+                }
             }
 
         }

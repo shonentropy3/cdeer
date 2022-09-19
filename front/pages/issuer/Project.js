@@ -242,9 +242,19 @@ export default function Project() {
             <div className="workerInfo-content">
                 <div className="img"></div>
                 <div className="info">
-                    <p className="title"></p>
-                    <p className="subtitle"></p>
-                    <p className="detail">查看他的信息</p>
+                    <p className="title">托尼</p>
+                    <p className="subtitle">他的技能: Solidity、Java、Go</p>
+                    <p className="detail">查看他的NFT</p>
+                    <div className="boxs">
+                        <div className="box">
+                            <div className="icon"></div>
+                            <p>Tonny Hool</p>
+                        </div>
+                        <div className="box">
+                            <div className="icon"></div>
+                            <p>Tonny Hool</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
