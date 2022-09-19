@@ -3,13 +3,16 @@ import { Button, Input,Select,Upload, Checkbox,message } from "antd"
 import {FolderAddOutlined} from "@ant-design/icons"
 import { useContracts } from "../controller";
 import { useAccount } from "wagmi";
-import { getHash } from "../http/api";
+import { createDemand, getHash } from "../http/api";
+import { ethers } from "ethers";
+import { useRouter } from "next/router";
 
 
 export  function Modal_ModifyTask (params) {
     const { TextArea }  = Input
     const { Dragger } = Upload;
     const {Option} = Select;
+    const router = useRouter()
 
     const {allInfo} = params
     const {address,isConnected } = useAccount()
@@ -30,6 +33,8 @@ export  function Modal_ModifyTask (params) {
 
     let [formData,setFormData] = useState()
     let [suffix,setSuffix] = useState()
+
+    let [modifyInfo,setModifInfo] = useState({})
     
     let [projectType,setProjectType] = useState(
         [
@@ -148,15 +153,40 @@ export  function Modal_ModifyTask (params) {
             skills: [...projectSkills],
             categories: [...types],
             title: projectTitle,
-            u_address: account,
             disabled:true,
         }
+        setModifInfo({...modifyInfo})
         console.log(modifyInfo);
-        // useTaskContractWrite.write({
-        //     recklesslySetUnpreparedArgs: [
-                
-        //     ]
-        // })
+        useTaskContractWrite.write({
+            recklesslySetUnpreparedArgs: [
+                account,
+                modifyInfo,
+                {
+                    value: ethers.utils.parseEther("1")
+                }
+            ]
+        })
+    }
+
+    const writeSuccess = () => {
+        params.projectAttrchment = useTaskContractWrite.data.hash
+        let para = {"proLabel":JSON.stringify(params)}
+        createDemand(para)
+        .then(res => {
+            console.log(res.code);
+            if(res.code == '200') {
+                message.success('修改成功')
+                setTimeout(() => {
+                    router.push('/issuer/projects')
+                })
+            }else{
+                message.error('连接超时')
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            message.error('创建失败')
+        })
     }
 
 
@@ -220,6 +250,11 @@ export  function Modal_ModifyTask (params) {
             setAccount(account)
         }
     },[isConnected])
+
+    useEffect(()=>{
+        console.log(useTaskContractWrite.isSuccess);
+        useTaskContractWrite.isSuccess ? writeSuccess() : ""
+    },[useTaskContractWrite.isSuccess])
 
     return <div className="Modal_modifyTask">
         <p className="project-title">项目名称</p>
