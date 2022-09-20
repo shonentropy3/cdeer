@@ -92,7 +92,7 @@ export default function Panel_stageInfo(props) {
             });
         })
         stageList = arr;
-        stages = Stages;
+        // stages = Stages;
         if (Stages[0].period === 0) {
             getAdvance(Stages[0].budget);
             illM = Stages[0].budget;
@@ -103,7 +103,7 @@ export default function Panel_stageInfo(props) {
             setStages([...Stages]);
         }
         setStageList([...stageList]);
-        setStages([...stages]);
+        setStages([...Stages]);
         setEditMode(true);
     }
 

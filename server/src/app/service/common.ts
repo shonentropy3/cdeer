@@ -196,7 +196,8 @@ export class CommonService {
             .then(stages => {
                 let obj = {
                     json: JSON.parse(data),
-                    stages: stages[0].stages
+                    stages: stages[0].stages,
+                    signature: stages[0].signature
                 }
                 return obj
             })

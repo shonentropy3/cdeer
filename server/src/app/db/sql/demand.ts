@@ -149,7 +149,7 @@ export const getStageJson = params => {
 }
 
 export const getStages = params => {
-    let sql = `SELECT stages FROM public."orders" WHERE order_id = ${params} `
+    let sql = `SELECT * FROM public."orders" WHERE order_id = ${params} `
     return sql
 }
 

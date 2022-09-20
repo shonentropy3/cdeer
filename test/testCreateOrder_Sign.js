@@ -67,12 +67,14 @@ describe("testCreateOrder&Sign", function () {
       // v = 签名的最后一个字节
 
       console.log("sig:", sig);
-
       let r = '0x' + sig.substring(2).substring(0, 64);
       let s = '0x' + sig.substring(2).substring(64, 128);
       let v = '0x' + sig.substring(2).substring(128, 130);
-
-    await DeOrder.permitStage(orderId,amounts,periods,nonce, deadline, v, r, s);
+      
+      
+       
+    // await DeOrder.permitStage(orderId,amounts,periods,nonce, deadline, v, r, s);
+    // await DeOrder.permitStage(8,["10000"],["1"],0, "99999999999", v, r, s);
     // let signer = await DeOrder.testPermitStage(orderId,amounts,periods,nonce, deadline, v, r, s);
     // console.log("signer:", signer);
 

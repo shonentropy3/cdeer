@@ -1,7 +1,7 @@
 import Panel_stageInfo from "../../components/Panel_stageInfo";
 import { Steps, Button, message } from "antd";
 import { useEffect, useState } from "react";
-import { testContract, useContracts, useReads, useSignData, useStageReads } from "../../controller";
+import { multicallWrite, testContract, useContracts, useReads, useSignData, useStageReads } from "../../controller";
 import { ethers } from "ethers";
 import { getOrdersInfo, getStagesHash, getStagesJson } from "../../http/api";
 import { useAccount, useNetwork } from 'wagmi'
@@ -24,6 +24,7 @@ export default function Project() {
     let [nonce,setNonce] = useState(null);
     let [multicall,setMulticall] = useState([]);
     let [deadLine,setDeadLine] = useState('');
+    let [signature,setSignature] = useState('');
     let [btnStatus,setBtnStatus] = useState(true);      //  true: permit || false: setStage
 
     const { useOrderReads: Order } = useReads('getOrder',[oid]);
@@ -32,9 +33,7 @@ export default function Project() {
     const { useStageReads: Stages } = useStageReads('getStages',[oid]);
     const { useSign, params, obj } = useSignData(testObj);
     const { useOrderContractWrite: OrderWirte } = useContracts('multicall');
-    const { contract } = testContract(multicall);
-
-
+    
     const readSuccess = () => {
         amount = Order.data[0].amount.toString();
         setAmount(amount);
@@ -54,24 +53,36 @@ export default function Project() {
 
     const permit = () => {
                 
-        console.log(stages);
-        let _amounts = [];
-        let _periods = [];
+        let _amounts = [ethers.utils.parseEther(`${advance}`)];
+        let _periods = ['0'];
         stages.map(e => {
             _amounts.push(ethers.utils.parseEther(`${e.budget}`));
             _periods.push(`${e.period * 24 * 60 * 60}`);
         })
-        let r = '0x' + sig.substring(2).substring(0, 64);
-        let s = '0x' + sig.substring(2).substring(64, 128);
-        let v = '0x' + sig.substring(2).substring(128, 130);
-        return
-        multicall.push([{
+
+        let r = '0x' + signature.substring(2).substring(0, 64);
+        let s = '0x' + signature.substring(2).substring(64, 128);
+        let v = '0x' + signature.substring(2).substring(128, 130);
+        let arr = [];
+        arr.push({
             functionName: 'permitStage',
-            params: [
-                oid, _amounts, _periods, nonce, v, s, r
-            ]
-        }])
-        console.log(contract);
+            params: [oid, _amounts, _periods, nonce, deadLine, v, r, s]
+        })
+        arr.push({
+            functionName: 'payOrder',
+            params: [oid, ethers.utils.parseEther(`${total}`)]
+        })
+        arr.push({
+            functionName: 'startOrder',
+            params: [oid]
+        })
+        multicall = arr;
+        setMulticall([...multicall]);
+        let params = testContract(multicall);
+        multicallWrite(params,address)
+        .then(res => {
+            console.log('===>',res);
+        })
     }
 
     const setStage = async() => {
@@ -192,6 +203,13 @@ export default function Project() {
     }
 
     useEffect(() => {
+        OrderWirte.isSuccess ?
+            console.log(OrderWirte.data)
+            :
+            console.log(OrderWirte.error);
+    },[OrderWirte.isSuccess])
+
+    useEffect(() => {
         nonces.data ? 
             getNonces()
             :
@@ -217,6 +235,10 @@ export default function Project() {
         setOid(Number(oid));
         getStagesJson({oid: oid})
         .then(res => {
+            deadLine = res.stages.deadline;
+            setDeadLine(deadLine);
+            signature = res.signature;
+            setSignature(signature);
             let arr = [];
             if (res.stages) {
                 res.json.stages.map((e,i) => {

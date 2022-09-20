@@ -8,6 +8,7 @@ import stageAddr from '../../deployments/dev/DeStage.json'
 import { useEffect, useState } from 'react';
 var Web3 = require('web3');
 var web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
+
 export function useContracts(functionName) {
 
   // const signer = useSigner();
@@ -182,10 +183,59 @@ export function testContract(params) {
 
   const contract = new web3.eth.Contract(order.abi,orderAddr.address,)
   let arr = [];
-  
+
   params.map(e => {
-    let code = contract.methods[e.functionName](e.params).encodeABI()
-    arr.push(code)
+    // 
+    switch (e.params.length) {
+      case 0:
+        var code = contract.methods[e.functionName]().encodeABI()
+        arr.push(code)
+        break;
+      case 1:
+        var code = contract.methods[e.functionName](e.params[0]).encodeABI()
+        arr.push(code)
+        break;
+      case 2:
+        var code = contract.methods[e.functionName](e.params[0],e.params[1]).encodeABI()
+        arr.push(code)
+        break; 
+      case 3:
+        var code = contract.methods[e.functionName](e.params[0],e.params[1],e.params[2]).encodeABI()
+        arr.push(code)
+        break;
+      case 4:
+        var code = contract.methods[e.functionName](e.params[0],e.params[1],e.params[2],e.params[3]).encodeABI()
+        arr.push(code)
+        break;
+      case 5:
+        var code = contract.methods[e.functionName](e.params[0],e.params[1],e.params[2],e.params[3],e.params[4]).encodeABI()
+        arr.push(code)
+        break;
+      case 6:
+        var code = contract.methods[e.functionName](e.params[0],e.params[1],e.params[2],e.params[3],e.params[4],e.params[5]).encodeABI()
+        arr.push(code)
+        break;
+      case 7:
+        var code = contract.methods[e.functionName](e.params[0],e.params[1],e.params[2],e.params[3],e.params[4],e.params[5],e.params[6]).encodeABI()
+        arr.push(code)
+        break;
+      default:
+        var code = contract.methods[e.functionName](e.params[0],e.params[1],e.params[2],e.params[3],e.params[4],e.params[5],e.params[6],e.params[7]).encodeABI()
+        arr.push(code)
+        break;
+    }
   })
-  return { arr }
+  return arr
+}
+
+export async function multicallWrite(arr,address) {
+  const contract = new web3.eth.Contract(order.abi,orderAddr.address,)
+  try {
+    return await contract.methods.multicall(arr).send({from: address, gas: 1000000, value: ''})
+            .then(res => {
+              console.log('res ===>',res);
+            })
+  } catch(err) {
+      console.log(err);
+  }
 }
