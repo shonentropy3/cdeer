@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import { multicallWrite, testContract, useContracts, useReads, useSignData, useStageReads } from "../../controller";
 import { ethers } from "ethers";
 import { getOrdersInfo, getStagesHash, getStagesJson } from "../../http/api";
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount, useNetwork, useProvider } from 'wagmi'
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 export default function Project() {
+    const provider = useProvider()
 
     const { chain } = useNetwork();
     const { address } = useAccount();
@@ -32,10 +33,10 @@ export default function Project() {
     
     const { useStageReads: Stages } = useStageReads('getStages',[oid]);
     const { useSign, params, obj } = useSignData(testObj);
-    const { useOrderContractWrite: OrderWirte } = useContracts('multicall');
+    const { useOrderContractWrite: OrderWirte } = useContracts('startOrder');
     
     const readSuccess = () => {
-        amount = Order.data[0].amount.toString();
+        amount = Order.data[0].amount.toString() / Math.pow(10,18);
         setAmount(amount);
     }
 
@@ -63,6 +64,16 @@ export default function Project() {
         let r = '0x' + signature.substring(2).substring(0, 64);
         let s = '0x' + signature.substring(2).substring(64, 128);
         let v = '0x' + signature.substring(2).substring(128, 130);
+
+        console.log(Order.data[0]);
+        let value = ethers.utils.parseEther(`${total}`);
+        // return
+        // OrderWirte.write({
+        //     recklesslySetUnpreparedArgs: [
+        //         oid
+        //     ]
+        // })
+        // return
         let arr = [];
         arr.push({
             functionName: 'permitStage',
@@ -70,18 +81,29 @@ export default function Project() {
         })
         arr.push({
             functionName: 'payOrder',
-            params: [oid, ethers.utils.parseEther(`${total}`)]
+            params: [oid, value]
         })
+        if (amount !== value) {
+            arr.push({
+                functionName: 'modifyOrder',
+                params: [oid, '0x90f79bf6eb2c4f870365e785982e1f101e93b906', value]
+            })
+        }
         arr.push({
             functionName: 'startOrder',
             params: [oid]
         })
+        // 
         multicall = arr;
         setMulticall([...multicall]);
         let params = testContract(multicall);
-        multicallWrite(params,address)
+        
+        multicallWrite(params,address,value)
         .then(res => {
-            console.log('===>',res);
+            console.log('success ==>',res);
+        })
+        .catch(err => {
+            console.log(err);
         })
     }
 
@@ -206,7 +228,8 @@ export default function Project() {
         OrderWirte.isSuccess ?
             console.log(OrderWirte.data)
             :
-            console.log(OrderWirte.error);
+            ''
+            // console.log(OrderWirte.error);
     },[OrderWirte.isSuccess])
 
     useEffect(() => {

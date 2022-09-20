@@ -62,7 +62,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
         );
     }
 
-    function createOrder(uint _taskId, address _issuer, address _worker, address _token, uint _amount) external {
+    function createOrder(uint _taskId, address _issuer, address _worker, address _token, uint _amount) external payable {
         if(address(0) == _worker || address(0) == _issuer || _worker == _issuer) revert ParamError();
 
         currOrderId += 1;
@@ -83,7 +83,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
         return orders[orderId];
     }
 
-    function modifyOrder(uint orderId, address token, uint amount) external {
+    function modifyOrder(uint orderId, address token, uint amount) external payable {
         Order storage order = orders[orderId];
         if(order.progress >= OrderProgess.Ongoing) revert ProgressError();
         if(msg.sender != order.issuer) revert PermissionsError(); 
@@ -117,7 +117,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
         uint deadline,
         uint8 v,
         bytes32 r,
-        bytes32 s) public {
+        bytes32 s) public payable {
         
         Order storage order = orders[_orderId];
         if(order.progress >= OrderProgess.Ongoing) revert ProgressError();
@@ -261,10 +261,10 @@ contract DeOrder is IOrder, Multicall, Ownable {
         emit OrderAbort(_orderId, msg.sender, currStageIndex);
     }
 
-    function refund(uint _orderId, address _to, uint _amount) public {
+    function refund(uint _orderId, address _to, uint _amount) payable public {
         Order storage order = orders[_orderId];
         if(msg.sender != order.issuer) revert PermissionsError(); 
-
+ 
         order.payed -= _amount;
         if(order.progress >= OrderProgess.Ongoing) {
             if(order.payed < order.amount) revert AmountError(1);

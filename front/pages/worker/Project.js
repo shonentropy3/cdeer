@@ -31,7 +31,7 @@ export default function Project() {
 
 
     const readSuccess = () => {
-        amount = Order.data[0].amount.toString();
+        amount = Order.data[0].amount.toString() / Math.pow(10,18);
         setAmount(amount);
     }
 

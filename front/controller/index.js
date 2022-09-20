@@ -7,7 +7,7 @@ import stage from '../../deployments/abi/DeStage.json'
 import stageAddr from '../../deployments/dev/DeStage.json'
 import { useEffect, useState } from 'react';
 var Web3 = require('web3');
-var web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
+var web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:8545");
 
 export function useContracts(functionName) {
 
@@ -180,7 +180,6 @@ export function usePrepareContracts(functionName) {
 }
 
 export function testContract(params) {
-
   const contract = new web3.eth.Contract(order.abi,orderAddr.address,)
   let arr = [];
 
@@ -228,14 +227,14 @@ export function testContract(params) {
   return arr
 }
 
-export async function multicallWrite(arr,address) {
+export async function multicallWrite(arr,address,total) {
   const contract = new web3.eth.Contract(order.abi,orderAddr.address,)
   try {
-    return await contract.methods.multicall(arr).send({from: address, gas: 1000000, value: ''})
-            .then(res => {
-              console.log('res ===>',res);
-            })
+    return await contract.methods.multicall(arr).send({from: address, gas: 1000000, value: total})
+      .then(res => {
+        console.log('index ===>',res);
+      })
   } catch(err) {
-      console.log(err);
+        console.log(err);
   }
 }

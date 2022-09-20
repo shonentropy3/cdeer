@@ -6,6 +6,7 @@ import { createOrder, getMyApplylist, getMyDemand } from "../../http/api";
 import { useContracts } from "../../controller/index";
 import {useRouter} from "next/router"
 import {Modal_ModifyTask} from "../../components/Modal_modifyTask"
+import { ethers } from "ethers";
 
 
 
@@ -107,7 +108,8 @@ export default function applylist() {
                 address,
                 worker,
                 '0x90f79bf6eb2c4f870365e785982e1f101e93b906',
-                amount
+                ethers.utils.parseEther(`${amount}`)
+                
             ]
         })
     }
