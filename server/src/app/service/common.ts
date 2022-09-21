@@ -246,8 +246,8 @@ export class CommonService {
                                 })
                                 fs.unlink(res, (err) => {
                                     if (err) throw err;
+                                    resolve(obj)
                                 });
-                                resolve(obj)
                             }
                         })
                 }

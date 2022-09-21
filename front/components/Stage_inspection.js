@@ -3,11 +3,9 @@ import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useContracts, useReads } from '../controller';
 import { getHash, getStagesHash, getStagesJson, updateAttachment } from '../http/api';
-import { useAccount } from 'wagmi'
 
 export default function Stage_inspection(props) {
 
-    const { address } = useAccount();
     const { setTab } = props;
     const { Oid } = props;
     const { Who } = props;
@@ -23,6 +21,7 @@ export default function Stage_inspection(props) {
 
     let [stageJson,setStageJson] = useState({});
     let [doingStage,setDodingStage] = useState();
+    let [deliveryDetail,setDeliveryDetail] = useState();
     
     const setDelivery = () => {
         delivery.write({
@@ -104,6 +103,8 @@ export default function Stage_inspection(props) {
             // TODO: 获取stagejson ==> delivery
             getStagesJson({oid: Oid})
             .then(res => {
+                deliveryDetail = res.json.stages[index+1].delivery;
+                setDeliveryDetail(deliveryDetail);
                 stageJson = res.json;
                 stageJson.last = res.attachment;
                 setStageJson({...stageJson});
@@ -150,6 +151,17 @@ export default function Stage_inspection(props) {
                     <p>交付说明</p>
                     <p>{data.content}</p>
                 </div>
+                {
+                    doingStage == index + 1 && !Who && deliveryDetail.content ? 
+                    <div className="deliveryDetail">
+                        <div className="title">开发者提交了「阶段交付」:</div>
+                        <div className="content">
+                            {deliveryDetail.content}
+                        </div>
+                    </div>
+                    :
+                    ''
+                }
                 {
                     doingStage == index + 1 ? 
                         <div className="btns">
