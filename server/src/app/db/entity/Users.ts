@@ -15,6 +15,41 @@ export class Users {
   })
   userAddr: string | null;
 
+  @Column("character varying", {
+    name: "avatar",
+    nullable: true,
+    length: 255
+  })
+  avatar: string | null
+
+  @Column("character varying",{
+    name: "telegram",
+    nullable: true,
+    length: 64
+  })
+  telegram: string | null
+
+  @Column("character varying", {
+    name: "wechat",
+    nullable: true,
+    length: 64
+  })
+  wechat: string | null
+
+  @Column("character varying", {
+    name: "skype",
+    nullable: true,
+    length: 64
+  })
+  skype: string | null
+
+  @Column("character", {
+    name: "role",
+    nullable: true,
+    array: true
+  })
+  role: string[] | null;
+
   @Column("date", {
     name: "create_time",
     nullable: true,

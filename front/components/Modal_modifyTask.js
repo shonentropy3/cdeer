@@ -3,9 +3,10 @@ import { Button, Input,Select,Upload, Checkbox,message } from "antd"
 import {FolderAddOutlined} from "@ant-design/icons"
 import { useContracts } from "../controller";
 import { useAccount } from "wagmi";
-import { createDemand, getHash } from "../http/api";
+import { modifyDemand, getHash } from "../http/api";
 import { ethers } from "ethers";
 import { useRouter } from "next/router";
+import { BitOperation } from "../utils/BitOperation";
 
 
 export  function Modal_ModifyTask (params) {
@@ -14,7 +15,7 @@ export  function Modal_ModifyTask (params) {
     const {Option} = Select;
     const router = useRouter()
 
-    const {allInfo} = params
+    const {allInfo,taskId} = params
     const {address,isConnected } = useAccount()
 
     const { useTaskContractWrite } = useContracts("modifyTask")
@@ -30,6 +31,7 @@ export  function Modal_ModifyTask (params) {
     let [period,setPeriod] = useState()
     let [currency,setCurrency] = useState()
     let [buttonType,setButtonType] = useState("text")
+    let [demandId,setDemandId] = useState()
 
     let [formData,setFormData] = useState()
     let [suffix,setSuffix] = useState()
@@ -133,54 +135,76 @@ export  function Modal_ModifyTask (params) {
     }
 
     const modifyHandler = async ()=>{
+        
+        let modifyInfo = {
+            demand_id: demandId,
+            currency: currency,
+            attachment: "",
+            budget: budget,
+            pro_content: projectDesc,
+            period: period,
+            recruiting_role: `{${[...projectSkills]}}`,
+            demand_type: `{${[...types]}}`,
+            title: projectTitle,
+            suffix: suffix,
+            issuer: account,
+            disabled:false,
+            payhash:""
+        }
         if(formData){
             await getHash(formData)
             .then((res)=>{
-                setProjectAttrchment(res)
+                modifyInfo.attachment = res
             })
             .catch(error => {
                 console.log(error);
-                // return error
+                return error
             })
         }
-
-        let modifyInfo = {
-            currency: currency,
-            attachment: projectAttrchment,
-            budget: budget,
-            desc: projectDesc,
-            period: period,
-            skills: [...projectSkills],
-            categories: [...types],
-            title: projectTitle,
-            disabled:true,
-        }
         setModifInfo({...modifyInfo})
+        // console.log(modifyInfo);
+        let params = {
+            title: modifyInfo.title,
+            desc: modifyInfo.pro_content,
+            attachment: "",
+            currency:modifyInfo.currency,
+            budget: modifyInfo.budget,
+            period: modifyInfo.period,
+            categories: BitOperation([...modifyInfo.demand_type]),
+            skills: BitOperation([...modifyInfo.recruiting_role]),
+            disabled: false,
+            payhash: ""
+        }
         console.log(modifyInfo);
+        console.log("address===>",account);
         useTaskContractWrite.write({
             recklesslySetUnpreparedArgs: [
                 account,
-                modifyInfo,
+                params,
                 {
                     value: ethers.utils.parseEther("1")
                 }
             ]
         })
+        console.log(useTaskContractWrite);
     }
 
     const writeSuccess = () => {
-        params.projectAttrchment = useTaskContractWrite.data.hash
-        let para = {"proLabel":JSON.stringify(params)}
-        createDemand(para)
+        modifyInfo.payhash = useTaskContractWrite.data.hash
+        let para = {"proLabel":JSON.stringify(modifyInfo)}
+        console.log(para);
+        console.log(2);
+        modifyDemand(para)
         .then(res => {
             console.log(res.code);
             if(res.code == '200') {
                 message.success('修改成功')
                 setTimeout(() => {
-                    router.push('/issuer/projects')
+                    router.push('/issuer/Projects')
                 })
             }else{
                 message.error('连接超时')
+                console.log(res);
             }
         })
         .catch(err => {
@@ -191,6 +215,7 @@ export  function Modal_ModifyTask (params) {
 
 
     useEffect(()=>{
+        setDemandId(taskId)
         setProjectTitle(allInfo.title)
         setProjectDesc(allInfo.desc)
         setProjectAttrchment(allInfo.attrchment)
@@ -253,6 +278,10 @@ export  function Modal_ModifyTask (params) {
 
     useEffect(()=>{
         console.log(useTaskContractWrite.isSuccess);
+    },[useTaskContractWrite.isSuccess])
+
+    useEffect(()=>{
+        console.log(useTaskContractWrite.isSuccess);
         useTaskContractWrite.isSuccess ? writeSuccess() : ""
     },[useTaskContractWrite.isSuccess])
 
@@ -272,8 +301,9 @@ export  function Modal_ModifyTask (params) {
             name="file"
             onChange={uploadChange}
             customRequest={upload}
+            
         >
-            <Button icon={<FolderAddOutlined />}>上传项目需求文档（Word、Excel、PPT、PDF、图像、视频，20MB以内）</Button>
+            <Button style={{width: 472,height:50,marginTop:20}} icon={<FolderAddOutlined />}>上传项目需求文档（Word、Excel、PPT、PDF，20MB以内）</Button>
         </Upload>
         <p style={{marginTop:20}}>项目类型(最多六个)</p>
         {
