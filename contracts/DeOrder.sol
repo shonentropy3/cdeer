@@ -265,7 +265,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
     function refund(uint _orderId, address _to, uint _amount) payable public {
         Order storage order = orders[_orderId];
         if(msg.sender != order.issuer) revert PermissionsError(); 
- 
+
         order.payed -= _amount;
         if(order.progress >= OrderProgess.Ongoing) {
             if(order.payed < order.amount) revert AmountError(1);
@@ -285,7 +285,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
             if (fee > 0) {
                 uint feeAmount = pending * fee / FEE_BASE;
                 doTransfer(order.token, feeTo, feeAmount);
-                doTransfer(order.token, feeTo, pending - feeAmount);
+                doTransfer(order.token, to, pending - feeAmount);
             } else {
                 doTransfer(order.token, to, pending);
             }
