@@ -1,6 +1,6 @@
 import { Divider, Button } from 'antd';
 import { ethers } from 'ethers';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useContracts, useReads } from '../controller';
 
 export default function Stage_inspection(props) {
@@ -15,26 +15,30 @@ export default function Stage_inspection(props) {
     const { useOrderContractWrite: delivery } = useContracts('updateAttachment');
     const { useOrderContractWrite: confirm } = useContracts('confirmDelivery');
     const { useStageReads } = useReads('ongoingStage',[Oid])
-    const { useStageReads: Stages } = useReads('getStages',[Oid])
+    const { useStageReads: Stages, stageConfig } = useReads('getStages',[Oid])
+    const { useStageReads: Order } = useReads('getOrder',[Oid])
+
+    let [doingStage,setDodingStage] = useState();
     
     const setDelivery = () => {
         console.log(typeof Oid);
         delivery.write({
             recklesslySetUnpreparedArgs: [
-                '1', ''
+                Oid, 'xxx'
             ]
         })
     }
 
-    const setConfirmDelivery = (index) => {
+    const setConfirmDelivery = (i) => {
         // console.log(Oid,index);
-        console.log(useStageReads.data[0].stageStartDate.toString());
-        console.log(Stages.data[0][1].amount.toString() / Math.pow(10,18));
-        console.log(Stages.data[0][1]);
+        console.log(index);
+        console.log(useStageReads.data[0].stageIndex.toString());
+        console.log(Stages.data[0]);
+        // console.log(stageConfig);
         return
         confirm.write({
             recklesslySetUnpreparedArgs: [
-                Oid, [`${index}`]
+                Oid, [`${i}`]
             ]
         })
     }
@@ -42,6 +46,13 @@ export default function Stage_inspection(props) {
     const deliveryHash = () => {
         console.log(delivery.data);
     }
+
+    useEffect(() => {
+        if (useStageReads.data[0].stageIndex) {
+            doingStage = useStageReads.data[0].stageIndex.toString();
+            setDodingStage(doingStage);
+        }
+    },[useStageReads.data[0]])
 
     useEffect(() => {
         confirm.error ? 
@@ -70,7 +81,13 @@ export default function Stage_inspection(props) {
                             <p>删除</p>
                         </>
                         :
+                        ''
+                }
+                {
+                    doingStage == index + 1 ? 
                         <span style={{width: '100%', textAlign: 'right', color: '#f9b65c'}}>进行中</span>
+                        :
+                        ''
                 }
                 
             </div>
@@ -91,7 +108,7 @@ export default function Stage_inspection(props) {
                     <p>{data.content}</p>
                 </div>
                 {
-                    OrderStart ? 
+                    doingStage == index + 1 ? 
                         <div className="btns">
                             <Button>延期</Button>
                             <Button>中止</Button>

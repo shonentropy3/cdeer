@@ -94,7 +94,7 @@ export function useReads(functionName,list) {
     contracts: arrA
   })
 
-  return { useOrderReads, useStageReads }
+  return { useOrderReads, useStageReads, stageConfig }
 }
 
 export function useStageReads(functionName,list) {

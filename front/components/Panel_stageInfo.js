@@ -75,10 +75,11 @@ export default function Panel_stageInfo(props) {
         getStages([...stages]);
     }
     
-    const withdraw = () => {
+    const gowithdraw = () => {
         let data = useStageReads.data[0];
         let pending = data.pending.toString() / Math.pow(10,18)
-        console.log(Oid);
+        let next = data.nextStage.toString()
+        console.log(Oid, address, '当前可领取==>',pending, '|| stage==>',next);
         return
         getWithdraw.write({
             recklesslySetUnpreparedArgs: [
@@ -210,7 +211,7 @@ export default function Panel_stageInfo(props) {
                     <Checkbox checked disabled className={`subtitle-check ${advance ? 'mb10' : ''}`}>预付款已支付</Checkbox>
                     <div style={{display: 'flex', justifyContent: 'space-between'}}>
                         <p style={{fontSize: '18px'}}>{info.advance}ETH</p>
-                        <Button style={{width: '150px', height: '50px'}} onClick={() => withdraw(0)}>取款</Button>
+                        <Button style={{width: '150px', height: '50px'}} onClick={() => gowithdraw(0)}>取款</Button>
                     </div>
                 </div>
                 :
