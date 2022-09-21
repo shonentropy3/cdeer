@@ -1,10 +1,13 @@
-import { Divider, Button, Modal, InputNumber } from 'antd';
+import { Divider, Button, Modal, InputNumber, message } from 'antd';
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useContracts, useReads } from '../controller';
+import { getHash, getStagesHash, getStagesJson, updateAttachment } from '../http/api';
+import { useAccount } from 'wagmi'
 
 export default function Stage_inspection(props) {
 
+    const { address } = useAccount();
     const { setTab } = props;
     const { Oid } = props;
     const { Who } = props;
@@ -18,19 +21,19 @@ export default function Stage_inspection(props) {
     const { useStageReads: Stages, stageConfig } = useReads('getStages',[Oid])
     const { useStageReads: Order } = useReads('getOrder',[Oid])
 
+    let [stageJson,setStageJson] = useState({});
     let [doingStage,setDodingStage] = useState();
     
     const setDelivery = () => {
-        console.log(typeof Oid);
         delivery.write({
             recklesslySetUnpreparedArgs: [
-                Oid, 'xxx'
+                Oid, ''
             ]
         })
     }
 
     const setConfirmDelivery = (i) => {
-        // console.log(Oid,index);
+        // 阶段验收
         console.log(index);
         console.log(useStageReads.data[0].stageIndex.toString());
         console.log(Stages.data[0]);
@@ -44,7 +47,17 @@ export default function Stage_inspection(props) {
     }
 
     const deliveryHash = () => {
-        console.log(delivery.data);
+        // TODO: 乙方成功后,更新数据库stageJson ==> 
+        stageJson.stages[index+1].delivery.attachment = '';
+        stageJson.stages[index+1].delivery.fileType = '';
+        stageJson.stages[index+1].delivery.content = '阶段一完成';
+        setStageJson({...stageJson});
+        updateAttachment({oid: Oid, obj: JSON.stringify(stageJson)})
+        .then(res => {
+            message.success('交付成功!')
+        }).catch(err => {
+            message.error('交付失败!')
+        })
     }
 
     const delay = () => {
@@ -86,6 +99,18 @@ export default function Stage_inspection(props) {
             ''
     },[delivery.isSuccess])
 
+    useEffect(() => {
+        if (Oid) {
+            // TODO: 获取stagejson ==> delivery
+            getStagesJson({oid: Oid})
+            .then(res => {
+                stageJson = res.json;
+                stageJson.last = res.attachment;
+                setStageJson({...stageJson});
+            })
+        }
+    },[Oid])
+
     return (
         data.period === 0 ? 
             ''
@@ -102,7 +127,7 @@ export default function Stage_inspection(props) {
                         ''
                 }
                 {
-                    doingStage == index + 1 ? 
+                    doingStage == index + 1 && OrderStart ? 
                         <span style={{width: '100%', textAlign: 'right', color: '#f9b65c'}}>进行中</span>
                         :
                         ''

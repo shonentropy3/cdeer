@@ -80,7 +80,7 @@ export default function Panel_stageInfo(props) {
         let pending = data.pending.toString() / Math.pow(10,18)
         let next = data.nextStage.toString()
         console.log(Oid, address, '当前可领取==>',pending, '|| stage==>',next);
-        return
+        // return
         getWithdraw.write({
             recklesslySetUnpreparedArgs: [
                 Oid, address

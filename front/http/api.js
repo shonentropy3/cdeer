@@ -195,3 +195,11 @@ export const getStages = (data) => {
         data
     })
 }
+
+export const updateAttachment = (data) => {
+    return serviceAxios({
+        url: "/common/updateAttachment",
+        method: "post",
+        data
+    })
+}

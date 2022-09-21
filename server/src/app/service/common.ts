@@ -20,7 +20,7 @@ var path = require("path");
 var request = require("request");
 
 
-import { getStageJson, updateStageJson, getStages } from '../db/sql/demand';
+import { getStageJson, updateStageJson, getStages, updateJson } from '../db/sql/demand';
 
 @Injectable()
 export class CommonService {
@@ -125,9 +125,13 @@ export class CommonService {
                             // 上传upyun
                             client.putFile(obj.hash, fs.readFileSync(res))
                             .then(res => {
+                                console.log(res);
+                                
                                 return true
                             })
                             .catch(err => {
+                                console.log(err);
+                                
                                 return false
                             })
                             fs.unlink(res, (err) => {
@@ -147,11 +151,15 @@ export class CommonService {
             }
         })
         .catch(err => {
+            console.log(err);
+            
             return {
                 code: 500
             }
         })
-    }).catch(() => {
+    }).catch(err => {
+        console.log(err);
+        
         return false
     })
         // return
@@ -177,7 +185,6 @@ export class CommonService {
                 }else{
                     let url = 'cache_area/'+ time;
                     const data = fs.readFileSync(url, 'utf8');
-                    
                     let obj = {
                         data: data,
                         url: url
@@ -197,7 +204,8 @@ export class CommonService {
                 let obj = {
                     json: JSON.parse(data),
                     stages: stages[0].stages,
-                    signature: stages[0].signature
+                    signature: stages[0].signature,
+                    attachment: stages[0].attachment
                 }
                 return obj
             })
@@ -205,12 +213,50 @@ export class CommonService {
     }
 
     async getStages(body: any){
-        return await this.tasksRepository.query(getStages(body.oid))
-        .then(res => {
-            return res[0].stages
-        })
+        
     }
 
+    async updateAttachment(body: any){
+        return new Promise((resolve, reject) => {
+            let time = Date.now()+'.json'
+            let path = './cache_area'+'/'+time
+            fs.writeFile(path, body.obj, function (err) {
+                if (err) {
+                    console.error(err);
+                }else{
+                    let res = 'cache_area/'+ time
+                        ipfs.add(fs.readFileSync(res), function (err, files) {
+                            
+                            if (err || typeof files == "undefined") {
+                                console.log('Ipfs writeStream err==>', err);
+                            } else {
+                                let obj = {
+                                    hash: files[0].hash,
+                                    path: res
+                                }
+                                // 上传upyun
+                                client.putFile(obj.hash, fs.readFileSync(res))
+                                .then(res => {
+                                    return true
+                                })
+                                .catch(err => {
+                                    console.log(err);
+                                    
+                                    return false
+                                })
+                                fs.unlink(res, (err) => {
+                                    if (err) throw err;
+                                });
+                                resolve(obj)
+                            }
+                        })
+                }
+                
+            })
+        }).then(async(res)=>{
+            return await this.tasksRepository.query(updateJson({json: res, oid: body.oid}))
+        })
+    }
     // AxiosErrorTip
     handleError(error: AxiosError) {
         if (error.response) {

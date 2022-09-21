@@ -36,8 +36,13 @@ export class CommonController {
         return await this.commonService.getStagesJson(body)
     }
 
-    @Post('getStages') //   获取hash 并下载获取内容后,返回内容,删除下载文件
+    @Post('getStages') 
     async getStages(@Body() body: any){
         return await this.commonService.getStages(body)
+    }
+
+    @Post('updateAttachment') 
+    async updateAttachment(@Body() body: any){
+        return await this.commonService.updateAttachment(body)
     }
 }
