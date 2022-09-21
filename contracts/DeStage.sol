@@ -103,13 +103,15 @@ contract DeStage is Ownable {
 
     function pendingWithdraw(uint _orderId) external view returns (uint pending, uint nextStage) {
         Order memory order = IOrder(deOrder).getOrder(_orderId);
+        if(order.progress != OrderProgess.Ongoing) revert StatusError();
         uint lastStageEnd = order.startDate;
 
         Stage[] memory stages = orderStages[_orderId];
         uint nowTs = block.timestamp;
         for ( uint i = 0; i < stages.length; i++) {
             Stage memory stage = stages[i];
-            if(stage.status == StageStatus.Accepted || nowTs >= lastStageEnd + stage.period) {
+            if(stage.status == StageStatus.Accepted ||
+                (nowTs >= lastStageEnd + stage.period && stage.status == StageStatus.Init)) {
                 pending += stage.amount;
                 nextStage = i+1;
             }

@@ -38,8 +38,9 @@ describe("testStartOrder", function () {
     await expect(DeOrder.startOrder(orderId)).to.be.revertedWith('AmountError(1)');
   });
 
-  it("测试多付了款，开始订单", async function () {
-    let tx = await DeOrder.payOrder(orderId, 10010, {value: 10010});
+  it("测试付款，开始订单", async function () {
+    let amount = ethers.utils.parseEther("1")
+    let tx = await DeOrder.payOrder(orderId, amount, {value: amount});
     await tx.wait();
 
     let order = await DeOrder.getOrder(orderId);
@@ -51,14 +52,14 @@ describe("testStartOrder", function () {
 
   });
 
-  it("取出多余的款， 无法多取", async function () {
-    await expect(DeOrder.refund(orderId, account1.address, 100)).to.be.revertedWith('AmountError(1)');
-  });
+  // it("取出多余的款， 无法多取", async function () {
+  //   await expect(DeOrder.refund(orderId, account1.address, 100)).to.be.revertedWith('AmountError(1)');
+  // });
 
-  it("取出多余的款，刚好取完", async function () {
-    let tx = await DeOrder.refund(orderId, account1.address, 10);
-    await tx.wait();
-  });
+  // it("取出多余的款，刚好取完", async function () {
+  //   let tx = await DeOrder.refund(orderId, account1.address, 10);
+  //   await tx.wait();
+  // });
 
 
 

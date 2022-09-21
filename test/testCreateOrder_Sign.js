@@ -27,11 +27,14 @@ describe("testCreateOrder&Sign", function () {
 
   it("createOrder", async function () {
     let currOrderId = await DeOrder.currOrderId();
+    let amount = ethers.utils.parseEther("1")
+    console.log("amount:" + amount)
 
     let tx = await DeOrder.createOrder(0, 
       account1.address,
       account2.address, 
-      ethers.constants.AddressZero, 10000);
+      ethers.constants.AddressZero,
+      amount);
     
     await tx.wait();
 
@@ -46,8 +49,11 @@ describe("testCreateOrder&Sign", function () {
     let nonce = await DeOrder.nonces(account2.address);  // get from  
     console.log("nonce:" + nonce)
 
-    let amounts = ["10000"]
-    let periods = ["1"] 
+    let amount1 = ethers.utils.parseEther("0.1")
+    let amount2 = ethers.utils.parseEther("0.9")
+
+    let amounts = [amount1, amount2]
+    let periods = ["0", "36000"] 
     let deadline = "99999999999"
 
     const sig = await signPermitStage(
@@ -72,8 +78,7 @@ describe("testCreateOrder&Sign", function () {
       let v = '0x' + sig.substring(2).substring(128, 130);
       
       
-       
-    // await DeOrder.permitStage(orderId,amounts,periods,nonce, deadline, v, r, s);
+    await DeOrder.permitStage(orderId,amounts,periods,nonce, deadline, v, r, s);
     // await DeOrder.permitStage(8,["10000"],["1"],0, "99999999999", v, r, s);
     // let signer = await DeOrder.testPermitStage(orderId,amounts,periods,nonce, deadline, v, r, s);
     // console.log("signer:", signer);
