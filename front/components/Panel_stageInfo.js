@@ -1,12 +1,17 @@
-import { Checkbox, Button, Card } from 'antd';
+import { Checkbox, Button, Card, message } from 'antd';
 import { useEffect, useState } from 'react';
 import { InputNumber, Select } from 'antd';
 import StageCard from './Stage_card';
 import StageInspection from './Stage_inspection';
+import { useContracts, useReads } from '../controller';
+import { useAccount } from 'wagmi'
 
 
 export default function Panel_stageInfo(props) {
     
+    const { Oid } = props;
+    const { who } = props;
+    const { OrderInfo } = props;
     const { amount } = props;
     const { Stages } = props;
     const { getStages } = props;
@@ -18,8 +23,11 @@ export default function Panel_stageInfo(props) {
     let [editMode,setEditMode] = useState(false);
     let [illM,setIllM] = useState(0);
     const [activeTabKey1, setActiveTabKey1] = useState('0');
-
-
+    let [orderStart, setOrderStart] = useState(false);
+    let [info,setInfo] = useState({});
+    const { useOrderContractWrite: getWithdraw, orderConfig } = useContracts('withdraw');
+    const { useStageReads } = useReads('pendingWithdraw',[1])
+    const { address } = useAccount()
 
     const selectAfter = (
         <Select
@@ -66,6 +74,23 @@ export default function Panel_stageInfo(props) {
         setEditMode(editMode);
         getStages([...stages]);
     }
+    
+    const withdraw = () => {
+        let data = useStageReads.data[0];
+        let pending = data.pending.toString() / Math.pow(10,18)
+        console.log(Oid);
+        return
+        getWithdraw.write({
+            recklesslySetUnpreparedArgs: [
+                Oid, address
+            ]
+        })
+    }
+
+    const withdrawSuccess = () => {
+        console.log(getWithdraw.data);
+        message.success('取款成功');
+    }
 
     const deleteStage = index => {
         stageList.splice(index,1);
@@ -82,8 +107,12 @@ export default function Panel_stageInfo(props) {
     }
 
     const init = () => {
+        if (OrderInfo.data[0].progress >= 4) {
+            orderStart = true;
+            setOrderStart(orderStart);
+        }
+
         let arr = []
-        
         Stages.map((e,i) => {
             let num = i+1
             arr.push({
@@ -107,28 +136,87 @@ export default function Panel_stageInfo(props) {
         setEditMode(true);
     }
 
+    const getInfo = () => {
+        let data = OrderInfo.data[0];
+        let stageAmount = 0;
+        Stages.map(e => {
+            stageAmount += e.budget;
+        })
+        let obj = {
+            amount: data.amount.toString() / Math.pow(10,18),
+            issuer: data.issuer,
+            payed: data.payed.toString() / Math.pow(10,18),
+            progress: data.progress,
+            startDate: data.startDate.toString()
+        }
+        obj.advance = obj.payed - stageAmount
+        info = obj;
+        setInfo({...info});
+    }
+
+    useEffect(() => {
+        getWithdraw.isSuccess ? 
+            withdrawSuccess()
+            :
+            ''
+    },[getWithdraw.isSuccess])
+
+    useEffect(() => {
+        getWithdraw.error ? 
+            console.log(getWithdraw.error)
+            :
+            ''
+    },[getWithdraw.error])
+
     useEffect(() => {
         // TODO: stages && stageList push
         Stages.length > 0 ?
             init()
             :
-            console.log(Stages);
+            ''
     },[Stages])
+
+    useEffect(() => {
+        OrderInfo.data[0] ? 
+            getInfo()
+            :
+            ''
+    },[OrderInfo])
 
     
     return <div className="Panel_stageInfo">
+        
         <div className="stageInfo-title">
             项目阶段划分
         </div>
-        <div className="stageInfo-subtitle">
-            <Checkbox checked={advance} className={`subtitle-check ${advance ? 'mb10' : ''}`} onChange={onChange}>增加预付款 <span className='check-span'>项目方确认阶段划分后,你将得到预付款</span></Checkbox>
-            {
-                advance ? 
-                    <InputNumber min={0} className='subtitle-inner' addonAfter={selectAfter} value={illM} onChange={e => {getAdvance(e), setIllM(e)}} />
-                    :
-                    ''
-            }
-        </div>
+        {
+            !orderStart ? 
+                <div className="stageInfo-subtitle">
+                    <Checkbox checked={advance} className={`subtitle-check ${advance ? 'mb10' : ''}`} onChange={onChange}>增加预付款 <span className='check-span'>项目方确认阶段划分后,你将得到预付款</span></Checkbox>
+                    {
+                        advance ? 
+                            <InputNumber min={0} className='subtitle-inner' addonAfter={selectAfter} value={illM} onChange={e => {getAdvance(e), setIllM(e)}} />
+                            :
+                            ''
+                    }
+                </div>
+                :
+                ''
+        }
+
+        {
+            who === 'worker' && info.progress === 4 ? 
+                <div className="stageInfo-subtitle">
+                    <Checkbox checked disabled className={`subtitle-check ${advance ? 'mb10' : ''}`}>预付款已支付</Checkbox>
+                    <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                        <p style={{fontSize: '18px'}}>{info.advance}ETH</p>
+                        <Button style={{width: '150px', height: '50px'}} onClick={() => withdraw(0)}>取款</Button>
+                    </div>
+                </div>
+                :
+                ''
+        }
+        
         {
             !editMode ? 
                 <div className="stageInfo-signIn">
@@ -173,7 +261,7 @@ export default function Panel_stageInfo(props) {
                 <div className="stageInfo-inspection">
                     {
                         stages.map((e,i) => 
-                            <StageInspection key={i} data={e} index={i} set={setEditMode} setTab={setActiveTabKey1} />
+                            <StageInspection key={i} data={e} index={i} set={setEditMode} setTab={setActiveTabKey1} OrderStart={orderStart} Oid={Oid} Who={who} />
                         )
                     }
                 </div>

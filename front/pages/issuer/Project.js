@@ -27,16 +27,17 @@ export default function Project() {
     let [deadLine,setDeadLine] = useState('');
     let [signature,setSignature] = useState('');
     let [btnStatus,setBtnStatus] = useState(true);      //  true: permit || false: setStage
+    let [steps,setSteps] = useState(0);
 
     const { useOrderReads: Order } = useReads('getOrder',[oid]);
     const { useOrderReads: nonces } = useReads('nonces',[address]);
-    
-    const { useStageReads: Stages } = useStageReads('getStages',[oid]);
     const { useSign, params, obj } = useSignData(testObj);
     const { useOrderContractWrite: OrderWirte } = useContracts('startOrder');
     
     const readSuccess = () => {
         amount = Order.data[0].amount.toString() / Math.pow(10,18);
+        steps = Order.data[0].progress == 4 ? 3 : 7 ? 4 : '';
+        setSteps(steps);
         setAmount(amount);
     }
 
@@ -49,7 +50,7 @@ export default function Project() {
             totalPeriod += e.period;
             setTotalPeriod(totalPeriod);
             setTotal(total);
-        })
+        }) 
     }
 
     const permit = () => {
@@ -65,15 +66,7 @@ export default function Project() {
         let s = '0x' + signature.substring(2).substring(64, 128);
         let v = '0x' + signature.substring(2).substring(128, 130);
 
-        console.log(Order.data[0]);
         let value = ethers.utils.parseEther(`${total}`);
-        // return
-        // OrderWirte.write({
-        //     recklesslySetUnpreparedArgs: [
-        //         oid
-        //     ]
-        // })
-        // return
         let arr = [];
         arr.push({
             functionName: 'permitStage',
@@ -83,10 +76,10 @@ export default function Project() {
             functionName: 'payOrder',
             params: [oid, value]
         })
-        if (amount !== value) {
+        if (amount !== total) {
             arr.push({
                 functionName: 'modifyOrder',
-                params: [oid, '0x90f79bf6eb2c4f870365e785982e1f101e93b906', value]
+                params: [oid, ethers.constants.AddressZero, value]
             })
         }
         arr.push({
@@ -97,10 +90,14 @@ export default function Project() {
         multicall = arr;
         setMulticall([...multicall]);
         let params = testContract(multicall);
-        
+        console.log(params);
         multicallWrite(params,address,value)
         .then(res => {
             console.log('success ==>',res);
+            message.success('项目开始')
+            setTimeout(() => {
+                history.go(0)
+            }, 500);
         })
         .catch(err => {
             console.log(err);
@@ -197,17 +194,6 @@ export default function Project() {
         })
     }
 
-    const getChainStages = () => {
-        // 从链上获取阶段划分数据
-        Stages.data.map((e,i) => {
-            let amount = e[0].amount.toString() / Math.pow(10,18);
-            let period = e[0].period / 60 / 60 / 24;
-            stages[i].budget = amount;
-            stages[i].period = period;
-        })
-        count()
-    }
-
     const sendSign = () => {
         useSign.signTypedData()
     }
@@ -277,6 +263,7 @@ export default function Project() {
                 setStages([...arr]);
             }
         })
+        
     },[])
 
     useEffect(() => {
@@ -305,7 +292,7 @@ export default function Project() {
             <h1>{amount}</h1>
         </div>
         <div className="worker-steps">
-            <Steps size="small" current={2}>
+            <Steps size="small" current={steps}>
                 <Step title="发布" />
                 <Step title="报名中" />
                 <Step title="阶段划分" />
@@ -335,7 +322,7 @@ export default function Project() {
             </div>
         </div>
         <div className="worker-signInStage">
-            <Panel_stageInfo getStages={setStages} Stages={stages} getAdvance={setAdvance} amount={amount}/>
+            <Panel_stageInfo getStages={setStages} Stages={stages} getAdvance={setAdvance} amount={amount} OrderInfo={Order} Oid={oid}/>
         </div>
         <div className="worker-total">
             {

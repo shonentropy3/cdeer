@@ -22,6 +22,7 @@ export default function Project() {
     let [signHash,setSignHash] = useState();
     let [nonce,setNonce] = useState(null);
     let [deadLine,setDeadLine] = useState('');
+    let [steps,setSteps] = useState(0);
 
     const { useOrderReads: Order } = useReads('getOrder',[oid]);
     const { useOrderReads: nonces } = useReads('nonces',[address]);
@@ -32,6 +33,8 @@ export default function Project() {
 
     const readSuccess = () => {
         amount = Order.data[0].amount.toString() / Math.pow(10,18);
+        steps = Order.data[0].progress == 4 ? 3 : 2;
+        setSteps(steps);
         setAmount(amount);
     }
 
@@ -255,7 +258,7 @@ export default function Project() {
             <h1>{amount}</h1>
         </div>
         <div className="worker-steps">
-            <Steps size="small" current={2}>
+            <Steps size="small" current={steps}>
                 <Step title="发布" />
                 <Step title="报名中" />
                 <Step title="阶段划分" />
@@ -264,7 +267,7 @@ export default function Project() {
             </Steps>
         </div>
         <div className="worker-signInStage">
-            <Panel_stageInfo getStages={setStages} Stages={stages} getAdvance={setAdvance} amount={amount}/>
+            <Panel_stageInfo getStages={setStages} Stages={stages} getAdvance={setAdvance} amount={amount} OrderInfo={Order} who={'worker'} Oid={oid} />
         </div>
         <div className="worker-total">
             {

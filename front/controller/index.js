@@ -67,10 +67,21 @@ export function useReads(functionName,list) {
       functionName: functionName,
   }
 
+  const stageConfig = {
+    addressOrName: stageAddr.address,
+    contractInterface: stage.abi,
+    functionName: functionName,
+}
+
   let arr = [];
+  let arrA = [];
   for (let i = 0; i < list.length; i++) {
     arr.push({
       ...orderConfig,
+      args: list[i]
+    })
+    arrA.push({
+      ...stageConfig,
       args: list[i]
     })
   }
@@ -79,7 +90,11 @@ export function useReads(functionName,list) {
     contracts: arr
   })
 
-  return { useOrderReads }
+  const useStageReads = useContractReads({
+    contracts: arrA
+  })
+
+  return { useOrderReads, useStageReads }
 }
 
 export function useStageReads(functionName,list) {

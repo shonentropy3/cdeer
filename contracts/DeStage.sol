@@ -164,7 +164,7 @@ contract DeStage is Ownable {
         if (_stageIndex == 0) {
             orderStages[_orderId][_stageIndex].status = StageStatus.Accepted;
         } else {
-            if(orderStages[_orderId][_stageIndex-1].status != StageStatus.Accepted) revert StatusError();
+            if(orderStages[_orderId][_stageIndex-1].status != StageStatus.Accepted || orderStages[_orderId][_stageIndex-1].status != StageStatus.Withdrawed) revert StatusError();
             orderStages[_orderId][_stageIndex].status = StageStatus.Accepted;
         }
         

@@ -107,7 +107,7 @@ export default function applylist() {
                 Number(taskId),
                 address,
                 worker,
-                '0x90f79bf6eb2c4f870365e785982e1f101e93b906',
+                ethers.constants.AddressZero,
                 ethers.utils.parseEther(`${amount}`)
                 
             ]

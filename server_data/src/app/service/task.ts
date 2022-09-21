@@ -9,12 +9,11 @@ import { updateProject, updateApplyInfo, cancelApply } from 'src/app/db/sql/sql'
 import { updateBlock } from 'src/app/db/sql/sql';
 import { ApplyInfo } from '../db/entity/ApplyInfo';
 import { Nfts } from '../db/entity/Nfts';
-
 const { ethers } = require('ethers');
 // TODO:更改配置文件
 // const rpcProvider = new ethers.providers.JsonRpcProvider("https://goerli.infura.io/v3/d3fe47cdbf454c9584113d05a918694f");
 const rpcProvider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
-const USDR_ADDR = require('../../../deployments/Task.json');
+// const USDR_ADDR = require('../../../deployments/dev/DeTask.json');
 
 // 信息同步hash表：待同步类型：1.创建需求 2.修改需求 3.报名 4.修改报名 5.取消报名, 6.创建订单或者修改订单
 
@@ -33,67 +32,67 @@ export class TaskService {
 
     private readonly logger = new Logger(TaskService.name)
 
-    modifyDemandLog = async () => {
-        let latest = await rpcProvider.getBlockNumber();
-        let last = await this.blockLogRepository.query(getModifyDemandLastBlock());
-        let logBlock = last[0].block;
+//     modifyDemandLog = async () => {
+//         let latest = await rpcProvider.getBlockNumber();
+//         let last = await this.blockLogRepository.query(getModifyDemandLastBlock());
+//         let logBlock = last[0].block;
         
-        if (logBlock >= latest) return; //区块已监听过了
-        logBlock = Math.max(logBlock, (latest - 100)); //最多往前100区块
-        let fromBlock = logBlock + 1;
-        let toBlock = latest;
-        let filter = {
-            address: USDR_ADDR.address,
-            topics: [
-                '0xeb0b0373fe4634755d2b0e27fc62dd567fed0e1e4d90d5317dfe735804cc5bf7'
-            ],
-            fromBlock,
-            toBlock
-        }
+//         if (logBlock >= latest) return; //区块已监听过了
+//         logBlock = Math.max(logBlock, (latest - 100)); //最多往前100区块
+//         let fromBlock = logBlock + 1;
+//         let toBlock = latest;
+//         let filter = {
+//             address: USDR_ADDR.address,
+//             topics: [
+//                 '0xeb0b0373fe4634755d2b0e27fc62dd567fed0e1e4d90d5317dfe735804cc5bf7'
+//             ],
+//             fromBlock,
+//             toBlock
+//         }
         
-        const logs = await rpcProvider.getLogs(filter);
-        const CreateTask = new ethers.utils.Interface(["event ModifyTask(uint256 indexed taskId, address maker, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
+//         const logs = await rpcProvider.getLogs(filter);
+//         const CreateTask = new ethers.utils.Interface(["event ModifyTask(uint256 indexed taskId, address maker, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
         
-        if (logs.length > 0) {
-            let txs = logs.map((ele: any) => {
-                let decodedData = CreateTask.parseLog(ele);
+//         if (logs.length > 0) {
+//             let txs = logs.map((ele: any) => {
+//                 let decodedData = CreateTask.parseLog(ele);
 
-                return {
-                    taskId: decodedData.args[0].toString(),
-                    title: decodedData.args[2],
-                    budget: decodedData.args[3].toString(),
-                    desc: decodedData.args[4],
-                    attachment: decodedData.args[5],
-                    period: decodedData.args[6].toString(),
-                }
-            });
-            let value = ``;
-            for (const v of txs) {
-                value += `
-                    (${v.taskId}, '${v.title}','${v.desc}', ${v.budget}, ${v.period}, '${v.attachment}'),
-                `
-            }
-            let sqlValue = value.substring(0,(value.lastIndexOf(',')))
-            let paramsSql = {
-                statusId: 1,
-                value: sqlValue
-            }
-            let sql = updateProject(paramsSql)
-            try {
-              let result = await this.tasksRepository.query(sql)
-              this.logger.debug('modifyTaskLog');
-              if (-1 != result[1]) {
-                  let params = {
-                      id: 1,
-                      latest: latest,
-                  }
-                  await this.blockLogRepository.query(updateBlock(params))
-              }
-            } catch (error) {
-              console.log(error);
-            }
-        }
-}
+//                 return {
+//                     taskId: decodedData.args[0].toString(),
+//                     title: decodedData.args[2],
+//                     budget: decodedData.args[3].toString(),
+//                     desc: decodedData.args[4],
+//                     attachment: decodedData.args[5],
+//                     period: decodedData.args[6].toString(),
+//                 }
+//             });
+//             let value = ``;
+//             for (const v of txs) {
+//                 value += `
+//                     (${v.taskId}, '${v.title}','${v.desc}', ${v.budget}, ${v.period}, '${v.attachment}'),
+//                 `
+//             }
+//             let sqlValue = value.substring(0,(value.lastIndexOf(',')))
+//             let paramsSql = {
+//                 statusId: 1,
+//                 value: sqlValue
+//             }
+//             let sql = updateProject(paramsSql)
+//             try {
+//               let result = await this.tasksRepository.query(sql)
+//               this.logger.debug('modifyTaskLog');
+//               if (-1 != result[1]) {
+//                   let params = {
+//                       id: 1,
+//                       latest: latest,
+//                   }
+//                   await this.blockLogRepository.query(updateBlock(params))
+//               }
+//             } catch (error) {
+//               console.log(error);
+//             }
+//         }
+// }
 
     insertApplyFor = async () => {
         //获取未同步的信息
@@ -110,6 +109,7 @@ export class TaskService {
         
         for (let v of taskHash) {
             const log = await rpcProvider.getTransactionReceipt(v.hash);
+            
             const createTask = new ethers.utils.Interface(
                 ["event TaskCreated(uint256 indexed,address,tuple(string,string,string,uint8,uint64,uint32,uint48,uint48,bool))"]
             );
@@ -253,7 +253,7 @@ export class TaskService {
 
     @Interval(5000)  //每隔5秒执行一次
     handleInterval() {
-        this.modifyDemandLog()  
+        // this.modifyDemandLog()  
         this.insertApplyFor()
         // this.clearNftCache()
         // this.logger.debug('Called 5 seconds');
