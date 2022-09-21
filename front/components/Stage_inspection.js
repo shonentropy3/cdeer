@@ -1,11 +1,14 @@
 import { Divider, Button, Modal, InputNumber, message } from 'antd';
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
-import { useContracts, useReads } from '../controller';
+import { useContracts, useReads, useSignProData } from '../controller';
 import { getHash, getStagesHash, getStagesJson, updateAttachment } from '../http/api';
+import { useAccount, useNetwork } from 'wagmi'
 
 export default function Stage_inspection(props) {
 
+    const { chain } = useNetwork();
+    const { address } = useAccount();
     const { setTab } = props;
     const { Oid } = props;
     const { Who } = props;
@@ -18,10 +21,17 @@ export default function Stage_inspection(props) {
     const { useStageReads } = useReads('ongoingStage',[Oid])
     const { useStageReads: Stages, stageConfig } = useReads('getStages',[Oid])
     const { useStageReads: Order } = useReads('getOrder',[Oid])
+    const { useOrderReads: nonces } = useReads('nonces',[address]);
 
     let [stageJson,setStageJson] = useState({});
     let [doingStage,setDodingStage] = useState();
-    let [deliveryDetail,setDeliveryDetail] = useState();
+    let [deliveryDetail,setDeliveryDetail] = useState(null);
+    let [delayValue,setDelayValue] = useState(null);
+    let [testObj,setTestObj] = useState({});
+    let [nonce,setNonce] = useState();
+    let [oid,setOid] = useState();
+
+    const { useSign, params, obj } = useSignProData(testObj);  //  延长签名
     
     const setDelivery = () => {
         delivery.write({
@@ -33,8 +43,8 @@ export default function Stage_inspection(props) {
 
     const setConfirmDelivery = (i) => {
         // 阶段验收
-        console.log(index);
-        console.log(useStageReads.data[0].stageIndex.toString());
+        // console.log(index);
+        // console.log(useStageReads.data[0].stageIndex.toString());
         console.log(Stages.data[0]);
         // console.log(stageConfig);
         return
@@ -66,16 +76,55 @@ export default function Stage_inspection(props) {
               <div>
                 <p>延期不回增加开发费用</p>
                 <p>请提前与对方沟通</p>
-                <InputNumber addonBefore="延长天数" addonAfter="day" min={1} controls={false} />
+                <InputNumber addonBefore="延长天数" addonAfter="day" min={1} controls={false} onChange={e => {delayValue = e,setDelayValue(delayValue)}} />
                 {/* controls */}
               </div>
             ),
         
             onOk() {
-                console.log('hh');
+                let now = parseInt(new Date().getTime()/1000);
+                let setTime = 2 * 24 * 60 * 60;
+                let i = index + 1;
+                testObj = {
+                    chainId: chain.id,
+                    address: address,
+                    orderId: Oid,
+                    stageIndex: `${i}`,
+                    period: `${delayValue * 24 * 60 * 60}`,
+                    nonce: nonce,  
+                    deadline: `${now+setTime}`,
+                }
+                setTestObj({...testObj})
+                useSign.signTypedData()
+                // console.log(delayValue,useStageReads.data[0].stageIndex.toString());
             },
           });
     }
+
+    const sendSign = () => {
+        console.log(obj, address, oid);
+        useSign.signTypedData()
+    }
+
+    useEffect(() => {
+        obj.chainId ? 
+            sendSign()
+            :
+            ''
+    },[params])
+
+    useEffect(() => {
+        if (useSign.error) {
+            console.log(useSign.error);
+        }
+    },[useSign.error])
+
+    useEffect(() => {
+        if (nonces.data) {
+            nonce = nonces.data.toString();
+            setNonce(nonce);
+        }
+    },[nonces.data])
 
     useEffect(() => {
         if (useStageReads.isSuccess && useStageReads.data[0] !== null) {
@@ -103,6 +152,8 @@ export default function Stage_inspection(props) {
             // TODO: 获取stagejson ==> delivery
             getStagesJson({oid: Oid})
             .then(res => {
+                console.log(res);
+                setOid(res.json.orderId);
                 deliveryDetail = res.json.stages[index+1].delivery;
                 setDeliveryDetail(deliveryDetail);
                 stageJson = res.json;
@@ -152,12 +203,19 @@ export default function Stage_inspection(props) {
                     <p>{data.content}</p>
                 </div>
                 {
-                    doingStage == index + 1 && !Who && deliveryDetail.content ? 
+                    doingStage == index + 1 && !Who && deliveryDetail !== null ? 
                     <div className="deliveryDetail">
-                        <div className="title">开发者提交了「阶段交付」:</div>
-                        <div className="content">
-                            {deliveryDetail.content}
-                        </div>
+                        {
+                            deliveryDetail.content.length !== 0 ?
+                            <>
+                                <div className="title">开发者提交了「阶段交付」:</div>
+                                <div className="content">
+                                    {deliveryDetail.content}
+                                </div>
+                            </>
+                            :
+                            ''
+                        }
                     </div>
                     :
                     ''

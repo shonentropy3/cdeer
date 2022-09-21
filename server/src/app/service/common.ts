@@ -217,6 +217,8 @@ export class CommonService {
     }
 
     async updateAttachment(body: any){
+        console.log(body);
+        
         return new Promise((resolve, reject) => {
             let time = Date.now()+'.json'
             let path = './cache_area'+'/'+time
