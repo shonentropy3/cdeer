@@ -1,4 +1,4 @@
-import { Divider, Button } from 'antd';
+import { Divider, Button, Modal, InputNumber } from 'antd';
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useContracts, useReads } from '../controller';
@@ -47,12 +47,30 @@ export default function Stage_inspection(props) {
         console.log(delivery.data);
     }
 
+    const delay = () => {
+        Modal.info({
+            title: '申请延期',
+            content: (
+              <div>
+                <p>延期不回增加开发费用</p>
+                <p>请提前与对方沟通</p>
+                <InputNumber addonBefore="延长天数" addonAfter="day" min={1} controls={false} />
+                {/* controls */}
+              </div>
+            ),
+        
+            onOk() {
+                console.log('hh');
+            },
+          });
+    }
+
     useEffect(() => {
-        if (useStageReads.data[0].stageIndex) {
+        if (useStageReads.isSuccess && useStageReads.data[0] !== null) {
             doingStage = useStageReads.data[0].stageIndex.toString();
             setDodingStage(doingStage);
         }
-    },[useStageReads.data[0]])
+    },[useStageReads.isSuccess])
 
     useEffect(() => {
         confirm.error ? 
@@ -110,7 +128,7 @@ export default function Stage_inspection(props) {
                 {
                     doingStage == index + 1 ? 
                         <div className="btns">
-                            <Button>延期</Button>
+                            <Button onClick={() => delay()}>延期</Button>
                             <Button>中止</Button>
                             {
                                 Who ? <Button onClick={() => setDelivery()}>确认交付</Button> : <Button onClick={() => setConfirmDelivery(index+1)}>确认验收</Button>
