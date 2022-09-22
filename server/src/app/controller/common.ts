@@ -36,13 +36,13 @@ export class CommonController {
         return await this.commonService.getStagesJson(body)
     }
 
-    @Post('getStages') 
-    async getStages(@Body() body: any){
-        return await this.commonService.getStages(body)
-    }
-
     @Post('updateAttachment') 
     async updateAttachment(@Body() body: any){
         return await this.commonService.updateAttachment(body)
+    }
+
+    @Post('updateSignature') 
+    async updateSignature(@Body() body: any){
+        return await this.commonService.updateSignature(body)
     }
 }

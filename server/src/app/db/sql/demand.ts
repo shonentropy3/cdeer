@@ -143,6 +143,12 @@ export const updateStageJson = params => {
     return sql
 }
 
+export const updateSigner = params => {
+    let sql = ` update orders SET signature = '${params.signature}',
+                signaddress = '${params.signaddress}', stages = '${params.stages}' where order_id = '${params.oid}'`;
+    return sql
+}
+
 export const updateJson = params => {
     let sql = ` update orders SET attachment = '${params.json.hash}' where order_id = '${params.oid}'`;
     return sql

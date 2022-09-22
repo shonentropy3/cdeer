@@ -187,18 +187,18 @@ export const getStagesJson = (data) => {
     })
 }
 
-// 获取orders => stages
-export const getStages = (data) => {
+export const updateAttachment = (data) => {
     return serviceAxios({
-        url: "/common/getStages",
+        url: "/common/updateAttachment",
         method: "post",
         data
     })
 }
 
-export const updateAttachment = (data) => {
+
+export const updateSignature = (data) => {
     return serviceAxios({
-        url: "/common/updateAttachment",
+        url: "/common/updateSignature",
         method: "post",
         data
     })

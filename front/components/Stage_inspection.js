@@ -2,7 +2,7 @@ import { Divider, Button, Modal, InputNumber, message } from 'antd';
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useContracts, useReads, useSignProData } from '../controller';
-import { getHash, getStagesHash, getStagesJson, updateAttachment } from '../http/api';
+import { getHash, getStagesHash, getStagesJson, updateAttachment, updateSignature } from '../http/api';
 import { useAccount, useNetwork } from 'wagmi'
 
 export default function Stage_inspection(props) {
@@ -29,8 +29,10 @@ export default function Stage_inspection(props) {
     let [delayValue,setDelayValue] = useState(null);
     let [testObj,setTestObj] = useState({});
     let [nonce,setNonce] = useState();
-    let [oid,setOid] = useState();
-
+    let [signature,setSignature] = useState();
+    let [stages,setStages] = useState({});
+    let [deadline,setDeadline] = useState();
+    
     const { useSign, params, obj } = useSignProData(testObj);  //  延长签名
     
     const setDelivery = () => {
@@ -45,9 +47,9 @@ export default function Stage_inspection(props) {
         // 阶段验收
         // console.log(index);
         // console.log(useStageReads.data[0].stageIndex.toString());
-        console.log(Stages.data[0]);
+        
         // console.log(stageConfig);
-        return
+        // return
         confirm.write({
             recklesslySetUnpreparedArgs: [
                 Oid, [`${i}`]
@@ -84,6 +86,8 @@ export default function Stage_inspection(props) {
             onOk() {
                 let now = parseInt(new Date().getTime()/1000);
                 let setTime = 2 * 24 * 60 * 60;
+                deadline = now+setTime;
+                setDeadline(deadline);
                 let i = index + 1;
                 testObj = {
                     chainId: chain.id,
@@ -95,16 +99,50 @@ export default function Stage_inspection(props) {
                     deadline: `${now+setTime}`,
                 }
                 setTestObj({...testObj})
-                useSign.signTypedData()
                 // console.log(delayValue,useStageReads.data[0].stageIndex.toString());
             },
           });
     }
 
     const sendSign = () => {
-        console.log(obj, address, oid);
         useSign.signTypedData()
     }
+
+    const updateSignatureData = () => {
+        // console.log(deliveryDetail);
+        // console.log('===>', Stages.data[0]);
+        // console.log('===>', stages.period[index+1]);
+        stages.period[index+1] += delayValue;
+        stages.deadline = deadline;
+        setStages({...stages});
+        console.log(stages);
+        updateSignature({signature: signature, signaddress: address, stages: JSON.stringify(stages), oid: Oid})
+        .then(res => {
+            console.log(res);
+        })
+    }
+
+    const getDetail = async() => {
+        await getStagesJson({oid: Oid})
+            .then(res => {
+                console.log(res);
+                stages = res.stages;
+                setStages({...stages});
+                deliveryDetail = res.json.stages[index+1].delivery;
+                setDeliveryDetail(deliveryDetail);
+                stageJson = res.json;
+                stageJson.last = res.attachment;
+                setStageJson({...stageJson});
+            })
+    }
+
+    useEffect(() => {
+        if (useSign.data) {
+            signature = useSign.data;
+            setSignature(signature);
+            updateSignatureData();
+        }
+    },[useSign.data])
 
     useEffect(() => {
         obj.chainId ? 
@@ -148,20 +186,10 @@ export default function Stage_inspection(props) {
     },[delivery.isSuccess])
 
     useEffect(() => {
-        if (Oid) {
-            // TODO: 获取stagejson ==> delivery
-            getStagesJson({oid: Oid})
-            .then(res => {
-                console.log(res);
-                setOid(res.json.orderId);
-                deliveryDetail = res.json.stages[index+1].delivery;
-                setDeliveryDetail(deliveryDetail);
-                stageJson = res.json;
-                stageJson.last = res.attachment;
-                setStageJson({...stageJson});
-            })
+        if (!deliveryDetail) {
+            getDetail()
         }
-    },[Oid])
+    },[])
 
     return (
         data.period === 0 ? 

@@ -20,7 +20,7 @@ var path = require("path");
 var request = require("request");
 
 
-import { getStageJson, updateStageJson, getStages, updateJson } from '../db/sql/demand';
+import { getStageJson, updateStageJson, getStages, updateJson, updateSigner } from '../db/sql/demand';
 
 @Injectable()
 export class CommonService {
@@ -212,10 +212,6 @@ export class CommonService {
         })
     }
 
-    async getStages(body: any){
-        
-    }
-
     async updateAttachment(body: any){
         console.log(body);
         
@@ -242,23 +238,39 @@ export class CommonService {
                                     return true
                                 })
                                 .catch(err => {
-                                    console.log(err);
-                                    
                                     return false
                                 })
-                                fs.unlink(res, (err) => {
-                                    if (err) throw err;
-                                    resolve(obj)
-                                });
+                                resolve(obj)
                             }
                         })
                 }
                 
             })
-        }).then(async(res)=>{
+        }).then(async(res: any)=>{
+            fs.unlink(res.res, (err) => {
+                if (err) throw err;
+            });
             return await this.tasksRepository.query(updateJson({json: res, oid: body.oid}))
         })
     }
+
+    async updateSignature(body: any){
+        await this.tasksRepository.query(updateSigner({signature: body.signature, signaddress: body.signaddress, stages: body.stages, oid: body.oid}))
+        .then(() => {
+            return {
+                code: 200
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            
+            return {
+                code: 500
+            }
+        })
+    }
+
+    
     // AxiosErrorTip
     handleError(error: AxiosError) {
         if (error.response) {
