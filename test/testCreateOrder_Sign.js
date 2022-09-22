@@ -1,6 +1,6 @@
 const { ethers } = require("hardhat");
 const { expect } = require("chai");
-const { signPermitStage } = require("./signPermitStage.js");
+const { signPermitStage, signPermitProlongStage } = require("./signPermitStage.js");
 
 const DeOrderAddr = require(`../deployments/dev/DeOrder.json`)
 
@@ -84,6 +84,9 @@ describe("testCreateOrder&Sign", function () {
     // console.log("signer:", signer);
 
   });
+
+
+  
 
 
 });

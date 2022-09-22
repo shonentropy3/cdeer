@@ -1,6 +1,6 @@
 const { ethers } = require("hardhat");
 const { expect } = require("chai");
-const { signPermitStage } = require("./signPermitStage.js");
+const { signPermitStage, signPermitProlongStage } = require("./signPermitStage.js");
 
 const DeOrderAddr = require(`../deployments/dev/DeOrder.json`)
 /** 
@@ -49,6 +49,41 @@ describe("testStartOrder", function () {
 
     tx = await DeOrder.startOrder(orderId);
     await tx.wait();
+
+  });
+
+  it("signPermitProlongStage", async function () {
+    let { chainId } = await ethers.provider.getNetwork();
+    let nonce = await DeOrder.nonces(account2.address);  // get from  
+    console.log("nonce:" + nonce)
+
+    let period = "36000" 
+    let deadline = "99999999999"
+
+    const sig = await signPermitProlongStage(
+      chainId,
+      DeOrderAddr.address,
+      account2,
+      orderId,
+      1,
+      period,
+      nonce,  
+      deadline,
+    );
+
+      //  椭圆曲线签名签名的值:
+      // r = 签名的前 32 字节
+      // s = 签名的第2个32 字节
+      // v = 签名的最后一个字节
+
+      console.log("sig:", sig);
+      let r = '0x' + sig.substring(2).substring(0, 64);
+      let s = '0x' + sig.substring(2).substring(64, 128);
+      let v = '0x' + sig.substring(2).substring(128, 130);
+      
+      
+    await DeOrder.prolongStage(orderId, 1 , period, nonce, deadline, v, r, s);
+    console.log("prolongStage OK ");
 
   });
 
