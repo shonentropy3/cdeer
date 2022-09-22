@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { InputNumber, Select } from 'antd';
 import StageCard from './Stage_card';
 import StageInspection from './Stage_inspection';
-import { useContracts, useReads } from '../controller';
+import { useContracts, useReads, useSignAppendData } from '../controller';
 import { useAccount } from 'wagmi'
 
 
@@ -155,6 +155,11 @@ export default function Panel_stageInfo(props) {
         setInfo({...info});
     }
 
+    const appendStage = () => {
+        // TODO: 添加阶段
+        useSignAppendData
+    }
+
     useEffect(() => {
         getWithdraw.isSuccess ? 
             withdrawSuccess()
@@ -265,6 +270,7 @@ export default function Panel_stageInfo(props) {
                             <StageInspection key={i} data={e} index={i} set={setEditMode} setTab={setActiveTabKey1} OrderStart={orderStart} Oid={Oid} Who={who} />
                         )
                     }
+                    <Button onClick={() => appendStage()}>添加阶段</Button>
                 </div>
         }
     </div>

@@ -20,7 +20,7 @@ var path = require("path");
 var request = require("request");
 
 
-import { getStageJson, updateStageJson, getStages, updateJson, updateSigner } from '../db/sql/demand';
+import { getStageJson, updateStageJson, getStages, updateJson, updateSigner, getSigner } from '../db/sql/demand';
 
 @Injectable()
 export class CommonService {
@@ -205,7 +205,8 @@ export class CommonService {
                     json: JSON.parse(data),
                     stages: stages[0].stages,
                     signature: stages[0].signature,
-                    attachment: stages[0].attachment
+                    attachment: stages[0].attachment,
+                    signnonce: stages[0].signnonce
                 }
                 return obj
             })
@@ -255,7 +256,7 @@ export class CommonService {
     }
 
     async updateSignature(body: any){
-        await this.tasksRepository.query(updateSigner({signature: body.signature, signaddress: body.signaddress, stages: body.stages, oid: body.oid}))
+        await this.tasksRepository.query(updateSigner({signature: body.signature, signaddress: body.signaddress, stages: body.stages, oid: body.oid, nonce: body.nonce}))
         .then(() => {
             return {
                 code: 200
@@ -270,6 +271,22 @@ export class CommonService {
         })
     }
 
+    async getProlongStage(body: any){
+        return await this.tasksRepository.query(getSigner(body.oid))
+        .then(res => {
+            return {
+                code: 200,
+                data: res[0]
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            
+            return {
+                code: 500
+            }
+        })
+    }
     
     // AxiosErrorTip
     handleError(error: AxiosError) {

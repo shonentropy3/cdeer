@@ -204,3 +204,10 @@ export const updateSignature = (data) => {
     })
 }
 
+export const getProlongStage = (data) => {
+    return serviceAxios({
+        url: "/common/getProlongStage",
+        method: "post",
+        data
+    })
+}

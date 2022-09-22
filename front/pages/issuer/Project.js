@@ -29,12 +29,14 @@ export default function Project() {
     let [btnStatus,setBtnStatus] = useState(true);      //  true: permit || false: setStage
     let [steps,setSteps] = useState(0);
 
+    const { useStageReads: Stages } = useStageReads('getStages',[oid]);
     const { useOrderReads: Order } = useReads('getOrder',[oid]);
     const { useOrderReads: nonces } = useReads('nonces',[address]);
     const { useSign, params, obj } = useSignData(testObj);
     const { useOrderContractWrite: OrderWirte } = useContracts('startOrder');
     
     const readSuccess = () => {
+        console.log('Order===>',Order);
         amount = Order.data[0].amount.toString() / Math.pow(10,18);
         if (Order.data[0].progress == 4) {
             steps = 3;
@@ -267,6 +269,7 @@ export default function Project() {
                     })
                 })
                 setStages([...arr]);
+                console.log(res.stages);
             }
         })
         
@@ -292,6 +295,19 @@ export default function Project() {
             :
             ''
     },[oid])
+
+    useEffect(() => {
+        if (Stages.data[0] && stages.length !== 0) {
+            let arr = Stages.data[0];
+            arr.map((e,i) => {
+                let period = e.period.toString() / 24 / 60 / 60;
+                if (i !== 0 && period != stages[i-1].period) {
+                    stages[i-1].prolong = period;
+                    // setStages([...stages]);
+                }
+            })
+        }
+    },[Stages])
     
     return <div className="WorkerProject">
         <div className="worker-title">

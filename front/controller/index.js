@@ -212,6 +212,51 @@ export function useSignProData(params) {
   return { obj, params, useSign }
 }
 
+export function useSignAppendData(params) {
+
+  let obj = {
+    chainId: params.chainId,
+    contractAddress: orderAddr.address,
+    orderId: params.orderId,
+    amount: params.amount,
+    period: params.period,
+    nonce: params.nonce,  
+    deadline: params.deadline,
+  }
+  const useSign = useSignTypedData({
+    domain: {
+      name: 'DetaskOrder',
+      version: '1',
+      chainId: obj.chainId,
+      verifyingContract: obj.contractAddress,
+    },
+    types: {
+      PermitAppendStage: [
+        { name: "orderId", type: "uint256" },
+        { name: "amount", type: "uint256" },
+        { name: "period", type: "uint256" },
+        { name: "nonce", type: "uint256" },
+        { name: "deadline", type: "uint256" },
+      ]
+    },
+    value: {
+      orderId: obj.orderId,
+      amount: obj.stageIndex,
+      period: obj.period,
+      nonce: obj.nonce,
+      deadline: obj.deadline,
+    },
+    onError(error) {
+      // console.log('Error', error)
+    },
+    onSuccess(data) {
+      // console.log('Success', data)
+    },
+  })
+
+  return { obj, params, useSign }
+}
+
 export function usePrepareContracts(functionName) {
 
   const { address } = useAccount();

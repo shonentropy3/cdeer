@@ -45,4 +45,9 @@ export class CommonController {
     async updateSignature(@Body() body: any){
         return await this.commonService.updateSignature(body)
     }
+
+    @Post('getProlongStage') 
+    async getProlongStage(@Body() body: any){
+        return await this.commonService.getProlongStage(body)
+    }
 }

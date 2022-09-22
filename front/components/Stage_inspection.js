@@ -2,7 +2,7 @@ import { Divider, Button, Modal, InputNumber, message } from 'antd';
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useContracts, useReads, useSignProData } from '../controller';
-import { getHash, getStagesHash, getStagesJson, updateAttachment, updateSignature } from '../http/api';
+import { getHash, getProlongStage, getStagesHash, getStagesJson, updateAttachment, updateSignature } from '../http/api';
 import { useAccount, useNetwork } from 'wagmi'
 
 export default function Stage_inspection(props) {
@@ -18,9 +18,11 @@ export default function Stage_inspection(props) {
     const { OrderStart } = props;
     const { useOrderContractWrite: delivery } = useContracts('updateAttachment');
     const { useOrderContractWrite: confirm } = useContracts('confirmDelivery');
+    const { useOrderContractWrite: prolongStage } = useContracts('prolongStage');
+    
     const { useStageReads } = useReads('ongoingStage',[Oid])
     const { useStageReads: Stages, stageConfig } = useReads('getStages',[Oid])
-    const { useStageReads: Order } = useReads('getOrder',[Oid])
+    const { useStageReads: Order } = useReads('getOrder',[`${Oid}`])
     const { useOrderReads: nonces } = useReads('nonces',[address]);
 
     let [stageJson,setStageJson] = useState({});
@@ -32,6 +34,7 @@ export default function Stage_inspection(props) {
     let [signature,setSignature] = useState();
     let [stages,setStages] = useState({});
     let [deadline,setDeadline] = useState();
+    let [permitNonce,setPermitNonce] = useState();
     
     const { useSign, params, obj } = useSignProData(testObj);  //  延长签名
     
@@ -91,7 +94,7 @@ export default function Stage_inspection(props) {
                 let i = index + 1;
                 testObj = {
                     chainId: chain.id,
-                    address: address,
+                    // address: address,
                     orderId: Oid,
                     stageIndex: `${i}`,
                     period: `${delayValue * 24 * 60 * 60}`,
@@ -116,7 +119,7 @@ export default function Stage_inspection(props) {
         stages.deadline = deadline;
         setStages({...stages});
         console.log(stages);
-        updateSignature({signature: signature, signaddress: address, stages: JSON.stringify(stages), oid: Oid})
+        updateSignature({signature: signature, signaddress: address, stages: JSON.stringify(stages), oid: Oid, nonce: nonce})
         .then(res => {
             // message.success('')
         })
@@ -125,7 +128,9 @@ export default function Stage_inspection(props) {
     const getDetail = async() => {
         await getStagesJson({oid: Oid})
             .then(res => {
-                console.log(res);
+                permitNonce = res.signnonce;
+                setPermitNonce(permitNonce);
+                console.log(res.signnonce);
                 stages = res.stages;
                 setStages({...stages});
                 deliveryDetail = res.json.stages[index+1].delivery;
@@ -138,7 +143,36 @@ export default function Stage_inspection(props) {
 
     const permitDelay = () => {
         // TODO: prolongStage contract
+        getProlongStage({oid: Oid})
+        .then(res => {
+            if (res.code === 200) {
+                let obj = {
+                    _orderId: Oid, 
+                    _stageIndex: index+1,
+                    _appendPeriod: (data.period - data.prolong) * 24 * 60 * 60,
+                    nonce: nonce,
+                    deadline: res.data.stages.deadline,
+                    v: '0x' + res.data.signature.substring(2).substring(128, 130),
+                    r: '0x' + res.data.signature.substring(2).substring(0, 64),
+                    s: '0x' + res.data.signature.substring(2).substring(64, 128)
+                }
+                console.log(obj._orderId, obj._stageIndex, obj._appendPeriod, permitNonce, obj.deadline, obj.v, obj.r, obj.s);
+                prolongStage.write({
+                    recklesslySetUnpreparedArgs: [obj._orderId, obj._stageIndex, obj._appendPeriod, permitNonce, obj.deadline, obj.v, obj.r, obj.s]
+                })
+            }
+        })
     }
+
+    useEffect(() => {
+        if (prolongStage.isSuccess) {
+            message.success('阶段延期成功')
+        }
+        if (prolongStage.error) {
+            console.log(prolongStage.error);
+        }
+
+    },[prolongStage])
 
     useEffect(() => {
         if (useSign.data) {
@@ -190,7 +224,6 @@ export default function Stage_inspection(props) {
     },[delivery.isSuccess])
 
     useEffect(() => {
-        console.log('====>',data);
         if (!deliveryDetail) {
             getDetail()
         }
@@ -236,7 +269,7 @@ export default function Stage_inspection(props) {
                     <p>{data.content}</p>
                 </div>
                 {
-                    data.prolong ? 
+                    data.prolong && doingStage == index + 1 ? 
                         <div className="deliveryDetail">
                             <div className="title">发起了「延长阶段」:</div>
                             <div className="content">
