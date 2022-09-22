@@ -259,7 +259,7 @@ export default function applylist() {
             open={isModifyModal} 
             bodyStyle={{height:900}}
             onCancel={ModifyHandler}>
-            <Modal_ModifyTask allInfo={allInfo} />
+            <Modal_ModifyTask allInfo={allInfo} taskId={taskId} />
         </Modal>
     </div>
 }

@@ -65,7 +65,7 @@ contract DeTask is SBTBase, Ownable {
         emit TaskCreated(taskId, who, tasks[taskId]);
     }
 
-    function modifyTask(uint taskId, TaskInfo memory task) external {
+    function modifyTask(uint taskId, TaskInfo memory task) external payable {
         require(msg.sender == ownerOf(taskId), "No permission.");
 
         TaskInfo storage taskInfo = tasks[taskId];

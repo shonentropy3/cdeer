@@ -163,3 +163,11 @@ export const getStagesHash = (data) => {
         data
     })
 }
+
+// 修改个人资料
+export const modifyMyInfo = (data) => {
+    return serviceAxios({
+        
+    })
+}
+
