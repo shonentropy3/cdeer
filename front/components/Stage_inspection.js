@@ -118,7 +118,7 @@ export default function Stage_inspection(props) {
         console.log(stages);
         updateSignature({signature: signature, signaddress: address, stages: JSON.stringify(stages), oid: Oid})
         .then(res => {
-            console.log(res);
+            // message.success('')
         })
     }
 
@@ -134,6 +134,10 @@ export default function Stage_inspection(props) {
                 stageJson.last = res.attachment;
                 setStageJson({...stageJson});
             })
+    }
+
+    const permitDelay = () => {
+        // TODO: prolongStage contract
     }
 
     useEffect(() => {
@@ -186,6 +190,7 @@ export default function Stage_inspection(props) {
     },[delivery.isSuccess])
 
     useEffect(() => {
+        console.log('====>',data);
         if (!deliveryDetail) {
             getDetail()
         }
@@ -220,7 +225,7 @@ export default function Stage_inspection(props) {
             <div className="inspection-content">
                 <div className="box">
                     <p>交付时长</p>
-                    <p>{data.period}天</p>
+                    <p>{ data.prolong ? data.prolong : data.period } 天</p>
                 </div>
                 <div className="box">
                     <p>阶段费用</p>
@@ -230,6 +235,18 @@ export default function Stage_inspection(props) {
                     <p>交付说明</p>
                     <p>{data.content}</p>
                 </div>
+                {
+                    data.prolong ? 
+                        <div className="deliveryDetail">
+                            <div className="title">发起了「延长阶段」:</div>
+                            <div className="content">
+                                该阶段周期延长为{data.period}
+                            </div>
+                            <Button onClick={() => permitDelay()}>确认延期</Button>
+                        </div>
+                        :
+                        ''
+                }
                 {
                     doingStage == index + 1 && !Who && deliveryDetail !== null ? 
                     <div className="deliveryDetail">

@@ -23,6 +23,7 @@ export default function Project() {
     let [nonce,setNonce] = useState(null);
     let [deadLine,setDeadLine] = useState('');
     let [steps,setSteps] = useState(0);
+    let [prolongStages,setProlongStages] = useState([]);
 
     const { useOrderReads: Order } = useReads('getOrder',[oid]);
     const { useOrderReads: nonces } = useReads('nonces',[address]);
@@ -33,7 +34,13 @@ export default function Project() {
 
     const readSuccess = () => {
         amount = Order.data[0].amount.toString() / Math.pow(10,18);
-        steps = Order.data[0].progress == 4 ? 3 : 2;
+        if (Order.data[0].progress == 4) {
+            steps = 3;
+        }else if(Order.data[0].progress == 7){
+            steps = 4;
+        }else{
+            steps = 2;
+        }
         setSteps(steps);
         setAmount(amount);
     }
@@ -245,13 +252,18 @@ export default function Project() {
             ''
     },[oid])
 
-    // useEffect(() => {
-    //     console.log(Stages);
-    //     // Stages.length !== 0 ?
-    //     //     getChainStages()
-    //     //     :
-    //     //     ''
-    // },[Stages])
+    useEffect(() => {
+        if (Stages.data[0] && stages.length !== 0) {
+            let arr = Stages.data[0];
+            arr.map((e,i) => {
+                let period = e.period.toString() / 24 / 60 / 60;
+                if (i !== 0 && period != stages[i-1].period) {
+                    stages[i-1].prolong = period;
+                    // setStages([...stages]);
+                }
+            })
+        }
+    },[Stages])
     
     return <div className="WorkerProject">
         <div className="worker-title">
