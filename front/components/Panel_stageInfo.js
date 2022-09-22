@@ -79,8 +79,8 @@ export default function Panel_stageInfo(props) {
         let data = useStageReads.data[0];
         let pending = data.pending.toString() / Math.pow(10,18)
         let next = data.nextStage.toString()
-        console.log(Oid, address, '当前可领取==>',pending, '|| stage==>',next);
-        return
+        // console.log(Oid, address, '当前可领取==>',pending, '|| stage==>',next);
+        // return
         getWithdraw.write({
             recklesslySetUnpreparedArgs: [
                 Oid, address
@@ -171,7 +171,7 @@ export default function Panel_stageInfo(props) {
 
     useEffect(() => {
         // TODO: stages && stageList push
-        Stages.length > 0 ?
+        (Stages.length > 0) && OrderInfo.data[0] ?
             init()
             :
             ''
