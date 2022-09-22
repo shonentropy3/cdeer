@@ -36,6 +36,45 @@ async function signPermitStage(
   return sig
 }
 
+
+async function signPermitProlongStage(
+  chainId,
+  contractAddress,
+  worker,
+  orderId,
+  stageIndex,
+  period,
+  nonce,
+  deadline,
+) {
+  const domain = {
+    name: "DetaskOrder",
+    version: "1",
+    chainId,
+    verifyingContract: contractAddress,
+  };
+
+  const types = {
+    PermitProStage: [{ name: "orderId", type: "uint256" },
+    { name: "stageIndex", type: "uint256" },
+    { name: "period", type: "uint256" },
+    { name: "nonce", type: "uint256" },
+    { name: "deadline", type: "uint256" },
+  ],
+  };
+
+  const sig = await worker._signTypedData(domain, types, {
+    orderId: orderId,
+    stageIndex: stageIndex,
+    period: period,
+    nonce: nonce,
+    deadline: deadline,
+  });
+
+  return sig
+}
+
 module.exports = {
   signPermitStage,
+  signPermitProlongStage
 }
