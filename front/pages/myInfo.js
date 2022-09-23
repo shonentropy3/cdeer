@@ -90,11 +90,11 @@ export default function myInfo() {
         // console.log(info);
         console.log(hasInfo);
         if(hasInfo){
-            // setMyInfo(info)
-            console.log("set");
+            modifyMyInfo(info)
+            console.log("mofify");  
         }else{
-            // modifyMyInfo(info)
-            console.log("mofify");
+            setMyInfo(info)
+            console.log("set");
         }
         
     }
