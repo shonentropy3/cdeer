@@ -27,8 +27,9 @@ export default function Panel_stageInfo(props) {
     let [info,setInfo] = useState({});
     const { useOrderContractWrite: getWithdraw, orderConfig } = useContracts('withdraw');
     const { useStageReads } = useReads('pendingWithdraw',[1])
+    const { useStageReads: Order } = useReads('getOrder',[Oid])
     const { address } = useAccount()
-
+    
     const selectAfter = (
         <Select
           defaultValue="ETH"
@@ -76,11 +77,12 @@ export default function Panel_stageInfo(props) {
     }
     
     const gowithdraw = () => {
-        let data = useStageReads.data[0];
-        let pending = data.pending.toString() / Math.pow(10,18)
-        let next = data.nextStage.toString()
+        // let data = useStageReads.data[0];
+        // let pending = data.pending.toString() / Math.pow(10,18)
+        // let next = data.nextStage.toString()
         // console.log(Oid, address, '当前可领取==>',pending, '|| stage==>',next);
-        // return
+        console.log(Order.data[0]);
+        return
         getWithdraw.write({
             recklesslySetUnpreparedArgs: [
                 Oid, address

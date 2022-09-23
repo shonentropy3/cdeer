@@ -19,10 +19,12 @@ export default function Stage_inspection(props) {
     const { useOrderContractWrite: delivery } = useContracts('updateAttachment');
     const { useOrderContractWrite: confirm } = useContracts('confirmDelivery');
     const { useOrderContractWrite: prolongStage } = useContracts('prolongStage');
-    
+    const { useOrderContractWrite: abortOrder } = useContracts('abortOrder');
+    // 
+
     const { useStageReads } = useReads('ongoingStage',[Oid])
     const { useStageReads: Stages, stageConfig } = useReads('getStages',[Oid])
-    const { useStageReads: Order } = useReads('getOrder',[`${Oid}`])
+    const { useStageReads: Order } = useReads('getOrder',[Oid])
     const { useOrderReads: nonces } = useReads('nonces',[address]);
 
     let [stageJson,setStageJson] = useState({});
@@ -164,6 +166,26 @@ export default function Stage_inspection(props) {
         })
     }
 
+    const abort = () => {
+        // console.log(Oid);
+        // console.log(Stages.data[0]);
+        // console.log(useStageReads.data[0]);
+        // ongoingStage
+        // return
+        abortOrder.write({
+            recklesslySetUnpreparedArgs: [Oid]
+        })
+    }
+
+    useEffect(() => {
+        if (abortOrder.isSuccess) {
+            console.log(abortOrder.data);
+        }
+        if (abortOrder.isError) {
+            console.log(abortOrder.error);
+        }
+    },[abortOrder.isSuccess])
+
     useEffect(() => {
         if (prolongStage.isSuccess) {
             message.success('阶段延期成功')
@@ -302,7 +324,7 @@ export default function Stage_inspection(props) {
                     doingStage == index + 1 ? 
                         <div className="btns">
                             <Button onClick={() => delay()}>延期</Button>
-                            <Button>中止</Button>
+                            <Button onClick={() => abort()}>中止</Button>
                             {
                                 Who ? <Button onClick={() => setDelivery()}>确认交付</Button> : <Button onClick={() => setConfirmDelivery(index+1)}>确认验收</Button>
                             }

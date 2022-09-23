@@ -34,6 +34,7 @@ export default function Project() {
 
     const readSuccess = () => {
         amount = Order.data[0].amount.toString() / Math.pow(10,18);
+        console.log(Order.data[0]);
         if (Order.data[0].progress == 4) {
             steps = 3;
         }else if(Order.data[0].progress == 7){
