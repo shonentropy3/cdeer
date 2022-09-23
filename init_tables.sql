@@ -98,3 +98,18 @@ CREATE TABLE nfts (
 CREATE INDEX "account" ON "public"."nfts" USING btree (
   "account" COLLATE "pg_catalog"."default" "pg_catalog"."text_ops" ASC NULLS LAST
 );
+
+
+-- 创建users信息表
+CREATE TABLE users (
+  id serial PRIMARY KEY,
+  "address" varchar(64),
+  "username" varchar(64),
+  "avatar" varchar(128),
+  "telegram" varchar(64),
+  "wechat" varchar(64),
+  "skype" varchar(64),
+  "role" varchar[],
+  "date" date DEFAULT (now()),
+  "update" date DEFAULT (now())
+)

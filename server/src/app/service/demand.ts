@@ -189,6 +189,8 @@ export class MarketService {
 
     // 修改需求
     async modifyDemand(@Body() body: any): Promise<Tasks[]>  {
+        console.log(body);
+        
         let bodyData = JSON.parse(body.proLabel);
         return await this.tasksRepository.query(moDemand(bodyData))
         .then(res=>{

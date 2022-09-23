@@ -10,6 +10,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Tasks } from '../db/entity/Tasks';
 import { Nfts } from '../db/entity/Nfts';
 import { ApplyInfo } from '../db/entity/ApplyInfo';
+import { Users } from '../db/entity/Users';
 
 
 @Module({
@@ -17,7 +18,7 @@ import { ApplyInfo } from '../db/entity/ApplyInfo';
   providers: [MarketService, CommonService, UserService],
   imports: [
     HttpModule,
-    TypeOrmModule.forFeature([Tasks, Nfts, ApplyInfo]),
+    TypeOrmModule.forFeature([Tasks, Nfts, ApplyInfo, Users]),
   ]
 })
 export class DemandModule {}

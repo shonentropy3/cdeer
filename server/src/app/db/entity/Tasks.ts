@@ -50,6 +50,9 @@ export class Tasks {
   @Column("smallint", { name: "del", default: () => "0" })
   del: number;
 
+  @Column("character varying", { name: "suffix", nullable: true, length: 64 })
+  suffix: string | null;
+
   @Column("date", {
     name: "create_time",
     nullable: true,
@@ -63,7 +66,4 @@ export class Tasks {
     default: () => "now()",
   })
   updateTime: string | null;
-
-  @Column("character varying", { name: "suffix", nullable: true, length: 64 })
-  suffix: string | null;
 }

@@ -204,10 +204,38 @@ export const updateSignature = (data) => {
     })
 }
 
+<<<<<<< Updated upstream
 export const getProlongStage = (data) => {
     return serviceAxios({
         url: "/common/getProlongStage",
+=======
+
+export const setMyInfo = (data) => {
+    return serviceAxios({
+        url: "/user/setMyInfo",
+>>>>>>> Stashed changes
         method: "post",
         data
     })
 }
+<<<<<<< Updated upstream
+=======
+
+
+export const modifyMyInfo = (data) => {
+    return serviceAxios({
+        url: "/user/modifyMyInfo",
+        method: "post",
+        data
+    })
+}
+
+
+export const getMyInfo = (data) => {
+    return serviceAxios({
+        url: "/user/getMyInfo",
+        method: "post",
+        data
+    })
+}
+>>>>>>> Stashed changes

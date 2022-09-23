@@ -61,6 +61,24 @@ export class UserController {
         
     }
 
+
+    // 个人资料
+
+    @Post('setMyInfo')
+    async setMyInfo(@Body() body: any){
+        return await this.userService.setMyInfo(body)
+    }
+
     
+    @Post('modifyMyInfo')
+    async modifyMyInfo(@Body() body:any){
+        return await this.userService.modifyMyInfo(body)
+    }
+
+
+    @Post('getMyInfo')
+    async getMyInfo(@Body() body:any){
+        return await this.userService.getMyInfo(body)
+    }
 
 }

@@ -4,10 +4,11 @@ import { AxiosError } from 'axios';
 import { createWriteStream } from 'fs';
 import { from, map, Observable, tap, throwError, lastValueFrom } from 'rxjs';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Code, Repository } from 'typeorm';
 import { Tasks } from '../db/entity/Tasks';	//引入entity
 import { Nfts } from '../db/entity/Nfts';
 import { ApplyInfo } from '../db/entity/ApplyInfo';
+import { Users } from '../db/entity/Users';
 // ipfs/upyun
 const fs  = require('fs');
 var upyun = require("upyun")
@@ -19,6 +20,7 @@ const client = new upyun.Client(service);
 import { getDemandInfoDate, getMyPjcDBa, getMyPjcDBb, getTaskApplyCount } from '../db/sql/demand';
 import { getApply, getMyApplylist } from '../db/sql/apply_info';
 import { getCacheNfts, hasNft, isOutTime, setNftlist, updateNftlist } from '../db/sql/nft';
+import { getMyInfo, modifyMyInfo, setMyInfo } from '../db/sql/user';
 
 @Injectable()
 export class UserService {
@@ -29,6 +31,8 @@ export class UserService {
         private readonly nftsRepository: Repository<Nfts>,
         @InjectRepository(ApplyInfo)
         private readonly applyInfoRepository: Repository<Nfts>,
+        @InjectRepository(Users)
+        private readonly usersRepository: Repository<Users>,
         private httpService: HttpService
     ) {}
 
@@ -146,6 +150,42 @@ export class UserService {
         })
       }
       return detail
+    }
+
+
+    // 个人资料
+
+    // 设置个人资料
+    async setMyInfo(@Body() body: any) {
+      return await this.usersRepository.query(setMyInfo(body))
+      .then(res => {
+        return {
+          code: 200
+        }
+      })
+    }
+
+    // 修改个人资料
+    async modifyMyInfo(@Body() body: any) {
+      return await this.usersRepository.query(modifyMyInfo(body))
+      .then(res => {
+        return {
+          code: 200
+        }
+      })
+    }
+
+
+    // 获取个人资料
+    async getMyInfo(@Body() body: any): Promise<Users> {
+      let key
+      for(key in body){
+        key = key
+      }
+      return await this.usersRepository.query(getMyInfo(key))
+      .then(res => {
+        return res
+      })
     }
     
 

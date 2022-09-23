@@ -12,14 +12,19 @@ import {
     CameraOutlined
   } from '@ant-design/icons';
 
+import { setMyInfo,getMyInfo,modifyMyInfo } from '../http/api';
+
 export default function myInfo() {
 
     let [inner,setInner] = useState({})
     let [username,setUserName] = useState()
-    let [telegram,setTelegram] = useState()
-    let [wechat,setWeChat] = useState()
-    let [skype,setSkype] = useState()
+    let [telegram,setTelegram] = useState("")
+    let [wechat,setWeChat] = useState("")
+    let [skype,setSkype] = useState("")
     let [userSkills,setUserSkills] = useState([])
+    let [avatar,setAvatar] = useState("")
+    let [userInfo,setUserInfo] = useState({})
+    let [hasInfo,setHasInfo] = useState(false)
 
     let [skills,setSkills] = useState([
         {title:'solidity', status: false},
@@ -66,20 +71,72 @@ export default function myInfo() {
         console.log('wechat====>',wechat);
         console.log('skype====>',skype);
         console.log('userSkills====>',userSkills);
+        // let telegramValue
+        // let wechatValue
+        // let skypeValue
+        // if(telegram == null){
+        //     setTelegram("")
+        // }
+        
         let info = {
-            name: username,
+            username,
             telegram,
             wechat,
             skype,
-            address
+            address,
+            role:userSkills,
+            avatar: ""
         }
-        console.log(info);
+        // console.log(info);
+        console.log(hasInfo);
+        if(hasInfo){
+            // setMyInfo(info)
+            console.log("set");
+        }else{
+            // modifyMyInfo(info)
+            console.log("mofify");
+        }
+        
     }
 
     const changeAvatar = () => {
         console.log('更换头像');
     }
-  
+
+    const getInfo = async () => {
+        await getMyInfo(address)
+        .then((res)=>{
+            console.log(res);
+            let obj = res[0]
+            // console.log(obj.role);
+            setUserInfo({...obj})
+            setUserName(obj.username)
+            setTelegram(obj.telegram)
+            setWeChat(obj.wechat)
+            setSkype(obj.skype)
+            setUserSkills([...obj.role])
+            if(res){
+                setHasInfo(true)
+            }
+        })
+        .catch((err)=>{
+            console.log(err);
+        })
+    }
+
+    useEffect(()=>{
+        getInfo()
+    },[])
+
+    useEffect(()=>{
+        userSkills.map((e,i)=>{
+            skills.map((ele,index)=>{
+                if(e === ele.title){
+                    ele.status = true
+                }
+            })
+        })
+    },[userSkills])
 
     
     return <>
@@ -89,7 +146,7 @@ export default function myInfo() {
             <div className="top">
                 <div className="img"></div>
                 <div className="info">
-                    <p>Tony-001</p>
+                    <p>{userInfo.username?userInfo.username:"未设置用户昵称"}</p>
                     <div className="li"><SkypeOutlined /><WechatOutlined /><GithubOutlined /></div>
                 </div>
             </div>
@@ -97,7 +154,13 @@ export default function myInfo() {
         </div>
         <div className="myInfo-bottom">
             <p className="bg">擅长技能</p>
-            <Button className="btn">添加擅长的技能</Button>
+            {
+                userInfo.role ? userInfo.role.map((e,i)=>
+                    <span key={i} className="role-list">{e}</span>
+                ):<Button className="btn">添加擅长的技能</Button>
+            }
+            {/* <Button className="btn">添加擅长的技能</Button> */}
+            
         </div>
         <Modal title="修改资料" className="Modify_personal_information" footer={null} open={isModalVisible} onCancel={handleCancel}>
             <div className="avatar" onClick={changeAvatar}>
