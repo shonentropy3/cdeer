@@ -245,9 +245,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
 
         bool issuerAbort;
         if(order.worker == msg.sender) {
-            order.progress = OrderProgess.WokerAbort;
         } else if (order.issuer == msg.sender) {
-            order.progress = OrderProgess.IssuerAbort;
             issuerAbort = true;
         } else {
             revert PermissionsError(); 
@@ -255,6 +253,12 @@ contract DeOrder is IOrder, Multicall, Ownable {
 
         (uint currStageIndex, uint issuerAmount, uint workerAmount) = 
             IStage(deStage).abortOrder(_orderId, issuerAbort);
+
+        if (issuerAbort) {
+            order.progress = OrderProgess.IssuerAbort;
+        } else {
+            order.progress = OrderProgess.WokerAbort;
+        }
 
         doTransfer(order.token, order.issuer, issuerAmount);
         doTransfer(order.token, order.worker, workerAmount);
