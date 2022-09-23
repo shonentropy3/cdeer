@@ -6,7 +6,7 @@ import StageInspection from './Stage_inspection';
 import { useContracts, useReads, useSignAppendData } from '../controller';
 import { useAccount, useNetwork } from 'wagmi'
 import { ethers } from 'ethers';
-import { getStagesJson, updateSignature } from '../http/api';
+import { getProlongStage, getStagesJson, updateSignature } from '../http/api';
 
 
 export default function Panel_stageInfo(props) {
@@ -33,10 +33,13 @@ export default function Panel_stageInfo(props) {
     let [orderStart, setOrderStart] = useState(false);
     let [info,setInfo] = useState({});
     let [appendObj,setAppendObj] = useState({});
-    const { useOrderContractWrite: getWithdraw, orderConfig } = useContracts('withdraw');
+    const { useOrderContractWrite: getWithdraw } = useContracts('withdraw');
+    const { useOrderContractWrite: useAppendStage } = useContracts('appendStage');
+    
     const { useStageReads } = useReads('pendingWithdraw',[1])
     const { useStageReads: Order } = useReads('getOrder',[Oid])
     const { useOrderReads: nonces } = useReads('nonces',[address]);
+    const { useStageReads: contractStages, stageConfig } = useReads('getStages',[Oid])
     const { useSign, obj: useSignParams } = useSignAppendData(appendObj)
 
     
@@ -91,8 +94,7 @@ export default function Panel_stageInfo(props) {
         // let pending = data.pending.toString() / Math.pow(10,18)
         // let next = data.nextStage.toString()
         // console.log(Oid, address, '当前可领取==>',pending, '|| stage==>',next);
-        console.log(Order.data[0]);
-        return
+        console.log(contractStages.data[0]);
         getWithdraw.write({
             recklesslySetUnpreparedArgs: [
                 Oid, address
@@ -197,6 +199,36 @@ export default function Panel_stageInfo(props) {
         })
     }
 
+    const agreeApeend = () => {
+        // 获取数据库数据
+        getProlongStage({oid: Oid})
+        .then(res => {
+            if (res.code === 200) {
+                let data = res.data;
+                console.log(res.data);
+                console.log(stages);
+                useAppendStage.write({
+                    recklesslySetUnpreparedArgs: [
+                        Oid, 
+                        ethers.utils.parseEther(data.amount[data.stages.stageIndex]), 
+                        (data.period[data.stages.stageIndex] * 24 * 60 * 60), 
+                        nonce, 
+                        data.stages.deadline,
+                        '0x' + data.signature.substring(2).substring(128, 130),
+                        '0x' + data.signature.substring(2).substring(0, 64),
+                        '0x' + data.signature.substring(2).substring(64, 128)
+                    ]
+                })
+            }
+        })
+    }
+
+    useEffect(() => {
+        if (useAppendStage.isSuccess) {
+            console.log(useAppendStage.data);
+        }
+    },[useAppendStage.isSuccess])
+
     useEffect(() => {
         if (useSign.data) {
             console.log(useSign.data,dataStages, nonce);
@@ -250,6 +282,8 @@ export default function Panel_stageInfo(props) {
     useEffect(() => {
         getStagesJson({oid: location.search.split('?')[1]})
             .then(res => {
+                nonce = res.signnonce;
+                setNonce(nonce);
                 dataStages = res.stages;
                 setDataStages({...dataStages});
             })
@@ -337,7 +371,7 @@ export default function Panel_stageInfo(props) {
                         )
                     }
                     <Button onClick={() => appendStage()}>添加阶段</Button>
-                    <Button onClick={() => appendStage()}>同意添加</Button>
+                    <Button onClick={() => agreeApeend()}>同意添加</Button>
                 </div>
         }
     </div>
