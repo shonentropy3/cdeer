@@ -4,7 +4,9 @@ import { InputNumber, Select } from 'antd';
 import StageCard from './Stage_card';
 import StageInspection from './Stage_inspection';
 import { useContracts, useReads, useSignAppendData } from '../controller';
-import { useAccount } from 'wagmi'
+import { useAccount, useNetwork } from 'wagmi'
+import { ethers } from 'ethers';
+import { getStagesJson, updateSignature } from '../http/api';
 
 
 export default function Panel_stageInfo(props) {
@@ -17,18 +19,26 @@ export default function Panel_stageInfo(props) {
     const { getStages } = props;
     const { getAdvance } = props;
     const { Option } = Select;
-    let [advance,setAdvance] = useState(false);
+    const { chain } = useNetwork()
+    const { address } = useAccount()
+    let [advance,setAdvance] = useState(false);    
     let [stageList,setStageList] = useState([]);
     let [stages,setStages] = useState([]);
+    let [dataStages,setDataStages] = useState([]);
     let [editMode,setEditMode] = useState(false);
     let [illM,setIllM] = useState(0);
+    let [deadline,setDeadline] = useState(0);
+    let [nonce,setNonce] = useState();
     const [activeTabKey1, setActiveTabKey1] = useState('0');
     let [orderStart, setOrderStart] = useState(false);
     let [info,setInfo] = useState({});
+    let [appendObj,setAppendObj] = useState({});
     const { useOrderContractWrite: getWithdraw, orderConfig } = useContracts('withdraw');
     const { useStageReads } = useReads('pendingWithdraw',[1])
     const { useStageReads: Order } = useReads('getOrder',[Oid])
-    const { address } = useAccount()
+    const { useOrderReads: nonces } = useReads('nonces',[address]);
+    const { useSign, obj: useSignParams } = useSignAppendData(appendObj)
+
     
     const selectAfter = (
         <Select
@@ -159,8 +169,54 @@ export default function Panel_stageInfo(props) {
 
     const appendStage = () => {
         // TODO: 添加阶段
-        useSignAppendData
+        new Promise((resolve, reject) => {
+            let now = parseInt(new Date().getTime()/1000);
+            let setTime = 2 * 24 * 60 * 60;
+            let period = 5 * 24 * 60 * 60;
+            deadline = now+setTime;
+            setDeadline(deadline);
+            let amount = ethers.utils.parseEther(`${100}`);
+            let obj = {
+                chainId: chain.id,
+                orderId: Oid,
+                amount: amount,
+                period: period,
+                nonce: nonce,  
+                deadline: `${deadline}`,
+            }
+            appendObj = obj;
+            setAppendObj({...appendObj})
+            setTimeout(() => {
+                resolve();
+            }, 50);
+        })
+        .then(res => {
+            useSign.signTypedData()
+            console.log(useSign.error);
+            console.log(useSignParams);
+        })
     }
+
+    useEffect(() => {
+        if (useSign.data) {
+            console.log(useSign.data,dataStages, nonce);
+            dataStages.amount.push(100)
+            dataStages.period.push(5)
+            dataStages.deadline = deadline;
+            setDataStages({...dataStages})
+            updateSignature({signature: useSign.data, signaddress: address, stages: JSON.stringify(dataStages), oid: Oid, nonce: nonce})
+            .then(res => {
+                message.success('操作成功')
+            })
+        }
+    },[useSign.data])
+
+    useEffect(() => {
+        if (nonces.data[0]) {
+            nonce = nonces.data[0].toString();
+            setNonce(nonce);
+        }
+    },[nonces.data])
 
     useEffect(() => {
         getWithdraw.isSuccess ? 
@@ -190,6 +246,14 @@ export default function Panel_stageInfo(props) {
             :
             ''
     },[OrderInfo])
+
+    useEffect(() => {
+        getStagesJson({oid: location.search.split('?')[1]})
+            .then(res => {
+                dataStages = res.stages;
+                setDataStages({...dataStages});
+            })
+    },[])
 
     
     return <div className="Panel_stageInfo">
@@ -273,6 +337,7 @@ export default function Panel_stageInfo(props) {
                         )
                     }
                     <Button onClick={() => appendStage()}>添加阶段</Button>
+                    <Button onClick={() => appendStage()}>同意添加</Button>
                 </div>
         }
     </div>

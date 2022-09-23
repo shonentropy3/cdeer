@@ -241,7 +241,7 @@ export function useSignAppendData(params) {
     },
     value: {
       orderId: obj.orderId,
-      amount: obj.stageIndex,
+      amount: obj.amount,
       period: obj.period,
       nonce: obj.nonce,
       deadline: obj.deadline,
