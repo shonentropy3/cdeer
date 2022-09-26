@@ -28,6 +28,25 @@ export const getTasksData = (data) => {
     });
 }
 
+// 删除需求
+export const delDemand = (data) => {
+    return serviceAxios({
+        url: "/demand/deleteDemand",
+        method: "post",
+        data
+    })
+}
+
+//报名开关
+export const modifyApplySwitch = (data) => {
+    return serviceAxios({
+        url: "/applyFor/modifyApplySwitch",
+        method: "post",
+        data,
+    });
+}
+
+
 // 获取Orders列表
 export const getOrdersData = (data) => {
     return serviceAxios({

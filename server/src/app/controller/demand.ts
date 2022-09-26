@@ -24,6 +24,7 @@ export class MarketController {
 
     @Post('deleteDemand')  // 删除需求
     async deleteDemand(@Body() body: any){
+        console.log(body);
         return await this.marketService.deleteDemand(body)
     }
 

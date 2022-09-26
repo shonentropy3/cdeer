@@ -221,18 +221,10 @@ export  function Modal_ModifyTask (params) {
         setProjectAttrchment(allInfo.attrchment)
         let task_type = allInfo.task_type
         let role = allInfo.role
-        setTypes([...task_type])
         setProjectSkills([...role])
         setPeriod(allInfo.period)
         setBudget(allInfo.budget)
         setCurrency(allInfo.apply_switch)
-        allInfo.task_type.map(e => {
-            projectType.map(ele => {
-                if (e === ele.value) {
-                    ele.status = true
-                }
-            })
-        })
         allInfo.role.map(e => {
             skillss.map(ele => {
                 if (e === ele.value){
@@ -243,19 +235,6 @@ export  function Modal_ModifyTask (params) {
         // setProjectType([...task_type])
         // setProjectSkills([...allInfo])
     },[])
-
-    useEffect(() => {
-        let arr = [];
-        projectType.map(e =>{
-            if (e.status && arr.length < 6) {
-                arr.push(e.value);
-            }
-        })
-        types = arr;
-        setTypes([...types])
-        console.log(types);
-        
-    },[projectType])
 
     useEffect(() => {
         let arr = []
@@ -305,21 +284,6 @@ export  function Modal_ModifyTask (params) {
         >
             <Button style={{width: 472,height:50,marginTop:20}} icon={<FolderAddOutlined />}>上传项目需求文档（Word、Excel、PPT、PDF，20MB以内）</Button>
         </Upload>
-        <p style={{marginTop:20}}>项目类型(最多六个)</p>
-        {
-
-            projectType.map((e,i)=>
-                <Button 
-                    key={i} 
-                    type={e.status ? 'primary':'text'}
-                    onClick={()=>checkType(e,i)}
-                    style={{marginBottom:10,marginRight:10}}
-                >
-                    {e.title}
-                </Button>
-            )
-
-        }
 
         <p style={{marginTop:20}}>技能要求(最多六个)</p>
         {

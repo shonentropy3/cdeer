@@ -3,12 +3,12 @@ import { Steps, Pagination, Modal, InputNumber, Select, Button, message, } from 
 import { ClockCircleOutlined, MessageFilled, } from "@ant-design/icons"
 import { useAccount } from 'wagmi'
 import { createOrder, getMyApplylist, } from "../../http/api";
-import { getTasksData } from "../../http/api/task";
+// import { getTasksData } from "../../http/api/task";
 import { useContracts } from "../../controller/index";
 import {useRouter} from "next/router"
 import {Modal_ModifyTask} from "../../components/Modal_modifyTask"
 import { ethers } from "ethers";
-import { getTasksData } from "../../http/api/task";
+import { getTasksData,delDemand,modifyApplySwitch } from "../../http/api/task";
 
 
 
@@ -138,6 +138,30 @@ export default function applylist() {
         })
     }
 
+    // 删除任务
+    const deleteTask = () => {
+        let data = {id:taskId}
+        delDemand(data)
+        .then((res)=>{
+            console.log(res);
+            message.success("任务已删除")
+        })
+        .catch((error)=> {
+            console.log(error);
+            message.error("服务器错误")
+        })
+    }
+
+    // 报名开关
+    const applyHandler = () => {
+        let data = { id: taskId }
+        modifyApplySwitch(data)
+        .then((res)=>{
+            console.log(res);
+            message.success("状态修改成功")
+        })
+    }
+
     // const routeHandler = ()=>{
     //     router.push("../publish")
     // }
@@ -189,6 +213,8 @@ export default function applylist() {
                 </p>
             </div>
             <div className="task-changeInfo" onClick={showModifyModal}>修改信息</div>
+            <div className="task-delete" onClick={deleteTask}>删除任务</div>
+            <div className="task-apply-switch" onClick={applyHandler}>报名开关</div>
             <div className="apply-number">
                 <p className="a-number">{demandData.applyNum}</p>
                 <p>报名人数</p>
