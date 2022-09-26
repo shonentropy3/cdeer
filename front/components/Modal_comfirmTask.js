@@ -1,8 +1,16 @@
 import { Button } from 'antd';
+import { useState,useEffect } from 'react';
 
 export default function Modal_comfirmTask(params) {
     
-    const { comfirm } = params
+    const { comfirm,inner,skills } = params
+
+    let [ roles,setRoles ] = useState([])
+
+    useEffect(()=>{
+        let role = inner[3].value
+        console.log(role);
+    },[])
 
 
     return <>
@@ -10,7 +18,7 @@ export default function Modal_comfirmTask(params) {
             <div className="modal-info">
                 <div className="info-full">
                     <p className="title">项目详情</p>
-                    <div className="content">XDAO运维+数据系统开发</div>
+                    <div className="content">{inner[0].value}</div>
                 </div>
                 <div className="info-full">
                     <p className="title">项目类型</p>
@@ -19,16 +27,16 @@ export default function Modal_comfirmTask(params) {
                 <div className="info-full info-half">
                     <div>
                         <p className="title">项目预算</p>
-                        <div className="content">10 ETH</div>
+                        <div className="content">{inner[4].value} ETH</div>
                     </div>
                     <div>
                         <p className="title">项目周期</p>
-                        <div className="content">20天</div>
+                        <div className="content">{inner[5].value}天</div>
                     </div>
                 </div>
                 <div className="info-full">
                     <p className="title">项目描述</p>
-                    <div className="content">后台需要一套前端系统来支持数据维护，权限维护，爬虫任务状态控制等工作。后台需要一套前端系统来支持数据维护，权限维护，爬虫任务状态控制等工作。后台需要一套前端系统来支持数据维护，权限维护，爬虫任务状态控制等工作。</div>
+                    <div className="content">{inner[1].value}</div>
                 </div>
                 <div className="info-full">
                     <p className="title">项目文档</p>
@@ -36,7 +44,14 @@ export default function Modal_comfirmTask(params) {
                 </div>
                 <div className="info-full">
                     <p className="title">技能要求</p>
-                    <div className="content"></div>
+                    <div className="content">
+                        {
+                            // skills.map((e,i)=>{
+                            //     if(e.value === JSON.parse(inner[3].value))
+                            // })
+                            inner[3].value
+                        }
+                    </div>
                 </div>
                 <Button className="btn" type="primary" onClick={() => comfirm()}>确认发布</Button>
             </div>

@@ -314,7 +314,7 @@ export default function Publish() {
             open={isModalVisibleC} 
             onCancel={handleCancelC}
         >
-            <Modal_comfirmTask comfirm={() => comfirm()}/>
+            <Modal_comfirmTask inner={inner} skills={skills} comfirm={() => comfirm()}/>
         </Modal>
     </div>
 }
