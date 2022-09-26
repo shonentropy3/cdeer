@@ -56,7 +56,6 @@ contract DeTask is SBTBase, Ownable {
             currency: task.currency,
             budget: task.budget,
             period: task.period,
-            categories: task.categories,
             skills: task.skills,
             disabled: false
         });
@@ -76,7 +75,6 @@ contract DeTask is SBTBase, Ownable {
         taskInfo.currency = task.currency;
         taskInfo.budget = task.budget;
         taskInfo.period = task.period;
-        taskInfo.categories = task.categories;
         taskInfo.skills = task.skills;
         taskInfo.disabled = task.disabled;
 
