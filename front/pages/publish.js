@@ -221,6 +221,7 @@ export default function Publish() {
             currency: inner[4].subValue,
             budget: inner[4].value * 100,
             period: inner[5].value * 24 * 60 * 60,
+            categories: 1,      //  TODO: 待合约部分删除字段.
             skills: inner[3].subValue,
         }
         let fee = {
@@ -240,7 +241,6 @@ export default function Publish() {
         Task.write({
             recklesslySetUnpreparedArgs: [address, data, fee]
         })
-        console.log([address, data, fee]);
     }
 
     const writeSuccess = () => {
@@ -249,7 +249,7 @@ export default function Publish() {
             pro_content: data.desc,
             recruiting_role: inner[3].value,
             period: data.period,
-            budget: data.budget,
+            budget: data.budget / 100 * Math.pow(10,18),          //  Currency: 1: ETH 10^18
             u_address: `${address}`,
             suffix: suffix,
             hash: data.attachment,
@@ -260,7 +260,7 @@ export default function Publish() {
                 if (res.code == '200') {
                   message.success('创建成功');
                   setTimeout(() => {
-                    router.push('/')
+                    // router.push('/')
                   }, 500);
                 }else{
                   message.error('连接超时');
@@ -273,11 +273,10 @@ export default function Publish() {
       }
 
     useEffect(() => {
-        console.log(Task.isSuccess);
         Task.isSuccess ? 
           writeSuccess()
           :
-          console.log(Task.error);
+          ''
       },[Task.isSuccess])
 
     return <div className="Publish">

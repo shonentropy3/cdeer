@@ -33,7 +33,7 @@ export default function Projects() {
                 let data = res.data;
                 data.map(e => {
                     e.role = deform_Skills(e.role);
-                    e.task_type = deform_ProjectTypes(e.task_type);
+                    // e.task_type = deform_ProjectTypes(e.task_type);
                 })
                 projects = data;
                 setProjects([...projects]);
@@ -53,7 +53,7 @@ export default function Projects() {
             let data = res.data;
                 data.map(e => {
                     e.role = deform_Skills(e.role);
-                    e.task_type = deform_ProjectTypes(e.task_type);
+                    // e.task_type = deform_ProjectTypes(e.task_type);
                 })
                 projects = data;
                 setProjects([...projects]);
@@ -86,7 +86,7 @@ export default function Projects() {
             let data = res.data;
             data.map(e => {
                 e.role = deform_Skills(e.role);
-                e.task_type = deform_ProjectTypes(e.task_type);
+                // e.task_type = deform_ProjectTypes(e.task_type);
             })
             projects = data;
             setProjects([...projects]);

@@ -119,18 +119,21 @@ export class TaskService {
             let decodedData = createTask.parseLog(log.logs[2]);
             const taskId = decodedData.args[0].toString();
             const _data = decodedData.args[2];
-            
+
+            let budget = _data[4].toString() / 100;
+            let multiple: any = _data[3] === 1 ? Math.pow(10,18) : '';   //  倍数
+
             let params = {
                 taskId: taskId,
                 hash: v.hash,
                 title: _data[0],
                 desc: _data[1],
                 attachment: _data[2],
-                budget: _data[4].toString() / 100,
+                budget: (budget * multiple),
                 period: _data[5]
             }
+            // TODO: 币种判断   _data[3]: currency
             let sql = createTaskSql(params)
-            
             try {
                 let sqlResult = await this.applyInfoRepository.query(sql.sql);
                 

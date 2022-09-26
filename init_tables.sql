@@ -15,7 +15,7 @@ CREATE TABLE tasks (
   "title" varchar(255),
 	"desc" varchar(64),
   "period" BIGINT,
-  "budget" DECIMAL,
+  "budget" varchar(64),
   "role" varchar[],
   "task_type" varchar[],
   "attachment" varchar(64),
