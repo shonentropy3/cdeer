@@ -225,9 +225,7 @@ export default function Publish() {
             period: inner[5].value * 24 * 60 * 60,
             skills: inner[3].subValue,
         }
-        let fee = {
-            value: ethers.utils.parseEther("1")
-        }
+        let fee = { value: ethers.utils.parseEther("1") };
         if (fromdata) {
             await getHash(fromdata)
               .then((res) => {
@@ -238,7 +236,6 @@ export default function Publish() {
                 return err
               })
         }
-        console.log(data.budegt);
         setData({...data})
         Task.write({
             recklesslySetUnpreparedArgs: [address, data, fee]

@@ -12,14 +12,14 @@ export const deform_Skills = (arr) => {
     return newArr
 }
 
-export const deform_ProjectTypes = (arr) => {
-    let newArr = []
-    arr.forEach(e => {
-        _data.projectTypes.forEach(ele => {
-            if (e === ele.value) {
-                newArr.push(ele.name)
-            }
-        })
-    })
-    return newArr
-}
+// export const deform_ProjectTypes = (arr) => {
+//     let newArr = []
+//     arr.forEach(e => {
+//         _data.projectTypes.forEach(ele => {
+//             if (e === ele.value) {
+//                 newArr.push(ele.name)
+//             }
+//         })
+//     })
+//     return newArr
+// }

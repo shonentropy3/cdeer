@@ -1,5 +1,6 @@
 import { Button, Empty } from "antd";
 import { useEffect, useState } from "react";
+import Link from 'next/link'
 import { useAccount } from 'wagmi'
 import { useReads } from "../controller";
 import { getOrdersData, getTasksData } from "../http/api/task";
@@ -48,7 +49,6 @@ export default function Task() {
                 if (e.data) {
                     arr.push(e.oid);
                     e.data.role = deform_Skills(e.data.role);
-                    e.data.task_type = deform_ProjectTypes(e.data.task_type);
                 }
             })
             sidbar[1].data = res;
@@ -96,29 +96,28 @@ export default function Task() {
     }
 
     const Tasks = () => {
-        return  <>
-                    {
-                        selectItem.data.length === 0 ?
-                            <Empty />
-                            :
-                            selectItem.data.map((e,i) => 
-                                <div key={i} className="li" onClick={() => goApplylist(e.id)}>
-                                    <div className="li-info">
-                                        <p className="title">{e.title}</p>
-                                        <p className="role">技术要求: {e.role.map((ele,index) => <span key={index}>{ele}</span> )}</p>
-                                        <div>
-                                            <p>项目周期: {e.period / 60 / 60 / 24}天</p>
-                                            <p>项目预算: {e.budget}ETH</p>
-                                        </div>
-                                    </div>
-                                    <div className="li-num">
-                                        <p>{e.apply_count}</p>
-                                        <p>报名人数</p>
+        return  <>{
+                    selectItem.data.length === 0 ?
+                        <Empty />
+                        :
+                        selectItem.data.map((e,i) => 
+                        <Link key={e.id} href={{pathname: '/issuer/applylist', search: e.id}}>
+                            <div className="li">
+                                <div className="li-info">
+                                    <p className="title">{e.title}</p>
+                                    <p className="role">技术要求: {e.role.map((ele,index) => <span key={index}>{ele}</span> )}</p>
+                                    <div>
+                                        <p>项目周期: {e.period / 60 / 60 / 24}天</p>
+                                        <p>项目预算: {e.budget}ETH</p>
                                     </div>
                                 </div>
-                            )
-                    }
-                </>
+                                <div className="li-num">
+                                    <p>{e.apply_count}</p>
+                                    <p>报名人数</p>
+                                </div>
+                            </div>
+                        </Link>)
+                }</>
     }
 
     useEffect(() => {
@@ -156,7 +155,7 @@ export default function Task() {
         <div className="Userprojects">
             <div className="sidbar">{
                 sidbar.map((e,i) => 
-                    <div 
+                    <div
                         key={i} 
                         className={`li ${selectItem.item === e.value ? 'active':''}`} 
                         onClick={() => changeItem(e.value)}
