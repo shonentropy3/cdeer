@@ -21,7 +21,6 @@ export default function Publish() {
         {title: 'Entry Name', type: 'input', value: ''},
         {title: 'Project Description', type: 'textarea', value: ''},
         {title: '', type: 'upload', value: ''},
-        {title: 'Project Type', type: 'model', value: [], subValue: []},
         {title: 'Skill Requirements', type: 'model', value: [], subValue: []},
         {title: 'Project Budget', type: 'inputNumber', value: '', subValue: 1},
         {title: 'Project Cycle', type: 'select', value: ''},
@@ -45,20 +44,6 @@ export default function Publish() {
             {title: 'IOS', status: false, value: '108'},
         ]
     })
-    let [projectType,setProjectType] = useState({
-        title: '项目类型',
-        subtitle: '项目相关类型*(最多6个)',
-        list: [
-            {title: 'solidity', status: false, value: '201'},
-            {title: 'javascript', status: false, value: '202'},
-            {title: 'python', status: false, value: '203'},
-            {title: 'Go', status: false, value: '204'},
-            {title: 'C/C++', status: false, value: '205'},
-            {title: 'Android', status: false, value: '206'},
-            {title: 'HTML/CSS', status: false, value: '207'},
-            {title: 'IOS', status: false, value: '208'},
-        ]
-    })
 
     const selectAfter = (
         <Select
@@ -80,24 +65,17 @@ export default function Publish() {
         </Select>
     )
 
-    const multiSelect = (index) => {
+    const multiSelect = () => {
 
         return (
             <div className="multiSelect">
                 <div className="list">
                     {
-                        index === 3 ? 
-                            projectType.list.map((e,i) => 
-                                <div key={i} className={`li ${e.status ? 'active':''}`} onClick={() => changeSelect(projectType,i,3)}>
-                                    {e.title}
-                                </div>
-                            )
-                            :
-                            skills.list.map((e,i) => 
-                                <div key={i} className={`li ${e.status ? 'active':''}`} onClick={() => changeSelect(skills,i,4)}>
-                                    {e.title}
-                                </div>
-                            )
+                        skills.list.map((e,i) => 
+                            <div key={i} className={`li ${e.status ? 'active':''}`} onClick={() => changeSelect(skills,i,3)}>
+                                {e.title}
+                            </div>
+                        )
                     }
                 </div>
             </div>
@@ -183,12 +161,12 @@ export default function Publish() {
     }
 
     const changeNum = (e) => {
-        inner[5].value = e;
+        inner[4].value = e;
         setInner([...inner]);
     }
 
     const changeSel = (e) => {
-        inner[5].subValue = e;
+        inner[4].subValue = e;
         setInner([...inner]);
     }
 
@@ -231,7 +209,7 @@ export default function Publish() {
     }
 
     const onchange = (e) => {
-        inner[6].value = e;
+        inner[5].value = e;
         setInner([...inner]);
     }
 
@@ -240,11 +218,10 @@ export default function Publish() {
             title: inner[0].value,
             desc: inner[1].value,
             attachment: inner[2].value,
-            currency: inner[5].subValue,
-            budget: inner[5].value * 100,
-            period: inner[6].value * 24 * 60 * 60,
-            categories: inner[3].subValue,
-            skills: inner[4].subValue,
+            currency: inner[4].subValue,
+            budget: inner[4].value * 100,
+            period: inner[5].value * 24 * 60 * 60,
+            skills: inner[3].subValue,
         }
         let fee = {
             value: ethers.utils.parseEther("1")
@@ -270,8 +247,7 @@ export default function Publish() {
         let obj = {
             title: data.title,
             pro_content: data.desc,
-            recruiting_role: inner[4].value,
-            demand_type: inner[3].value,
+            recruiting_role: inner[3].value,
             period: data.period,
             budget: data.budget,
             u_address: `${address}`,
@@ -301,7 +277,7 @@ export default function Publish() {
         Task.isSuccess ? 
           writeSuccess()
           :
-          ''
+          console.log(Task.error);
       },[Task.isSuccess])
 
     return <div className="Publish">
