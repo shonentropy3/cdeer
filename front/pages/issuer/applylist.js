@@ -7,6 +7,7 @@ import { useContracts } from "../../controller/index";
 import {useRouter} from "next/router"
 import {Modal_ModifyTask} from "../../components/Modal_modifyTask"
 import { ethers } from "ethers";
+import { getTasksData } from "../../http/api/task";
 
 
 
@@ -66,7 +67,7 @@ export default function applylist() {
     }
 
     const getInfo = ()=>{
-        getMyDemand({hash: address})
+        getTasksData({hash: address})
         .then(res=>{
             let deData = {}
             res.map(e=>{
