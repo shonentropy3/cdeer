@@ -1,26 +1,17 @@
 import { useEffect, useState } from "react"
-import { 
-    Input, 
-    Select, 
-    InputNumber, 
-    Button, 
-    Modal, 
-    Upload, 
-    message 
-} from 'antd';
+import { Input, Select, InputNumber, Button, Modal, Upload, message } from 'antd';
 import { FolderAddOutlined } from '@ant-design/icons';
 import { useAccount } from 'wagmi';
 import { useRouter } from 'next/router'
 import { ethers } from "ethers";
-
+const { TextArea } = Input;
+const { Option } = Select;
 // 自定义部分
 import Modal_comfirmTask from "../components/Modal_comfirmTask";
 import { useContracts } from '../controller/index';
-import { createDemand, getHash } from "../http/api";
+import { createDemand, getHash } from "../http/api/task";
 import { BitOperation } from '../utils/BitOperation';
 
-const { TextArea } = Input;
-const { Option } = Select;
 export default function Publish() {
     
     const router = useRouter();

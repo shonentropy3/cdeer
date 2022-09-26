@@ -38,16 +38,6 @@ export const getUserApply = (data) => {
     });
 }
 
-
-export const createDemand = (data) => {
-
-    return serviceAxios({
-        url: "/demand/createDemand",
-        method: "post",
-        data,
-    });
-}
-
 export const createOrder = (data) => {
 
     return serviceAxios({
@@ -80,15 +70,6 @@ export const deleteDemand = (data) => {
 
     return serviceAxios({
         url: "/demand/deleteDemand",
-        method: "post",
-        data,
-    });
-}
-
-export const getHash = (data) => {
-    
-    return serviceAxios({
-        url: "/common/upload",
         method: "post",
         data,
     });
@@ -236,7 +217,3 @@ export const getMyInfo = (data) => {
         data
     })
 }
-<<<<<<< HEAD
-=======
-
->>>>>>> 158193d4fd78cb0aa0d723428a0af6aecdf48b81
