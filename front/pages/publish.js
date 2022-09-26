@@ -14,6 +14,7 @@ import { BitOperation } from '../utils/BitOperation';
 
 export default function Publish() {
     
+    const _data = require("../data/data.json");
     const router = useRouter();
     const { address } = useAccount()
     const { useTaskContractWrite: Task } = useContracts('createTask');
@@ -33,16 +34,7 @@ export default function Publish() {
     let [skills,setSkills] = useState({
         title: '技能要求',
         subtitle: '你擅长的技能*(最多6个)',
-        list: [
-            {title: 'solidity', status: false, value: '101'},
-            {title: 'javascript', status: false, value: '102'},
-            {title: 'python', status: false, value: '103'},
-            {title: 'Go', status: false, value: '104'},
-            {title: 'C/C++', status: false, value: '105'},
-            {title: 'Android', status: false, value: '106'},
-            {title: 'HTML/CSS', status: false, value: '107'},
-            {title: 'IOS', status: false, value: '108'},
-        ]
+        list: []
     })
 
     const selectAfter = (
@@ -279,11 +271,17 @@ export default function Publish() {
       },[Task.isSuccess])
 
       useEffect(() => {
-        Task.error ? 
-          console.log(Task.error)
-          :
-          ''
-      },[Task.error])
+        let arr = [];
+        _data.skills.map((e,i) => {
+            if (i > 0) {
+                arr.push({
+                    title: e.name, status: false, value: e.value
+                })
+            }
+        })
+        skills.list = arr;
+        setSkills({...skills});
+      },[])
 
     return <div className="Publish">
         <div className="h100"></div>

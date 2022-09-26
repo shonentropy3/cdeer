@@ -8,7 +8,6 @@ import stageAddr from '../../deployments/dev/DeStage.json'
 var Web3 = require('web3');
 var web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:8545");
 
-
 export function ConfigTask(functionName) { 
   let taskConfig = {
     addressOrName: taskAddr.address,
@@ -47,7 +46,7 @@ export function useContracts(functionName) {
   return { useTaskContractWrite, useOrderContractWrite, useStageContractWrite }
 }
 
-export function useContractsRead(functionName) {
+export function useRead(functionName) {
 
   const useTaskRead = useContractRead(ConfigTask(functionName))
   const useOrderRead = useContractRead(ConfigOrder(functionName))

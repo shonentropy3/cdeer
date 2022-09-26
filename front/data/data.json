@@ -17,17 +17,6 @@
     {"value":"107","name":"HTML/CSS"},
     {"value":"108","name":"IOS"}
   ],
-  "projectTypes": [
-    {"value":null,"name":"全部"},
-    {"value":"201","name":"solidity"},
-    {"value":"202","name":"javascript"},
-    {"value":"203","name":"python"},
-    {"value":"204","name":"Go"},
-    {"value":"205","name":"C/C++"},
-    {"value":"206","name":"Android"},
-    {"value":"207","name":"HTML/CSS"},
-    {"value":"208","name":"IOS"}
-  ],
   "inner": [
     {"title": "title", "name": "项目名称", "value": "", "status": "", "help": "", "type": "input"},
     {"title": "budget", "name": "项目预算", "value": "", "status": "", "help": "", "type": "number"},
