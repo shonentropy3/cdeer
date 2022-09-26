@@ -214,14 +214,15 @@ export default function Publish() {
     }
 
     const comfirm = async() => {
+        // TODO: 币种处理 ==> 2、3
+        let budget = inner[4].subValue === 1 ? ethers.utils.parseEther(`${inner[4].value}`) : 1;
         data = {
             title: inner[0].value,
             desc: inner[1].value,
             attachment: inner[2].value,
             currency: inner[4].subValue,
-            budget: inner[4].value * 100,
+            budget: budget,
             period: inner[5].value * 24 * 60 * 60,
-            categories: 1,      //  TODO: 待合约部分删除字段.
             skills: inner[3].subValue,
         }
         let fee = {
@@ -237,6 +238,7 @@ export default function Publish() {
                 return err
               })
         }
+        console.log(data.budegt);
         setData({...data})
         Task.write({
             recklesslySetUnpreparedArgs: [address, data, fee]
@@ -260,7 +262,7 @@ export default function Publish() {
                 if (res.code == '200') {
                   message.success('创建成功');
                   setTimeout(() => {
-                    // router.push('/')
+                    router.push({pathname: '/task', search: 'issuer'})    //  跳转链接
                   }, 500);
                 }else{
                   message.error('连接超时');
@@ -278,6 +280,13 @@ export default function Publish() {
           :
           ''
       },[Task.isSuccess])
+
+      useEffect(() => {
+        Task.error ? 
+          console.log(Task.error)
+          :
+          ''
+      },[Task.error])
 
     return <div className="Publish">
         <div className="h100"></div>

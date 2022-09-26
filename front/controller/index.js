@@ -9,6 +9,16 @@ import { useEffect, useState } from 'react';
 var Web3 = require('web3');
 var web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:8545");
 
+
+export function Config(functionName) { 
+  let taskConfig = {
+    addressOrName: taskAddr.address,
+    contractInterface: task.abi,
+    functionName: functionName,
+  }
+  return taskConfig
+}
+
 export function useContracts(functionName) {
 
   // const signer = useSigner();
@@ -75,6 +85,7 @@ export function useReads(functionName,list) {
 
   let arr = [];
   let arrA = [];
+  let arrB = [];
   for (let i = 0; i < list.length; i++) {
     arr.push({
       ...orderConfig,
@@ -84,8 +95,12 @@ export function useReads(functionName,list) {
       ...stageConfig,
       args: list[i]
     })
+    arrB.push({
+      ...Config(functionName),
+      args: list[i]
+    })
   }
-
+  
   const useOrderReads = useContractReads({
     contracts: arr
   })
@@ -94,7 +109,11 @@ export function useReads(functionName,list) {
     contracts: arrA
   })
 
-  return { useOrderReads, useStageReads, stageConfig }
+  const useTaskReads = useContractReads({
+    contracts: arrB
+  })
+
+  return { useOrderReads, useStageReads, stageConfig, useTaskReads }
 }
 
 export function useStageReads(functionName,list) {

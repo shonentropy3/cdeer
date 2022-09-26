@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { Empty, Button } from 'antd';
 import { useAccount } from 'wagmi'
 import { useRouter } from "next/router";
-import { getMyDemand, getOrders } from "../../http/api";
+import { getOrdersData, getTasksData } from "../../http/api/task";
 import { deform_ProjectTypes, deform_Skills } from "../../utils/Deform";
 import { useReads } from "../../controller";
 
@@ -30,7 +30,7 @@ export default function Issuerprojects(params) {
     }
 
     const getTasks = () => {
-        getMyDemand({hash: address})
+        getTasksData({hash: address})
         .then(res => {
             res.map(e => {
                 e.role = deform_Skills(e.role);
@@ -44,7 +44,7 @@ export default function Issuerprojects(params) {
     }
 
     const getStages = () => {
-        getOrders(address+'_')
+        getOrdersData(address+'_')
         .then(res => {
             let arr = [];
             res.map(e => {

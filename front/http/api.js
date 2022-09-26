@@ -16,12 +16,6 @@ export const getSearch = (data) => {
     });
 }
 
-export const getOrders = (data) => {
-    return serviceAxios({
-        url: "/demand/getOrder/?account="+data,
-        method: "get",
-    });
-}
 
 export const getOrdersInfo = (data) => {
     return serviceAxios({
@@ -91,13 +85,7 @@ export const getDemandInfo = (data) => {
     });
 }
 
-export const getMyDemand = (data) => {
-    return serviceAxios({
-        url: "/user/getMyDemand",
-        method: "post",
-        data,
-    });
-}
+
 
 export const applyFor = (data) => {
     return serviceAxios({

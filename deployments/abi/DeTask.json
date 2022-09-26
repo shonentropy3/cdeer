@@ -195,19 +195,14 @@
               "type": "uint8"
             },
             {
-              "internalType": "uint64",
+              "internalType": "uint112",
               "name": "budget",
-              "type": "uint64"
+              "type": "uint112"
             },
             {
               "internalType": "uint32",
               "name": "period",
               "type": "uint32"
-            },
-            {
-              "internalType": "uint48",
-              "name": "categories",
-              "type": "uint48"
             },
             {
               "internalType": "uint48",
@@ -286,19 +281,14 @@
               "type": "uint8"
             },
             {
-              "internalType": "uint64",
+              "internalType": "uint112",
               "name": "budget",
-              "type": "uint64"
+              "type": "uint112"
             },
             {
               "internalType": "uint32",
               "name": "period",
               "type": "uint32"
-            },
-            {
-              "internalType": "uint48",
-              "name": "categories",
-              "type": "uint48"
             },
             {
               "internalType": "uint48",
@@ -489,19 +479,14 @@
               "type": "uint8"
             },
             {
-              "internalType": "uint64",
+              "internalType": "uint112",
               "name": "budget",
-              "type": "uint64"
+              "type": "uint112"
             },
             {
               "internalType": "uint32",
               "name": "period",
               "type": "uint32"
-            },
-            {
-              "internalType": "uint48",
-              "name": "categories",
-              "type": "uint48"
             },
             {
               "internalType": "uint48",
@@ -647,19 +632,14 @@
               "type": "uint8"
             },
             {
-              "internalType": "uint64",
+              "internalType": "uint112",
               "name": "budget",
-              "type": "uint64"
+              "type": "uint112"
             },
             {
               "internalType": "uint32",
               "name": "period",
               "type": "uint32"
-            },
-            {
-              "internalType": "uint48",
-              "name": "categories",
-              "type": "uint48"
             },
             {
               "internalType": "uint48",
@@ -905,19 +885,14 @@
           "type": "uint8"
         },
         {
-          "internalType": "uint64",
+          "internalType": "uint112",
           "name": "budget",
-          "type": "uint64"
+          "type": "uint112"
         },
         {
           "internalType": "uint32",
           "name": "period",
           "type": "uint32"
-        },
-        {
-          "internalType": "uint48",
-          "name": "categories",
-          "type": "uint48"
         },
         {
           "internalType": "uint48",

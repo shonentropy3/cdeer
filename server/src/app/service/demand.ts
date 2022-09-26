@@ -153,8 +153,6 @@ export class MarketService {
         let bodyData = JSON.parse(body.proLabel);
         
         let sql = setDemand(bodyData)
-        console.log(bodyData);
-        
         try {
             let sqlResult = await this.tasksRepository.query(sql.sql);
             if (-1 != sqlResult[1]) {
