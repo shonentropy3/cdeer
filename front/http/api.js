@@ -204,22 +204,20 @@ export const updateSignature = (data) => {
     })
 }
 
-<<<<<<< Updated upstream
 export const getProlongStage = (data) => {
     return serviceAxios({
         url: "/common/getProlongStage",
-=======
+        method: "post",
+        data})
+    }
 
 export const setMyInfo = (data) => {
     return serviceAxios({
         url: "/user/setMyInfo",
->>>>>>> Stashed changes
         method: "post",
         data
     })
 }
-<<<<<<< Updated upstream
-=======
 
 
 export const modifyMyInfo = (data) => {
@@ -238,4 +236,3 @@ export const getMyInfo = (data) => {
         data
     })
 }
->>>>>>> Stashed changes

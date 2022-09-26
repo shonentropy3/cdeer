@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { InputNumber, Select } from 'antd';
 import StageCard from './Stage_card';
 import StageInspection from './Stage_inspection';
-import { useContracts, useReads, useSignAppendData } from '../controller';
+import { multicallWrite, testContract, useContracts, useReads, useSignAppendData } from '../controller';
 import { useAccount, useNetwork } from 'wagmi'
 import { ethers } from 'ethers';
 import { getProlongStage, getStagesJson, updateSignature } from '../http/api';
@@ -35,6 +35,7 @@ export default function Panel_stageInfo(props) {
     let [appendObj,setAppendObj] = useState({});
     const { useOrderContractWrite: getWithdraw } = useContracts('withdraw');
     const { useOrderContractWrite: useAppendStage } = useContracts('appendStage');
+    const { useOrderContractWrite: payOrder } = useContracts('payOrder');
     
     const { useStageReads } = useReads('pendingWithdraw',[1])
     const { useStageReads: Order } = useReads('getOrder',[Oid])
@@ -169,6 +170,22 @@ export default function Panel_stageInfo(props) {
         setInfo({...info});
     }
 
+    const payStage = () => {
+        // payOrder.write({
+        //     recklesslySetUnpreparedArgs:[
+        //         Oid, ethers.utils.parseEther(`${100}`)
+        //     ]
+        // })
+        multicallWrite(testContract([{
+            functionName: 'payOrder',
+            params: [Oid, ethers.utils.parseEther(`${100}`)]
+        }]),address,ethers.utils.parseEther(`${100}`))
+        .then(res => {
+            console.log('success ==>',res);
+        })
+        
+    }
+
     const appendStage = () => {
         // TODO: 添加阶段
         new Promise((resolve, reject) => {
@@ -205,14 +222,23 @@ export default function Panel_stageInfo(props) {
         .then(res => {
             if (res.code === 200) {
                 let data = res.data;
-                console.log(res.data);
-                console.log(stages);
+                // console.log(res.data);
+                console.log(
+                    Oid, 
+                    data.stages.amount[data.stages.amount.length - 1],
+                    (data.stages.period[data.stages.period.length - 1] * 24 * 60 * 60), 
+                    String(nonce), 
+                    data.stages.deadline,
+                    '0x' + data.signature.substring(2).substring(128, 130),
+                    '0x' + data.signature.substring(2).substring(0, 64),
+                    '0x' + data.signature.substring(2).substring(64, 128)
+                );
                 useAppendStage.write({
                     recklesslySetUnpreparedArgs: [
                         Oid, 
-                        ethers.utils.parseEther(data.amount[data.stages.stageIndex]), 
-                        (data.period[data.stages.stageIndex] * 24 * 60 * 60), 
-                        nonce, 
+                        ethers.utils.parseEther(`${data.stages.amount[data.stages.amount.length - 1]}`),
+                        (data.stages.period[data.stages.period.length - 1] * 24 * 60 * 60), 
+                        String(nonce), 
                         data.stages.deadline,
                         '0x' + data.signature.substring(2).substring(128, 130),
                         '0x' + data.signature.substring(2).substring(0, 64),
@@ -244,8 +270,9 @@ export default function Panel_stageInfo(props) {
     },[useSign.data])
 
     useEffect(() => {
-        if (nonces.data[0]) {
+        if (nonces.data[0] && !nonce) {
             nonce = nonces.data[0].toString();
+            console.log(nonce,'====>');
             setNonce(nonce);
         }
     },[nonces.data])
@@ -282,8 +309,10 @@ export default function Panel_stageInfo(props) {
     useEffect(() => {
         getStagesJson({oid: location.search.split('?')[1]})
             .then(res => {
-                nonce = res.signnonce;
-                setNonce(nonce);
+                if (res.signnonce !== null) {
+                    nonce = res.signnonce;
+                    setNonce(nonce);
+                }
                 dataStages = res.stages;
                 setDataStages({...dataStages});
             })
@@ -371,6 +400,7 @@ export default function Panel_stageInfo(props) {
                         )
                     }
                     <Button onClick={() => appendStage()}>添加阶段</Button>
+                    <Button onClick={() => payStage()}>支付阶段</Button>
                     <Button onClick={() => agreeApeend()}>同意添加</Button>
                 </div>
         }

@@ -178,27 +178,26 @@ export class CommonService {
             let time = `${Date.now()}.json`
             let path = '../../../cache_area'+'/'+ time
             let stream = createWriteStream(join(__dirname, path));
-            request(`http://ipfs.learnblockchain.cn/${hash}`).pipe(stream).on("close", function (err) {
+            request(`http://ipfs.learnblockchain.cn/${hash}`).pipe(stream).on("close",async function (err) {
                 // 获取json数据
                 if (err) {
                     console.error(err);
                 }else{
                     let url = 'cache_area/'+ time;
-                    const data = fs.readFileSync(url, 'utf8');
-                    let obj = {
-                        data: data,
-                        url: url
-                    }
-                    resolve(obj)
+                    const data = await fs.readFileSync(url, 'utf8');
+                    fs.unlink(url, (err) => {
+                        if (err) throw err;
+                        resolve(data)
+                    });
                 }
             });
             })
         })
-        .then((res: any) => {
-            fs.unlink(res.url, (err) => {
-                if (err) throw err;
-            });
-            let data = res.data;
+        .then(async(res: any) => {
+            // fs.unlink(res.url, (err) => {
+            //     if (err) throw err;
+            // });
+            let data = res;
             return this.tasksRepository.query(getStages(body.oid))
             .then(stages => {
                 let obj = {
