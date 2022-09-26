@@ -208,9 +208,9 @@ export const getProlongStage = (data) => {
     return serviceAxios({
         url: "/common/getProlongStage",
         method: "post",
-        data})
-    }
-
+        data
+    })
+}
 export const setMyInfo = (data) => {
     return serviceAxios({
         url: "/user/setMyInfo",
@@ -236,3 +236,7 @@ export const getMyInfo = (data) => {
         data
     })
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 158193d4fd78cb0aa0d723428a0af6aecdf48b81
