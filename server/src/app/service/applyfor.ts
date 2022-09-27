@@ -2,7 +2,7 @@ import { Body, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ApplyInfo } from '../db/entity/ApplyInfo';	
-import { setApply, getApply, delApply, modifyApplySwitch } from '../db/sql/demand';
+import { setApply, getApply, delApply, modifyApplySwitch, setApplylist } from '../db/sql/demand';
 @Injectable()
 export class ApplyforService {
     constructor(
@@ -11,9 +11,10 @@ export class ApplyforService {
     ) {}
 
 
-    async apply(@Body() body: any): Promise<ApplyInfo[]> {
+    async apply(@Body() body: any) {
         let bodyData = JSON.parse(body.proLabel)
-        return await this.applyInfoRepository.query(setApply(bodyData))
+        await this.applyInfoRepository.query(setApply(bodyData))
+        await this.applyInfoRepository.query(setApplylist(bodyData))
     }
 
     async getApply(@Body() body: any): Promise<ApplyInfo[]> {

@@ -3,7 +3,8 @@ import { Button, Input,Select,Upload, Checkbox,message } from "antd"
 import {FolderAddOutlined} from "@ant-design/icons"
 import { useContracts } from "../controller";
 import { useAccount } from "wagmi";
-import { modifyDemand, getHash } from "../http/api";
+import { getHash } from "../http/api/task";
+import { modifyDemand } from "../http/api/user";
 import { ethers } from "ethers";
 import { useRouter } from "next/router";
 import { BitOperation } from "../utils/BitOperation";

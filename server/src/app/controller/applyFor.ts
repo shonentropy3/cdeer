@@ -9,7 +9,7 @@ export class ApplyforController {
 
     @Post('applyFor')  // 报名
     async applyFor(@Body() body: any){
-        return await this.applyforService.apply(body)
+        await this.applyforService.apply(body)
     }
 
     @Post('getApply')  // 展示列表

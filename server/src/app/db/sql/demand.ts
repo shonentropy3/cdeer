@@ -102,6 +102,12 @@ export const setApply = params => {
     return sql
 }
 
+export const setApplylist = params => {
+    let sql = ` insert into apply_info(apply_addr, task_id, "desc", sort ,currency) 
+        VALUES ('${params.address}', ${params.demandId}, '${params.desc}', 1, ${params.currency})`;
+    return sql
+}
+
 export const getApply = params => {
     let sql = `SELECT * FROM apply_info WHERE apply_addr = '${params}'`
 

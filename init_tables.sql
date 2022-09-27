@@ -64,9 +64,13 @@ CREATE TABLE apply_info (
   "apply_addr" varchar(64),
 	"task_id" BIGINT, 
 	"price" DECIMAL, 
+  "sort" int2,
+	"currency" int2, 
+	"desc" varchar(64),
   "create_time" date DEFAULT (now()),
   "update_time" date DEFAULT (now())
 );
+COMMENT ON COLUMN "public"."apply_info"."sort" IS '排序: 0.底部  1.正常';
 
 
 -- 创建日志同步hash表

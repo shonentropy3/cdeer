@@ -4,10 +4,8 @@ import Link from 'next/link'
 import { useAccount } from 'wagmi'
 import { useRouter } from 'next/router'
 import { useReads } from "../controller";
-import { getApplyData, getOrdersData, getTasksData } from "../http/api/task";
+import { getApplyData, getOrdersData, getTasksData } from "../http/api/user";
 import { deform_Skills } from "../utils/Deform";
-
-
 
 export default function Task() {
     

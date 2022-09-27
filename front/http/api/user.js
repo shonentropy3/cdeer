@@ -9,6 +9,14 @@ export const setMyInfo = (data) => {
     })
 }
 
+// 获取个人Orders列表
+export const getOrdersData = (data) => {
+    return serviceAxios({
+        url: "/demand/getOrder/?account="+data,
+        method: "get",
+    });
+}
+
 // 获取个人报名列表
 export const getMyApplylist = (data) => {
     return serviceAxios({

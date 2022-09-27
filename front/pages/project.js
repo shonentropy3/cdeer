@@ -4,6 +4,7 @@ import { Button,Modal,message } from 'antd';
 import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { useRouter } from 'next/router';
+import { ethers } from "ethers";
 
 import { useContracts } from '../controller';
 import { getDemandInfo } from '../http/api/task';
@@ -49,7 +50,7 @@ export default function project() {
             recklesslySetUnpreparedArgs:[
                 address,
                 Number(taskID),
-                Number(params.valuation) * 100
+                ethers.utils.parseEther(`${params.valuation}`)
             ]
         })
     }
@@ -58,7 +59,6 @@ export default function project() {
         params.demandId = taskID;
         params.address = address;
         params.hash = Task.data.hash;
-        params.valuation = params.valuation * 100;
         applyFor({proLabel: JSON.stringify(params)})
         .then(res => {
           message.success('报名成功!')

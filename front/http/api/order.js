@@ -9,14 +9,6 @@ export const createOrder = (data) => {
     });
 }
 
-// 获取Orders列表
-export const getOrdersData = (data) => {
-    return serviceAxios({
-        url: "/demand/getOrder/?account="+data,
-        method: "get",
-    });
-}
-
 // 获取order详情
 export const getOrdersInfo = (data) => {
     return serviceAxios({

@@ -9,15 +9,6 @@ export const applyFor = (data) => {
     });
 }
 
-// 获取报名详情
-export const getApplyinfo = (data) => {
-    return serviceAxios({
-        url: "/applyFor/getApply",
-        method: "post",
-        data,
-    });
-}
-
 //取消报名
 export const cancelApply = (data) => {
     return serviceAxios({
