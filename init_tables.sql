@@ -17,7 +17,6 @@ CREATE TABLE tasks (
   "period" BIGINT,
   "budget" varchar(64),
   "role" varchar[],
-  "task_type" varchar[],
   "attachment" varchar(64),
 	"apply_switch" int2 DEFAULT 1,
 	"del" int2 NOT NULL DEFAULT 0,

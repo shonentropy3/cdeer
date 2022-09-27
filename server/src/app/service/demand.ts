@@ -207,7 +207,9 @@ export class MarketService {
 
     // 删除需求
     async deleteDemand(@Body() body: any): Promise<Tasks[]>  {
-        let data = body.data
+        let data = body
+        console.log(body);
+        // return
         return await this.tasksRepository.query(delDemand(data))
         .then(res=>{
             let obj = {

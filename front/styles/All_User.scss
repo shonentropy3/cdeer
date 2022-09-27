@@ -95,7 +95,7 @@
                 }
             }
         }
-        .task-changeInfo{
+        .task-changeInfo,.task-delete,.task-apply-switch{
             margin-top: 10px;
             font-size: 16px;
             line-height: 30px;
@@ -104,6 +104,10 @@
             background-color: rgb(235, 231, 231);
             padding: 0 5px;
             cursor: pointer;
+            margin-left: 10px;
+        }
+        .task-delete{
+
         }
         .apply-number{
             flex: 1;

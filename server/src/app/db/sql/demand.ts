@@ -95,6 +95,8 @@ export const moDemand = params => {
 
 export const delDemand = params => {
     let sql = ` UPDATE tasks SET del = 1  WHERE id = ${params.id} `;
+    console.log(sql);
+    
     return sql
 }
 
