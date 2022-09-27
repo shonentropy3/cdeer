@@ -8,6 +8,7 @@ import { useContracts } from "../../controller/index";
 import { Modal_ModifyTask } from "../../components/Modal_modifyTask"
 import { ethers } from "ethers";
 import { getTasksData,delDemand,modifyApplySwitch } from "../../http/api/user";
+import { modifyApplySort } from "../../http/api/apply";
 
 
 
@@ -70,7 +71,6 @@ export default function applylist() {
             let deData = {}
             res.map(e=>{
                 if(e.id == taskId){
-                    console.log(e);
                     // 币种换算
                     let budeget = e.budget / Math.pow(10,18);
                     deData = {
@@ -93,14 +93,18 @@ export default function applylist() {
     const getList = () => {
         getMyApplylist({demandId: taskId})
         .then(res => {
-            res.map(e => {
-                e.address = e.apply_addr.slice(0,5) + "..." + e.apply_addr.slice(38,42)
-                // 币种换算处理
-                if (e.currency === 1) {
-                    e.price = e.price / Math.pow(10,18)
-                }
-            })
-            data = res;
+            for (const i in res) {
+                res[i].map(e => {
+                    e.address = e.apply_addr.slice(0,5) + "..." + e.apply_addr.slice(38,42)
+                    // 币种换算处理
+                    if (e.currency === 1) {
+                        e.price = e.price / Math.pow(10,18)
+                    }
+                })
+            }
+            let arr = res.normal.concat(res.sort);
+            data = arr;
+            console.log(arr);
             setData([...data]);
         })
     }
@@ -164,10 +168,19 @@ export default function applylist() {
         })
     }
 
-    // const routeHandler = ()=>{
-    //     router.push("../publish")
-    // }
-
+    // 暂不合作
+    const sort = (e, i) => {
+        data[i].sort = 0;
+        setData([...data]);
+        let obj = {
+            address: e,
+            taskId: taskId
+        }
+        modifyApplySort({proLabel: JSON.stringify(obj)})
+        .then(res => {
+            message.success('操作成功')
+        })
+    }
 
     useEffect(() => {
         useOrderContractWrite.isSuccess ? 
@@ -236,7 +249,7 @@ export default function applylist() {
             <div className="product-list">
                 <ul>
                     {
-                        data.map((e,i) => <li key={i}>
+                        data.map((e,i) => <li key={i} className={e.sort === 0 ? 'sort':''} >
                             <div className="product-list-item">
                                 <div className="product-img"></div>
                                 <div className="product-info">
@@ -266,7 +279,7 @@ export default function applylist() {
                             </div>
                             <div>
                                 <div className="product-collaborate">
-                                    <p className="product-collaborate-no">暂不合作</p>
+                                    <p onClick={() => sort(e.apply_addr, i)} className="product-collaborate-no">暂不合作</p>
                                     <p onClick={() => {worker = e.apply_addr, setWorker(worker) ,showModal()}}>邀请合作</p>
                                 </div>
                             </div>

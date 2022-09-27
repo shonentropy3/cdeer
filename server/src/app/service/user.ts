@@ -18,7 +18,7 @@ const service = new upyun.Service('ipfs0','upchain', 'upchain123')
 const client = new upyun.Client(service);
 // dbUtils
 import { getDemandInfoDate, getMyPjcDBa, getMyPjcDBb, getTaskApplyCount } from '../db/sql/demand';
-import { getApply, getMyApplylist } from '../db/sql/apply_info';
+import { getApply, getMyApplylistA, getMyApplylistB } from '../db/sql/apply_info';
 import { getCacheNfts, hasNft, isOutTime, setNftlist, updateNftlist } from '../db/sql/nft';
 import { getMyInfo, modifyMyInfo, setMyInfo } from '../db/sql/user';
 
@@ -75,7 +75,20 @@ export class UserService {
     }
 
     async getMyApplylist(@Body() body: any) {
-      return this.tasksRepository.query(getMyApplylist(body.demandId));
+      let obj = {
+        normal: [],
+        sort: []
+      };
+      return this.tasksRepository.query(getMyApplylistA(body.demandId))
+              .then(res => {
+                obj.normal = res;
+                return this.tasksRepository.query(getMyApplylistB(body.demandId))
+                .then(res => {
+                  obj.sort = res;
+                  return obj;
+                })
+                
+              })
     } 
 
 

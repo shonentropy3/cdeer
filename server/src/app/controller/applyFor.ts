@@ -21,8 +21,14 @@ export class ApplyforController {
     async cancelApply(@Body() body: any){
         return await this.applyforService.cancel(body)
     }
+
     @Post('modifyApplySwitch')  //  报名开关
     async modifyApplySwitch(@Body() body: any){
         return await this.applyforService.modifyApplySwitch(body)
+    }
+
+    @Post('modifyApplySort')  //  报名开关
+    async modifyApplySort(@Body() body: any){
+        return await this.applyforService.modifyApplySort(body)
     }
 }

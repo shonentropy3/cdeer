@@ -143,10 +143,13 @@ export const delApply = params => {
     return obj
 }
 
+export const modifyApplySort = params => {
+    let sql = `UPDATE apply_info SET sort = 0 WHERE task_id = '${params.taskId}' and apply_addr = '${params.address}'`
+    return sql
+}
+
 export const modifyApplySwitch = params => {
     let sql = `UPDATE tasks SET apply_switch = ${params.buttonSwitch}  WHERE id = '${params.demandId}'`
-    console.log(sql,'==>');
-    
     return sql
 }
 

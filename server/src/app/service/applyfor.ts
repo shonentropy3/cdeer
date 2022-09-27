@@ -2,7 +2,7 @@ import { Body, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ApplyInfo } from '../db/entity/ApplyInfo';	
-import { setApply, getApply, delApply, modifyApplySwitch, setApplylist, getMyApply, updateApply } from '../db/sql/demand';
+import { setApply, getApply, delApply, modifyApplySwitch, setApplylist, getMyApply, updateApply, modifyApplySort } from '../db/sql/demand';
 @Injectable()
 export class ApplyforService {
     constructor(
@@ -76,6 +76,7 @@ export class ApplyforService {
             });
         }
     }
+
     // TODO:需要考虑验证问题
     async modifyApplySwitch(@Body() body: any): Promise<ApplyInfo[]> {
         let bodyData = JSON.parse(body.proLabel)
@@ -92,5 +93,21 @@ export class ApplyforService {
             console.log('cancel err =>', err)
             return err
         });
+    }
+
+    // 修改报名列表排序
+    async modifyApplySort(@Body() body: any) {
+        let bodyData = JSON.parse(body.proLabel)
+        return await this.applyInfoRepository.query(modifyApplySort(bodyData))
+        .then(res =>{
+            let obj = {
+                code: 200,
+            }
+            return obj
+        })
+        // .catch(err => {
+        //     console.log('cancel err =>', err)
+        //     return err
+        // });
     }
 }
