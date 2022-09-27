@@ -85,7 +85,7 @@ export default function Publish() {
             return multiSelect(i)
 
             case 'inputNumber':
-            return <InputNumber className="inner w100" onChange={changeNum} addonAfter={selectAfter} />;
+            return <InputNumber className="inner w100 eth-select" onChange={changeNum} addonAfter={selectAfter} />;
 
             case 'select':
             return period
@@ -96,6 +96,7 @@ export default function Publish() {
                             maxCount={1}
                             name="file"
                             onChange={handleChange}
+                            className="upload-button"
                             customRequest={upload}
                         >
                 <Button icon={<FolderAddOutlined />}>上传项目需求文档（Word、Excel、PPT、PDF、图像、视频，20MB以内）</Button>
