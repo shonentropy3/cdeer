@@ -76,13 +76,8 @@ export default function applylist() {
                     deData = {
                         title: e.title,
                         desc: e.desc,
-<<<<<<< Updated upstream
                         currency: 1,   // TODO: 从链上获取
                         budget: budeget,
-=======
-                        // currency: e.apply_switch,
-                        budget: e.budget,
->>>>>>> Stashed changes
                         period: e.period,
                         skill: e.role,
                         applyNum: data.length,
