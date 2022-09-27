@@ -6,7 +6,8 @@ import { useAccount } from 'wagmi';
 import { useRouter } from 'next/router';
 
 import { useContracts } from '../controller';
-import { applyFor, getDemandInfo } from '../http/api';
+import { getDemandInfo } from '../http/api/task';
+import { applyFor } from '../http/api/apply';
 import { deform_Skills } from '../utils/Deform';
 import Modal_applyTask from '../components/Modal_applyTask';
 

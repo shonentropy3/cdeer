@@ -2,9 +2,8 @@ import { useEffect, useState } from "react"
 import { Steps, Pagination, Modal, InputNumber, Select, Button, message, } from "antd";
 import { ClockCircleOutlined, MessageFilled, } from "@ant-design/icons"
 import { useAccount } from 'wagmi'
-import { getMyApplylist, } from "../../http/api";
+import { getMyApplylist } from "../../http/api/user";
 import { createOrder } from "../../http/api/order";
-// import { getTasksData } from "../../http/api/task";
 import { useContracts } from "../../controller/index";
 import { Modal_ModifyTask } from "../../components/Modal_modifyTask"
 import { ethers } from "ethers";

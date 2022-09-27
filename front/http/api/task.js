@@ -11,7 +11,6 @@ export const createDemand = (data) => {
 
 // 获取附件ipfs
 export const getHash = (data) => {
-    
     return serviceAxios({
         url: "/common/upload",
         method: "post",
@@ -19,47 +18,55 @@ export const getHash = (data) => {
     });
 }
 
-// 获取Taks列表
-export const getTasksData = (data) => {
+// 下载附件
+export const getFile = (data) => {
     return serviceAxios({
-        url: "/user/getMyDemand",
+        url: "/common/download",
         method: "post",
         data,
     });
 }
 
-// 删除需求
-export const delDemand = (data) => {
+// 修改附件
+export const updateAttachment = (data) => {
     return serviceAxios({
-        url: "/demand/deleteDemand",
+        url: "/common/updateAttachment",
         method: "post",
         data
     })
 }
 
-//报名开关
-export const modifyApplySwitch = (data) => {
+// 获取task详情
+export const getDemandInfo = (data) => {
     return serviceAxios({
-        url: "/applyFor/modifyApplySwitch",
+        url: "/demand/getDemandInfo",
         method: "post",
         data,
     });
 }
 
-
-// 获取Orders列表
-export const getOrdersData = (data) => {
+// 展示task列表
+export const getDemand = (data) => {
     return serviceAxios({
-        url: "/demand/getOrder/?account="+data,
+        url: "/demand/getDemand",
         method: "get",
+        data,
     });
 }
 
-
-// 获取报名中的项目
-export const getApplyData = (data) => {
+// 搜索task
+export const getSearch = (data) => {
     return serviceAxios({
-        url: "/user/getApply",
+        url: "/demand/getSearch/?name="+data,
+        method: "get"
+    });
+}
+
+// 筛选task
+export const getFilter = (data) => {
+
+    return serviceAxios({
+        url: "/demand/getFilter",
         method: "post",
         data,
     });

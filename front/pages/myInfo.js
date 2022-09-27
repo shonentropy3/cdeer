@@ -12,7 +12,7 @@ import {
     CameraOutlined
   } from '@ant-design/icons';
 
-import { setMyInfo,getMyInfo,modifyMyInfo } from '../http/api';
+import { setMyInfo,getMyInfo,modifyMyInfo } from '../http/api/user';
 
 export default function myInfo() {
 

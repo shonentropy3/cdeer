@@ -3,8 +3,8 @@ import { SearchOutlined, HistoryOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router'
 
-import { getDemand, getFilter, getSearch } from '../http/api';
-import { deform_Skills, deform_ProjectTypes } from '../utils/Deform'
+import { getDemand, getFilter, getSearch } from '../http/api/task';
+import { deform_Skills } from '../utils/Deform'
 
 export default function Projects() {
 
@@ -14,11 +14,8 @@ export default function Projects() {
     let [projects,setProjects] = useState([]);
 
     let [selectA,setSelectA] = useState(null); //  临时的
-    let [selectB,setSelectB] = useState(null); //  临时的
     let [tagsA,setTagsA] = useState([]);
-    let [tagsB,setTagsB] = useState([]);
     // const tagsA = ['全部','后端','全栈','区块链','solidity','DeFi','NFT','Design','Smart Contract'] //  临时的
-    // const tagsB = ['全部','后端','全栈','区块链','solidity','DeFi','NFT','Design','Smart Contract'] //  临时的
     const router = useRouter();
 
 
@@ -76,7 +73,6 @@ export default function Projects() {
     useEffect(() => {
         let obj = {
           role: selectA,
-          task_type: selectB
         }
         obj = JSON.stringify(obj)
         getFilter({obj: obj})
@@ -89,7 +85,7 @@ export default function Projects() {
             projects = data;
             setProjects([...projects]);
         })
-    },[selectA,selectB])
+    },[selectA])
 
     return <div className="Projects">
         <div className="search">
@@ -103,17 +99,6 @@ export default function Projects() {
                                         key={i} 
                                         className={`tags-li ${selectA === e.value ? 'tags-li-active':''}`}
                                         onClick={() =>{selectA = e.value,setSelectA(selectA)}}
-                                        >
-                        {e.name}
-                    </div>)
-                }
-            </div>
-            <div className="tags-list">
-                {
-                    tagsB.map((e,i) => <div 
-                                        key={i} 
-                                        className={`tags-li ${selectB === e.value ? 'tags-li-active':''}`} 
-                                        onClick={() =>{selectB = e.value,setSelectB(selectB);}}
                                         >
                         {e.name}
                     </div>)
