@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { InputNumber, Select } from 'antd';
 import StageCard from './Stage_card';
 import StageInspection from './Stage_inspection';
-import { multicallWrite, testContract, useContracts, useReads, useSignAppendData } from '../controller';
+import { multicallWrite, muticallEncode, testContract, useContracts, useReads, useSignAppendData } from '../controller';
 import { useAccount, useNetwork } from 'wagmi'
 import { ethers } from 'ethers';
 import { getProlongStage, getStagesJson, updateSignature } from '../http/api';
@@ -176,7 +176,7 @@ export default function Panel_stageInfo(props) {
         //         Oid, ethers.utils.parseEther(`${100}`)
         //     ]
         // })
-        multicallWrite(testContract([{
+        multicallWrite(muticallEncode([{
             functionName: 'payOrder',
             params: [Oid, ethers.utils.parseEther(`${100}`)]
         }]),address,ethers.utils.parseEther(`${100}`))
@@ -310,6 +310,7 @@ export default function Panel_stageInfo(props) {
         getStagesJson({oid: location.search.split('?')[1]})
             .then(res => {
                 if (res.signnonce !== null) {
+                    console.log('hh==>',res.signnonce);
                     nonce = res.signnonce;
                     setNonce(nonce);
                 }

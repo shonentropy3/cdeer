@@ -1,7 +1,7 @@
 import Panel_stageInfo from "../../components/Panel_stageInfo";
 import { Steps, Button, message } from "antd";
 import { useEffect, useState } from "react";
-import { multicallWrite, testContract, useContracts, useReads, useSignData, useStageReads } from "../../controller";
+import { multicallWrite, muticallEncode, useContracts, useReads, useSignData, useStageReads } from "../../controller";
 import { ethers } from "ethers";
 import { getOrdersInfo, getStagesHash, getStagesJson } from "../../http/api";
 import { useAccount, useNetwork, useProvider } from 'wagmi'
@@ -29,14 +29,13 @@ export default function Project() {
     let [btnStatus,setBtnStatus] = useState(true);      //  true: permit || false: setStage
     let [steps,setSteps] = useState(0);
 
-    const { useStageReads: Stages } = useStageReads('getStages',[oid]);
+    const { useStageReads: Stages } = useReads('getStages',[oid]);
     const { useOrderReads: Order } = useReads('getOrder',[oid]);
     const { useOrderReads: nonces } = useReads('nonces',[address]);
     const { useSign, params, obj } = useSignData(testObj);
     const { useOrderContractWrite: OrderWirte } = useContracts('startOrder');
     
     const readSuccess = () => {
-        console.log('Order===>',Order);
         amount = Order.data[0].amount.toString() / Math.pow(10,18);
         if (Order.data[0].progress == 4) {
             steps = 3;
@@ -97,7 +96,7 @@ export default function Project() {
         
         multicall = arr;
         setMulticall([...multicall]);
-        let params = testContract(multicall);
+        let params = muticallEncode(multicall);
         console.log(params);
         multicallWrite(params,address,value)
         .then(res => {

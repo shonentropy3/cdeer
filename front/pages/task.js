@@ -134,7 +134,9 @@ export default function Task() {
                                         </div>
                                     </div>
                                     <div className="li-right">
-                                        <Button type="primary" onClick={() => goUserProject(e.oid)}>阶段详情</Button>
+                                        <Link href={{pathname: who === 'issuer' ? '/issuer/Project' : '/worker/Project', search: e.oid}}>
+                                            <Button type="primary">阶段详情</Button>
+                                        </Link>
                                     </div>
                                 </div>
                             )

@@ -28,7 +28,7 @@ export default function Project() {
     const { useOrderReads: Order } = useReads('getOrder',[oid]);
     const { useOrderReads: nonces } = useReads('nonces',[address]);
     
-    const { useStageReads: Stages } = useStageReads('getStages',[oid]);
+    const { useStageReads: Stages } = useReads('getStages',[oid]);
     const { useSign, params, obj } = useSignData(testObj);
 
 
