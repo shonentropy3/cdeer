@@ -24,13 +24,7 @@ export const getOrdersInfo = (data) => {
     });
 }
 
-export const getUserApply = (data) => {
-    return serviceAxios({
-        url: "/user/getApply",
-        method: "post",
-        data,
-    });
-}
+
 
 export const createOrder = (data) => {
 

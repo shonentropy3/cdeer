@@ -4,8 +4,7 @@ import { ClockCircleOutlined, MessageFilled, } from "@ant-design/icons"
 import { useAccount } from 'wagmi'
 import { createOrder, getMyApplylist, getMyDemand } from "../../http/api";
 import { useContracts } from "../../controller/index";
-import {useRouter} from "next/router"
-import {Modal_ModifyTask} from "../../components/Modal_modifyTask"
+import { Modal_ModifyTask } from "../../components/Modal_modifyTask"
 import { ethers } from "ethers";
 import { getTasksData } from "../../http/api/task";
 
@@ -48,7 +47,6 @@ export default function applylist() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isModifyModal,setIsModifyModal] = useState(false)
     const { useOrderContractWrite } = useContracts('createOrder');
-    const router = useRouter()
       
     const showModal = () => {
       setIsModalOpen(true);
@@ -136,11 +134,6 @@ export default function applylist() {
             }
         })
     }
-
-    // const routeHandler = ()=>{
-    //     router.push("../publish")
-    // }
-
 
     useEffect(() => {
         useOrderContractWrite.isSuccess ? 

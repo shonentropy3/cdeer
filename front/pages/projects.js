@@ -66,8 +66,6 @@ export default function Projects() {
     const init = () => {
         tagsA = _data.skills;
         setTagsA([...tagsA]);
-        tagsB = _data.projectTypes
-        setTagsB([...tagsB]);
     }
 
     useEffect(() => {

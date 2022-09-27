@@ -35,3 +35,13 @@ export const getOrdersData = (data) => {
         method: "get",
     });
 }
+
+
+// 获取报名中的项目
+export const getApplyData = (data) => {
+    return serviceAxios({
+        url: "/user/getApply",
+        method: "post",
+        data,
+    });
+}

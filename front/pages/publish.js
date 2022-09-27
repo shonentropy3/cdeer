@@ -139,6 +139,12 @@ export default function Publish() {
     };
 
     const showModalC = () => {
+        //  TODO: 钱包状态判断
+        if (!address) {
+            console.log('hh');
+            // TODO: connect wallet
+            return
+        }
         setIsModalVisibleC(true);
     };
 
@@ -204,7 +210,7 @@ export default function Publish() {
         inner[5].value = e;
         setInner([...inner]);
     }
-
+    
     const comfirm = async() => {
         // TODO: 币种处理 ==> 2、3
         let budget = inner[4].subValue === 1 ? ethers.utils.parseEther(`${inner[4].value}`) : 1;
@@ -270,7 +276,7 @@ export default function Publish() {
           ''
       },[Task.isSuccess])
 
-      useEffect(() => {
+    useEffect(() => {
         let arr = [];
         _data.skills.map((e,i) => {
             if (i > 0) {
@@ -281,7 +287,7 @@ export default function Publish() {
         })
         skills.list = arr;
         setSkills({...skills});
-      },[])
+    },[])
 
     return <div className="Publish">
         <div className="h100"></div>

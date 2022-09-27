@@ -3,7 +3,7 @@ import { Empty, Button } from 'antd';
 import { useAccount } from 'wagmi'
 import { useRouter } from "next/router";
 import { getOrders, getUserApply } from "../../http/api";
-import { deform_ProjectTypes, deform_Skills } from "../../utils/Deform";
+import { deform_Skills } from "../../utils/Deform";
 import { useReads } from "../../controller/index";
 
 export default function Userprojects(params) {
@@ -34,7 +34,6 @@ export default function Userprojects(params) {
         .then(res => {
             res.map(e => {
                 e.role = deform_Skills(e.role);
-                e.task_type = deform_ProjectTypes(e.task_type);
             })
             sidbar[0].data = res;
             setSidbar([...sidbar]);

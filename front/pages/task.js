@@ -2,8 +2,9 @@ import { Button, Empty } from "antd";
 import { useEffect, useState } from "react";
 import Link from 'next/link'
 import { useAccount } from 'wagmi'
+import { useRouter } from 'next/router'
 import { useReads } from "../controller";
-import { getOrdersData, getTasksData } from "../http/api/task";
+import { getApplyData, getOrdersData, getTasksData } from "../http/api/task";
 import { deform_Skills } from "../utils/Deform";
 
 
@@ -12,17 +13,20 @@ export default function Task() {
     
     let [who,setWho] = useState();
     let [tidList,setTidList] = useState([]); 
-    let [selectItem,setSelectItem] = useState({item: 'tasks', data: []});
+    let [selectItem,setSelectItem] = useState({item: '', data: []});
     let [sidbar,setSidbar] = useState([
         {title: '发布的项目', value: 'tasks'},
         {title: '进行中', value: 'developping'},
         {title: '发布的项目', value: 'developend'},
     ]);
+    let [sidbarWorker,setSidbarWorker] = useState();
+    const router = useRouter()
     const { address } = useAccount();
     const { useTaskReads } = useReads('tasks', tidList);
 
     const changeItem = value => {
         selectItem.item = value;
+        selectItem.data = [];
         setSelectItem({...selectItem});
     }
 
@@ -42,19 +46,36 @@ export default function Task() {
     }
 
     const getDevelopping = () => {
-        getOrdersData(address+'_')
+        let param = who === 'worker' ? address : address+'_'
+        getOrdersData(param)
         .then(res => {
             let arr = [];
+            console.log(res);
             res.map(e => {
                 if (e.data) {
                     arr.push(e.oid);
                     e.data.role = deform_Skills(e.data.role);
                 }
             })
-            sidbar[1].data = res;
-            setSidbar([...sidbar]);
-            oidList = arr;
-            setOidList([...oidList]);
+            tidList = arr;
+            setTidList([...arr])
+            selectItem.data = res;
+            setSelectItem({...selectItem});
+        })
+    }
+
+    const getApply = () => {
+        getApplyData({hash: `'${address}'`})
+        .then(res => {
+            let arr = [];
+            res.map(e => {
+                e.role = deform_Skills(e.role);
+                arr.push(e.id);
+            })
+            tidList = arr;
+            setTidList([...arr])
+            selectItem.data = res;
+            setSelectItem({...selectItem});
         })
     }
 
@@ -64,16 +85,42 @@ export default function Task() {
             case 'tasks':
                 return Tasks()
             case 'developping':
-                return Developping(sidbar[1].data)
+                return Developping(selectItem.data)
+            case 'apply':
+                return Apply(selectItem.data)
             default:
                 break;
         }
     }
 
+    const Apply = (arr) => {
+        if (arr.length === 0) {
+            return <Empty />
+        }
+        return (
+            arr.map((e,i) => 
+                <div key={i} className="li">
+                    <div className="li-info">
+                        <p className="title">{e.title}</p>
+                        {/* <p className="role">技术要求: {e.role.map((ele,index) => <span key={index}>{ele}</span> )}</p> */}
+                        <div>
+                            <p>项目周期: {e.period / 60 / 60 / 24}天</p>
+                            <p>项目预算: {e.budget}ETH</p>
+                        </div>
+                    </div>
+                    <div className="li-right">
+                        <Button>取消报名</Button>
+                        <Button type="primary">修改报名信息</Button>
+                    </div>
+                </div>
+            )
+        )
+    }
+
     const Developping = (arr) => {
         return  <>
                     {
-                        arr.length === 0 || arr[0].odata === undefined ?
+                        arr.length === 0 ?
                             <Empty />
                             :
                             arr.map((e,i) => 
@@ -83,7 +130,7 @@ export default function Task() {
                                         <p className="role">技术要求: {e.data.role.map((ele,index) => <span key={index}>{ele}</span> )}</p>
                                         <div>
                                             <p>项目周期: {e.data.period / 60 / 60 / 24}天</p>
-                                            <p>项目预算: {e.odata.amount}ETH</p>
+                                            <p>项目预算: {e.data.budget}ETH</p>
                                         </div>
                                     </div>
                                     <div className="li-right">
@@ -121,9 +168,30 @@ export default function Task() {
     }
 
     useEffect(() => {
+        selectItem.data = [];
+        setSelectItem({...selectItem});
         who = location.search.split('?')[1];
         setWho(who);
-    },[])
+        if (who === 'worker') {
+            sidbar = [
+                {title: '报名中的项目', value: 'apply'},
+                {title: '参与中的项目', value: 'developping'},
+                {title: '已完成的项目', value: 'developend'},
+            ];
+            setSidbar([...sidbar]);
+            selectItem.item = 'apply';
+            setSelectItem({...selectItem});
+        }else{
+            sidbar = [
+                {title: '发布的项目', value: 'tasks'},
+                {title: '进行中', value: 'developping'},
+                {title: '发布的项目', value: 'developend'},
+            ]
+            setSidbar([...sidbar]);
+            selectItem.item = 'tasks';
+            setSelectItem({...selectItem});
+        }
+    },[router])
 
     useEffect(() => {
         switch (selectItem.item) {
@@ -131,7 +199,10 @@ export default function Task() {
                 getTasks()
                 break;
             case 'developping':
-                // getDevelopping()
+                getDevelopping()
+                break;
+            case 'apply':
+                getApply()
                 break;
             default:
                 // getDevelopend()
@@ -140,12 +211,16 @@ export default function Task() {
     },[selectItem.item])
 
     useEffect(() => {
-        if (tidList.length !== 0 && selectItem.item === 'tasks') {
+        if (tidList.length !== 0) {
             let data = useTaskReads.data;
             selectItem.data.map((e,i) => {
                 // TODO: 根据币种计算budget
                 let multiple = data[i].currency === 1 ? Math.pow(10,18) : 1;
-                e.budget = data[i].budget.toString() / multiple; 
+                if (selectItem.item === 'developping') {
+                    e.data.budget = data[i].budget.toString() / multiple;
+                }else{
+                    e.budget = data[i].budget.toString() / multiple; 
+                }
             })
             setSelectItem({...selectItem});
         }
@@ -153,15 +228,17 @@ export default function Task() {
 
     return (
         <div className="Userprojects">
-            <div className="sidbar">{
-                sidbar.map((e,i) => 
-                    <div
-                        key={i} 
-                        className={`li ${selectItem.item === e.value ? 'active':''}`} 
-                        onClick={() => changeItem(e.value)}
-                        >
-                        {e.title}
-                    </div> )}
+            <div className="sidbar">
+                    {
+                        sidbar.map((e,i) => 
+                            <div
+                                key={i} 
+                                className={`li ${selectItem.item === e.value ? 'active':''}`} 
+                                onClick={() => changeItem(e.value)}
+                                >
+                                {e.title}
+                            </div>)
+                    }
             </div>
             <div className="content">
                 {panel()}

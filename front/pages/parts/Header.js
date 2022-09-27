@@ -41,7 +41,7 @@ export default function Header() {
             {
               key: '3',
               label: (
-                <Link href={{pathname: '/worker/Projects'}}>
+                <Link href={{pathname: '/task', search: 'worker'}}>
                   参与的项目
                 </Link>
                 ),

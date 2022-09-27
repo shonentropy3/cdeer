@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 
 import { useContracts } from '../controller';
 import { applyFor, getDemandInfo } from '../http/api';
-import { deform_ProjectTypes, deform_Skills } from '../utils/Deform';
+import { deform_Skills } from '../utils/Deform';
 import Modal_applyTask from '../components/Modal_applyTask';
 
 
@@ -27,7 +27,6 @@ export default function project() {
         .then(res=>{
             let obj = res.data[0]
             obj.role = deform_Skills(obj.role);
-            obj.task_type = deform_ProjectTypes(obj.task_type);
             project = obj;
             setProject({...project});
         })
