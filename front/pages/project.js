@@ -1,6 +1,6 @@
 
 
-import { Button,Modal,message } from 'antd';
+import { Button,Modal,message, notification } from 'antd';
 import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { useRouter } from 'next/router';
@@ -11,6 +11,7 @@ import { getDemandInfo } from '../http/api/task';
 import { applyFor } from '../http/api/apply';
 import { deform_Skills } from '../utils/Deform';
 import Modal_applyTask from '../components/Modal_applyTask';
+import { getMyInfo } from '../http/api/user';
 
 
 export default function project() {
@@ -22,7 +23,7 @@ export default function project() {
     let [project,setProject] = useState({});
     let [params,setParams] = useState({});
     let [isModalOpen,setIsModalOpen] = useState(false);
-
+    
 
     const getProject = async() => {
         await getDemandInfo({id: taskID})
@@ -61,14 +62,46 @@ export default function project() {
         params.hash = Task.data.hash;
         applyFor({proLabel: JSON.stringify(params)})
         .then(res => {
-          message.success('报名成功!')
-          setTimeout(() => {
-            router.push('/')
-          }, 500);
+            guide()
         })
         .catch(err => {
           console.log(err);
         })
+    }
+
+    const guide = () => {
+        // TODO: 判断用户资料是否完整 > '报名成功,自动消失' : '报名成功,不消失,补充资料跳转'
+        getMyInfo({address: address})
+        .then(res => {
+            if (res.length === 0) {
+                // 未填写资料
+                openNotification()
+            }else{
+                // 已填写
+            }
+        })
+    }
+
+    const openNotification = () => {
+        setTimeout(() => {
+            history.go(-1);
+        }, 500);
+        notification.info({
+            message: '报名成功',
+            description:
+              '个人资料尚未填写完成,点击跳转补全信息',
+            className: 'Notice',
+            top: '100px',
+            placement: 'top',
+            duration: 0,
+            getContainer: '',
+            onClick: () => {
+            notification.destroy()
+              setTimeout(() => {
+                router.push('/myInfo');
+              }, 1000);
+            },
+          });
     }
 
     useEffect(() => {
@@ -163,6 +196,7 @@ export default function project() {
         </div>
         </div>
         <Button type="primary" className="project-btn" onClick={showModal}>报名参加</Button>
+        <Button type='primary' onClick={() => openNotification()}>test</Button>
         <Modal
             footer={null}
             open={isModalOpen}

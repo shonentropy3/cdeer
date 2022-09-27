@@ -14,7 +14,6 @@ export const modifyMyInfo = params => {
     return sql
 }
 
-
 export const getMyInfo = (params) => {
     let sql = `SELECT * FROM public."users" WHERE address = '${params}'`
     return sql

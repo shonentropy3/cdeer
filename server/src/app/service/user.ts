@@ -191,11 +191,7 @@ export class UserService {
 
     // 获取个人资料
     async getMyInfo(@Body() body: any): Promise<Users> {
-      let key
-      for(key in body){
-        key = key
-      }
-      return await this.usersRepository.query(getMyInfo(key))
+      return await this.usersRepository.query(getMyInfo(body.address))
       .then(res => {
         return res
       })
