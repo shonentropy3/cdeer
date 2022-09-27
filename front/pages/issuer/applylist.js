@@ -71,11 +71,13 @@ export default function applylist() {
             res.map(e=>{
                 if(e.id == taskId){
                     console.log(e);
+                    // 币种换算
+                    let budeget = e.budget / Math.pow(10,18);
                     deData = {
                         title: e.title,
                         desc: e.desc,
-                        currency: e.apply_switch,
-                        budget: e.budget,
+                        currency: 1,   // TODO: 从链上获取
+                        budget: budeget,
                         period: e.period,
                         skill: e.role,
                         applyNum: data.length
@@ -91,9 +93,12 @@ export default function applylist() {
     const getList = () => {
         getMyApplylist({demandId: taskId})
         .then(res => {
-            // console.log(res);
             res.map(e => {
                 e.address = e.apply_addr.slice(0,5) + "..." + e.apply_addr.slice(38,42)
+                // 币种换算处理
+                if (e.currency === 1) {
+                    e.price = e.price / Math.pow(10,18)
+                }
             })
             data = res;
             setData([...data]);

@@ -188,7 +188,7 @@ export class TaskService {
             let params = {
                 taskId: taskId,
                 applyAddr: taker,
-                valuation: Number(valuation)/100,
+                valuation: valuation,
                 hash: v.hash
             }
             let sql = updateApplyInfo(params)

@@ -108,10 +108,19 @@ export const setApplylist = params => {
     return sql
 }
 
+export const updateApply = params => {
+    let sql = ` UPDATE apply_info set "desc" = '${params.desc}', currency = ${params.currency}
+                where apply_addr = '${params.address}' and task_id = ${params.demandId}`;
+    return sql
+}
+
+export const getMyApply = params => {
+    let sql = `SELECT * FROM apply_info WHERE apply_addr = '${params.address}' and task_id = ${params.demandId}`
+    return sql
+}
+
 export const getApply = params => {
     let sql = `SELECT * FROM apply_info WHERE apply_addr = '${params}'`
-
-    
     return sql
 }
 
