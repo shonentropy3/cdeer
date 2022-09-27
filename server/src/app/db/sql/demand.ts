@@ -81,10 +81,6 @@ export const setDemand = params => {
     return obj
 }
 
-export const setOrder = params => {
-    return  ` insert into trans_hashes("send_addr", category, hash, task_id) 
-        VALUES ('${params.address}', 6, '${params.hash}', ${params.taskId})`;
-}
 
 export const moDemand = params => {
     let sql = ` update tasks SET title = '${params.title}', budget = ${params.budget}, period = ${params.period} ,

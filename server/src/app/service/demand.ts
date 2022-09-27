@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { Tasks } from '../db/entity/Tasks';	//引入entity
 
 // dbUtils
-import { getDemandDate, getDemandInfoDate, setDemand, moDemand, delDemand, getFilter, setOrder, getOrdersDate, getOrderInfo, getSearchData, getIssuerOrdersDate } from '../db/sql/demand';
+import { getDemandDate, getDemandInfoDate, setDemand, moDemand, delDemand, getFilter, getOrdersDate, getOrderInfo, getSearchData, getIssuerOrdersDate } from '../db/sql/demand';
 
 
 @Injectable()
@@ -173,19 +173,6 @@ export class MarketService {
         }
     }
 
-    // 创建订单
-    async createOrder(@Body() body: any){
-        return await this.tasksRepository.query(setOrder(body))
-        .then(res => {
-            console.log(res);
-            return {
-                code: 200
-            }
-        })
-        .catch(err => {
-            
-        })
-    }
 
     // 修改需求
     async modifyDemand(@Body() body: any): Promise<Tasks[]>  {

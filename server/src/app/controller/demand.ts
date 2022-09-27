@@ -12,10 +12,7 @@ export class MarketController {
         return await this.marketService.createDemand(body)
     }
     
-    @Post('createOrder')  // 发布需求
-    async createOrder(@Body() body: any){
-        return await this.marketService.createOrder(body)
-    }
+    
     
     @Post('modifyDemand')  // 修改需求
     async modifyDemand(@Body() body: any){

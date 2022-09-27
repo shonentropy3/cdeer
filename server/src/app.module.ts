@@ -7,6 +7,7 @@ import configuration from './config';
 import { ConfigModule,ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ApplyforModule } from './app/module/applyfor';
+import { OrderModule } from './app/module/order';
 
 @Module({
   imports: [ 
@@ -32,6 +33,7 @@ import { ApplyforModule } from './app/module/applyfor';
     }),
     DemandModule,
     ApplyforModule,
+    OrderModule,
   ],
   controllers: [AppController],
   providers: [AppService],
