@@ -76,11 +76,17 @@ export default function applylist() {
                     deData = {
                         title: e.title,
                         desc: e.desc,
+<<<<<<< Updated upstream
                         currency: 1,   // TODO: 从链上获取
                         budget: budeget,
+=======
+                        // currency: e.apply_switch,
+                        budget: e.budget,
+>>>>>>> Stashed changes
                         period: e.period,
                         skill: e.role,
-                        applyNum: data.length
+                        applyNum: data.length,
+                        apply_switch: e.apply_switch
                     }
                     setAllInfo({...e})
                     // console.log(deData);
@@ -156,12 +162,28 @@ export default function applylist() {
 
     // 报名开关
     const applyHandler = () => {
-        let data = { id: taskId }
-        modifyApplySwitch(data)
-        .then((res)=>{
-            console.log(res);
-            message.success("状态修改成功")
-        })
+        let buttonSwitch
+        let data
+        if(allInfo.apply_switch == 1){
+            data = { demandId: taskId,buttonSwitch:0 }
+            modifyApplySwitch(data)
+            .then((res)=>{
+                console.log(res);
+                message.success("报名已关闭")
+                allInfo.apply_switch = 0
+                setAllInfo({...allInfo})
+            })
+        }else{
+            data = { demandId: taskId, buttonSwitch: 1 }
+            modifyApplySwitch(data)
+            .then((res)=>{
+                console.log(res);
+                message.success("报名已开启")
+                allInfo.apply_switch = 1
+                setAllInfo({...allInfo})
+            })
+        }
+        console.log(allInfo.apply_switch);
     }
 
     // const routeHandler = ()=>{
@@ -211,12 +233,12 @@ export default function applylist() {
                 <p className="task-cycle">项目周期:
                     <span>{parseInt(demandData.period/86400)}天</span>
                     项目预算:
-                    <span>{demandData.budget}{currencys[demandData.currency]}</span>
+                    <span>{demandData.budget}ETH</span>
                 </p>
             </div>
             <div className="task-changeInfo" onClick={showModifyModal}>修改信息</div>
             <div className="task-delete" onClick={deleteTask}>删除任务</div>
-            <div className="task-apply-switch" onClick={applyHandler}>报名开关</div>
+            <div className="task-apply-switch" onClick={applyHandler}>{allInfo.apply_switch?"关闭报名":"开启报名"}</div>
             <div className="apply-number">
                 <p className="a-number">{demandData.applyNum}</p>
                 <p>报名人数</p>
