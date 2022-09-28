@@ -17,7 +17,6 @@ export class ApplyforService {
 
     async apply(@Body() body: any) {
         let bodyData = JSON.parse(body.proLabel)
-        console.log(bodyData);
         
         await this.applyInfoRepository.query(setApply(bodyData))
 
@@ -31,7 +30,7 @@ export class ApplyforService {
         })
         
 
-        this.usersRepository.query(getMyInfo(bodyData))
+        this.usersRepository.query(getMyInfo(bodyData.address))
         .then(res => {
             if (res.length === 0) {
                 this.usersRepository.query(setContacts(bodyData))
@@ -60,7 +59,6 @@ export class ApplyforService {
 
 
     async cancel(@Body() body: any): Promise<ApplyInfo[]> {
-        console.log(body);
         let sql = delApply(body)
         let sqlBefore = await this.applyInfoRepository.query(sql.sqlBefore);
         console.log("调用取消报名", sqlBefore)

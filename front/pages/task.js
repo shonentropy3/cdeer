@@ -1,4 +1,4 @@
-import { Button, Empty, Input, Modal, Select } from "antd";
+import { Button, Empty, Input, message, Modal, Select } from "antd";
 import { useEffect, useState } from "react";
 import Link from 'next/link'
 import { useAccount } from 'wagmi'
@@ -27,12 +27,9 @@ export default function Task() {
         {title: '发布的项目', value: 'developend'},
     ]);
 
-    // let [taskID,setTaskID] = useState("")
-
-    let [modalInfo,setModaInfo] = useState({})
+    let [modalInfo,setModaInfo] = useState({ contactName: 'telegram' })
     let [cancelInfo,setCancelInfo] = useState({})
     
-    let [sidbarWorker,setSidbarWorker] = useState();
     const router = useRouter()
     const { address } = useAccount();
     const { useTaskReads } = useReads('tasks', tidList);
@@ -79,10 +76,8 @@ export default function Task() {
     const getApply = () => {
         getApplyData({hash: `'${address}'`})
         .then(res => {
-            // console.log(res);
             let arr = [];
             res.map(e => {
-                console.log(e);
                 e.role = deform_Skills(e.role);
                 arr.push(e.id);
             })
@@ -113,10 +108,6 @@ export default function Task() {
         setIsModal(true)
     }
 
-    const cancelHandler = () => {
-        setIsModal(false)
-    }
-
     const onchange = (e,type) => {
         modalInfo[type] = e
         setModaInfo({...modalInfo})
@@ -134,14 +125,14 @@ export default function Task() {
     }
 
     const celSuccess = () => {
-        let data = {}
-        data.applyAddr = address
-        data.demandId = cancelInfo.taskId
-        data.hash = celTask.data.hash
-        console.log(data);
+        let data = {
+            applyAddr: address,
+            demandId: cancelInfo.taskId,
+            hash: celTask.data.hash
+        }
         cancelApply(data)
         .then(res => {
-            console.log(res);
+            message.success('取消报名成功')
         })
         .catch(err => {
             console.log(err);
@@ -238,10 +229,12 @@ export default function Task() {
     const writeSuccess = () => {
         modalInfo.address = address;
         modalInfo.hash = Task.data.hash;
-        console.log(modalInfo);
         applyFor({proLabel: JSON.stringify(modalInfo)})
         .then(res => {
-            console.log(res);
+            message.success('修改成功')
+            setTimeout(() => {
+                history.go(0);
+            }, 500);
         })
         .catch(err=>{
             console.log(err);
@@ -256,17 +249,9 @@ export default function Task() {
     },[Task.isSuccess])
 
     useEffect(()=>{
-        console.log(celTask.isSuccess);
         celTask.isSuccess ?
-        celSuccess()
-        :
-        ""
+        celSuccess() : ""
     },[celTask.isSuccess])
-
-    useEffect(() => {
-        modalInfo.contactName = 'telegram';
-        setModaInfo({...modalInfo});
-    },[])
 
     useEffect(() => {
         selectItem.data = [];
@@ -312,7 +297,6 @@ export default function Task() {
     },[selectItem.item])
 
     useEffect(() => {
-        console.log(tidList);
         if (tidList.length !== 0 && useTaskReads.data) {
             let data = useTaskReads.data;
             selectItem.data.map((e,i) => {
@@ -347,13 +331,13 @@ export default function Task() {
             </div>
             <Modal 
                 open={isModal}
-                onCancel={cancelHandler}
+                onCancel={() => {setIsModal(false)}}
                 footer={null}              
             >
                 <p>报名信息</p>
                 <p>你的报价</p>
                 <Input onChange={(e) => onchange(e.target.value,"valuation")} />
-                <Select defaultValue="1" onSelect={(e) => onchange(e,'currency')} >
+                <Select defaultValue="1" disabled >
                     <Option value="1">ETH</Option>
                 </Select>
                 <p>自我推荐</p>
