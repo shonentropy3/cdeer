@@ -103,13 +103,13 @@ export const setApply = params => {
 }
 
 export const setApplylist = params => {
-    let sql = ` insert into apply_info(apply_addr, task_id, "desc", sort ,currency) 
-        VALUES ('${params.address}', ${params.demandId}, '${params.desc}', 1, ${params.currency})`;
+    let sql = ` insert into apply_info(apply_addr, task_id, "desc", sort) 
+        VALUES ('${params.address}', ${params.demandId}, '${params.desc}', 1)`;
     return sql
 }
 
 export const updateApply = params => {
-    let sql = ` UPDATE apply_info set "desc" = '${params.desc}', currency = ${params.currency}
+    let sql = ` UPDATE apply_info set "desc" = '${params.desc}'
                 where apply_addr = '${params.address}' and task_id = ${params.demandId}`;
     return sql
 }

@@ -211,7 +211,7 @@ export default function Task() {
     },[selectItem.item])
 
     useEffect(() => {
-        if (tidList.length !== 0 && useTaskReads.data[0]) {
+        if (tidList.length !== 0 && useTaskReads.data) {
             let data = useTaskReads.data;
             selectItem.data.map((e,i) => {
                 // TODO: 根据币种计算budget

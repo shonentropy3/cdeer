@@ -151,7 +151,6 @@ export class MarketService {
     // 发布需求
     async createDemand(@Body() body: any){
         let bodyData = JSON.parse(body.proLabel);
-        
         let sql = setDemand(bodyData)
         try {
             let sqlResult = await this.tasksRepository.query(sql.sql);

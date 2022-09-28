@@ -19,3 +19,13 @@ export const getMyInfo = (params) => {
     return sql
 }
 
+export const modifyContacts = params => {
+    let sql = `update users SET ${params.contactName} = '${params.contactValue}' where address = '${params.address}'`;
+    return sql
+}
+
+export const setContacts = params => {
+    let sql = `INSERT INTO users (address, ${params.contactName})
+        VALUES ('${params.address}', '${params.contactValue}')`;
+    return sql
+}

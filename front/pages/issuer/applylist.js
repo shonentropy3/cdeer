@@ -253,13 +253,13 @@ export default function applylist() {
             </div>
         </div>
         <div className="product-stage">
-            <Steps size="small" current={1}>
+            {/* <Steps size="small" current={1}>
                 <Step title="发布" />
                 <Step title="报名中" />
                 <Step title="阶段划分" />
                 <Step title="开发中" />
                 <Step title="完成" />
-            </Steps>
+            </Steps> */}
         </div>
         <div className="task-list">
             <h4>报名列表</h4>

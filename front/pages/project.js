@@ -60,6 +60,7 @@ export default function project() {
         params.demandId = taskID;
         params.address = address;
         params.hash = Task.data.hash;
+        console.log(params);
         applyFor({proLabel: JSON.stringify(params)})
         .then(res => {
             guide()

@@ -2,17 +2,22 @@ import { Body, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ApplyInfo } from '../db/entity/ApplyInfo';	
+import { Users } from '../db/entity/Users';
 import { setApply, getApply, delApply, modifyApplySwitch, setApplylist, getMyApply, updateApply, modifyApplySort } from '../db/sql/demand';
+import { getMyInfo, modifyContacts, setContacts } from '../db/sql/user';
 @Injectable()
 export class ApplyforService {
     constructor(
         @InjectRepository(ApplyInfo)
         private readonly applyInfoRepository: Repository<ApplyInfo>,
+        @InjectRepository(Users)
+        private readonly usersRepository: Repository<Users>,
     ) {}
 
 
     async apply(@Body() body: any) {
         let bodyData = JSON.parse(body.proLabel)
+        console.log(bodyData);
         
         await this.applyInfoRepository.query(setApply(bodyData))
 
@@ -22,6 +27,16 @@ export class ApplyforService {
                 this.applyInfoRepository.query(setApplylist(bodyData))
             }else{
                 this.applyInfoRepository.query(updateApply(bodyData))
+            }
+        })
+        
+
+        this.usersRepository.query(getMyInfo(bodyData))
+        .then(res => {
+            if (res.length === 0) {
+                this.usersRepository.query(setContacts(bodyData))
+            }else{
+                this.usersRepository.query(modifyContacts(bodyData))
             }
         })
         
