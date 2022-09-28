@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { Steps, Pagination, Modal, InputNumber, Select, Button, message, } from "antd";
 import { ClockCircleOutlined, MessageFilled, } from "@ant-design/icons"
 import { useAccount } from 'wagmi'
-import { getMyApplylist } from "../../http/api/user";
+import { getMyApplylist, getMyInfo } from "../../http/api/user";
 import { createOrder } from "../../http/api/order";
 import { useContracts } from "../../controller/index";
 import { Modal_ModifyTask } from "../../components/Modal_modifyTask"
@@ -41,12 +41,10 @@ export default function applylist() {
         "107":"HTML/CSS",
         "108":"IOS"
     });
-    let [currencys,setCurrencys] = useState({
-        1 : "ETH",
-        2 : "BTC"
-    })
+    const [info, setInfo] = useState({});
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isModifyModal,setIsModifyModal] = useState(false)
+    const [isModalDetial,setIsModalDetial] = useState(false)
     const { useOrderContractWrite } = useContracts('createOrder');
       
     const showModal = () => {
@@ -98,9 +96,9 @@ export default function applylist() {
                 res[i].map(e => {
                     e.address = e.apply_addr.slice(0,5) + "..." + e.apply_addr.slice(38,42)
                     // 币种换算处理
-                    if (e.currency === 1) {
+                    // if (e.currency === 1) {
                         e.price = e.price / Math.pow(10,18)
-                    }
+                    // }
                 })
             }
             let arr = res.normal.concat(res.sort);
@@ -199,6 +197,30 @@ export default function applylist() {
         })
     }
 
+    const detailCancel = () => {
+        setIsModalDetial(false)
+    };
+
+    const showDetailModal = (e) => {
+        setIsModalDetial(true);
+        getMyInfo({address: e.apply_addr})
+        .then(res => {
+            info = {
+                address: e.apply_addr.slice(0,5) + "..." + e.apply_addr.slice(38,42),
+                amount: e.price,
+                name: '',
+                desc: e.desc
+            }
+            if (res.code === 200 && res.data.length > 0) {
+                info.name = res.data.username;
+            }
+            setInfo({...info});
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    };
+
     useEffect(() => {
         useOrderContractWrite.isSuccess ? 
             writeSuccess()
@@ -278,7 +300,7 @@ export default function applylist() {
                                     </p>
                                     <p className="applicant-info">
                                         <span>查看他的信息</span>
-                                        <span>查看他的报名资料</span>
+                                        <span onClick={() => showDetailModal(e)}>查看他的报名资料</span>
                                     </p>
                                     <p className="applicant-mess">
                                         <span className="applicant-mess-item"><MessageFilled />联系方式</span>
@@ -321,5 +343,12 @@ export default function applylist() {
             onCancel={ModifyHandler}>
             <Modal_ModifyTask allInfo={allInfo} taskId={taskId} />
         </Modal>
+        <Modal title="" open={isModalDetial} onCancel={detailCancel} footer={null}>
+            <p className="title">报名信息</p>
+            <p className="subtitle">报名者「{info.name ? info.name : info.address}」的报价</p>
+            <p>{info.amount}ETH</p>
+            <p className="subtitle">报价者「{info.name ? info.name : info.address}」的自我介绍</p>
+            <div> {info.desc} </div>
+      </Modal>
     </div>
 }

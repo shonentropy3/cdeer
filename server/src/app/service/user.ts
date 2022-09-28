@@ -190,10 +190,13 @@ export class UserService {
 
 
     // 获取个人资料
-    async getMyInfo(@Body() body: any): Promise<Users> {
+    async getMyInfo(@Body() body: any){
       return await this.usersRepository.query(getMyInfo(body.address))
       .then(res => {
-        return res
+          return {
+            code: 200,
+            data: res
+        }
       })
     }
     
