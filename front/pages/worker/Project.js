@@ -3,7 +3,7 @@ import { Steps, Button, message } from "antd";
 import { useEffect, useState } from "react";
 import { useContracts, useContractsRead, usePrepareContracts, useReads, useSignData, useStageReads } from "../../controller";
 import { ethers } from "ethers";
-import { getOrdersInfo, getStages, getStagesHash, getStagesJson } from "../../http/api";
+import { getOrdersInfo, getStages, getStagesHash, getStagesJson } from "../../http/api/order";
 import { useAccount, useNetwork } from 'wagmi'
 
 export default function Project() {

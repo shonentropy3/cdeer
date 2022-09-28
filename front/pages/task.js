@@ -48,7 +48,6 @@ export default function Task() {
         getOrdersData(param)
         .then(res => {
             let arr = [];
-            console.log(res);
             res.map(e => {
                 if (e.data) {
                     arr.push(e.oid);
@@ -132,7 +131,7 @@ export default function Task() {
                                         </div>
                                     </div>
                                     <div className="li-right">
-                                        <Link href={{pathname: who === 'issuer' ? '/issuer/Project' : '/worker/Project', search: e.oid}}>
+                                        <Link href={{pathname: '/order', query: {oid: e.oid, who: who, tid: e.tid}}}>
                                             <Button type="primary">阶段详情</Button>
                                         </Link>
                                     </div>

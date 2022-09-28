@@ -46,11 +46,23 @@ export function useContracts(functionName) {
   return { useTaskContractWrite, useOrderContractWrite, useStageContractWrite }
 }
 
-export function useRead(functionName) {
+export function useRead(functionName,args) {
 
-  const useTaskRead = useContractRead(ConfigTask(functionName))
-  const useOrderRead = useContractRead(ConfigOrder(functionName))
-  const useStageRead = useContractRead(ConfigStage(functionName))
+  let objA = {
+    ...ConfigTask(functionName),
+    args: args
+  };
+  let objB = {
+    ...ConfigOrder(functionName),
+    args: args
+  };
+  let objC = {
+    ...ConfigStage(functionName),
+    args: args
+  };
+  const useTaskRead = useContractRead(objA)
+  const useOrderRead = useContractRead(objB)
+  const useStageRead = useContractRead(objC)
 
   return { useTaskRead, useOrderRead, useStageRead }
 }

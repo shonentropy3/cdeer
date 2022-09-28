@@ -1,12 +1,10 @@
 import { Button, InputNumber, Form, Input } from 'antd';
 import { useEffect, useState } from 'react';
 
-export default function StageCard(params) {
+export default function Stage_card(params) {
 
-    const { deleteStage } = params;
-    const { index } = params;
-    const { amount } = params;
     const { TextArea } = Input;
+    const { amount } = params;
     const { stage } = params;
     const { stages } = params;
     const { set } = params;
@@ -43,8 +41,8 @@ export default function StageCard(params) {
         setSelectPercent(selectPercent);
     }
 
-    const del = () => {
-        deleteStage(index)
+    const onchange = (name,value) => {
+        stage[name] = value;
     }
 
     useEffect(() => {
@@ -53,40 +51,40 @@ export default function StageCard(params) {
     },[stage])
 
     return (
-        <Form
-        name="basic"
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
-        autoComplete="off"
-      >
-        <Form.Item label="阶段名称">
-            <Input value={stage.title} onChange={e => {stage.title = e.target.value, set([...stages]);}}/>
-        </Form.Item>
+        <div style={{padding: '20px'}}>
+            <Form
+                name="basic"
+                onFinish={onFinish}
+                onFinishFailed={onFinishFailed}
+                autoComplete="off"
+            >
+            <Form.Item label="阶段名称">
+                <Input defaultValue={stage.title} onChange={e => onchange('title',e.target.value)}/>
+            </Form.Item>
 
-        <Form.Item label="阶段时长">
-            <InputNumber min={1} addonAfter="DAY" value={stage.period} onChange={e => {stage.period = e, set([...stages]);}}/>
-        </Form.Item>
+            <Form.Item label="阶段时长">
+                <InputNumber defaultValue={stage.period} min={1} addonAfter="DAY" onChange={e => onchange('period',e)}/>
+            </Form.Item>
 
-        <Form.Item label="阶段费用" className="check-percent">
-            <div className="list">
-                {
-                    percent.map((e,i) => 
-                        <div 
-                            key={i} 
-                            className={`li ${selectPercent === e.title ? 'active' : ''}`}
-                            onClick={() => checkPercent(e)}
-                        >{e.title}</div>
-                    )
-                }
-            </div>
-            <InputNumber min={1} addonAfter="ETH" value={stage.budget} onChange={e => changeBudget(e)} />
-        </Form.Item>
+            <Form.Item label="阶段费用" className="check-percent">
+                <div className="list">
+                    {
+                        percent.map((e,i) => 
+                            <div 
+                                key={i} 
+                                className={`li ${selectPercent === e.title ? 'active' : ''}`}
+                                onClick={() => checkPercent(e)}
+                            >{e.title}</div>
+                        )
+                    }
+                </div>
+                <InputNumber min={1} addonAfter="ETH" value={stage.budget} onChange={e => changeBudget(e)} />
+            </Form.Item>
 
-        <Form.Item label="阶段说明">
-            <TextArea rows={4} value={stage.content} onChange={e => {stage.content = e.target.value, set([...stages]);}} />
-        </Form.Item>
-        <Button className="btn" onClick={() => del()}>删除该阶段</Button>
-
-      </Form>
+            <Form.Item label="阶段说明">
+                <TextArea rows={4} defaultValue={stage.content} onChange={e => onchange('content',e.target.value)} />
+            </Form.Item>
+            </Form>
+      </div>
     )
 }

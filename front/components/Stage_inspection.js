@@ -2,7 +2,7 @@ import { Divider, Button, Modal, InputNumber, message } from 'antd';
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useContracts, useReads, useSignProData } from '../controller';
-import { getHash, getProlongStage, getStagesHash, getStagesJson, updateAttachment, updateSignature } from '../http/api';
+import { getHash, getProlongStage, getStagesHash, getStagesJson, updateAttachment, updateSignature } from '../http/api/order';
 import { useAccount, useNetwork } from 'wagmi'
 
 export default function Stage_inspection(props) {
@@ -10,6 +10,7 @@ export default function Stage_inspection(props) {
     const { chain } = useNetwork();
     const { address } = useAccount();
     const { setTab } = props;
+    
     const { Oid } = props;
     const { Who } = props;
     const { data } = props;
