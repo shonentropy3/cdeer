@@ -1,4 +1,4 @@
-import { Button, Empty } from "antd";
+import { Button, Empty, Input, Modal, Select } from "antd";
 import { useEffect, useState } from "react";
 import Link from 'next/link'
 import { useAccount } from 'wagmi'
@@ -6,17 +6,32 @@ import { useRouter } from 'next/router'
 import { useReads } from "../controller";
 import { getApplyData, getOrdersData, getTasksData } from "../http/api/user";
 import { deform_Skills } from "../utils/Deform";
+import { useContracts } from "../controller";
+import { ethers } from "ethers";
+import { applyFor,cancelApply } from "../http/api/apply";
 
 export default function Task() {
+
+    const {TextArea} = Input
+    const {Option} = Select
+    const {useTaskContractWrite: Task} = useContracts("applyFor")
+    const {useTaskContractWrite: celTask} = useContracts("cancelApply")
     
     let [who,setWho] = useState();
     let [tidList,setTidList] = useState([]); 
     let [selectItem,setSelectItem] = useState({item: '', data: []});
+    let [isModal,setIsModal] = useState(false)
     let [sidbar,setSidbar] = useState([
         {title: '发布的项目', value: 'tasks'},
         {title: '进行中', value: 'developping'},
         {title: '发布的项目', value: 'developend'},
     ]);
+
+    // let [taskID,setTaskID] = useState("")
+
+    let [modalInfo,setModaInfo] = useState({})
+    let [cancelInfo,setCancelInfo] = useState({})
+    
     let [sidbarWorker,setSidbarWorker] = useState();
     const router = useRouter()
     const { address } = useAccount();
@@ -64,8 +79,10 @@ export default function Task() {
     const getApply = () => {
         getApplyData({hash: `'${address}'`})
         .then(res => {
+            // console.log(res);
             let arr = [];
             res.map(e => {
+                console.log(e);
                 e.role = deform_Skills(e.role);
                 arr.push(e.id);
             })
@@ -90,6 +107,48 @@ export default function Task() {
         }
     }
 
+    const changeModal = (type,e) => {
+        modalInfo[type] = e
+        setModaInfo({...modalInfo})
+        setIsModal(true)
+    }
+
+    const cancelHandler = () => {
+        setIsModal(false)
+    }
+
+    const onchange = (e,type) => {
+        modalInfo[type] = e
+        setModaInfo({...modalInfo})
+        console.log(modalInfo);
+    }
+
+    const cancelApplys = (type,e) => {
+        cancelInfo[type] = e
+        setCancelInfo({...cancelInfo})
+        celTask.write({
+            recklesslySetUnpreparedArgs:[
+                Number(cancelInfo.taskId)
+            ] 
+        })
+    }
+
+    const celSuccess = () => {
+        let data = {}
+        data.applyAddr = address
+        data.demandId = cancelInfo.taskId
+        data.hash = celTask.data.hash
+        console.log(data);
+        cancelApply(data)
+        .then(res => {
+            console.log(res);
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    }
+
+
     const Apply = (arr) => {
         if (arr.length === 0) {
             return <Empty />
@@ -106,8 +165,8 @@ export default function Task() {
                         </div>
                     </div>
                     <div className="li-right">
-                        <Button>取消报名</Button>
-                        <Button type="primary">修改报名信息</Button>
+                        <Button onClick={()=>cancelApplys("taskId",e.id)}>取消报名</Button>
+                        <Button type="primary" onClick={()=> changeModal("demandId",e.id)}>修改报名信息</Button>
                     </div>
                 </div>
             )
@@ -166,6 +225,49 @@ export default function Task() {
                 }</>
     }
 
+    const modifyApply = () => {
+        Task.write({
+            recklesslySetUnpreparedArgs:[
+                address,
+                Number(modalInfo.demandId),
+                ethers.utils.parseEther(`${modalInfo.valuation}`)
+            ]
+        })
+    }
+
+    const writeSuccess = () => {
+        modalInfo.address = address;
+        modalInfo.hash = Task.data.hash;
+        console.log(modalInfo);
+        applyFor({proLabel: JSON.stringify(modalInfo)})
+        .then(res => {
+            console.log(res);
+        })
+        .catch(err=>{
+            console.log(err);
+        })
+    }
+
+    useEffect(()=>{
+        Task.isSuccess ?
+        writeSuccess()
+        :
+        ""
+    },[Task.isSuccess])
+
+    useEffect(()=>{
+        console.log(celTask.isSuccess);
+        celTask.isSuccess ?
+        celSuccess()
+        :
+        ""
+    },[celTask.isSuccess])
+
+    useEffect(() => {
+        modalInfo.contactName = 'telegram';
+        setModaInfo({...modalInfo});
+    },[])
+
     useEffect(() => {
         selectItem.data = [];
         setSelectItem({...selectItem});
@@ -210,6 +312,7 @@ export default function Task() {
     },[selectItem.item])
 
     useEffect(() => {
+        console.log(tidList);
         if (tidList.length !== 0 && useTaskReads.data) {
             let data = useTaskReads.data;
             selectItem.data.map((e,i) => {
@@ -242,6 +345,28 @@ export default function Task() {
             <div className="content">
                 {panel()}
             </div>
-        </div>   
+            <Modal 
+                open={isModal}
+                onCancel={cancelHandler}
+                footer={null}              
+            >
+                <p>报名信息</p>
+                <p>你的报价</p>
+                <Input onChange={(e) => onchange(e.target.value,"valuation")} />
+                <Select defaultValue="1" onSelect={(e) => onchange(e,'currency')} >
+                    <Option value="1">ETH</Option>
+                </Select>
+                <p>自我推荐</p>
+                <TextArea rows={4} onChange={(e) => onchange(e.target.value,"desc")}></TextArea>
+                <p>联系方式</p>
+                <Select defaultValue="telegram" onChange={(e) => onchange(e,'contactName')} >
+                    <Option value="telegram">telegram</Option>
+                    <Option value="wechat">wechat</Option>
+                    <Option value="skype">skype</Option>
+                </Select>
+                <Input className="applyPrice" onChange={e => onchange(e.target.value,'contactValue')} />
+                <Button onClick={()=>modifyApply()}>确认修改</Button>
+            </Modal>   
+        </div>
     )
 }

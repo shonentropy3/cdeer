@@ -134,10 +134,14 @@ export const delApply = params => {
     let updateSql = `UPDATE trans_hashes SET send_addr = '${params.applyAddr}', update_time = now() 
         where trans_hashes.hash= '${params.hash}';
     `
+
+    let deldateSql = `DELETE from apply_info where apply_addr = '${params.applyAddr}' and task_id = '${params.demandId}'`
+
     let obj = {
         sqlBefore: sqlBefore,
         insertSql: insertSql,
-        updateSql: updateSql
+        updateSql: updateSql,
+        deldateSql: deldateSql
     }
     
     return obj
