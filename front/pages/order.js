@@ -2,22 +2,34 @@ import { useEffect, useState } from "react";
 import { useRouter } from 'next/router'
 import { Steps, Button, message } from "antd";
 import { getDemandInfo } from "../http/api/task";
-import { useRead } from "../controller";
-import Panel_stageInfo from "../components/Panel_stageInfo";
+import { useRead, useSignData } from "../controller";
 import Stage_info from "../components/Stage_info";
-
+import { ethers } from "ethers";
+import { useAccount, useNetwork } from 'wagmi'
+import { getOrdersInfo, getStagesHash, getStagesJson } from "../http/api/order";
 
 export default function order(props) {
     
     let [query,setQuery] = useState({});
     let [task,setTask] = useState({});
+    let [signObj,setSignObj] = useState({});
     let [step,setStep] = useState();
-    const router = useRouter();
+    let [stagesData,setStagesData] = useState();
+    let [deadLine,setDeadLine] = useState();
+    let [nonce,setNonce] = useState();
+    let [isSigner,setIsSigner] = useState(false);
+    let [stagejson,setStagejson] = useState('');
+    
     const { Step } = Steps;
+    const router = useRouter();
+    const { chain } = useNetwork();
+    const { address } = useAccount();
     const { useTaskRead } = useRead('tasks', query.tid);
     const { useStageRead } = useRead('ongoingStage', query.oid);
     const { useOrderRead: Order } = useRead('getOrder', query.oid);
-    const { useStageRead: Stages } = useRead('getStages',query.oid);
+    const { useStageRead: StagesChain } = useRead('getStages', query.oid);
+    const { useOrderRead: nonces } = useRead('nonces', address);
+    const { useSign, obj } = useSignData(signObj);
     
     const readContract = () => {
         if (query.tid && useTaskRead.data) {
@@ -63,11 +75,146 @@ export default function order(props) {
                 readContract()
             }
         })
+
+        if (nonces.data) {
+            nonce = nonces.data.toString();
+            setNonce(nonce)
+        }
+    }
+
+    const setStage = () => {
+        // 设置阶段
+            let now = parseInt(new Date().getTime()/1000);
+            let setTime = 2 * 24 * 60 * 60;
+            deadLine = now+setTime;
+            setDeadLine(deadLine);
+            let _amounts = [];
+            let _periods = [];
+            stagesData.map(e => {
+                _amounts.push(ethers.utils.parseEther(`${e.budget}`));
+                _periods.push(`${e.period * 24 * 60 * 60}`)
+            })
+            signObj = {
+                amounts: _amounts,
+                periods: _periods,
+                chainId: chain.id,
+                address: address,
+                oid: query.oid,
+                nonce: nonce,
+                deadline: `${now+setTime}`
+            }
+            setSignObj({...signObj});
+            setIsSigner(true);
+    }
+
+    const signSuccess = () => {
+        setIsSigner(false);
+        let stageDetail = {
+            orderId: query.oid,
+            stages: [],
+            task: {
+                id: query.tid,
+                title: task.title,
+                desc: task.desc,
+                attachment: task.attachment,
+            },
+            last: stagejson, //  jsonhash
+            version: '1.0'
+        };
+        stagesData.map(e => {
+            stageDetail.stages.push({
+                milestone: {
+                    type: 'raw',
+                    content: e.content,
+                    title: e.title
+                },
+                delivery: {
+                    attachment: '',
+                    fileType: '',
+                    content: ''
+                }
+            })
+        })
+        let a = [];
+        let b = [];
+        stagesData.map(e => {
+            a.push(e.budget);
+            b.push(e.period)
+        })
+        let info = {
+            signature: useSign.data,
+            signaddress: address
+        }
+        let order_Stages = {
+            amount: a,
+            period: b,
+            deadline: deadLine
+        }
+        getStagesHash({
+            obj: JSON.stringify(stageDetail),
+            oid: query.oid, 
+            info: info,
+            stages: JSON.stringify(order_Stages)
+        })
+        .then(res => {
+              // ipfs ==> 存入链上 && 存入stageDetail.last
+              if (res.code === 200) {
+                message.success('划分阶段成功')
+                setTimeout(() => {
+                    history.go(0);
+                }, 500);
+              }else{
+                message.error('划分阶段失败')
+              }
+        })
     }
 
     useEffect(() => {
         init()
     },[router])
+
+    useEffect(() => {
+        if (obj.chainId && isSigner) {
+            useSign.signTypedData();
+        }
+    },[signObj])
+
+    useEffect(() => {
+        useSign.data ? signSuccess() : ''
+    },[useSign.data])
+
+    useEffect(() => {
+        if (step === 0) {
+            // 获取stagejson
+            getOrdersInfo(query.oid)
+            .then(res => {
+                stagejson = res[0].stagejson;
+                setStagejson(stagejson);
+            })
+
+            getStagesJson({oid: query.oid})
+            .then(res => {
+                // TODO: 判断是否有人设置阶段
+                if (res.signature) {
+                   let arr = [];
+                    if (res.stages) {
+                        res.json.stages.map((e,i) => {
+                            arr.push({
+                                budget: res.stages.amount[i],
+                                period: res.stages.period[i],
+                                content: e.milestone.content,
+                                percent: '',
+                                title: e.milestone.title
+                            })
+                        })
+                        stagesData = arr;
+                        setStagesData([...arr]);
+                    } 
+                }
+                
+            })
+        }
+    },[step])
 
     return <div className="WorkerProject">
                 <div className="worker-title">
@@ -119,7 +266,7 @@ export default function order(props) {
                         ''
                 }
                 <div className="worker-signInStage">
-                    <Stage_info Query={query} Amount={task.budget} OrderInfo={Order} Step={step} />
+                    <Stage_info Query={query} Amount={task.budget} OrderInfo={Order} Step={step} StagesData={setStagesData} Data={stagesData} />
                     {/* <Panel_stageInfo getStages={setStages} Stages={stages} getAdvance={setAdvance} amount={amount} OrderInfo={Order} who={'worker'} Oid={oid} /> */}
                 </div>
                 <div className="worker-total">

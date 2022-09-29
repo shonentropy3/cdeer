@@ -28,7 +28,6 @@ export class ApplyforService {
                 this.applyInfoRepository.query(updateApply(bodyData))
             }
         })
-        
 
         this.usersRepository.query(getMyInfo(bodyData.address))
         .then(res => {
@@ -38,7 +37,6 @@ export class ApplyforService {
                 this.usersRepository.query(modifyContacts(bodyData))
             }
         })
-        
     }
 
     async getApply(@Body() body: any): Promise<ApplyInfo[]> {
@@ -55,8 +53,6 @@ export class ApplyforService {
             return err
         });
     }
-    
-
 
     async cancel(@Body() body: any): Promise<ApplyInfo[]> {
         let sql = delApply(body)

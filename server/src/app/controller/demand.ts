@@ -50,6 +50,7 @@ export class MarketController {
     @Get('getOrdersInfo')  // 展示需求详情
     async getOrdersInfo(@Request() request: any){
         const oid = request.query.oid;
+        
         return await new Promise ((resolve,reject)=>{
             resolve(this.marketService.getOrder(oid))
          })

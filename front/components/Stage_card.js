@@ -8,6 +8,9 @@ export default function Stage_card(params) {
     const { stage } = params;
     const { stages } = params;
     const { set } = params;
+    let [data,setData] = useState({
+        budget: '', content: '', key: '', percent: '', period: '', stageIndex: '', title: ''
+    });
     let [selectPercent,setSelectPercent] = useState();
     let [percent,setPercent] = useState([
         {title: '10%', value: 0.1},
@@ -46,9 +49,18 @@ export default function Stage_card(params) {
     }
 
     useEffect(() => {
-        selectPercent = stage.percent;
-        setSelectPercent(selectPercent);
+        if (stage) {
+            selectPercent = stage.percent;
+            setSelectPercent(selectPercent);
+        }
     },[stage])
+
+    useEffect(() => {
+        if (stage) {
+            data = stage;
+            setData(data);
+        }
+    },[])
 
     return (
         <div style={{padding: '20px'}}>
@@ -57,13 +69,18 @@ export default function Stage_card(params) {
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
                 autoComplete="off"
+                fields={[
+                    { "name": ["title"], "value": data.title },
+                    { "name": ["period"], "value": data.period },
+                    { "name": ["content"], "value": data.content },
+                  ]}
             >
-            <Form.Item label="阶段名称">
-                <Input defaultValue={stage.title} onChange={e => onchange('title',e.target.value)}/>
+            <Form.Item label="阶段名称" name="title">
+                <Input onChange={e => onchange('title',e.target.value)}/>
             </Form.Item>
 
-            <Form.Item label="阶段时长">
-                <InputNumber defaultValue={stage.period} min={1} addonAfter="DAY" onChange={e => onchange('period',e)}/>
+            <Form.Item label="阶段时长" name="period">
+                <InputNumber min={1} addonAfter="DAY" onChange={e => onchange('period',e)}/>
             </Form.Item>
 
             <Form.Item label="阶段费用" className="check-percent">
@@ -78,11 +95,11 @@ export default function Stage_card(params) {
                         )
                     }
                 </div>
-                <InputNumber min={1} addonAfter="ETH" value={stage.budget} onChange={e => changeBudget(e)} />
+                <InputNumber value={data.budget} min={1} addonAfter="ETH" onChange={e => changeBudget(e)} />
             </Form.Item>
 
-            <Form.Item label="阶段说明">
-                <TextArea rows={4} defaultValue={stage.content} onChange={e => onchange('content',e.target.value)} />
+            <Form.Item label="阶段说明" name="content">
+                <TextArea rows={4} onChange={e => onchange('content',e.target.value)} />
             </Form.Item>
             </Form>
       </div>

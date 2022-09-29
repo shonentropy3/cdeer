@@ -8,9 +8,7 @@ export default function Stage_list(props) {
 
 
     return  (
-        data.period === 0 ? 
-            ''
-            :
+        data.period === 0 ? '' :
             <div className="Stage_inspection">
             <div className="inspection-info">
                 {
