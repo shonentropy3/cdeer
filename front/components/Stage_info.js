@@ -127,6 +127,7 @@ export default function Stage_info(props) {
 
     useEffect(() => {
         if (Data && Data.length > 0) {
+            setEditMode(true);
             let arr = [];
             let cards = [];
             Data.map(e => {
@@ -135,16 +136,17 @@ export default function Stage_info(props) {
                     stage0 = e.budget;
                     setStage0(stage0);
                 }else{
+                    const key = `newTab${newTabIndex.current++}`;
                     let obj = {
                         ...e,
-                        key: `newTab${newTabIndex.current++}`,
+                        key: key,
                         stageIndex: arr.length + 1,
                     }
                     arr.push(obj);
                     cards.push({
                         label: 'P' + arr.length,
                         children: <Stage_card stage={arr[arr.length - 1]} amount={Amount} set={setStages} stages={stages} />,
-                        key: `newTab${newTabIndex.current++}`,
+                        key: key,
                         closable: false
                     });
                 }
@@ -152,7 +154,6 @@ export default function Stage_info(props) {
             stages = arr;
             setStages([...stages]);
             setItems(cards);
-
         }
     },[Data])
 
@@ -215,12 +216,6 @@ export default function Stage_info(props) {
                                     <Stage_list key={i} index={i} data={e} set={setEditMode} setTab={setActiveKey} Query={Query} Step={Step} del={del}/>
                                 )
                             }
-                            
-                            {/* {
-                                stages.map((e,i) => 
-                                    <Stage_inspection key={i} data={e} index={i} set={setEditMode} setTab={setActiveKey} Step={Step} Query={Query} />
-                                )
-                            } */}
                             {
                                 Step === 1 ? 
                                 <>

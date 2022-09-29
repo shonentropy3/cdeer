@@ -7,6 +7,7 @@ import Stage_info from "../components/Stage_info";
 import { ethers } from "ethers";
 import { useAccount, useNetwork } from 'wagmi'
 import { getOrdersInfo, getStagesHash, getStagesJson } from "../http/api/order";
+import { getDate } from "../utils/getDate";
 
 export default function order(props) {
     
@@ -169,6 +170,31 @@ export default function order(props) {
         })
     }
 
+    const total = () => {
+        if (!stagesData) {
+            return
+        }
+        let allPeriod = 0;
+        let allTotal = 0;
+        let now = new Date().getTime();
+        return <>
+                {
+                    stagesData.map((e,i) => {
+                        allPeriod += e.period;
+                        allTotal += e.budget;
+                        if (e.period === 0) {
+                            return <p key={i}>预付款: <span>{stagesData[0].budget}</span>ETH</p>
+                        }else{
+                            let p = stagesData[0].period === 0 ? i : i+1;
+                            return <p key={i}>P{p}阶段费用: <span>{e.budget}</span>ETH </p>
+                        }})
+                }
+                <p>开发周期: <span>{allPeriod}</span>DAYS</p>
+                <p>预计时间: {getDate(now,'d')} / {getDate(now + (allPeriod * 24 * 60 * 60 * 1000),'d')}</p>
+                <strong>总费用: {allTotal}ETH</strong>
+        </>
+    }
+
     useEffect(() => {
         init()
     },[router])
@@ -209,9 +235,8 @@ export default function order(props) {
                         })
                         stagesData = arr;
                         setStagesData([...arr]);
-                    } 
+                    }
                 }
-                
             })
         }
     },[step])
@@ -269,21 +294,7 @@ export default function order(props) {
                     <Stage_info Query={query} Amount={task.budget} OrderInfo={Order} Step={step} StagesData={setStagesData} Data={stagesData} />
                     {/* <Panel_stageInfo getStages={setStages} Stages={stages} getAdvance={setAdvance} amount={amount} OrderInfo={Order} who={'worker'} Oid={oid} /> */}
                 </div>
-                <div className="worker-total">
-                    {/* {
-                        advance !== 0 ? 
-                            <p>预付款: <span>{advance}</span>ETH</p>
-                            :
-                            ''
-                    }
-                    {
-                        stages.map((e,i) => 
-                            <p key={i}>P{i+1}阶段费用: <span>{e.budget}</span>ETH </p>
-                        )
-                    }
-                    <p>开发周期: <span>{totalPeriod}</span>DAYS</p>
-                    <strong>总费用: {total}ETH</strong> */}
-                </div>
+                <div className="worker-total">{total()}</div>
                 <Button type='primary' className='worker-btn' onClick={() => setStage()}>完成并提交阶段划分</Button>
                 <div className="h50"></div>
             </div>
