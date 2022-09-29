@@ -8,12 +8,7 @@ import Stage_list from "./Stage_list";
 
 export default function Stage_info(props) {
 
-    const { Query } = props;
-    const { Amount } = props;
-    const { OrderInfo } = props;
-    const { Data } = props;     //  数据库阶段
-    const { Step } = props;
-    const { StagesData } = props;
+    const { Query, Amount, OrderInfo, Data, Step, StagesData, isModify } = props;   //  StagesData 数据库阶段
     let [advance,setAdvance] = useState(false);
     let [stage0,setStage0] = useState();
     let [stages,setStages] = useState([]);   
@@ -25,8 +20,11 @@ export default function Stage_info(props) {
     const newTabIndex = useRef(0);
 
     const onChange = e => {
+        // TODO: 修改预付款时更改Modify状态为false ===> 调用合并数组 concat
         advance = e.target.checked;
         setAdvance(advance);
+        isModify(true);
+        concat();
     }
 
     const add = () => {
@@ -83,7 +81,7 @@ export default function Stage_info(props) {
     };
 
     const concat = () => {
-        if (stage0 && (stages.length === 0 || stages[0].period !== 0)) {
+        if (advance && stage0 && (stages.length === 0 || stages[0].period !== 0)) {
             let obj = {
                 budget: stage0,
                 period: 0
@@ -98,7 +96,8 @@ export default function Stage_info(props) {
     }
 
     const isOk = () => {
-        // TODO: 判断是否有空值 ==> 合并预付款
+        // TODO: 判断是否有空值
+        isModify(true);
         concat()
         editMode = true;
         setEditMode(editMode);
@@ -129,6 +128,7 @@ export default function Stage_info(props) {
     const change0 = (e) => {
         stage0 = e;
         setStage0(stage0);
+        isModify(true);
         concat();
     }
 
@@ -173,10 +173,10 @@ export default function Stage_info(props) {
                  {
                     Step === 0 ? 
                         <div className="stageInfo-subtitle">
-                            <Checkbox disabled={editMode ? true : false} checked={advance} className={`subtitle-check ${advance ? 'mb10' : ''}`} onChange={onChange}>增加预付款 <span className='check-span'>项目方确认阶段划分后,你将得到预付款</span></Checkbox>
+                            <Checkbox checked={advance} className={`subtitle-check ${advance ? 'mb10' : ''}`} onChange={onChange}>增加预付款 <span className='check-span'>项目方确认阶段划分后,你将得到预付款</span></Checkbox>
                             { 
                                 advance ? 
-                                  <InputNumber disabled={editMode ? true : false} defaultValue={stage0} min={0} className='subtitle-inner' addonAfter={<Select defaultValue="ETH" disabled />} onChange={e => change0(e)} />
+                                  <InputNumber defaultValue={stage0} min={0} className='subtitle-inner' addonAfter={<Select defaultValue="ETH" disabled />} onChange={e => change0(e)} />
                                   :
                                   ''
                             }

@@ -17,6 +17,7 @@ export default function order(props) {
     let [signObj,setSignObj] = useState({});
     let [step,setStep] = useState();
     let [stagesData,setStagesData] = useState();
+    let [modifyStatus,setModifyStatus] = useState(false);
     let [deadLine,setDeadLine] = useState();
     let [nonce,setNonce] = useState();
     let [isSigner,setIsSigner] = useState(false);
@@ -292,12 +293,11 @@ export default function order(props) {
                         ''
                 }
                 <div className="worker-signInStage">
-                    <Stage_info Query={query} Amount={task.budget} OrderInfo={Order} Step={step} StagesData={setStagesData} Data={stagesData} />
-                    {/* <Panel_stageInfo getStages={setStages} Stages={stages} getAdvance={setAdvance} amount={amount} OrderInfo={Order} who={'worker'} Oid={oid} /> */}
+                    <Stage_info Query={query} Amount={task.budget} OrderInfo={Order} Step={step} StagesData={setStagesData} Data={stagesData} isModify={setModifyStatus} />
                 </div>
                 <div className="worker-total">{total()}</div>
                 {
-                    query.who === 'issuer' ? <>
+                    query.who === 'issuer' && !modifyStatus ? <>
                         <p className="tips"><ExclamationCircleOutlined style={{color: 'red', marginRight: '10px'}} />同意后,项目正式启动.并按照阶段划分作为项目交付计划和付款计划</p>
                         <Button type='primary' className='worker-btn' onClick={() => permit()}>同意阶段划分</Button></>
                         :
