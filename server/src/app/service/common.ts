@@ -213,8 +213,6 @@ export class CommonService {
     }
 
     async updateAttachment(body: any){
-        console.log(body);
-        
         return new Promise((resolve, reject) => {
             let time = Date.now()+'.json'
             let path = './cache_area'+'/'+time
@@ -247,7 +245,7 @@ export class CommonService {
                 
             })
         }).then(async(res: any)=>{
-            fs.unlink(res.res, (err) => {
+            fs.unlink(res.path, (err) => {
                 if (err) throw err;
             });
             return await this.tasksRepository.query(updateJson({json: res, oid: body.oid}))

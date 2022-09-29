@@ -14,7 +14,6 @@ export default function Stage_info(props) {
     let [stage0,setStage0] = useState();
     let [stages,setStages] = useState([]);   
     let [editMode,setEditMode] = useState(false);
-
     // Tabs
     const [activeKey, setActiveKey] = useState();   
     const [items, setItems] = useState([]);

@@ -1,6 +1,8 @@
-import { Divider } from "antd";
+import { Button, Divider, message } from "antd";
 import { useEffect, useState } from "react";
-import { useRead } from "../controller";
+import { useContracts, useRead } from "../controller";
+import { getStagesJson } from "../http/api/order";
+import { updateAttachment } from "../http/api/task";
 
 
 
@@ -9,17 +11,76 @@ export default function Stage_list(props) {
     const { data, set, setTab, Query, Step, index, del } = props;
     const { useStageRead: ongoingStage } = useRead('ongoingStage', Query.oid);
     const { useStageRead: stagesChain } = useRead('getStages', Query.oid);
+    const { useOrderContractWrite: delivery } = useContracts('updateAttachment');
     let [stageIndex,setStageIndex] = useState();
+    let [stageJson,setStageJson] = useState();
+    let [isDelivery,setIsDelivery] = useState({data: '', status: false});
+    
+    const setDelivery = () => {
+        // TODO: attachment添加附件
+        delivery.write({ recklesslySetUnpreparedArgs: [ Query.oid, '' ] });
+    }
+
+    useEffect(() => {
+        if (delivery.data) {
+            stageJson.stages[ongoingStage.data.stageIndex.toString()].delivery = {
+                attachment: '',
+                fileType: '',
+                content: '完成'
+            }
+            setStageJson({...stageJson});
+            updateAttachment({oid: Query.oid, obj: JSON.stringify(stageJson)})
+            .then(res => {
+                message.success('交付成功!')
+                setTimeout(() => {
+                    history.go(0)
+                }, 500);
+            }).catch(err => {
+                message.error('交付失败!')
+            })
+        }
+    },[delivery.data])
 
     useEffect(() => {
         if (ongoingStage.data) {
-            // 判断是否有预付款
             let index = ongoingStage.data.stageIndex.toString();
             let isStage0 = stagesChain.data[0].period.toString();
-            stageIndex = isStage0 == 0 ? index - 1 : index;
+            stageIndex = isStage0 == 0 ? Number(index) - 1 : index;
             setStageIndex(stageIndex);
         }
     },[ongoingStage.data])
+// TODO: 改为Stage_info传子
+    useEffect(() => {
+        getStagesJson({oid: Query.oid})
+            .then(res => {
+                // console.log(res);
+                // return
+                // permitNonce = res.signnonce;
+                // setPermitNonce(permitNonce);
+                // console.log(res.signnonce);
+                // stages = res.stages;
+                // setStages({...stages});
+                // deliveryDetail = res.json.stages[index+1].delivery;
+                // setDeliveryDetail(deliveryDetail);
+                stageJson = res.json;
+                stageJson.last = res.attachment;
+                setStageJson({...stageJson});
+            })
+    },[])
+
+    useEffect(() => {
+        if (stageJson) {
+            stageJson.stages.map((e,i) => {
+                if (ongoingStage.data.stageIndex.toString() == i && e.delivery.content) {
+                    isDelivery = {
+                        status: true,
+                        data: e.delivery
+                    }
+                    setIsDelivery({...isDelivery});
+                }
+            })
+        }
+    },[stageJson])
 
     return  (
         data.period === 0 ? '' :
@@ -65,36 +126,35 @@ export default function Stage_list(props) {
                         :
                         ''
                 }
-                {/* {
-                    doingStage == index + 1 && !Who && deliveryDetail !== null ? 
+                {
+                    stageIndex == index && isDelivery.status ? 
                     <div className="deliveryDetail">
-                        {
-                            deliveryDetail.content.length !== 0 ?
-                            <>
-                                <div className="title">开发者提交了「阶段交付」:</div>
-                                <div className="content">
-                                    {deliveryDetail.content}
-                                </div>
-                            </>
-                            :
-                            ''
-                        }
+                        <>
+                            <div className="title">{Query.who === 'issuer' ? '开发者': '你'}提交了「阶段交付」:</div>
+                            <div className="content">
+                                {isDelivery.data.content}
+                                {/* TODO: 文件下载 */}
+                                {/* {isDelivery.data.attachment} */}
+                            </div>
+                        </>
+                        
                     </div>
                     :
                     ''
-                } */}
-                {/* {
-                    doingStage == index + 1 ? 
+                }
+                {
+                    Step === 1 && index == stageIndex  ? 
                         <div className="btns">
-                            <Button onClick={() => delay()}>延期</Button>
-                            <Button onClick={() => abort()}>中止</Button>
+                            <Button type="dashed" onClick={() => delay()}>延期</Button>
+                            <Button type="primary" danger onClick={() => abort()}>中止</Button>
                             {
-                                Who ? <Button onClick={() => setDelivery()}>确认交付</Button> : <Button onClick={() => setConfirmDelivery(index+1)}>确认验收</Button>
+                                Query.who === 'worker' ? 
+                                <Button type="primary" onClick={() => setDelivery()}>确认交付</Button> 
+                                : 
+                                <Button type="primary" onClick={() => setConfirmDelivery(index+1)}>确认验收</Button>
                             }
-                        </div>
-                        :
-                        ''
-                } */}
+                        </div> : ''
+                }
             </div>
         </div>
     )
