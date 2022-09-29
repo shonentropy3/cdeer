@@ -105,6 +105,13 @@ export default function Stage_info(props) {
         setStages([...stages]);
     };
 
+    const isCancel = () => {
+        setEditMode(true)
+        if (Data && Data.length > 0) {
+            init();
+        }
+    }
+
     const del = (index) => {
         // TODO: 加上预付款判断   有的话则index+1
         stages.splice(index,1);
@@ -125,9 +132,8 @@ export default function Stage_info(props) {
         concat();
     }
 
-    useEffect(() => {
-        if (Data && Data.length > 0) {
-            setEditMode(true);
+    const init = () => {
+        setEditMode(true);
             let arr = [];
             let cards = [];
             Data.map(e => {
@@ -154,6 +160,11 @@ export default function Stage_info(props) {
             stages = arr;
             setStages([...stages]);
             setItems(cards);
+    }
+
+    useEffect(() => {
+        if (Data && Data.length > 0) {
+            init();
         }
     },[Data])
 
@@ -162,10 +173,10 @@ export default function Stage_info(props) {
                  {
                     Step === 0 ? 
                         <div className="stageInfo-subtitle">
-                            <Checkbox checked={advance} className={`subtitle-check ${advance ? 'mb10' : ''}`} onChange={onChange}>增加预付款 <span className='check-span'>项目方确认阶段划分后,你将得到预付款</span></Checkbox>
+                            <Checkbox disabled={editMode ? true : false} checked={advance} className={`subtitle-check ${advance ? 'mb10' : ''}`} onChange={onChange}>增加预付款 <span className='check-span'>项目方确认阶段划分后,你将得到预付款</span></Checkbox>
                             { 
                                 advance ? 
-                                  <InputNumber defaultValue={stage0} min={0} className='subtitle-inner' addonAfter={<Select defaultValue="ETH" disabled />} onChange={e => change0(e)} />
+                                  <InputNumber disabled={editMode ? true : false} defaultValue={stage0} min={0} className='subtitle-inner' addonAfter={<Select defaultValue="ETH" disabled />} onChange={e => change0(e)} />
                                   :
                                   ''
                             }
@@ -203,7 +214,7 @@ export default function Stage_info(props) {
                                             style={{ width: '100%' }}
                                         />
                                             <div className="btns">
-                                                <Button className="btn">取消</Button>
+                                                <Button className="btn" onClick={() => isCancel()}>取消</Button>
                                                 <Button className="btn" type="primary" onClick={() => isOk()}>编辑完成</Button>                              
                                             </div> 
                                     </div>

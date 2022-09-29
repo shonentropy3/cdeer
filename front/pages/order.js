@@ -8,6 +8,7 @@ import { ethers } from "ethers";
 import { useAccount, useNetwork } from 'wagmi'
 import { getOrdersInfo, getStagesHash, getStagesJson } from "../http/api/order";
 import { getDate } from "../utils/getDate";
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 export default function order(props) {
     
@@ -28,7 +29,7 @@ export default function order(props) {
     const { useTaskRead } = useRead('tasks', query.tid);
     const { useStageRead } = useRead('ongoingStage', query.oid);
     const { useOrderRead: Order } = useRead('getOrder', query.oid);
-    const { useStageRead: StagesChain } = useRead('getStages', query.oid);
+    const { useStageRead: stagesChain } = useRead('getStages', query.oid);
     const { useOrderRead: nonces } = useRead('nonces', address);
     const { useSign, obj } = useSignData(signObj);
     
@@ -190,7 +191,7 @@ export default function order(props) {
                         }})
                 }
                 <p>开发周期: <span>{allPeriod}</span>DAYS</p>
-                <p>预计时间: {getDate(now,'d')} / {getDate(now + (allPeriod * 24 * 60 * 60 * 1000),'d')}</p>
+                <p>预计时间: <span>{getDate(now,'d')} / {getDate(now + (allPeriod * 24 * 60 * 60 * 1000),'d')}</span></p>
                 <strong>总费用: {allTotal}ETH</strong>
         </>
     }
@@ -295,7 +296,13 @@ export default function order(props) {
                     {/* <Panel_stageInfo getStages={setStages} Stages={stages} getAdvance={setAdvance} amount={amount} OrderInfo={Order} who={'worker'} Oid={oid} /> */}
                 </div>
                 <div className="worker-total">{total()}</div>
-                <Button type='primary' className='worker-btn' onClick={() => setStage()}>完成并提交阶段划分</Button>
+                {
+                    query.who === 'issuer' ? <>
+                        <p className="tips"><ExclamationCircleOutlined style={{color: 'red', marginRight: '10px'}} />同意后,项目正式启动.并按照阶段划分作为项目交付计划和付款计划</p>
+                        <Button type='primary' className='worker-btn' onClick={() => permit()}>同意阶段划分</Button></>
+                        :
+                        <Button type='primary' className='worker-btn' onClick={() => setStage()}>完成并提交阶段划分</Button>
+                    }
                 <div className="h50"></div>
             </div>
 }
