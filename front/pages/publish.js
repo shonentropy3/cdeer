@@ -201,7 +201,6 @@ export default function Publish() {
                 value += ele.value + ','
             }
         })
-        console.log(value);
         fun({...obj});
         inner[i].subValue = BitOperation(arr);
         inner[i].value = "'{"+ value.substring(0,value.lastIndexOf(',')) + "}'"
