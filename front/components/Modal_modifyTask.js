@@ -39,18 +39,6 @@ export  function Modal_ModifyTask (params) {
 
     let [modifyInfo,setModifInfo] = useState({})
     
-    let [projectType,setProjectType] = useState(
-        [
-            {title: 'solidity', status: false, buttonType:"text", value: '201'},
-            {title: 'javascript', status: false, buttonType:"text", value: '202'},
-            {title: 'python', status: false, buttonType:"text", value: '203'},
-            {title: 'Go', status: false, buttonType:"text", value: '204'},
-            {title: 'C/C++', status: false, buttonType:"text", value: '205'},
-            {title: 'Android', status: false, buttonType:"text", value: '206'},
-            {title: 'HTML/CSS', status: false, buttonType:"text", value: '207'},
-            {title: 'IOS', status: false, buttonType:"text", value: '208'},
-        ]
-    )
     let [skillss,setSkillss] = useState(
         [
             {title: 'solidity', status: false, buttonType:"text", value: '101'},
@@ -98,25 +86,6 @@ export  function Modal_ModifyTask (params) {
     }
 
 
-    const checkType = (e,i)=>{
-
-        // console.log(e);
-        let arr = []
-        projectType.map(ele => {
-            if(ele.status){
-                arr.push(ele)
-            }
-        })
-        console.log(arr.length);
-        if(arr.length < 6){
-            e.status = !e.status;
-            setProjectType([...projectType]);
-        }else{
-            e.status = false
-            setProjectType([...projectType]);
-        }
-
-    }
 
     const checkSkill = (e,i)=>{
 
@@ -233,8 +202,6 @@ export  function Modal_ModifyTask (params) {
                 }
             })
         })
-        // setProjectType([...task_type])
-        // setProjectSkills([...allInfo])
     },[])
 
     useEffect(() => {
