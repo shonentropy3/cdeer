@@ -1,11 +1,25 @@
 import { Divider } from "antd";
+import { useEffect, useState } from "react";
+import { useRead } from "../controller";
 
 
 
 export default function Stage_list(props) {
     
     const { data, set, setTab, Query, Step, index, del } = props;
+    const { useStageRead: ongoingStage } = useRead('ongoingStage', Query.oid);
+    const { useStageRead: stagesChain } = useRead('getStages', Query.oid);
+    let [stageIndex,setStageIndex] = useState();
 
+    useEffect(() => {
+        if (ongoingStage.data) {
+            // 判断是否有预付款
+            let index = ongoingStage.data.stageIndex.toString();
+            let isStage0 = stagesChain.data[0].period.toString();
+            stageIndex = isStage0 == 0 ? index - 1 : index;
+            setStageIndex(stageIndex);
+        }
+    },[ongoingStage.data])
 
     return  (
         data.period === 0 ? '' :
@@ -18,12 +32,10 @@ export default function Stage_list(props) {
                             <p onClick={() => del(index)}>删除</p>
                         </> : ''
                 }
-                {/* {
-                    Step === 2 && OrderStart ? 
-                        <span style={{width: '100%', textAlign: 'right', color: '#f9b65c'}}>进行中</span>
-                        :
-                        ''
-                } */}
+                {
+                    Step === 1 && index == stageIndex ? 
+                        <span style={{width: '100%', textAlign: 'right', color: '#f9b65c'}}>进行中</span> : ''
+                }
             </div>
             <div className="inspection-nav">
                 P{index+1}阶段<Divider type="vertical" className="line" />{data.title}

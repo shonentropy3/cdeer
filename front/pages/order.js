@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from 'next/router'
 import { Steps, Button, message } from "antd";
 import { getDemandInfo } from "../http/api/task";
-import { useRead, useSignData } from "../controller";
+import { multicallWrite, muticallEncode, useRead, useSignData } from "../controller";
 import Stage_info from "../components/Stage_info";
 import { ethers } from "ethers";
 import { useAccount, useNetwork } from 'wagmi'
@@ -22,28 +22,37 @@ export default function order(props) {
     let [nonce,setNonce] = useState();
     let [isSigner,setIsSigner] = useState(false);
     let [stagejson,setStagejson] = useState('');
+    // 确认划分
+    let [signature,setSignature] = useState('');
     
     const { Step } = Steps;
     const router = useRouter();
     const { chain } = useNetwork();
     const { address } = useAccount();
     const { useTaskRead } = useRead('tasks', query.tid);
-    const { useStageRead } = useRead('ongoingStage', query.oid);
     const { useOrderRead: Order } = useRead('getOrder', query.oid);
     const { useStageRead: stagesChain } = useRead('getStages', query.oid);
     const { useOrderRead: nonces } = useRead('nonces', address);
     const { useSign, obj } = useSignData(signObj);
     
-    const readContract = () => {
+    // 获取链上数据
+    const readContract = async() => {
         if (query.tid && useTaskRead.data) {
             let multiple = useTaskRead.data.currency === 1 ? Math.pow(10,18) : 1;
             task.budget = useTaskRead.data.budget.toString() / multiple;
             task.currency = useTaskRead.data.currency;
             setTask({...task});
         }
-        if (query.oid && useStageRead.data) {
-            // TODO: chain阶段详情 
-            console.log(useStageRead.data);
+        if (query.oid && stagesChain.data) {
+            // TODO: chain阶段详情
+            await getStages()
+            stagesChain.data.map((e,i) => {
+                let period = e.period.toString() / 60 / 60 / 24;
+                let budget = e.amount.toString() / Math.pow(10,18);
+                stagesData[i].period = period;
+                stagesData[i].budget = budget;
+            })
+            setStagesData([...stagesData]);
         }
         if (query.oid && Order.data) {
             switch (Order.data.progress) {
@@ -110,6 +119,54 @@ export default function order(props) {
             setIsSigner(true);
     }
 
+    const permit = () => {
+        let _amounts = [];
+        let _periods = [];
+        let total = 0;
+        stagesData.map(e => {
+            total += e.budget;
+            _amounts.push(ethers.utils.parseEther(`${e.budget}`));
+            _periods.push(`${e.period * 24 * 60 * 60}`);
+        })
+        let r = '0x' + signature.substring(2).substring(0, 64);
+        let s = '0x' + signature.substring(2).substring(64, 128);
+        let v = '0x' + signature.substring(2).substring(128, 130);
+
+        let value = ethers.utils.parseEther(`${total}`);
+        let arr = [];
+        arr.push({
+            functionName: 'permitStage',
+            params: [query.oid, _amounts, _periods, nonce, deadLine, v, r, s]
+        })
+        arr.push({
+            functionName: 'payOrder',
+            params: [query.oid, value]
+        })
+        if (task.budget !== total) {
+            arr.push({
+                functionName: 'modifyOrder',
+                params: [query.oid, ethers.constants.AddressZero, value]
+            })
+        }
+        arr.push({
+            functionName: 'startOrder',
+            params: [query.oid]
+        })
+        
+
+        let params = muticallEncode(arr);
+        multicallWrite(params,address,value)
+        .then(res => {
+            message.success('项目开始')
+            setTimeout(() => {
+                history.go(0)
+            }, 500);
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    }
+
     const signSuccess = () => {
         setIsSigner(false);
         let stageDetail = {
@@ -172,6 +229,33 @@ export default function order(props) {
         })
     }
 
+    const getStages = async() => {
+        await getStagesJson({oid: query.oid})
+            .then(res => {
+                // TODO: 判断是否有人设置阶段
+                if (res.signature) {
+                   signature = res.signature;
+                   setSignature(signature);
+                   deadLine = res.stages.deadline;
+                   setDeadLine(deadLine);
+                   let arr = [];
+                    if (res.stages) {
+                        res.json.stages.map((e,i) => {
+                            arr.push({
+                                budget: res.stages.amount[i],
+                                period: res.stages.period[i],
+                                content: e.milestone.content,
+                                percent: '',
+                                title: e.milestone.title
+                            })
+                        })
+                        stagesData = arr;
+                        setStagesData([...arr]);
+                    }
+                }
+            })
+    }
+
     const total = () => {
         if (!stagesData) {
             return
@@ -197,6 +281,18 @@ export default function order(props) {
         </>
     }
 
+    const btn = () => {
+        if (step === 0) {
+            return (
+                query.who === 'issuer' && !modifyStatus ? <>
+                    <p className="tips"><ExclamationCircleOutlined style={{color: 'red', marginRight: '10px'}} />同意后,项目正式启动.并按照阶段划分作为项目交付计划和付款计划</p>
+                    <Button type='primary' className='worker-btn' onClick={() => permit()}>同意阶段划分</Button></>
+                    :
+                    <Button type='primary' className='worker-btn' onClick={() => setStage()}>完成并提交阶段划分</Button>
+            )
+        }
+    }
+
     useEffect(() => {
         init()
     },[router])
@@ -219,27 +315,7 @@ export default function order(props) {
                 stagejson = res[0].stagejson;
                 setStagejson(stagejson);
             })
-
-            getStagesJson({oid: query.oid})
-            .then(res => {
-                // TODO: 判断是否有人设置阶段
-                if (res.signature) {
-                   let arr = [];
-                    if (res.stages) {
-                        res.json.stages.map((e,i) => {
-                            arr.push({
-                                budget: res.stages.amount[i],
-                                period: res.stages.period[i],
-                                content: e.milestone.content,
-                                percent: '',
-                                title: e.milestone.title
-                            })
-                        })
-                        stagesData = arr;
-                        setStagesData([...arr]);
-                    }
-                }
-            })
+            getStages()
         }
     },[step])
 
@@ -288,21 +364,13 @@ export default function order(props) {
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        :
-                        ''
+                        </div> : ''
                 }
                 <div className="worker-signInStage">
                     <Stage_info Query={query} Amount={task.budget} OrderInfo={Order} Step={step} StagesData={setStagesData} Data={stagesData} isModify={setModifyStatus} />
                 </div>
                 <div className="worker-total">{total()}</div>
-                {
-                    query.who === 'issuer' && !modifyStatus ? <>
-                        <p className="tips"><ExclamationCircleOutlined style={{color: 'red', marginRight: '10px'}} />同意后,项目正式启动.并按照阶段划分作为项目交付计划和付款计划</p>
-                        <Button type='primary' className='worker-btn' onClick={() => permit()}>同意阶段划分</Button></>
-                        :
-                        <Button type='primary' className='worker-btn' onClick={() => setStage()}>完成并提交阶段划分</Button>
-                    }
+                {btn()}
                 <div className="h50"></div>
             </div>
 }

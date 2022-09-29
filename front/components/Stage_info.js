@@ -1,7 +1,8 @@
 import { Button, Card, Checkbox, InputNumber, Select, Tabs } from "antd";
 import { useEffect, useRef, useState } from "react";
+import { useAccount } from 'wagmi'
+import { useContracts } from "../controller";
 import Stage_card from "./Stage_card";
-import Stage_inspection from "./Stage_inspection";
 import Stage_list from "./Stage_list";
 
 
@@ -18,6 +19,9 @@ export default function Stage_info(props) {
     const [activeKey, setActiveKey] = useState();   
     const [items, setItems] = useState([]);
     const newTabIndex = useRef(0);
+
+    const { address } = useAccount()
+    const { useOrderContractWrite: getWithdraw } = useContracts('withdraw');
 
     const onChange = e => {
         // TODO: 修改预付款时更改Modify状态为false ===> 调用合并数组 concat
@@ -162,11 +166,23 @@ export default function Stage_info(props) {
             setItems(cards);
     }
 
+    const gowithdraw = () => {
+        getWithdraw.write({
+            recklesslySetUnpreparedArgs: [
+                Query.oid, address
+            ]
+        })
+    }
+
     useEffect(() => {
         if (Data && Data.length > 0) {
             init();
         }
     },[Data])
+
+    useEffect(() => {
+        getWithdraw.isSuccess ? message.success('取款成功') : '';
+    },[getWithdraw.isSuccess])
 
     return <div className="Stage_info">
                 <div className="stageInfo-title"> 项目阶段划分 </div>
@@ -183,12 +199,12 @@ export default function Stage_info(props) {
                         </div> : ''
                 }
                 {
-                    Query.who === 'worker' && Step === 1 ? 
+                    Query.who === 'worker' && Step === 1 && stage0 ? 
                         <div className="stageInfo-subtitle">
                             <Checkbox checked disabled className={`subtitle-check ${advance ? 'mb10' : ''}`}>预付款已支付</Checkbox>
                             <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                                <p style={{fontSize: '18px'}}>{info.advance}ETH</p>
-                                <Button style={{width: '150px', height: '50px'}} onClick={() => gowithdraw(0)}>取款</Button>
+                                <p style={{fontSize: '18px'}}>{stage0}ETH</p>
+                                <Button style={{width: '150px', height: '50px'}} onClick={() => gowithdraw()}>取款</Button>
                             </div>
                         </div> : ''
                 }
