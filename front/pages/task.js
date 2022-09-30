@@ -319,7 +319,7 @@ export default function Task() {
                         sidbar.map((e,i) => 
                             <div
                                 key={i} 
-                                className={`li ${selectItem.item === e.value ? 'active':''}`} 
+                                className={`li ${selectItem.item === e.value ? 'active':''}`}
                                 onClick={() => changeItem(e.value)}
                                 >
                                 {e.title}
