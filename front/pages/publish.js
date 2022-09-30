@@ -33,7 +33,7 @@ export default function Publish() {
     let [suffix,setSuffix] = useState("");
     let [skills,setSkills] = useState({
         title: '技能要求',
-        subtitle: '你擅长的技能*(最多6个)',
+        subtitle: '你擅长的技能*(最多4个)',
         list: []
     })
 
@@ -171,7 +171,7 @@ export default function Publish() {
 
     const changeSelect = (obj, i, index) => {
         if (limiter(obj.list, i) === false) {
-            message.error('最多可选择6个')
+            message.error('最多可选择4个')
             return
         }
         obj.list[i].status = !obj.list[i].status
@@ -187,7 +187,7 @@ export default function Publish() {
         arr.map(e => {
             e.status ? length++ : '';
         })
-        if (length === 6 && !arr[i].status) {
+        if (length === 4 && !arr[i].status) {
             return false
         }
     }
