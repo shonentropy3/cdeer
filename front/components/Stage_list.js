@@ -16,6 +16,7 @@ export default function Stage_list(props) {
     let [stageIndex,setStageIndex] = useState();
     let [stageJson,setStageJson] = useState();
     let [isDelivery,setIsDelivery] = useState({data: '', status: false});
+    const [isAbortModalOpen, setIsAbortModalOpen] = useState(false);
     // TODO: 改为Stage_info传子
     
     // 交付
@@ -159,6 +160,14 @@ export default function Stage_list(props) {
     return  (
         data.period === 0 ? '' :
             <div className="Stage_inspection">
+            <Modal title="" className="Abort" footer={null} open={isAbortModalOpen} closable={false}>
+                <p className="title">中止阶段</p>
+                {/* TODO: 中止阶段退款 */}
+                <div className="btns">
+                    <Button onClick={() => {setIsAbortModalOpen(false)}}>取消</Button>
+                    <Button onClick={() => abort()}>中止阶段</Button>
+                </div>
+            </Modal>
             <div className="inspection-info">
                 {
                     Step === 0 ? 
@@ -219,7 +228,7 @@ export default function Stage_list(props) {
                     Step === 1 && index == stageIndex  ? 
                         <div className="btns">
                             <Button type="dashed" onClick={() => delay()}>延期</Button>
-                            <Button type="primary" danger onClick={() => abort()}>中止</Button>
+                            <Button type="primary" danger onClick={() => {setIsAbortModalOpen(true)}}>中止</Button>
                             {
                                 Query.who === 'worker' ? 
                                 <Button type="primary" onClick={() => setDelivery()}>确认交付</Button> 

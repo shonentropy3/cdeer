@@ -315,16 +315,16 @@ export default function Task() {
     return (
         <div className="Userprojects">
             <div className="sidbar">
-                    {
-                        sidbar.map((e,i) => 
-                            <div
-                                key={i} 
-                                className={`li ${selectItem.item === e.value ? 'active':''}`}
-                                onClick={() => changeItem(e.value)}
-                                >
-                                {e.title}
-                            </div>)
-                    }
+                {
+                    sidbar.map((e,i) => 
+                        <div
+                            key={i} 
+                            className={`li ${selectItem.item === e.value ? 'active':''}`}
+                            onClick={() => changeItem(e.value)}
+                            >
+                            {e.title}
+                        </div>)
+                }
             </div>
             <div className="content">
                 {panel()}
