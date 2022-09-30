@@ -1,23 +1,22 @@
 import { Button, Divider, InputNumber, message, Modal } from "antd";
 import { useEffect, useState } from "react";
 import { useContracts, useRead } from "../controller";
-import { getStagesJson } from "../http/api/order";
+import { getProlongStage, getStagesJson } from "../http/api/order";
 import { updateAttachment } from "../http/api/task";
-import { useAccount, useNetwork } from 'wagmi'
+import { useNetwork } from 'wagmi'
 
 export default function Stage_list(props) {
     
-    const { data, set, setTab, Query, Step, index, del } = props;
+    const { data, set, setTab, Query, Step, index, del, delivery, confirm, abortOrder, prolongStage } = props;
     const { useStageRead: ongoingStage } = useRead('ongoingStage', Query.oid);
     const { useStageRead: stagesChain } = useRead('getStages', Query.oid);
-    const { useOrderContractWrite: delivery } = useContracts('updateAttachment');
-    const { useOrderContractWrite: confirm } = useContracts('confirmDelivery');
-    const { useOrderContractWrite: abortOrder } = useContracts('abortOrder');
+
     const { chain } = useNetwork();
     let [delayValue,setDelayValue] = useState(null);
     let [stageIndex,setStageIndex] = useState();
     let [stageJson,setStageJson] = useState();
     let [isDelivery,setIsDelivery] = useState({data: '', status: false});
+    // TODO: 改为Stage_info传子
     
     // 交付
     const setDelivery = () => {
@@ -48,24 +47,48 @@ export default function Stage_list(props) {
               </div>
             ),
             onOk() {
-                let now = parseInt(new Date().getTime()/1000);
-                let setTime = 2 * 24 * 60 * 60;
-                deadline = now+setTime;
-                setDeadline(deadline);
-                let i = index + 1;
-                testObj = {
-                    chainId: chain.id,
-                    // address: address,
-                    orderId: Query.oid,
-                    stageIndex: ongoingStage.data.stageIndex.toString(),
-                    period: `${delayValue * 24 * 60 * 60}`,
-                    nonce: nonce,
-                    deadline: `${now+setTime}`,
-                }
-                setTestObj({...testObj})
+                // let now = parseInt(new Date().getTime()/1000);
+                // let setTime = 2 * 24 * 60 * 60;
+                // deadline = now+setTime;
+                // setDeadline(deadline);
+                // let i = index + 1;
+                // testObj = {
+                //     chainId: chain.id,
+                //     // address: address,
+                //     orderId: Query.oid,
+                //     stageIndex: ongoingStage.data.stageIndex.toString(),
+                //     period: `${delayValue * 24 * 60 * 60}`,
+                //     nonce: nonce,
+                //     deadline: `${now+setTime}`,
+                // }
+                // setTestObj({...testObj})
                 // console.log(delayValue,useStageReads.data[0].stageIndex.toString());
             },
           });
+    }
+
+    // 确认延期
+    const permitDelay = () => {
+        // TODO: prolongStage contract
+        // getProlongStage({oid: Query.oid})
+        // .then(res => {
+        //     if (res.code === 200) {
+        //         let obj = {
+        //             _orderId: Oid, 
+        //             _stageIndex: index+1,
+        //             _appendPeriod: (data.period - data.prolong) * 24 * 60 * 60,
+        //             nonce: nonce,
+        //             deadline: res.data.stages.deadline,
+        //             v: '0x' + res.data.signature.substring(2).substring(128, 130),
+        //             r: '0x' + res.data.signature.substring(2).substring(0, 64),
+        //             s: '0x' + res.data.signature.substring(2).substring(64, 128)
+        //         }
+        //         console.log(obj._orderId, obj._stageIndex, obj._appendPeriod, permitNonce, obj.deadline, obj.v, obj.r, obj.s);
+        //         prolongStage.write({
+        //             recklesslySetUnpreparedArgs: [obj._orderId, obj._stageIndex, obj._appendPeriod, permitNonce, obj.deadline, obj.v, obj.r, obj.s]
+        //         })
+        //     }
+        // })
     }
 
     useEffect(() => {
@@ -96,7 +119,7 @@ export default function Stage_list(props) {
             setStageIndex(stageIndex);
         }
     },[ongoingStage.data])
-// TODO: 改为Stage_info传子
+
     useEffect(() => {
         getStagesJson({oid: Query.oid})
             .then(res => {

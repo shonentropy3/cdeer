@@ -1,17 +1,24 @@
 import { Body, Controller, Get, Post, Request, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { MarketService } from '../service/demand';
+import { ResolutionService } from '../service/resolution';
 
 
 @Controller('demand')
 export class MarketController {
-    constructor(private readonly marketService: MarketService){}
+    constructor(
+        private readonly marketService: MarketService,
+        private readonly resolutionService: ResolutionService
+    ){}
 
     @Post('createDemand')  // 发布需求
     async createProject(@Body() body: any){
         return await this.marketService.createDemand(body)
+        .then(res => {
+            this.resolutionService.TransHashes()
+            return res
+        })
     }
-    
     
     
     @Post('modifyDemand')  // 修改需求

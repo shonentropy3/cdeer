@@ -10,6 +10,10 @@ import Stage_list from "./Stage_list";
 export default function Stage_info(props) {
 
     const { Query, Amount, OrderInfo, Data, Step, StagesData, isModify } = props;   //  StagesData 数据库阶段
+    const { useOrderContractWrite: delivery } = useContracts('updateAttachment');
+    const { useOrderContractWrite: confirm } = useContracts('confirmDelivery');
+    const { useOrderContractWrite: abortOrder } = useContracts('abortOrder');
+    const { useOrderContractWrite: prolongStage } = useContracts('prolongStage');
     let [advance,setAdvance] = useState(false);
     let [stage0,setStage0] = useState();
     let [stages,setStages] = useState([]);   
@@ -243,7 +247,20 @@ export default function Stage_info(props) {
                         <div className="stageInfo-inspection">
                             {
                                 stages.map((e,i) => 
-                                    <Stage_list key={i} index={i} data={e} set={setEditMode} setTab={setActiveKey} Query={Query} Step={Step} del={del}/>
+                                    <Stage_list 
+                                        key={i} 
+                                        index={i} 
+                                        data={e} 
+                                        set={setEditMode} 
+                                        setTab={setActiveKey} 
+                                        Query={Query} 
+                                        Step={Step} 
+                                        del={del}
+                                        delivery={delivery}
+                                        confirm={confirm}
+                                        abortOrder={abortOrder}
+                                        prolongStage={prolongStage}
+                                    />
                                 )
                             }
                             {
