@@ -3,7 +3,8 @@ import { useAccount } from 'wagmi';
 import { 
     Button,
     Modal,
-    Input
+    Input,
+    message
  } from 'antd';
 import {
     WechatOutlined,
@@ -25,6 +26,7 @@ export default function myInfo() {
     let [avatar,setAvatar] = useState("")
     let [userInfo,setUserInfo] = useState({})
     let [hasInfo,setHasInfo] = useState(false)
+    let [info,setInfo] = useState({})
 
     let [skills,setSkills] = useState([
         {title:'solidity', status: false},
@@ -91,6 +93,12 @@ export default function myInfo() {
         console.log(hasInfo);
         if(hasInfo){
             modifyMyInfo(info)
+            .then(res => {
+                message.success('修改成功')
+                setTimeout(() => {
+                    history.go(0)
+                }, 500);
+            })
             console.log("mofify");  
         }else{
             setMyInfo(info)
@@ -104,23 +112,25 @@ export default function myInfo() {
     }
 
     const getInfo = async () => {
-        await getMyInfo(address)
+        await getMyInfo({address: address})
         .then((res)=>{
-            console.log(res);
-            let obj = res[0]
-            // console.log(obj.role);
-            setUserInfo({...obj})
-            setUserName(obj.username)
-            setTelegram(obj.telegram)
-            setWeChat(obj.wechat)
-            setSkype(obj.skype)
-            setUserSkills([...obj.role])
-            if(res){
-                setHasInfo(true)
+            if (res.code === 200) {
+                let obj = res.data[0]
+                info = obj;
+                setInfo({...info});
+                if(res){
+                    setHasInfo(true)
+                }
+                return
+                console.log(obj);
+                setUserInfo({...obj})
+                setUserName(obj.username)
+                setTelegram(obj.telegram)
+                setWeChat(obj.wechat)
+                setSkype(obj.skype)
+                setUserSkills([...obj.role])
+                
             }
-        })
-        .catch((err)=>{
-            console.log(err);
         })
     }
 
@@ -146,7 +156,7 @@ export default function myInfo() {
             <div className="top">
                 <div className="img"></div>
                 <div className="info">
-                    <p>{userInfo.username?userInfo.username:"未设置用户昵称"}</p>
+                    <p>{info.username?info.username:"未设置用户昵称"}</p>
                     <div className="li"><SkypeOutlined /><WechatOutlined /><GithubOutlined /></div>
                 </div>
             </div>
@@ -174,7 +184,7 @@ export default function myInfo() {
                         <Input 
                             type="text" 
                             placeholder="name"
-                            value={username}
+                            defaultValue={info.username}
                             onChange={(e)=>setUserName(e.target.value)} 
                         />
                     </div>
@@ -187,7 +197,7 @@ export default function myInfo() {
                         <Input 
                             type="text" 
                             placeholder='Telegram'
-                            value={telegram} 
+                            defaultValue={info.telegram}
                             onChange={(e)=>setTelegram(e.target.value)}
                         />
                     </div>
@@ -195,7 +205,7 @@ export default function myInfo() {
                         <Input 
                             type="text" 
                             placeholder='WeChat' 
-                            value={wechat}
+                            defaultValue={info.wechat}
                             onChange={(e)=>setWeChat(e.target.value)}
                         />
                     </div>
@@ -204,7 +214,7 @@ export default function myInfo() {
                         <Input 
                             type="text" 
                             placeholder='Skype' 
-                            value={skype}
+                            defaultValue={info.skype}
                             onChange={(e)=>setSkype(e.target.value)}
                         />
                     </div>
@@ -227,7 +237,7 @@ export default function myInfo() {
                     }
                 </div>
             </div>
-            <Button className="btn" onClick={saveHanler}>保存</Button>
+            <Button className="btn" onClick={() => saveHanler()}>保存</Button>
         </Modal>
     </div>
     </>

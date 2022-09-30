@@ -95,7 +95,7 @@ export default function Stage_card(params) {
                         )
                     }
                 </div>
-                <InputNumber value={data.budget} min={1} addonAfter="ETH" onChange={e => changeBudget(e)} />
+                <InputNumber defaultValue={data.budget} min={1} addonAfter="ETH" onChange={e => changeBudget(e)} />
             </Form.Item>
 
             <Form.Item label="阶段说明" name="content">

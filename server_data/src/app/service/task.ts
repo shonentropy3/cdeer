@@ -32,68 +32,6 @@ export class TaskService {
 
     private readonly logger = new Logger(TaskService.name)
 
-//     modifyDemandLog = async () => {
-//         let latest = await rpcProvider.getBlockNumber();
-//         let last = await this.blockLogRepository.query(getModifyDemandLastBlock());
-//         let logBlock = last[0].block;
-        
-//         if (logBlock >= latest) return; //区块已监听过了
-//         logBlock = Math.max(logBlock, (latest - 100)); //最多往前100区块
-//         let fromBlock = logBlock + 1;
-//         let toBlock = latest;
-//         let filter = {
-//             address: USDR_ADDR.address,
-//             topics: [
-//                 '0xeb0b0373fe4634755d2b0e27fc62dd567fed0e1e4d90d5317dfe735804cc5bf7'
-//             ],
-//             fromBlock,
-//             toBlock
-//         }
-        
-//         const logs = await rpcProvider.getLogs(filter);
-//         const CreateTask = new ethers.utils.Interface(["event ModifyTask(uint256 indexed taskId, address maker, string title, uint256 budget, string desc, string attachment, uint256 period)"]);
-        
-//         if (logs.length > 0) {
-//             let txs = logs.map((ele: any) => {
-//                 let decodedData = CreateTask.parseLog(ele);
-
-//                 return {
-//                     taskId: decodedData.args[0].toString(),
-//                     title: decodedData.args[2],
-//                     budget: decodedData.args[3].toString(),
-//                     desc: decodedData.args[4],
-//                     attachment: decodedData.args[5],
-//                     period: decodedData.args[6].toString(),
-//                 }
-//             });
-//             let value = ``;
-//             for (const v of txs) {
-//                 value += `
-//                     (${v.taskId}, '${v.title}','${v.desc}', ${v.budget}, ${v.period}, '${v.attachment}'),
-//                 `
-//             }
-//             let sqlValue = value.substring(0,(value.lastIndexOf(',')))
-//             let paramsSql = {
-//                 statusId: 1,
-//                 value: sqlValue
-//             }
-//             let sql = updateProject(paramsSql)
-//             try {
-//               let result = await this.tasksRepository.query(sql)
-//               this.logger.debug('modifyTaskLog');
-//               if (-1 != result[1]) {
-//                   let params = {
-//                       id: 1,
-//                       latest: latest,
-//                   }
-//                   await this.blockLogRepository.query(updateBlock(params))
-//               }
-//             } catch (error) {
-//               console.log(error);
-//             }
-//         }
-// }
-
     insertApplyFor = async () => {
         //获取未同步的信息
         let latest = await rpcProvider.getBlockNumber();

@@ -1,10 +1,9 @@
-import { Button, Divider, message } from "antd";
+import { Button, Divider, InputNumber, message, Modal } from "antd";
 import { useEffect, useState } from "react";
 import { useContracts, useRead } from "../controller";
 import { getStagesJson } from "../http/api/order";
 import { updateAttachment } from "../http/api/task";
-
-
+import { useAccount, useNetwork } from 'wagmi'
 
 export default function Stage_list(props) {
     
@@ -12,13 +11,61 @@ export default function Stage_list(props) {
     const { useStageRead: ongoingStage } = useRead('ongoingStage', Query.oid);
     const { useStageRead: stagesChain } = useRead('getStages', Query.oid);
     const { useOrderContractWrite: delivery } = useContracts('updateAttachment');
+    const { useOrderContractWrite: confirm } = useContracts('confirmDelivery');
+    const { useOrderContractWrite: abortOrder } = useContracts('abortOrder');
+    const { chain } = useNetwork();
+    let [delayValue,setDelayValue] = useState(null);
     let [stageIndex,setStageIndex] = useState();
     let [stageJson,setStageJson] = useState();
     let [isDelivery,setIsDelivery] = useState({data: '', status: false});
     
+    // 交付
     const setDelivery = () => {
         // TODO: attachment添加附件
         delivery.write({ recklesslySetUnpreparedArgs: [ Query.oid, '' ] });
+    }
+
+    // 验收
+    const setConfirmDelivery = () => {
+        confirm.write({ recklesslySetUnpreparedArgs: [ Query.oid, [ongoingStage.data.stageIndex.toString()] ] })
+    }
+
+    // 中止
+    const abort = () => {
+        abortOrder.write({ recklesslySetUnpreparedArgs: [Query.oid] })
+    }
+    
+    // 提交延期
+    const delay = () => {
+        // TODO: 修改调用方法部分为Stage_info调用传递给Stage_list
+        Modal.info({
+            title: '申请延期',
+            content: (
+              <div>
+                <p>延期不回增加开发费用</p>
+                <p>请提前与对方沟通</p>
+                <InputNumber addonBefore="延长天数" addonAfter="day" min={1} controls={false} onChange={e => {delayValue = e,setDelayValue(delayValue)}} />
+              </div>
+            ),
+            onOk() {
+                let now = parseInt(new Date().getTime()/1000);
+                let setTime = 2 * 24 * 60 * 60;
+                deadline = now+setTime;
+                setDeadline(deadline);
+                let i = index + 1;
+                testObj = {
+                    chainId: chain.id,
+                    // address: address,
+                    orderId: Query.oid,
+                    stageIndex: ongoingStage.data.stageIndex.toString(),
+                    period: `${delayValue * 24 * 60 * 60}`,
+                    nonce: nonce,
+                    deadline: `${now+setTime}`,
+                }
+                setTestObj({...testObj})
+                // console.log(delayValue,useStageReads.data[0].stageIndex.toString());
+            },
+          });
     }
 
     useEffect(() => {
@@ -42,7 +89,7 @@ export default function Stage_list(props) {
     },[delivery.data])
 
     useEffect(() => {
-        if (ongoingStage.data) {
+        if (Step === 1 && ongoingStage.data) {
             let index = ongoingStage.data.stageIndex.toString();
             let isStage0 = stagesChain.data[0].period.toString();
             stageIndex = isStage0 == 0 ? Number(index) - 1 : index;
@@ -69,7 +116,7 @@ export default function Stage_list(props) {
     },[])
 
     useEffect(() => {
-        if (stageJson) {
+        if (stageJson && Step !== 0) {
             stageJson.stages.map((e,i) => {
                 if (ongoingStage.data.stageIndex.toString() == i && e.delivery.content) {
                     isDelivery = {
@@ -81,6 +128,10 @@ export default function Stage_list(props) {
             })
         }
     },[stageJson])
+
+    useEffect(() => {
+        abortOrder.data ? message.success('中止成功') : '';
+    },[abortOrder.isSuccess])
 
     return  (
         data.period === 0 ? '' :
@@ -127,7 +178,7 @@ export default function Stage_list(props) {
                         ''
                 }
                 {
-                    stageIndex == index && isDelivery.status ? 
+                    stageIndex == index && isDelivery.status && Step === 1 ? 
                     <div className="deliveryDetail">
                         <>
                             <div className="title">{Query.who === 'issuer' ? '开发者': '你'}提交了「阶段交付」:</div>
@@ -137,7 +188,6 @@ export default function Stage_list(props) {
                                 {/* {isDelivery.data.attachment} */}
                             </div>
                         </>
-                        
                     </div>
                     :
                     ''

@@ -54,20 +54,6 @@ export default function order(props) {
             })
             setStagesData([...stagesData]);
         }
-        if (query.oid && Order.data) {
-            switch (Order.data.progress) {
-                case 0:
-                    step = 0;
-                    break;
-                case 4:
-                    step = 1;
-                    break;
-                default:
-                    step = 2;
-                    break;
-            }
-            setStep(step);
-        }
     }
 
     const init = () => {
@@ -318,6 +304,23 @@ export default function order(props) {
             getStages()
         }
     },[step])
+
+    useEffect(() => {
+        if (query.oid && Order.data) {
+            switch (Order.data.progress) {
+                case 0:
+                    step = 0;
+                    break;
+                case 4:
+                    step = 1;
+                    break;
+                default:
+                    step = 2;
+                    break;
+            }
+            setStep(step);
+        }
+    },[Order.data])
 
     return <div className="WorkerProject">
                 <div className="worker-title">

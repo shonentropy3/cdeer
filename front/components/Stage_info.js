@@ -1,4 +1,4 @@
-import { Button, Card, Checkbox, InputNumber, Select, Tabs } from "antd";
+import { Button, Card, Checkbox, InputNumber, message, Select, Tabs } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { useAccount } from 'wagmi'
 import { useContracts } from "../controller";
@@ -84,6 +84,9 @@ export default function Stage_info(props) {
     };
 
     const concat = () => {
+        if (stages.length === 0) {
+            return
+        }
         if (advance && stage0 && (stages.length === 0 || stages[0].period !== 0)) {
             let obj = {
                 budget: stage0,
@@ -178,6 +181,7 @@ export default function Stage_info(props) {
             init();
         }
     },[Data])
+    
 
     useEffect(() => {
         getWithdraw.isSuccess ? message.success('取款成功') : '';

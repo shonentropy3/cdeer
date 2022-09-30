@@ -74,11 +74,16 @@ export default function project() {
         // TODO: 判断用户资料是否完整 > '报名成功,自动消失' : '报名成功,不消失,补充资料跳转'
         getMyInfo({address: address})
         .then(res => {
-            if (res.length === 0) {
+            console.log(res);
+            if (!res.data[0]) {
                 // 未填写资料
                 openNotification()
             }else{
                 // 已填写
+                message.success('报名成功')
+                setTimeout(() => {
+                    history.go(-1);
+                }, 500);
             }
         })
     }
@@ -197,7 +202,6 @@ export default function project() {
         </div>
         </div>
         <Button type="primary" className="project-btn" onClick={showModal}>报名参加</Button>
-        <Button type='primary' onClick={() => openNotification()}>test</Button>
         <Modal
             footer={null}
             open={isModalOpen}
