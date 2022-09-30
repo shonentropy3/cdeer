@@ -310,7 +310,7 @@ export default function Task() {
             })
             setSelectItem({...selectItem});
         }
-    },[tidList])
+    },[tidList, useTaskReads.data])
 
     return (
         <div className="Userprojects">

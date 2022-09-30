@@ -276,6 +276,8 @@ export default function order(props) {
                     :
                     <Button type='primary' className='worker-btn' onClick={() => setStage()}>完成并提交阶段划分</Button>
             )
+        }else{
+            return <h1>{step}</h1>
         }
     }
 
@@ -306,6 +308,7 @@ export default function order(props) {
     },[step])
 
     useEffect(() => {
+        console.log(Order);
         if (query.oid && Order.data) {
             switch (Order.data.progress) {
                 case 0:
