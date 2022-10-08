@@ -255,23 +255,24 @@ export default function applylist() {
         <div className="task-info">
             <div className="task-demand">
                 <p className="task-title">{demandData.title}</p>
-                <p className="task-skill">技术要求:
+                <p className="task-skill">
+                    <i className="skill-tip">Recruitment type:</i>
                     {
                         demandData.skill?.map((e,i)=>e?(<span key={i}>{skills[e]}</span>):"")
                     }
                 </p>
-                <p className="task-cycle">项目周期:
+                <p className="task-cycle">cycle：
                     <span>{parseInt(demandData.period/86400)}天</span>
-                    项目预算:
+                    Cost：
                     <span>{demandData.budget}ETH</span>
                 </p>
             </div>
-            <div className="task-changeInfo" onClick={showModifyModal}>修改信息</div>
+            {/* <div className="task-changeInfo" onClick={showModifyModal}>修改信息</div>
             <div className="task-delete" onClick={deleteTask}>删除任务</div>
-            <div className="task-apply-switch" onClick={applyHandler}>{allInfo.apply_switch?"关闭报名":"开启报名"}</div>
+            <div className="task-apply-switch" onClick={applyHandler}>{allInfo.apply_switch?"关闭报名":"开启报名"}</div> */}
             <div className="apply-number">
                 <p className="a-number">{demandData.applyNum}</p>
-                <p>报名人数</p>
+                <p className="a-tip">Number of applicants</p>
             </div>
         </div>
         <div className="product-stage">
@@ -284,52 +285,61 @@ export default function applylist() {
             </Steps> */}
         </div>
         <div className="task-list">
-            <h4>报名列表</h4>
+            <h4>Registration list</h4>
             <div className="product-list">
                 <ul>
                     {
                         data.map((e,i) => <li key={i} className={e.sort === 0 ? 'sort':''} >
                             <div className="product-list-item">
-                                <div className="product-img"></div>
-                                <div className="product-info">
-                                    <p className="applicant-name">{e.address}</p>
-                                    <p className="applicant-skill">擅长技能：
-                                        <span>solidity、</span>
-                                        <span>php、</span>
-                                        <span>javascripts</span>
-                                    </p>
-                                    <p className="applicant-info">
-                                        <span>查看他的信息</span>
-                                        <span onClick={() => showDetailModal(e)}>查看他的报名资料</span>
-                                    </p>
-                                    <p className="applicant-mess">
-                                        <span className="applicant-mess-item"><MessageFilled />联系方式</span>
-                                        <span className="applicant-mess-item"><MessageFilled />联系方式</span>
-                                    </p>
+                                <div className="product-list-info">
+                                    <div className="product-img"></div>
+                                    <div className="product-info">
+                                        <p className="applicant-name">{e.address}<span>View personal information</span></p>
+                                        <p className="applicant-skill">
+                                            <i className="good-skill">Good at skills：</i>
+                                            <span>solidity</span>
+                                            <span>php</span>
+                                            <span>javascripts</span>
+                                        </p>
+                                        <p className="applicant-mess">
+                                            <span className="applicant-mess-item iconfont skype">&#xe882;</span>
+                                            <span className="applicant-mess-item iconfont telegram">&#xec25;</span>
+                                            <span className="applicant-mess-item iconfont weixin">&#xec26;</span>
+                                            <span className="applicant-mess-item iconfont facebook">&#xebfc;</span>
+                                        </p>
+                                    </div>
+                                    <div className="product-apply">
+                                        <span className="product-apply-he">His offer:</span>
+                                        <span className="product-apply-price">{e.price}ETH</span>
+                                        <p className="product-apply-time">
+                                            <span className="product-apply-time-icon"><ClockCircleOutlined /></span>
+                                            <span className="product-apply-time-text">30 minutes ago</span>
+                                        </p>
+                                    </div>
                                 </div>
-                                <div className="product-apply">
-                                    <p className="product-apply-price">{e.price} ETH</p>
-                                    <p className="product-apply-he">他的报价</p>
-                                    <p className="product-apply-time">
-                                        <span><ClockCircleOutlined /></span>
-                                        <span className="product-apply-time-text">30分钟前报名</span>
+                                <div className="product-apply-desc">
+                                    <span></span>
+                                    <p className="product-apply-desc-text">
+                                    Hey, I'm interested in your Task. Please send me a message so that we can discuss more.
+Good at technology development and promotion
                                     </p>
                                 </div>
                             </div>
                             <div>
                                 <div className="product-collaborate">
-                                    <p onClick={() => sort(e.apply_addr, i)} className="product-collaborate-no">暂不合作</p>
-                                    <p onClick={() => {worker = e.apply_addr, setWorker(worker) ,showModal()}}>邀请合作</p>
+                                    <p onClick={() => {worker = e.apply_addr, setWorker(worker) ,showModal()}}>Invite</p>
+                                    <p onClick={() => sort(e.apply_addr, i)} className="product-collaborate-no">Improper</p>
                                 </div>
                             </div>
                         </li> )
                     }
                 </ul>
             </div>
-            <div className="task-page">
+            {/* <div className="task-page">
                 <Pagination defaultCurrent={1} total={50} />
-            </div>
+            </div> */}
         </div>
+        <div className="task-bottom">1</div>
         <Modal title="选择接单者" open={isModalOpen} footer={null} onCancel={handleCancel}>
             给出您的预算
             <InputNumber addonAfter={selectAfter} onChange={onchange} />
