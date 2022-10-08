@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from 'next/router'
-import { Steps, Button, message } from "antd";
+import { Steps, Button, message, Modal } from "antd";
 import { getDemandInfo } from "../http/api/task";
 import { multicallWrite, muticallEncode, useRead, useSignData } from "../controller";
 import Stage_info from "../components/Stage_info";
@@ -24,6 +24,8 @@ export default function order(props) {
     let [stagejson,setStagejson] = useState('');
     // 确认划分
     let [signature,setSignature] = useState('');
+    // Modal
+    const [isModalOpen, setIsModalOpen] = useState(false);
     
     const { Step } = Steps;
     const router = useRouter();
@@ -116,6 +118,7 @@ export default function order(props) {
             _periods.push(`${e.period * 24 * 60 * 60}`);
         })
 
+        // TODO: 判断当前阶段总金额是否与预期金额有误差
         // if (total !== task.budget) {
         //     console.log(total, '===>', task.budget);
         //     return
@@ -249,6 +252,20 @@ export default function order(props) {
             })
     }
 
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+    
+    const handleOk = () => {
+        // TODO: 确认阶段提示框
+        permit();
+        setIsModalOpen(false);
+    };
+    
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    };
+
     const total = () => {
         if (!stagesData) {
             return
@@ -279,7 +296,7 @@ export default function order(props) {
             return (
                 query.who === 'issuer' && !modifyStatus ? <>
                     <p className="tips"><ExclamationCircleOutlined style={{color: 'red', marginRight: '10px'}} />同意后,项目正式启动.并按照阶段划分作为项目交付计划和付款计划</p>
-                    <Button type='primary' className='worker-btn' onClick={() => permit()}>同意阶段划分</Button></>
+                    <Button type='primary' className='worker-btn' onClick={showModal}>同意阶段划分</Button></>
                     :
                     <Button type='primary' className='worker-btn' onClick={() => setStage()}>完成并提交阶段划分</Button>
             )
@@ -331,6 +348,11 @@ export default function order(props) {
     },[Order.data])
 
     return <div className="WorkerProject">
+                <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+                    <p>Some contents...</p>
+                    <p>Some contents...</p>
+                    <p>Some contents...</p>
+                </Modal>
                 <div className="worker-title">
                     {/* <h1>{amount}</h1> */}
                     {/* TODO: 获取task */}
