@@ -7,6 +7,7 @@ import { useNetwork, useAccount } from 'wagmi'
 
 export default function Stage_list(props) {
     
+    const { confirm: modalComfirm } = Modal;
     const { chain } = useNetwork();
     const { address } = useAccount()
     const { data, stages, set, setTab, Query, Step, index, del, delivery, confirm, abortOrder, prolongStage } = props;
@@ -114,6 +115,17 @@ export default function Stage_list(props) {
                 return <span style={{width: '100%', textAlign: 'right', color: '#f9b65c'}}>已取款</span>
         }
     }
+
+    const showConfirm = () => {
+        modalComfirm({
+          title: '通过延期?',
+          content: '同意对方发起的延期申请!',
+          onOk() {
+            permitDelay();
+          },
+          onCancel() {},
+        });
+      };
 
     useEffect(() => {
         if (delivery.data) {
@@ -320,11 +332,11 @@ export default function Stage_list(props) {
                 data.prolongStage ? 
                 <div className="prolong">
                     {data.prolongAddress === address ? 
-                    '你提交了「阶段延期」，等待甲方同意' 
+                    '你提交了「阶段延期」，等待对方同意' 
                     : 
                     <div className="btn" style={{display: 'flex', justifyContent: 'space-between', padding: '10px'}}>
                         <p>对方申请周期延长{data.prolongStage - data.period}天</p>
-                        <Button onClick={() => permitDelay()}>同意延期</Button>
+                        <Button onClick={showConfirm}>同意延期</Button>
                     </div> }
                 </div>:''
             }
