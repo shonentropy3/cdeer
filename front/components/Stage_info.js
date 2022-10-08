@@ -13,12 +13,14 @@ export default function Stage_info(props) {
     let [advance,setAdvance] = useState(false);
     let [stage0,setStage0] = useState();
     let [stages,setStages] = useState([]);   
+    let [appendStages,setAppendStages] = useState([{budget:'',percent:'',title:'',content:''}]);   
     let [editMode,setEditMode] = useState(false);
     // Tabs
     const [activeKey, setActiveKey] = useState();   
+    const [append, setAppend] = useState(false);
     const [items, setItems] = useState([]);
     const newTabIndex = useRef(0);
-
+    
     const { address } = useAccount()
     const { useOrderContractWrite: getWithdraw } = useContracts('withdraw');
     const { useOrderContractWrite: delivery } = useContracts('updateAttachment');
@@ -26,6 +28,35 @@ export default function Stage_info(props) {
     const { useOrderContractWrite: abortOrder } = useContracts('abortOrder');
     const { useOrderContractWrite: prolongStage } = useContracts('prolongStage');
 
+    const appendStage = () => {
+        // TODO: 添加阶段
+        new Promise((resolve, reject) => {
+            let now = parseInt(new Date().getTime()/1000);
+            let setTime = 2 * 24 * 60 * 60;
+            let period = 5 * 24 * 60 * 60;
+            deadline = now+setTime;
+            setDeadline(deadline);
+            let amount = ethers.utils.parseEther(`${100}`);
+            let obj = {
+                chainId: chain.id,
+                orderId: Oid,
+                amount: amount,
+                period: period,
+                nonce: nonce,  
+                deadline: `${deadline}`,
+            }
+            appendObj = obj;
+            setAppendObj({...appendObj})
+            setTimeout(() => {
+                resolve();
+            }, 50);
+        })
+        .then(res => {
+            useSign.signTypedData()
+            console.log(useSign.error);
+            console.log(useSignParams);
+        })
+    }
 
     const onChange = e => {
         // TODO: 修改预付款时更改Modify状态为false ===> 调用合并数组 concat
@@ -250,6 +281,13 @@ export default function Stage_info(props) {
                         :
                         <div className="stageInfo-inspection">
                             {
+                                append ? <>
+                                <Stage_card stage={appendStages[0]} amount={Amount} set={setAppendStages} stages={appendStages}/>
+                                <Button onClick={() => {setAppend(false)}}>Cancel</Button>
+                                <Button onClick={() => appendStage()}>Confirm</Button>
+                                </>:''
+                            }
+                            {
                                 stages.map((e,i) => 
                                     <Stage_list 
                                         key={i} 
@@ -271,7 +309,8 @@ export default function Stage_info(props) {
                             {
                                 Step === 1 ? 
                                 <>
-                                    <Button onClick={() => appendStage()}>添加阶段</Button>
+                                    {/* <Button onClick={() => appendStage()}>添加阶段</Button> */}
+                                    <Button onClick={() => {setAppend(true)}}>添加阶段</Button>
                                     <Button onClick={() => payStage()}>支付阶段</Button>
                                     <Button onClick={() => agreeApeend()}>同意添加</Button>
                                 </> : ''
