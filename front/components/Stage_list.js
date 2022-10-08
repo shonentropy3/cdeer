@@ -19,6 +19,8 @@ export default function Stage_list(props) {
     let [stageJson,setStageJson] = useState();
     let [deadline,setDeadline] = useState();
     let [nonce,setNonce] = useState();
+    let [permitNonce,setPermitNonce] = useState();
+    
     let [delayObj,setDelayObj] = useState({});  //  延长签名
     let [isSigner,setIsSigner] = useState(false);   //  签名flag
     
@@ -46,7 +48,6 @@ export default function Stage_list(props) {
     
     // 提交延期
     const delay = () => {
-        // TODO: 修改调用方法部分为Stage_info调用传递给Stage_list
         Modal.info({
             title: '申请延期',
             content: (
@@ -78,25 +79,23 @@ export default function Stage_list(props) {
     // 确认延期
     const permitDelay = () => {
         // TODO: prolongStage contract
-        // getProlongStage({oid: Query.oid})
-        // .then(res => {
-        //     if (res.code === 200) {
-        //         let obj = {
-        //             _orderId: Oid, 
-        //             _stageIndex: index+1,
-        //             _appendPeriod: (data.period - data.prolong) * 24 * 60 * 60,
-        //             nonce: nonce,
-        //             deadline: res.data.stages.deadline,
-        //             v: '0x' + res.data.signature.substring(2).substring(128, 130),
-        //             r: '0x' + res.data.signature.substring(2).substring(0, 64),
-        //             s: '0x' + res.data.signature.substring(2).substring(64, 128)
-        //         }
-        //         console.log(obj._orderId, obj._stageIndex, obj._appendPeriod, permitNonce, obj.deadline, obj.v, obj.r, obj.s);
-        //         prolongStage.write({
-        //             recklesslySetUnpreparedArgs: [obj._orderId, obj._stageIndex, obj._appendPeriod, permitNonce, obj.deadline, obj.v, obj.r, obj.s]
-        //         })
-        //     }
-        // })
+        getProlongStage({oid: Query.oid})
+        .then(res => {
+            if (res.code === 200) {
+                let obj = {
+                    _orderId: Query.oid, 
+                    _stageIndex: ongoingStage.data.stageIndex.toString(),
+                    _appendPeriod: (data.prolongStage - data.period) * 24 * 60 * 60,
+                    deadline: res.data.stages.deadline,
+                    v: '0x' + res.data.signature.substring(2).substring(128, 130),
+                    r: '0x' + res.data.signature.substring(2).substring(0, 64),
+                    s: '0x' + res.data.signature.substring(2).substring(64, 128)
+                }
+                prolongStage.write({
+                    recklesslySetUnpreparedArgs: [obj._orderId, obj._stageIndex, obj._appendPeriod, permitNonce, obj.deadline, obj.v, obj.r, obj.s]
+                })
+            }
+        })
     }
 
     const stageStatus = () => {
@@ -150,8 +149,8 @@ export default function Stage_list(props) {
             .then(res => {
                 // console.log(res);
                 // return
-                // permitNonce = res.signnonce;
-                // setPermitNonce(permitNonce);
+                permitNonce = res.signnonce;
+                setPermitNonce(permitNonce);
                 // console.log(res.signnonce);
                 // stages = res.stages;
                 // setStages({...stages});
@@ -216,6 +215,15 @@ export default function Stage_list(props) {
             setNonce(nonce);
         }
     },[nonces.data])
+
+    useEffect(() => {
+        if (prolongStage.isSuccess) {
+            message.success('阶段延期成功')
+            setTimeout(() => {
+                history.go(0);
+            }, 1000);
+        }
+    },[prolongStage.isSuccess])
 
     return  (
         data.period === 0 ? '' :
@@ -314,7 +322,10 @@ export default function Stage_list(props) {
                     {data.prolongAddress === address ? 
                     '你提交了「阶段延期」，等待甲方同意' 
                     : 
-                    `对方申请周期延长${data.prolongStage - data.period}天`}
+                    <div className="btn" style={{display: 'flex', justifyContent: 'space-between', padding: '10px'}}>
+                        <p>对方申请周期延长{data.prolongStage - data.period}天</p>
+                        <Button onClick={() => permitDelay()}>同意延期</Button>
+                    </div> }
                 </div>:''
             }
             </div>
