@@ -31,7 +31,9 @@ export default function Stage_info(props) {
         advance = e.target.checked;
         setAdvance(advance);
         isModify(true);
-        concat();
+        if (Data) {
+            concat();
+        }
     }
 
     const add = () => {
@@ -139,7 +141,9 @@ export default function Stage_info(props) {
         stage0 = e;
         setStage0(stage0);
         isModify(true);
-        concat();
+        if (Data) {
+            concat();
+        }
     }
 
     const init = () => {
