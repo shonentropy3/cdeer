@@ -10,10 +10,6 @@ import Stage_list from "./Stage_list";
 export default function Stage_info(props) {
 
     const { Query, Amount, OrderInfo, Data, Step, StagesData, isModify } = props;   //  StagesData 数据库阶段
-    const { useOrderContractWrite: delivery } = useContracts('updateAttachment');
-    const { useOrderContractWrite: confirm } = useContracts('confirmDelivery');
-    const { useOrderContractWrite: abortOrder } = useContracts('abortOrder');
-    const { useOrderContractWrite: prolongStage } = useContracts('prolongStage');
     let [advance,setAdvance] = useState(false);
     let [stage0,setStage0] = useState();
     let [stages,setStages] = useState([]);   
@@ -25,6 +21,11 @@ export default function Stage_info(props) {
 
     const { address } = useAccount()
     const { useOrderContractWrite: getWithdraw } = useContracts('withdraw');
+    const { useOrderContractWrite: delivery } = useContracts('updateAttachment');
+    const { useOrderContractWrite: confirm } = useContracts('confirmDelivery');
+    const { useOrderContractWrite: abortOrder } = useContracts('abortOrder');
+    const { useOrderContractWrite: prolongStage } = useContracts('prolongStage');
+
 
     const onChange = e => {
         // TODO: 修改预付款时更改Modify状态为false ===> 调用合并数组 concat
@@ -189,7 +190,6 @@ export default function Stage_info(props) {
             init();
         }
     },[Data])
-    
 
     useEffect(() => {
         getWithdraw.isSuccess ? message.success('取款成功') : '';
@@ -255,6 +255,7 @@ export default function Stage_info(props) {
                                         key={i} 
                                         index={i} 
                                         data={e} 
+                                        stages={Data} 
                                         set={setEditMode} 
                                         setTab={setActiveKey} 
                                         Query={Query} 

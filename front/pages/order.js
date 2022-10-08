@@ -22,6 +22,7 @@ export default function order(props) {
     let [nonce,setNonce] = useState();
     let [isSigner,setIsSigner] = useState(false);
     let [stagejson,setStagejson] = useState('');
+    let [signaddress,setSignaddress] = useState();
     // 确认划分
     let [signature,setSignature] = useState('');
     // Modal
@@ -49,14 +50,22 @@ export default function order(props) {
         if (query.oid && stagesChain.data) {
             // TODO: chain阶段详情
             await getStages()
-            stagesChain.data.map((e,i) => {
-                let period = e.period.toString() / 60 / 60 / 24;
-                let budget = e.amount.toString() / Math.pow(10,18);
-                stagesData[i].period = period;
-                stagesData[i].budget = budget;
-                stagesData[i].status = e.status;
+            .then(() => {
+                stagesChain.data.map((e,i) => {
+                    let period = e.period.toString() / 60 / 60 / 24;
+                    let budget = e.amount.toString() / Math.pow(10,18);
+                    // 对比数据库数据与链上数据
+                    if (stagesData[i].period != period) {
+                        stagesData[i].prolongStage = stagesData[i].period;
+                        stagesData[i].prolongAddress = signaddress;
+                    }
+                    stagesData[i].period = period;
+                    stagesData[i].budget = budget;
+                    stagesData[i].status = e.status;
+                })
+                setStagesData([...stagesData]);
             })
-            setStagesData([...stagesData]);
+            
         }
     }
 
@@ -237,11 +246,15 @@ export default function order(props) {
             .then(res => {
                 // TODO: 判断是否有人设置阶段
                 if (res.signature) {
-                   signature = res.signature;
-                   setSignature(signature);
-                   deadLine = res.stages.deadline;
-                   setDeadLine(deadLine);
-                   let arr = [];
+                    signature = res.signature;
+                    setSignature(signature);
+                    deadLine = res.stages.deadline;
+                    setDeadLine(deadLine);
+                    let arr = [];
+                    if (res.signaddress) {
+                        signaddress = res.signaddress;
+                        setSignaddress(signaddress);
+                    }
                     if (res.stages) {
                         res.json.stages.map((e,i) => {
                             arr.push({

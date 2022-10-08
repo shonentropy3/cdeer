@@ -205,7 +205,8 @@ export class CommonService {
                     stages: stages[0].stages,
                     signature: stages[0].signature,
                     attachment: stages[0].attachment,
-                    signnonce: stages[0].signnonce
+                    signnonce: stages[0].signnonce,
+                    signaddress: stages[0].signaddress
                 }
                 return obj
             })

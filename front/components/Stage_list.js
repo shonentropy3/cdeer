@@ -1,22 +1,31 @@
 import { Button, Divider, InputNumber, message, Modal } from "antd";
 import { useEffect, useState } from "react";
-import { useContracts, useRead } from "../controller";
-import { getProlongStage, getStagesJson } from "../http/api/order";
+import { useContracts, useRead, useSignProData } from "../controller";
+import { getProlongStage, getStagesJson, updateSignature } from "../http/api/order";
 import { updateAttachment } from "../http/api/task";
-import { useNetwork } from 'wagmi'
+import { useNetwork, useAccount } from 'wagmi'
 
 export default function Stage_list(props) {
     
-    const { data, set, setTab, Query, Step, index, del, delivery, confirm, abortOrder, prolongStage } = props;
+    const { chain } = useNetwork();
+    const { address } = useAccount()
+    const { data, stages, set, setTab, Query, Step, index, del, delivery, confirm, abortOrder, prolongStage } = props;
     const { useStageRead: ongoingStage } = useRead('ongoingStage', Query.oid);
     const { useStageRead: stagesChain } = useRead('getStages', Query.oid);
+    const { useOrderRead: nonces } = useRead('nonces', address);
 
-    const { chain } = useNetwork();
     let [delayValue,setDelayValue] = useState(null);
     let [stageIndex,setStageIndex] = useState();
     let [stageJson,setStageJson] = useState();
+    let [deadline,setDeadline] = useState();
+    let [nonce,setNonce] = useState();
+    let [delayObj,setDelayObj] = useState({});  //  延长签名
+    let [isSigner,setIsSigner] = useState(false);   //  签名flag
+    
     let [isDelivery,setIsDelivery] = useState({data: '', status: false});
     const [isAbortModalOpen, setIsAbortModalOpen] = useState(false);
+    const { useSign, obj } = useSignProData(delayObj);  //  延长签名
+    
     // TODO: 改为Stage_info传子
     
     // 交付
@@ -48,22 +57,20 @@ export default function Stage_list(props) {
               </div>
             ),
             onOk() {
-                // let now = parseInt(new Date().getTime()/1000);
-                // let setTime = 2 * 24 * 60 * 60;
-                // deadline = now+setTime;
-                // setDeadline(deadline);
-                // let i = index + 1;
-                // testObj = {
-                //     chainId: chain.id,
-                //     // address: address,
-                //     orderId: Query.oid,
-                //     stageIndex: ongoingStage.data.stageIndex.toString(),
-                //     period: `${delayValue * 24 * 60 * 60}`,
-                //     nonce: nonce,
-                //     deadline: `${now+setTime}`,
-                // }
-                // setTestObj({...testObj})
-                // console.log(delayValue,useStageReads.data[0].stageIndex.toString());
+                let now = parseInt(new Date().getTime()/1000);
+                let setTime = 2 * 24 * 60 * 60;
+                deadline = now+setTime;
+                setDeadline(deadline);
+                delayObj = {
+                    chainId: chain.id,
+                    orderId: Query.oid,
+                    stageIndex: ongoingStage.data.stageIndex.toString(),
+                    period: `${delayValue * 24 * 60 * 60}`,
+                    nonce: nonce,
+                    deadline: deadline,
+                }
+                setDelayObj({...delayObj})
+                setIsSigner(true);
             },
           });
     }
@@ -97,6 +104,8 @@ export default function Stage_list(props) {
             case 0:
                 if (index == stageIndex) {
                     return <span style={{width: '100%', textAlign: 'right', color: '#f9b65c'}}>进行中</span>
+                }else {
+                    return ''
                 }
             case 1:
                 return <span style={{width: '100%', textAlign: 'right', color: 'green'}}>已完成</span>
@@ -171,6 +180,42 @@ export default function Stage_list(props) {
     useEffect(() => {
         abortOrder.data ? message.success('中止成功') : '';
     },[abortOrder.isSuccess])
+
+    // 延期
+    useEffect(() => {
+        if (obj.chainId && isSigner) {
+            useSign.signTypedData();
+        }
+    },[delayObj])
+
+    useEffect(() => {
+        if (useSign.data) {
+            setIsSigner(false);
+            let _amounts = [];
+            let _periods = [];
+            stages.map(e => {
+                _amounts.push(e.budget);
+                _periods.push(e.period);
+                // {amount:[111,111,222],"period":[0,11,2],"deadline":1665386882}
+            })
+            _periods[ongoingStage.data.stageIndex.toString()] += delayValue;
+            console.log();
+            let obj = {
+                amount: _amounts, period: _periods, deadline: deadline
+            }
+            updateSignature({signature: useSign.data, signaddress: address, stages: JSON.stringify(obj), oid: Query.oid, nonce: nonce})
+            .then(res => {
+                message.success('申请成功,等待对方同意!')
+            })
+        }
+    },[useSign.data])
+    
+    useEffect(() => {
+        if (nonces.data) {
+            nonce = nonces.data.toString();
+            setNonce(nonce);
+        }
+    },[nonces.data])
 
     return  (
         data.period === 0 ? '' :
@@ -255,12 +300,24 @@ export default function Stage_list(props) {
                 }
                 
             </div>
+            <div className="bottom">
             {
                 data.status === 1 && Query.who === 'worker' ? 
-                <div className="bottom">
+                
                     <Button>取款</Button>
-                </div> : ''
+                 : ''
             }
+            {/* 延期 */}
+            {
+                data.prolongStage ? 
+                <div className="prolong">
+                    {data.prolongAddress === address ? 
+                    '你提交了「阶段延期」，等待甲方同意' 
+                    : 
+                    `对方申请周期延长${data.prolongStage - data.period}天`}
+                </div>:''
+            }
+            </div>
         </div>
     )
 }
