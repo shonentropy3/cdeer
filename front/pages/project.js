@@ -1,6 +1,7 @@
 
 
 import { Button,Modal,message, notification } from 'antd';
+import { ClockCircleOutlined } from '@ant-design/icons'
 import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { useRouter } from 'next/router';
@@ -32,6 +33,7 @@ export default function project() {
             obj.role = deform_Skills(obj.role);
             project = obj;
             setProject({...project});
+            console.log(project);
         })
         .catch(err=>{
             console.log(err);
@@ -132,8 +134,12 @@ export default function project() {
                 </div>
                 <div className="info">
                     <p className="title">{project.title}</p>
+                    <p className='time'>
+                        <ClockCircleOutlined />
+                        <span className='time-text'>10 days ago</span>
+                    </p>
                     <p className="skills">
-                        技术要求: {
+                            Recruitment type： {
                             project.role ? 
                                 project.role.map((e,i) => <span key={i}>{e}</span> )
                                 :
@@ -142,36 +148,26 @@ export default function project() {
                     </p>
                 </div>
             </div>
-            <Button className="btn">报名参与</Button>
+            <Button className="btn" onClick={showModal}>Go to register</Button>
         </div>
         <div className="content-container">
-            <div className="content-li">
-                <p className="li-title">项目类型</p>
-                <div className="li-box boxs">
-                    {
-                        project.task_type ? 
-                        project.task_type.map((e,i) => <div className="box" key={i}>{e}</div> )
-                        :
-                        ''
-                    }
-                </div>
-            </div>
-            <div className="content-list">
-                <div className="list-li">
-                    <p className="li-title">项目费用</p>
-                    <div className="li-box">
-                        <p className="detail">{project.budget}ETH</p>
-                    </div>
-                </div>
-                <div className="list-li">
-                    <p className="li-title">项目周期</p>
-                    <div className="li-box">
-                        <p className="detail">{project.period / 60 / 60 / 24}天</p>
-                    </div>
-                </div>
+            <p className='task-details'>Task Details</p>
+            <div className='task-detail-list'>
+                <p className='task-type task-li'>
+                    <span className='task-type-title title'>Type：</span>
+                    <span className='task-type-text content'>Blockchain</span>
+                </p>
+                <p className='task-cost task-li'>
+                    <span className='task-cost-title title'>Cost：</span>
+                    <span className='task-cost-price content'>{project.budget / 1000000000000000000}ETH</span>
+                </p>
+                <p className='task-date task-li'>
+                    <span className='task-date-title title'>Cycle：</span>
+                    <span className='task-date-time content'>{project.period / 86400}days</span>
+                </p>
             </div>
             <div className="content-li">
-                <p className="li-title">项目描述</p>
+                <p className="li-title">Task Description：</p>
                 <div className="li-box">
                     <p className="detail content">
                         {project.desc}
@@ -179,16 +175,16 @@ export default function project() {
                 </div>
             </div>
             <div className="content-li">
-                <p className="li-title">项目文档</p>
+                <p className="li-title">Task document：</p>
                 <div className="li-box">
                     <div className="upload">
                         <p className="upload-title">{project.suffix}</p>
-                        <p>下载</p>
+                        {/* <p>下载</p> */}
                     </div>
                 </div>
             </div>
             <div className="content-li">
-                <p className="li-title">技能要求</p>
+                <p className="li-title">Skill requirements：</p>
                 <div className="li-box boxs">
                 {
                         project.role ? 
@@ -201,7 +197,7 @@ export default function project() {
 
         </div>
         </div>
-        <Button type="primary" className="project-btn" onClick={showModal}>报名参加</Button>
+        {/* <Button type="primary" className="project-btn" onClick={showModal}>报名参加</Button> */}
         <Modal
             footer={null}
             open={isModalOpen}
