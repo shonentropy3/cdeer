@@ -372,23 +372,22 @@
     }
 }
 .check-percent{
-    .ant-form-item-control-input-content{
-        display: flex;
-        .list{
-            display: flex;
-            align-items: center;
-            .li{
-                padding: 5px 15px;
-                border-radius: 5px;
-                background-color: gainsboro;
-                margin-right: 20px;
-                cursor: pointer;
-                transition: color 0.3s, background-color 0.3s;
-            }
-            .active{
-                background-color: rgb(59, 59, 255);
-                color: white;
-            }
-        }
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+    .li{
+        padding: 5px 15px;
+        border-radius: 5px;
+        background-color: gainsboro;
+        margin-right: 20px;
+        cursor: pointer;
+        transition: color 0.3s, background-color 0.3s;
+    }
+    .active{
+        background-color: rgb(59, 59, 255);
+        color: white;
+    }
+    .ant-form-item{
+        margin: 0;
     }
 }

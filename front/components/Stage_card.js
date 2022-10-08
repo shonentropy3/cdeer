@@ -72,6 +72,7 @@ export default function Stage_card(params) {
                 fields={[
                     { "name": ["title"], "value": data.title },
                     { "name": ["period"], "value": data.period },
+                    { "name": ["budget"], "value": data.budget },
                     { "name": ["content"], "value": data.content },
                   ]}
             >
@@ -82,9 +83,7 @@ export default function Stage_card(params) {
             <Form.Item label="阶段时长" name="period">
                 <InputNumber min={1} addonAfter="DAY" onChange={e => onchange('period',e)}/>
             </Form.Item>
-
-            <Form.Item label="阶段费用" className="check-percent">
-                <div className="list">
+            <div className="check-percent">
                     {
                         percent.map((e,i) => 
                             <div 
@@ -94,9 +93,11 @@ export default function Stage_card(params) {
                             >{e.title}</div>
                         )
                     }
-                </div>
-                <InputNumber defaultValue={data.budget} min={1} addonAfter="ETH" onChange={e => changeBudget(e)} />
-            </Form.Item>
+                    <Form.Item label="阶段费用" name='budget'>
+                        <InputNumber min={1} addonAfter="ETH" onChange={e => changeBudget(e)} />
+                    </Form.Item>
+            </div>
+            
 
             <Form.Item label="阶段说明" name="content">
                 <TextArea rows={4} onChange={e => onchange('content',e.target.value)} />

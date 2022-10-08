@@ -193,7 +193,7 @@ export default function Stage_list(props) {
                 }
                 {/* index == stageIndex */}
                 {   
-                    Step === 1 ? 
+                    Step !== 0 ? 
                         stageStatus() : ''
                 }
             </div>
@@ -241,7 +241,7 @@ export default function Stage_list(props) {
                     ''
                 }
                 {
-                    Step === 1 && index == stageIndex  ? 
+                    Step === 1 && index == stageIndex && data.status === 0  ? 
                         <div className="btns">
                             <Button type="dashed" onClick={() => delay()}>延期</Button>
                             <Button type="primary" danger onClick={() => {setIsAbortModalOpen(true)}}>中止</Button>
@@ -253,7 +253,14 @@ export default function Stage_list(props) {
                             }
                         </div> : ''
                 }
+                
             </div>
+            {
+                data.status === 1 && Query.who === 'worker' ? 
+                <div className="bottom">
+                    <Button>取款</Button>
+                </div> : ''
+            }
         </div>
     )
 }
