@@ -92,6 +92,21 @@ export default function Stage_list(props) {
         // })
     }
 
+    const stageStatus = () => {
+        switch (data.status) {
+            case 0:
+                if (index == stageIndex) {
+                    return <span style={{width: '100%', textAlign: 'right', color: '#f9b65c'}}>进行中</span>
+                }
+            case 1:
+                return <span style={{width: '100%', textAlign: 'right', color: 'green'}}>已完成</span>
+            case 2:
+                return <span style={{width: '100%', textAlign: 'right', color: 'red'}}>已中止</span>
+            default:
+                return <span style={{width: '100%', textAlign: 'right', color: '#f9b65c'}}>已取款</span>
+        }
+    }
+
     useEffect(() => {
         if (delivery.data) {
             stageJson.stages[ongoingStage.data.stageIndex.toString()].delivery = {
@@ -176,9 +191,10 @@ export default function Stage_list(props) {
                             <p onClick={() => del(index)}>删除</p>
                         </> : ''
                 }
-                {
-                    Step === 1 && index == stageIndex ? 
-                        <span style={{width: '100%', textAlign: 'right', color: '#f9b65c'}}>进行中</span> : ''
+                {/* index == stageIndex */}
+                {   
+                    Step === 1 ? 
+                        stageStatus() : ''
                 }
             </div>
             <div className="inspection-nav">

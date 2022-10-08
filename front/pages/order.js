@@ -51,6 +51,7 @@ export default function order(props) {
                 let budget = e.amount.toString() / Math.pow(10,18);
                 stagesData[i].period = period;
                 stagesData[i].budget = budget;
+                stagesData[i].status = e.status;
             })
             setStagesData([...stagesData]);
         }
@@ -114,6 +115,12 @@ export default function order(props) {
             _amounts.push(ethers.utils.parseEther(`${e.budget}`));
             _periods.push(`${e.period * 24 * 60 * 60}`);
         })
+
+        // if (total !== task.budget) {
+        //     console.log(total, '===>', task.budget);
+        //     return
+        // }
+
         let r = '0x' + signature.substring(2).substring(0, 64);
         let s = '0x' + signature.substring(2).substring(64, 128);
         let v = '0x' + signature.substring(2).substring(128, 130);
@@ -276,8 +283,6 @@ export default function order(props) {
                     :
                     <Button type='primary' className='worker-btn' onClick={() => setStage()}>完成并提交阶段划分</Button>
             )
-        }else{
-            return <h1>{step}</h1>
         }
     }
 
