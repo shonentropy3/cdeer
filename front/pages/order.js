@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from 'next/router'
-import { Steps, Button, message } from "antd";
+import { Steps, Button, message, Modal } from "antd";
 import { getDemandInfo } from "../http/api/task";
 import { multicallWrite, muticallEncode, useRead, useSignData } from "../controller";
 import Stage_info from "../components/Stage_info";
@@ -24,7 +24,10 @@ export default function order(props) {
     let [stagejson,setStagejson] = useState('');
     // 确认划分
     let [signature,setSignature] = useState('');
-    
+    // Modal
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const { confirm } = Modal;
     const { Step } = Steps;
     const router = useRouter();
     const { chain } = useNetwork();
@@ -51,6 +54,7 @@ export default function order(props) {
                 let budget = e.amount.toString() / Math.pow(10,18);
                 stagesData[i].period = period;
                 stagesData[i].budget = budget;
+                stagesData[i].status = e.status;
             })
             setStagesData([...stagesData]);
         }
@@ -105,6 +109,18 @@ export default function order(props) {
             setIsSigner(true);
     }
 
+    const overflow = () => {
+        let total = 0;
+        stagesData.map(e => {
+            total += e.budget;
+        })
+        if (total !== (task.budget / Math.pow(10,18))) {
+            showConfirm()
+        }else{
+            permit()
+        }
+    }
+
     const permit = () => {
         let _amounts = [];
         let _periods = [];
@@ -114,6 +130,7 @@ export default function order(props) {
             _amounts.push(ethers.utils.parseEther(`${e.budget}`));
             _periods.push(`${e.period * 24 * 60 * 60}`);
         })
+
         let r = '0x' + signature.substring(2).substring(0, 64);
         let s = '0x' + signature.substring(2).substring(64, 128);
         let v = '0x' + signature.substring(2).substring(128, 130);
@@ -242,6 +259,18 @@ export default function order(props) {
             })
     }
 
+    const showConfirm = () => {
+        confirm({
+          title: '你确认支付这笔订单吗?',
+          icon: <ExclamationCircleOutlined />,
+          content: '当前总金额超出预期金额!',
+          onOk() {
+            permit();
+          },
+          onCancel() {},
+        });
+      };
+
     const total = () => {
         if (!stagesData) {
             return
@@ -272,12 +301,10 @@ export default function order(props) {
             return (
                 query.who === 'issuer' && !modifyStatus ? <>
                     <p className="tips"><ExclamationCircleOutlined style={{color: 'red', marginRight: '10px'}} />同意后,项目正式启动.并按照阶段划分作为项目交付计划和付款计划</p>
-                    <Button type='primary' className='worker-btn' onClick={() => permit()}>同意阶段划分</Button></>
+                    <Button type='primary' className='worker-btn' onClick={() => overflow()}>同意阶段划分</Button></>
                     :
                     <Button type='primary' className='worker-btn' onClick={() => setStage()}>完成并提交阶段划分</Button>
             )
-        }else{
-            return <h1>{step}</h1>
         }
     }
 
@@ -308,7 +335,6 @@ export default function order(props) {
     },[step])
 
     useEffect(() => {
-        console.log(Order);
         if (query.oid && Order.data) {
             switch (Order.data.progress) {
                 case 0:
