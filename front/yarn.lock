@@ -5303,6 +5303,11 @@
   dependencies:
     "safer-buffer" ">= 2.1.2 < 3"
 
+"identicon.js@^2.3.3":
+  "integrity" "sha512-/qgOkXKZ7YbeCYbawJ9uQQ3XJ3uBg9VDpvHjabCAPp6aRMhjLaFAxG90+1TxzrhKaj6AYpVGrx6UXQfQA41UEA=="
+  "resolved" "https://registry.npmmirror.com/identicon.js/-/identicon.js-2.3.3.tgz"
+  "version" "2.3.3"
+
 "idna-uts46-hx@^2.3.1":
   "integrity" "sha512-PWoF9Keq6laYdIRwwCdhTPl60xRqAloYNMQLiyUnG42VjT53oW07BXIRM+NK7eQjzXjAk2gUvX9caRxlnF9TAA=="
   "resolved" "https://registry.npmmirror.com/idna-uts46-hx/-/idna-uts46-hx-2.3.1.tgz"

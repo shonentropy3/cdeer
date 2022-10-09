@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useDisconnect, useConnect, useAccount } from 'wagmi';
-
+import Identicon, { IdenticonOptions } from "identicon.js";
 export default function Header() {
 
     const {connect,chainId,connectors,error,isLoading,pendingConnector} = useConnect()
@@ -17,6 +17,7 @@ export default function Header() {
     ])
     const [isModalVisible, setIsModalVisible] = useState(false);
     let [wagmi,setWagmi] = useState({});
+    let [account,setAccount] = useState('');
     let [isScroll,setIsScroll] = useState(false);
 
     const menu = (
@@ -88,6 +89,28 @@ export default function Header() {
         setIsModalVisible(false)
     }
 
+    const hashAvt = () => {
+        if (!address) {
+            return
+        }
+        let r = Math.floor(Math.random() * (155 - 0 + 1)) + 0;
+        let g = Math.floor(Math.random() * (155 - 0 + 1)) + 0;
+        let b = Math.floor(Math.random() * (155 - 0 + 1)) + 0;
+        var hash = address;  // 15+ hex chars
+        // var options = {
+        //     foreground: [r, g, b, 255],               // rgba black
+        //     background: [255, 255, 255, 255],         // rgba white
+        //     margin: 0.2,                              // 20% margin
+        //     size: 420,                                // 420px square
+        //     format: 'svg'                             // use SVG instead of PNG
+        //     };
+        // create a base64 encoded SVG
+        // var data = new Identicon(hash, options).toString();
+        var data = new Identicon(hash, {format: 'svg'}).toString();
+        data = `data:image/svg+xml;base64,${data}`
+        return data
+    }
+
     useEffect(() => {
         selectItem.map(e => {
             e.checked = false;
@@ -101,7 +124,6 @@ export default function Header() {
     useEffect(()=>{
         if(isConnected){
             wagmi = {
-                account: address.slice(0,5)+"..."+address.slice(38,42),
                 isActive: isConnected
             }
         }else{
@@ -111,6 +133,13 @@ export default function Header() {
         }
         setWagmi({...wagmi})
     },[isConnected])
+
+    useEffect(() => {
+        if (address) {
+            account = address.slice(0,5)+"..."+address.slice(38,42);
+            setAccount(account);
+        }
+    },[address])
 
     useEffect(() => {
         window.addEventListener("scroll", handleScroll)
@@ -150,14 +179,19 @@ export default function Header() {
 
             </div>
             <div className="header-info">
-                <Dropdown overlay={menu} placement="bottom">
-                    {/* <a onClick={(e) => e.preventDefault()}> */}
-                        <div className="img"></div>
-                    {/* </a> */}
-                </Dropdown>
+                
                 {
                     wagmi.isActive ? 
-                        <p className="btn">{wagmi.account}</p>
+                        <>
+                            <Dropdown overlay={menu} placement="bottom">
+                            {/* <a onClick={(e) => e.preventDefault()}> */}
+                                <div>
+                                    <img className="img" src={hashAvt()} alt="" />
+                                </div>
+                            {/* </a> */}
+                            </Dropdown>
+                            <p className="btn">{account}</p>
+                        </>
                         :
                         <Button className="btn" onClick={showModal}>链接钱包</Button>
                 }
