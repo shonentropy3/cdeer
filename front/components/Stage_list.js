@@ -1,6 +1,6 @@
 import { Button, Divider, InputNumber, message, Modal } from "antd";
 import { useEffect, useState } from "react";
-import { useContracts, useRead, useSignProData } from "../controller";
+import { multicallWrite, muticallEncode, useContracts, useRead, useSignProData } from "../controller";
 import { getProlongStage, getStagesJson, updateSignature } from "../http/api/order";
 import { updateAttachment } from "../http/api/task";
 import { useNetwork, useAccount } from 'wagmi'
@@ -11,7 +11,7 @@ export default function Stage_list(props) {
     const { confirm: modalComfirm } = Modal;
     const { chain } = useNetwork();
     const { address } = useAccount()
-    const { data, stages, set, setTab, Query, Step, index, del, delivery, confirm, abortOrder, prolongStage, modifyAppend } = props;
+    const { data, stages, set, setTab, Query, Step, index, del, delivery, confirm, abortOrder, prolongStage, modifyAppend, pay, permitApeend } = props;
     const { useStageRead: ongoingStage } = useRead('ongoingStage', Query.oid);
     const { useStageRead: stagesChain } = useRead('getStages', Query.oid);
     const { useOrderRead: nonces } = useRead('nonces', address);
@@ -100,28 +100,6 @@ export default function Stage_list(props) {
         })
     }
 
-    // 确认新增
-    const permitApeend = () => {
-        getProlongStage({oid: Query.oid})
-        .then(res => {
-            if (res.code === 200) {
-                let data = res.data;
-                useAppendStage.write({
-                    recklesslySetUnpreparedArgs: [
-                        Query.oid, 
-                        ethers.utils.parseEther(`${data.stages.amount[data.stages.amount.length - 1]}`),
-                        (data.stages.period[data.stages.period.length - 1] * 24 * 60 * 60), 
-                        permitNonce, 
-                        data.stages.deadline,
-                        '0x' + data.signature.substring(2).substring(128, 130),
-                        '0x' + data.signature.substring(2).substring(0, 64),
-                        '0x' + data.signature.substring(2).substring(64, 128)
-                    ]
-                })
-            }
-        })
-    }
-
     const stageStatus = () => {
         switch (data.status) {
             case 0:
@@ -162,6 +140,17 @@ export default function Stage_list(props) {
             onCancel() {},
           });
     }
+
+    const showAppendPayConfirm = () => {
+        modalComfirm({
+            title: '同意新增',
+            content: '同意对方发起的新增阶段申请,并付款.',
+            onOk() {
+                pay();
+            },
+            onCancel() {},
+          });
+    }
     
     useEffect(() => {
         if (delivery.data) {
@@ -195,11 +184,8 @@ export default function Stage_list(props) {
     useEffect(() => {
         getStagesJson({oid: Query.oid})
             .then(res => {
-                // console.log(res);
-                // return
                 permitNonce = res.signnonce;
                 setPermitNonce(permitNonce);
-                // console.log(res.signnonce);
                 // stages = res.stages;
                 // setStages({...stages});
                 // deliveryDetail = res.json.stages[index+1].delivery;
@@ -397,7 +383,15 @@ export default function Stage_list(props) {
                     : 
                     <div className="btn" style={{display: 'flex', justifyContent: 'space-between', padding: '10px'}}>
                         <p>对方发起了「新增阶段」的申请</p>
-                        <Button onClick={showAppendConfirm}>同意新增</Button>
+                        <div>
+                        <Button onClick={() => {modifyAppend(true)}}>修改新增</Button>
+                        {
+                            Query.who === 'issuer' ? 
+                            <Button onClick={showAppendPayConfirm}>同意新增并支付</Button>
+                            :
+                            <Button onClick={showAppendConfirm}>同意新增</Button>
+                        }
+                        </div>
                     </div> }
                 </div>:''
             }

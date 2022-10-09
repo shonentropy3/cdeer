@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import { useEffect, useRef, useState } from "react";
 import { useAccount, useNetwork } from 'wagmi'
 import { multicallWrite, muticallEncode, useContracts, useRead, useSignAppendData } from "../controller";
-import { updateSignature } from "../http/api/order";
+import { getProlongStage, getStagesJson, updateSignature } from "../http/api/order";
 import Stage_card from "./Stage_card";
 import Stage_list from "./Stage_list";
 
@@ -22,6 +22,8 @@ export default function Stage_info(props) {
     const [items, setItems] = useState([]);
     const newTabIndex = useRef(0);
     // appendStage
+    let [multicall,setMulticall] = useState([]);
+    let [permitNonce,setPermitNonce] = useState();
     const [append, setAppend] = useState(false);
     let [deadline,setDeadline] = useState();
     let [nonce,setNonce] = useState();
@@ -36,10 +38,11 @@ export default function Stage_info(props) {
     const { useOrderContractWrite: confirm } = useContracts('confirmDelivery');
     const { useOrderContractWrite: abortOrder } = useContracts('abortOrder');
     const { useOrderContractWrite: prolongStage } = useContracts('prolongStage');
+    const { useOrderContractWrite: useAppendStage } = useContracts('appendStage');
     const { useSign, obj } = useSignAppendData(appendObj);  //  延长签名
 
     const appendStage = () => {
-        // TODO: 添加阶段
+        // TODO: 添加阶段==>签名
         let data = appendStages[0];
         let now = parseInt(new Date().getTime()/1000);
         let setTime = 2 * 24 * 60 * 60;
@@ -47,14 +50,6 @@ export default function Stage_info(props) {
         deadline = now+setTime;
         setDeadline(deadline);
         let amount = ethers.utils.parseEther(`${data.budget}`);
-        // // 支付
-        // multicallWrite(muticallEncode([{
-        //     functionName: 'payOrder',
-        //     params: [Query.oid, amount]
-        // }]),address,amount)
-        // .then(res => {
-        //     console.log('支付成功 ==>',res);
-        // })
         let obj = {
             chainId: chain.id,  //  id
             orderId: Query.oid,
@@ -66,6 +61,49 @@ export default function Stage_info(props) {
         appendObj = obj;
         setAppendObj({...appendObj})
         setIsSigner(true);
+    }
+
+    // 甲方确认新增并付款
+    const pay = async() => {
+        let amount = ethers.utils.parseEther(`${appendStages[0].budget}`);
+        let data = '';
+        await getProlongStage({oid: Query.oid})
+        .then(res => {
+            if (res.code === 200) {
+                data = res.data;
+            }else{
+                message.error('支付失败')
+                return
+            }
+        })
+        let arr = [];
+        arr.push({
+            functionName: 'payOrder',
+            params: [Query.oid, amount]
+        })
+        arr.push({
+            functionName: 'appendStage',
+            params: [
+                Query.oid, 
+                ethers.utils.parseEther(`${data.stages.amount[data.stages.amount.length - 1]}`),
+                (data.stages.period[data.stages.period.length - 1] * 24 * 60 * 60), 
+                permitNonce, 
+                data.stages.deadline,
+                '0x' + data.signature.substring(2).substring(128, 130),
+                '0x' + data.signature.substring(2).substring(0, 64),
+                '0x' + data.signature.substring(2).substring(64, 128)
+            ]
+        })
+        multicall = arr;
+        setMulticall([...multicall]);
+        let params = muticallEncode(multicall);
+        multicallWrite(params,address,amount)
+        .then(res => {
+            message.success('支付成功')
+            setTimeout(() => {
+                history.go(0)
+            }, 500);
+        })
     }
 
     const onChange = e => {
@@ -220,6 +258,11 @@ export default function Stage_info(props) {
             stages = arr;
             setStages([...stages]);
             setItems(cards);
+            getStagesJson({oid: Query.oid})
+            .then(res => {
+                permitNonce = res.signnonce;
+                setPermitNonce(permitNonce);
+            })
     }
 
     const gowithdraw = () => {
@@ -287,6 +330,9 @@ export default function Stage_info(props) {
             .then(res => {
                 message.success('申请成功,等待对方同意!')
                 setAppend(false);
+                setTimeout(() => {
+                    history.go(0);
+                }, 500);
             })
         }
     },[useSign.data])
@@ -362,6 +408,8 @@ export default function Stage_info(props) {
                                         abortOrder={abortOrder}
                                         prolongStage={prolongStage}
                                         modifyAppend={setAppend}
+                                        pay={pay}
+                                        permitApeend={appendStage}
                                     />
                                 )
                             }
