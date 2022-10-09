@@ -11,7 +11,7 @@ export default function Stage_list(props) {
     const { confirm: modalComfirm } = Modal;
     const { chain } = useNetwork();
     const { address } = useAccount()
-    const { data, stages, set, setTab, Query, Step, index, del, delivery, confirm, abortOrder, prolongStage, modifyAppend, pay, permitApeend } = props;
+    const { data, stages, set, setTab, Query, Step, index, del, delivery, confirm, abortOrder, prolongStage, modifyAppend, pay, permitApeend, permitNonce, Attachment } = props;
     const { useStageRead: ongoingStage } = useRead('ongoingStage', Query.oid);
     const { useStageRead: stagesChain } = useRead('getStages', Query.oid);
     const { useOrderRead: nonces } = useRead('nonces', address);
@@ -21,7 +21,6 @@ export default function Stage_list(props) {
     let [stageJson,setStageJson] = useState();
     let [deadline,setDeadline] = useState();
     let [nonce,setNonce] = useState();
-    let [permitNonce,setPermitNonce] = useState();
     
     let [delayObj,setDelayObj] = useState({});  //  延长签名
     let [isSigner,setIsSigner] = useState(false);   //  签名flag
@@ -182,18 +181,16 @@ export default function Stage_list(props) {
     },[ongoingStage.data])
 
     useEffect(() => {
-        getStagesJson({oid: Query.oid})
-            .then(res => {
-                permitNonce = res.signnonce;
-                setPermitNonce(permitNonce);
+        // getStagesJson({oid: Query.oid})
+            // .then(res => {
                 // stages = res.stages;
                 // setStages({...stages});
                 // deliveryDetail = res.json.stages[index+1].delivery;
                 // setDeliveryDetail(deliveryDetail);
-                stageJson = res.json;
-                stageJson.last = res.attachment;
+                stageJson = Attachment;
                 setStageJson({...stageJson});
-            })
+            // })
+
     },[])
 
     useEffect(() => {

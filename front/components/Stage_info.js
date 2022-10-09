@@ -2,8 +2,8 @@ import { Button, Card, Checkbox, InputNumber, message, Select, Tabs } from "antd
 import { ethers } from "ethers";
 import { useEffect, useRef, useState } from "react";
 import { useAccount, useNetwork } from 'wagmi'
-import { multicallWrite, muticallEncode, useContracts, useRead, useSignAppendData } from "../controller";
-import { getProlongStage, getStagesJson, updateSignature } from "../http/api/order";
+import { multicallWrite, muticallEncode, useContracts, useRead, useSignAppendData, permitNonce } from "../controller";
+import { getProlongStage, updateSignature } from "../http/api/order";
 import Stage_card from "./Stage_card";
 import Stage_list from "./Stage_list";
 
@@ -23,7 +23,6 @@ export default function Stage_info(props) {
     const newTabIndex = useRef(0);
     // appendStage
     let [multicall,setMulticall] = useState([]);
-    let [permitNonce,setPermitNonce] = useState();
     const [append, setAppend] = useState(false);
     let [deadline,setDeadline] = useState();
     let [nonce,setNonce] = useState();
@@ -258,11 +257,6 @@ export default function Stage_info(props) {
             stages = arr;
             setStages([...stages]);
             setItems(cards);
-            getStagesJson({oid: Query.oid})
-            .then(res => {
-                permitNonce = res.signnonce;
-                setPermitNonce(permitNonce);
-            })
     }
 
     const gowithdraw = () => {
@@ -410,6 +404,8 @@ export default function Stage_info(props) {
                                         modifyAppend={setAppend}
                                         pay={pay}
                                         permitApeend={appendStage}
+                                        permitNonce={permitNonce}
+                                        Attachment={Attachment}
                                     />
                                 )
                             }

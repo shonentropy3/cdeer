@@ -23,7 +23,9 @@ export default function order(props) {
     let [nonce,setNonce] = useState();
     let [isSigner,setIsSigner] = useState(false);
     let [stagejson,setStagejson] = useState('');
+    let [Json,setJson] = useState({});
     let [signaddress,setSignaddress] = useState();
+    let [permitNonce,setPermitNonce] = useState();
     // 确认划分
     let [signature,setSignature] = useState('');
     // json
@@ -254,8 +256,11 @@ export default function order(props) {
                     attachment = res.json;
                     attachment.last = res.attachment;
                     setAttachment({...attachment});
+                    console.log('====>',attachment);
                 }
                 if (res.signature) {
+                    permitNonce = res.signnonce;
+                    setPermitNonce(permitNonce);
                     signature = res.signature;
                     setSignature(signature);
                     deadLine = res.stages.deadline;
@@ -353,7 +358,6 @@ export default function order(props) {
                 stagejson = res[0].stagejson;
                 setStagejson(stagejson);
             })
-            getStages()
         }
     },[step])
 
@@ -422,7 +426,7 @@ export default function order(props) {
                             </div>
                         </div> : ''
                 }
-                    <Stage_info Query={query} Amount={task.budget} OrderInfo={Order} Step={step} StagesData={setStagesData} Data={stagesData} isModify={setModifyStatus} Attachment={attachment} />
+                    <Stage_info Query={query} Amount={task.budget} OrderInfo={Order} Step={step} StagesData={setStagesData} Data={stagesData} isModify={setModifyStatus} Attachment={attachment} permitNonce={permitNonce} />
                 <div className="worker-signInStage">
                 </div>
                 <div className="worker-total">{total()}</div>
