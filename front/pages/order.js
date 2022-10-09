@@ -25,8 +25,8 @@ export default function order(props) {
     let [signaddress,setSignaddress] = useState();
     // 确认划分
     let [signature,setSignature] = useState('');
-    // Modal
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    // json
+    const [attachment, setAttachment] = useState({});
 
     const { confirm } = Modal;
     const { Step } = Steps;
@@ -51,6 +51,10 @@ export default function order(props) {
             // TODO: chain阶段详情
             await getStages()
             .then(() => {
+                if (stagesChain.data.length !== stagesData.length) {
+                    stagesData[stagesData.length-1].append = true;
+                    stagesData[stagesData.length-1].appendAddress = signaddress;
+                }
                 stagesChain.data.map((e,i) => {
                     let period = e.period.toString() / 60 / 60 / 24;
                     let budget = e.amount.toString() / Math.pow(10,18);
@@ -64,6 +68,7 @@ export default function order(props) {
                     stagesData[i].status = e.status;
                 })
                 setStagesData([...stagesData]);
+                console.log(stagesData);
             })
             
         }
@@ -245,6 +250,11 @@ export default function order(props) {
         await getStagesJson({oid: query.oid})
             .then(res => {
                 // TODO: 判断是否有人设置阶段
+                if (res.json) {
+                    attachment = res.json;
+                    attachment.last = res.attachment;
+                    setAttachment({...attachment});
+                }
                 if (res.signature) {
                     signature = res.signature;
                     setSignature(signature);
@@ -411,8 +421,8 @@ export default function order(props) {
                             </div>
                         </div> : ''
                 }
+                    <Stage_info Query={query} Amount={task.budget} OrderInfo={Order} Step={step} StagesData={setStagesData} Data={stagesData} isModify={setModifyStatus} Attachment={attachment} />
                 <div className="worker-signInStage">
-                    <Stage_info Query={query} Amount={task.budget} OrderInfo={Order} Step={step} StagesData={setStagesData} Data={stagesData} isModify={setModifyStatus} />
                 </div>
                 <div className="worker-total">{total()}</div>
                 {btn()}

@@ -256,6 +256,13 @@ export class CommonService {
     async updateSignature(body: any){
         await this.tasksRepository.query(updateSigner({signature: body.signature, signaddress: body.signaddress, stages: body.stages, oid: body.oid, nonce: body.nonce}))
         .then(() => {
+            if (body.json) {
+                let obj = {
+                    obj: body.json,
+                    oid: body.oid
+                }
+                this.updateAttachment(obj)
+            }
             return {
                 code: 200
             }

@@ -4,6 +4,7 @@ import { useContracts, useRead, useSignProData } from "../controller";
 import { getProlongStage, getStagesJson, updateSignature } from "../http/api/order";
 import { updateAttachment } from "../http/api/task";
 import { useNetwork, useAccount } from 'wagmi'
+import { ethers } from "ethers";
 
 export default function Stage_list(props) {
     
@@ -29,7 +30,7 @@ export default function Stage_list(props) {
     const [isAbortModalOpen, setIsAbortModalOpen] = useState(false);
     const { useSign, obj } = useSignProData(delayObj);  //  延长签名
     
-    // TODO: 改为Stage_info传子
+    const { useOrderContractWrite: useAppendStage } = useContracts('appendStage');
     
     // 交付
     const setDelivery = () => {
@@ -99,6 +100,28 @@ export default function Stage_list(props) {
         })
     }
 
+    // 确认新增
+    const permitApeend = () => {
+        getProlongStage({oid: Query.oid})
+        .then(res => {
+            if (res.code === 200) {
+                let data = res.data;
+                useAppendStage.write({
+                    recklesslySetUnpreparedArgs: [
+                        Query.oid, 
+                        ethers.utils.parseEther(`${data.stages.amount[data.stages.amount.length - 1]}`),
+                        (data.stages.period[data.stages.period.length - 1] * 24 * 60 * 60), 
+                        permitNonce, 
+                        data.stages.deadline,
+                        '0x' + data.signature.substring(2).substring(128, 130),
+                        '0x' + data.signature.substring(2).substring(0, 64),
+                        '0x' + data.signature.substring(2).substring(64, 128)
+                    ]
+                })
+            }
+        })
+    }
+
     const stageStatus = () => {
         switch (data.status) {
             case 0:
@@ -111,8 +134,10 @@ export default function Stage_list(props) {
                 return <span style={{width: '100%', textAlign: 'right', color: 'green'}}>已完成</span>
             case 2:
                 return <span style={{width: '100%', textAlign: 'right', color: 'red'}}>已中止</span>
-            default:
+            case 3:
                 return <span style={{width: '100%', textAlign: 'right', color: '#f9b65c'}}>已取款</span>
+            default:
+                return 
         }
     }
 
@@ -125,8 +150,19 @@ export default function Stage_list(props) {
           },
           onCancel() {},
         });
-      };
+    };
 
+    const showAppendConfirm = () => {
+        modalComfirm({
+            title: '同意新增',
+            content: '同意对方发起的新增阶段申请!',
+            onOk() {
+                permitApeend();
+            },
+            onCancel() {},
+          });
+    }
+    
     useEffect(() => {
         if (delivery.data) {
             stageJson.stages[ongoingStage.data.stageIndex.toString()].delivery = {
@@ -200,7 +236,7 @@ export default function Stage_list(props) {
     },[delayObj])
 
     useEffect(() => {
-        if (useSign.data) {
+        if (useSign.data && isSigner) {
             setIsSigner(false);
             let _amounts = [];
             let _periods = [];
@@ -236,6 +272,15 @@ export default function Stage_list(props) {
             }, 1000);
         }
     },[prolongStage.isSuccess])
+
+    useEffect(() => {
+        if (useAppendStage.data) {
+            message.success('新增阶段成功!')
+            setTimeout(() => {
+                history.go(0)
+            }, 500);
+        }
+    },[useAppendStage.data])
 
     return  (
         data.period === 0 ? '' :
@@ -337,6 +382,19 @@ export default function Stage_list(props) {
                     <div className="btn" style={{display: 'flex', justifyContent: 'space-between', padding: '10px'}}>
                         <p>对方申请周期延长{data.prolongStage - data.period}天</p>
                         <Button onClick={showConfirm}>同意延期</Button>
+                    </div> }
+                </div>:''
+            }
+            {/* 添加阶段 */}
+            {
+                data.append ? 
+                <div className="append">
+                    {data.appendAddress === address ? 
+                    '你提交了「新增阶段」，等待对方同意' 
+                    : 
+                    <div className="btn" style={{display: 'flex', justifyContent: 'space-between', padding: '10px'}}>
+                        <p>对方发起了「新增阶段」的申请</p>
+                        <Button onClick={showAppendConfirm}>同意新增</Button>
                     </div> }
                 </div>:''
             }

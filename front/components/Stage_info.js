@@ -1,7 +1,9 @@
 import { Button, Card, Checkbox, InputNumber, message, Select, Tabs } from "antd";
+import { ethers } from "ethers";
 import { useEffect, useRef, useState } from "react";
-import { useAccount } from 'wagmi'
-import { useContracts } from "../controller";
+import { useAccount, useNetwork } from 'wagmi'
+import { multicallWrite, muticallEncode, useContracts, useRead, useSignAppendData } from "../controller";
+import { updateSignature } from "../http/api/order";
 import Stage_card from "./Stage_card";
 import Stage_list from "./Stage_list";
 
@@ -9,53 +11,61 @@ import Stage_list from "./Stage_list";
 
 export default function Stage_info(props) {
 
-    const { Query, Amount, OrderInfo, Data, Step, StagesData, isModify } = props;   //  StagesData 数据库阶段
+    const { Query, Amount, OrderInfo, Data, Step, StagesData, isModify, Attachment } = props;   //  StagesData 数据库阶段
     let [advance,setAdvance] = useState(false);
     let [stage0,setStage0] = useState();
     let [stages,setStages] = useState([]);   
-    let [appendStages,setAppendStages] = useState([{budget:'',percent:'',title:'',content:''}]);   
+    let [appendStages,setAppendStages] = useState([{budget:'',percent:'',title:'',content:'',period: ''}]);   
     let [editMode,setEditMode] = useState(false);
     // Tabs
     const [activeKey, setActiveKey] = useState();   
-    const [append, setAppend] = useState(false);
     const [items, setItems] = useState([]);
     const newTabIndex = useRef(0);
+    // appendStage
+    const [append, setAppend] = useState(false);
+    let [deadline,setDeadline] = useState();
+    let [nonce,setNonce] = useState();
+    let [appendObj,setAppendObj] = useState({});  //  新增阶段签名
+    let [isSigner,setIsSigner] = useState(false);   //  签名flag
     
+    const { chain } = useNetwork();
     const { address } = useAccount()
+    const { useOrderRead: nonces } = useRead('nonces', address);
     const { useOrderContractWrite: getWithdraw } = useContracts('withdraw');
     const { useOrderContractWrite: delivery } = useContracts('updateAttachment');
     const { useOrderContractWrite: confirm } = useContracts('confirmDelivery');
     const { useOrderContractWrite: abortOrder } = useContracts('abortOrder');
     const { useOrderContractWrite: prolongStage } = useContracts('prolongStage');
+    const { useSign, obj } = useSignAppendData(appendObj);  //  延长签名
 
     const appendStage = () => {
         // TODO: 添加阶段
-        new Promise((resolve, reject) => {
-            let now = parseInt(new Date().getTime()/1000);
-            let setTime = 2 * 24 * 60 * 60;
-            let period = 5 * 24 * 60 * 60;
-            deadline = now+setTime;
-            setDeadline(deadline);
-            let amount = ethers.utils.parseEther(`${100}`);
-            let obj = {
-                chainId: chain.id,
-                orderId: Oid,
-                amount: amount,
-                period: period,
-                nonce: nonce,  
-                deadline: `${deadline}`,
-            }
-            appendObj = obj;
-            setAppendObj({...appendObj})
-            setTimeout(() => {
-                resolve();
-            }, 50);
-        })
+        let data = appendStages[0];
+        let now = parseInt(new Date().getTime()/1000);
+        let setTime = 2 * 24 * 60 * 60;
+        let period = data.period * 24 * 60 * 60;
+        deadline = now+setTime;
+        setDeadline(deadline);
+        let amount = ethers.utils.parseEther(`${data.budget}`);
+        // 支付
+        multicallWrite(muticallEncode([{
+            functionName: 'payOrder',
+            params: [Query.oid, amount]
+        }]),address,amount)
         .then(res => {
-            useSign.signTypedData()
-            console.log(useSign.error);
-            console.log(useSignParams);
+            console.log('支付成功 ==>',res);
         })
+        let obj = {
+            chainId: chain.id,  //  id
+            orderId: Query.oid,
+            amount: amount,
+            period: period,
+            nonce: nonce,    //  id nonce form sql? or chain
+            deadline: `${deadline}`,
+        }
+        appendObj = obj;
+        setAppendObj({...appendObj})
+        setIsSigner(true);
     }
 
     const onChange = e => {
@@ -226,6 +236,45 @@ export default function Stage_info(props) {
         getWithdraw.isSuccess ? message.success('取款成功') : '';
     },[getWithdraw.isSuccess])
 
+    useEffect(() => {
+        if (nonces.data) {
+            setNonce(nonces.data.toString());
+        }
+    },[nonces.data])
+
+    // 新增
+    useEffect(() => {
+        if (obj.chainId && isSigner) {
+            useSign.signTypedData();
+        }
+    },[appendObj])
+
+    useEffect(() => {
+        if (useSign.data && isSigner) {
+            setIsSigner(false);
+            let _amounts = [];
+            let _periods = [];
+            Data.map(e => {
+                _amounts.push(e.budget);
+                _periods.push(e.period);
+            })
+            _amounts.push(appendStages[0].budget);
+            _periods.push(appendStages[0].period);
+            let obj = {
+                amount: _amounts, period: _periods, deadline: deadline
+            }
+            Attachment.stages.push({
+                milestone: {type: '', content: appendStages[0].content, title: appendStages[0].title},
+                delivery: {attachment: '', content: '', fileType: ''},
+            })
+            updateSignature({signature: useSign.data, signaddress: address, stages: JSON.stringify(obj), oid: Query.oid, nonce: nonce, json: JSON.stringify(Attachment)})
+            .then(res => {
+                message.success('申请成功,等待对方同意!')
+                setAppend(false);
+            })
+        }
+    },[useSign.data])
+
     return <div className="Stage_info">
                 <div className="stageInfo-title"> 项目阶段划分 </div>
                  {
@@ -311,8 +360,6 @@ export default function Stage_info(props) {
                                 <>
                                     {/* <Button onClick={() => appendStage()}>添加阶段</Button> */}
                                     <Button onClick={() => {setAppend(true)}}>添加阶段</Button>
-                                    <Button onClick={() => payStage()}>支付阶段</Button>
-                                    <Button onClick={() => agreeApeend()}>同意添加</Button>
                                 </> : ''
                             }
                         </div>
