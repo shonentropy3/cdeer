@@ -11,7 +11,7 @@ export default function Stage_list(props) {
     const { confirm: modalComfirm } = Modal;
     const { chain } = useNetwork();
     const { address } = useAccount()
-    const { data, stages, set, setTab, Query, Step, index, del, delivery, confirm, abortOrder, prolongStage } = props;
+    const { data, stages, set, setTab, Query, Step, index, del, delivery, confirm, abortOrder, prolongStage, modifyAppend } = props;
     const { useStageRead: ongoingStage } = useRead('ongoingStage', Query.oid);
     const { useStageRead: stagesChain } = useRead('getStages', Query.oid);
     const { useOrderRead: nonces } = useRead('nonces', address);
@@ -374,7 +374,7 @@ export default function Stage_list(props) {
             }
             {/* 延期 */}
             {
-                data.prolongStage ? 
+                data.prolongStage && Step === 1 ? 
                 <div className="prolong">
                     {data.prolongAddress === address ? 
                     '你提交了「阶段延期」，等待对方同意' 
@@ -387,10 +387,13 @@ export default function Stage_list(props) {
             }
             {/* 添加阶段 */}
             {
-                data.append ? 
+                data.append && Step === 1 ? 
                 <div className="append">
                     {data.appendAddress === address ? 
-                    '你提交了「新增阶段」，等待对方同意' 
+                    <div className="btn" style={{display: 'flex', justifyContent: 'space-between', padding: '10px'}}>
+                        <p>你提交了「新增阶段」，等待对方同意</p>
+                        <Button onClick={() => {modifyAppend(true)}}>重新提交</Button>
+                    </div>
                     : 
                     <div className="btn" style={{display: 'flex', justifyContent: 'space-between', padding: '10px'}}>
                         <p>对方发起了「新增阶段」的申请</p>

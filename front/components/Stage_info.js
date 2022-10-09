@@ -47,14 +47,14 @@ export default function Stage_info(props) {
         deadline = now+setTime;
         setDeadline(deadline);
         let amount = ethers.utils.parseEther(`${data.budget}`);
-        // 支付
-        multicallWrite(muticallEncode([{
-            functionName: 'payOrder',
-            params: [Query.oid, amount]
-        }]),address,amount)
-        .then(res => {
-            console.log('支付成功 ==>',res);
-        })
+        // // 支付
+        // multicallWrite(muticallEncode([{
+        //     functionName: 'payOrder',
+        //     params: [Query.oid, amount]
+        // }]),address,amount)
+        // .then(res => {
+        //     console.log('支付成功 ==>',res);
+        // })
         let obj = {
             chainId: chain.id,  //  id
             orderId: Query.oid,
@@ -193,6 +193,10 @@ export default function Stage_info(props) {
             let arr = [];
             let cards = [];
             Data.map(e => {
+                if (e.append) {
+                    appendStages[0] = e;
+                    setAppendStages([...appendStages]);
+                }
                 if(e.period === 0){
                     setAdvance(true);
                     stage0 = e.budget;
@@ -254,19 +258,31 @@ export default function Stage_info(props) {
             setIsSigner(false);
             let _amounts = [];
             let _periods = [];
+            let flag = false;   // 判断此次操作是否是 『修改』 还是 「新增」 
             Data.map(e => {
                 _amounts.push(e.budget);
                 _periods.push(e.period);
+                if (e.append) {
+                    flag = true;
+                }
             })
-            _amounts.push(appendStages[0].budget);
-            _periods.push(appendStages[0].period);
+            if (!flag) {
+                // 新增操作执行PUSH
+                _amounts.push(appendStages[0].budget);
+                _periods.push(appendStages[0].period);
+                Attachment.stages.push({
+                    milestone: {type: '', content: appendStages[0].content, title: appendStages[0].title},
+                    delivery: {attachment: '', content: '', fileType: ''},
+                })
+            }else{
+                Attachment.stages[Attachment.stages.length - 1] = {
+                    milestone: {type: '', content: appendStages[0].content, title: appendStages[0].title},
+                    delivery: {attachment: '', content: '', fileType: ''},
+                }
+            }
             let obj = {
                 amount: _amounts, period: _periods, deadline: deadline
             }
-            Attachment.stages.push({
-                milestone: {type: '', content: appendStages[0].content, title: appendStages[0].title},
-                delivery: {attachment: '', content: '', fileType: ''},
-            })
             updateSignature({signature: useSign.data, signaddress: address, stages: JSON.stringify(obj), oid: Query.oid, nonce: nonce, json: JSON.stringify(Attachment)})
             .then(res => {
                 message.success('申请成功,等待对方同意!')
@@ -330,13 +346,6 @@ export default function Stage_info(props) {
                         :
                         <div className="stageInfo-inspection">
                             {
-                                append ? <>
-                                <Stage_card stage={appendStages[0]} amount={Amount} set={setAppendStages} stages={appendStages}/>
-                                <Button onClick={() => {setAppend(false)}}>Cancel</Button>
-                                <Button onClick={() => appendStage()}>Confirm</Button>
-                                </>:''
-                            }
-                            {
                                 stages.map((e,i) => 
                                     <Stage_list 
                                         key={i} 
@@ -352,15 +361,22 @@ export default function Stage_info(props) {
                                         confirm={confirm}
                                         abortOrder={abortOrder}
                                         prolongStage={prolongStage}
+                                        modifyAppend={setAppend}
                                     />
                                 )
                             }
                             {
+                                append ? <>
+                                <Stage_card stage={appendStages[0]} amount={Amount} set={setAppendStages} stages={appendStages}/>
+                                <Button onClick={() => {setAppend(false)}}>Cancel</Button>
+                                <Button onClick={() => appendStage()}>Confirm</Button>
+                                </>:''
+                            }
+                            {
                                 Step === 1 ? 
-                                <>
-                                    {/* <Button onClick={() => appendStage()}>添加阶段</Button> */}
+                                <div style={{display: "flex", justifyContent: "center"}}>
                                     <Button onClick={() => {setAppend(true)}}>添加阶段</Button>
-                                </> : ''
+                                </div> : ''
                             }
                         </div>
                 }
