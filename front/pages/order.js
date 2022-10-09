@@ -41,9 +41,10 @@ export default function order(props) {
     
     // 获取链上数据
     const readContract = async() => {
-        if (query.tid && useTaskRead.data) {
+        if (query.tid && useTaskRead.data && Order.data) {
             let multiple = useTaskRead.data.currency === 1 ? Math.pow(10,18) : 1;
-            task.budget = useTaskRead.data.budget.toString() / multiple;
+            // 价格从Order获取不从Task获取
+            task.budget = Order.data.amount.toString() / multiple;
             task.currency = useTaskRead.data.currency;
             setTask({...task});
         }
@@ -68,7 +69,6 @@ export default function order(props) {
                     stagesData[i].status = e.status;
                 })
                 setStagesData([...stagesData]);
-                console.log(stagesData);
             })
             
         }
