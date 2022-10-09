@@ -9,7 +9,7 @@ export const setMyInfo = params => {
 
 export const modifyMyInfo = params => {
     let sql = `update users SET username='${params.username}', avatar='${params.avatar}', telegram='${params.telegram}',
-    wechat='${params.wechat}', skype='${params.skype}', role='{${params.role}}'
+    wechat='${params.wechat}', skype='${params.skype}', role='{${params.role}}' WHERE address = '${params.address}'
     `;
     return sql
 }

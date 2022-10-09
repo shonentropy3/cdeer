@@ -17,8 +17,8 @@ export default function Modal_applyTask (props) {
         setParams({...params});
     },[])
 
-    return <>
-        <p>报名此项目<span>X</span></p>
+    return <div className="apply-task">
+        <p className="apply-task-top">报名此项目<span>X</span></p>
         <div>
             <div>
                 <div></div>
@@ -54,6 +54,6 @@ export default function Modal_applyTask (props) {
             </div>
             <Button onClick={() => submit()}>报名参与</Button>
         </div>
-    </>
+    </div>
 }
 
