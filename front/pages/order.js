@@ -256,7 +256,6 @@ export default function order(props) {
                     attachment = res.json;
                     attachment.last = res.attachment;
                     setAttachment({...attachment});
-                    console.log('====>',attachment);
                 }
                 if (res.signature) {
                     permitNonce = res.signnonce;
