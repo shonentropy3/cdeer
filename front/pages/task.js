@@ -181,9 +181,9 @@ export default function Task() {
                                         </div>
                                     </div>
                                     <div className="li-right">
-                                        <Link href={{pathname: '/order', query: {oid: e.oid, who: who, tid: e.tid}}}>
-                                            <Button type="primary">阶段详情</Button>
-                                        </Link>
+                                        {/* <Link href={{pathname: '/order', query: {oid: e.oid, who: who, tid: e.tid}}}> */}
+                                            <Button type="primary" onClick={() => {router.push({pathname: '/order', query: {oid: e.oid, who: who, tid: e.tid}})}}>阶段详情</Button>
+                                        {/* </Link> */}
                                     </div>
                                 </div>
                             )

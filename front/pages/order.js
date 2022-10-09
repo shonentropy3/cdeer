@@ -14,6 +14,7 @@ export default function order(props) {
     
     let [query,setQuery] = useState({});
     let [task,setTask] = useState({});
+    let [price,setPrice] = useState({});
     let [signObj,setSignObj] = useState({});
     let [step,setStep] = useState();
     let [stagesData,setStagesData] = useState();
@@ -44,9 +45,9 @@ export default function order(props) {
         if (query.tid && useTaskRead.data && Order.data) {
             let multiple = useTaskRead.data.currency === 1 ? Math.pow(10,18) : 1;
             // 价格从Order获取不从Task获取
-            task.budget = Order.data.amount.toString() / multiple;
-            task.currency = useTaskRead.data.currency;
-            setTask({...task});
+            price.budget = Order.data.amount.toString() / multiple;
+            price.currency = useTaskRead.data.currency;
+            setPrice({...price});
         }
         if (query.oid && stagesChain.data) {
             // TODO: chain阶段详情
@@ -88,7 +89,6 @@ export default function order(props) {
                 task = res.data[0];
                 task.budget
                 setTask({...task});
-                readContract()
             }
         })
 
@@ -359,6 +359,7 @@ export default function order(props) {
 
     useEffect(() => {
         if (query.oid && Order.data) {
+            readContract()
             switch (Order.data.progress) {
                 case 0:
                     step = 0;
@@ -383,7 +384,7 @@ export default function order(props) {
                         <p>技术要求: {task.role}</p>
                         <div>
                             <p>项目周期: <span>{task.period / 24 / 60 / 60}天</span> </p>
-                            <p>项目预算: <span>{task.budget} {task.currency === 1 ? 'ETH' : 'BTC'}</span> </p>
+                            <p>项目预算: <span>{price.budget} {price.currency === 1 ? 'ETH' : 'BTC'}</span> </p>
                         </div>
                     </div>
                     <div className="title-num">
