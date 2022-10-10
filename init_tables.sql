@@ -2,7 +2,7 @@
 
 -- 创建日志表
 CREATE TABLE block_logs (
- id serial PRIMARY KEY,
+  id serial PRIMARY KEY,
   "block" int8 NOT NULL
 );
 

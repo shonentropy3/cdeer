@@ -1,1 +1,4 @@
-.env MNEMONIC=" "
+// test  0xada57585A768830a4c06D9A6e2314DF716426BB5
+MNEMONIC="crazy pipe all coach upset frost truth sand spring brass fine avoid"
+
+INFURA_API_KEY = ""

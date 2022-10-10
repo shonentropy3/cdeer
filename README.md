@@ -19,11 +19,21 @@ server_data：基于nest框架的nodejs项目，作用为同步数据库和链�
    ```
 
 
-3. 在code--market项目下建表：
+3. 在code--market项目下
 
+创建数据库：
+```
+create database detask;
+create user ethereum detask 'detask@123';
+
+```
+
+建表：
    ```js
-   // 第一个postgres为用户名，第二个postgres为库名，可以更改
-   psql -p5432 "postgres" -d postgres -f init_tables.sql
+   // 第一个detask为用户名，第二个detask为库名，可以更改
+   psql -p5432 "detask" -d detask -f init_tables.sql
+   // 或(Mac) 
+   /Applications/Postgres.app/Contents/Versions/14/bin/psql -p5432 -p5432 "detask" -d detask -f init_tables.sql
    ```
 
 
@@ -68,19 +78,4 @@ npx hardhat run scripts/2_deploy_Order.js --network dev
 npm run start:dev
 ```
 
-2. 设计创建表实体类，可以参考server项目下package.json包中scripts中的db
 
-## server_data
-
-目前是定时任务同步数据库和链上数据，在server_data/src/app/service/task.ts路径下为定时任务入口；
-
-注：
-
-1. 需复制.envExample文件，命名为.env，填写数据
-
-```js
-// 启动项目
-npm run start:dev
-```
-
-3. 设计创建表实体类，可以参考server_data项目下package.json包中scripts中的db
