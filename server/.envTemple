@@ -1,13 +1,12 @@
 
-MNEMONIC = "助记词"
-PROVIDER_URL = "http://127.0.0.1:8545"
+PROVIDER_URL = "https://matic-mumbai.chainstacklabs.com"
 
 LOGGER_LEVEL= "warn"
 
 PORT = "3030"
 
-PGUSER = "postgres"
+PGUSER = "detask"
 PGHOST = "127.0.0.1"
-PGDATABASE = "用户名"
-PGPASSWORD = "xxx"
+PGDATABASE = "detask"
+PGPASSWORD = "detask@123"
 PGPORT = "5432"
