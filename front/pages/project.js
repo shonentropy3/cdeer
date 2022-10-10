@@ -202,8 +202,9 @@ export default function Project() {
             footer={null}
             open={isModalOpen}
             onCancel={handleCancel}
+            className="modal-apply-task"
         >
-            <Modal_applyTask setParams={setParams} params={params} submit={apply} />
+            <Modal_applyTask setParams={setParams} params={params} project={project} submit={apply} />
         </Modal>
     </div>
 }

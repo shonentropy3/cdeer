@@ -6,6 +6,27 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "1727433",
+      "name": "209电话-圆框",
+      "font_class": "dianhua-yuankuang",
+      "unicode": "e8be",
+      "unicode_decimal": 59582
+    },
+    {
+      "icon_id": "26267561",
+      "name": "discord",
+      "font_class": "discord",
+      "unicode": "e60b",
+      "unicode_decimal": 58891
+    },
+    {
+      "icon_id": "4933141",
+      "name": "时间",
+      "font_class": "shijian",
+      "unicode": "e6c2",
+      "unicode_decimal": 59074
+    },
+    {
       "icon_id": "4936986",
       "name": "skype-fill",
       "font_class": "skype-fill",

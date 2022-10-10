@@ -225,3 +225,343 @@
         }
     }
 }
+
+
+.modal-apply-task{
+    width: 934px !important;
+    .ant-modal-content{
+        box-shadow: 0px 0px 44px -24px #000000;
+        padding-bottom: 56px;
+        border-radius: 30px;
+        .ant-modal-body{
+            padding: 0;
+        }
+        .ant-modal-close{
+            color: #1F1E2E;
+            .ant-modal-close-x{
+                background-color: white;
+                width: 34px;
+                height: 34px;
+                border-radius: 17px;
+                margin-top: 26px;
+                margin-right: 50px;
+                svg{
+                    font-size: 26px;
+                    margin-bottom: 5px;
+                }
+            }
+        }
+    }
+    .apply-task-top{
+        height: 85px;
+        line-height: 85px;
+        background-color: #1F1E2E;
+        color: white;
+        border-radius: 30px 30px 0 0;
+        font-size: 32px;
+        .apply-task-top-text{
+            margin-left: 57px;
+        }
+    }
+    .apply-task-detail{
+        width: 824px;
+        height: 186px;
+        margin-left: 54px;
+        margin-top: 26px;
+        margin-bottom: 32px;
+        box-shadow: 0px 0px 44px -24px #7C7879;
+        border-radius: 9px;
+        padding: 27px 44px 27px 24px;
+        display: flex;
+        letter-spacing: 1px;
+        .apply-task-img{
+            width: 132px;
+            height: 132px;
+            background-color: #D8D8D8;
+            margin-right: 24px;
+        }
+        .apply-task-detail-title{
+            font-size: 18px;
+            color: #1F1E2E;
+            margin-bottom: 5px;
+            line-height: 25px;
+            height: 25px;
+            font-weight: 500;
+        }
+        .apply-task-detail-time{
+            i{
+                font-style: normal;
+            }
+            font-size: 12px;
+            height: 17px;
+            line-height: 17px;
+            margin-bottom: 57px;
+            font-weight: 400;
+            .apply-task-detail-time-ago{
+                .time-icon{
+                    font-size: 14px;
+                    margin-right: 8px;
+                }
+                margin-right: 19px;
+                width: 194px;
+                display: inline-block;
+                color: #6C6C6C;
+            }
+            .apply-task-detail-time-cycle{
+                width: 98px;
+                display: inline-block;
+                color: #6C6C6C;
+                i{
+                    margin-left: 8px;
+                }
+            }
+        }
+        .apply-task-detail-skill{
+            .apply-task-detail-skill-title{
+                font-size: 12px;
+                font-weight: 400;
+                color: #6C6C6C;
+            }
+            .apply-task-detail-skill-li{
+                font-size: 12px;
+                span{
+                    display: inline-block;
+                    height: 22px;
+                    padding: 2px 4px 3px 4px;
+                    margin-right: 7px;
+                    &:nth-of-type(3n+1){
+                        background-color: #FFB1BE;
+                    }
+                    &:nth-of-type(3n+2){
+                        background-color: #FEE7B9;
+                    }
+                    &:nth-of-type(3n+3){
+                        background-color: #C9B1FF;
+                    }
+                }
+            }
+        }
+        .apply-task-detail-cost{
+            margin-left: auto;
+            p{
+                color: #6C6C6C;
+                font-size: 12px;
+                height: 17px;
+                line-height: 17px;
+                span{
+                    font-size: 18px;
+                    color: #1F1E2E;
+                    margin-left: 16px;
+                    letter-spacing: 1px;
+                }
+            }
+        }
+    }
+    .apply-task-applyInfo{
+        padding-top: 17px;
+        border-top: 1px solid #E2E2E2;
+        margin-left: 54px;
+        margin-right: 55px;
+        .apply-task-applyInfo-title{
+            height: 45px;
+            line-height: 45px;
+            font-size: 32px;
+            color: #1F1E2E;
+            font-weight: 600;
+            margin-bottom: 33px;
+        }
+        .apply-task-applyInfo-priceAndtime{
+            display: flex;
+            margin-bottom: 33px;
+            p{
+                color: #1F1E2E;
+                height: 33px;
+                line-height: 33px;
+                font-size: 24px;
+                margin-bottom: 12px;
+            }
+            .apply-task-applyInfo-price{
+
+                margin-right: 200px;
+            }
+            .apply-task-applyInfo-price,.apply-task-applyInfo-time{
+                position: relative;
+                .ant-input{
+                    display: inline-block;
+                    width: 236px;
+                    height: 45px;
+                    margin-right: 11px;
+                    border-radius: 10px;
+                    border: 1px solid #979797;
+                }
+                .ant-select{
+                    position: absolute;
+                    display: inline-block;
+                    width: 118px;
+                    height: 45px;
+                    .ant-select-selector{
+                        border-radius: 10px;
+                        background-color: white;
+                        border: 1px solid #1F1E2E;
+                        height: 45px !important;
+                        .ant-select-selection-item{
+                            height: 45px;
+                            line-height: 45px;
+                            font-size: 18px;
+                            color: #1F1E2E;
+                            margin-left: 20px;
+                        }
+                    }
+                    .ant-select-arrow{
+                        margin-right: 20px;
+                        font-size: 18px;
+                        color: #1F1E2E;
+                    }
+                }
+            }
+        }
+        .apply-task-applyInfo-contact,.apply-task-applyInfo-self{
+            p{
+                font-size: 24px;
+                height: 33px;
+                line-height: 33px;
+                color: #1F1E2E;
+                font-weight: 400;
+                margin-bottom: 12px;
+            }
+        }
+        .apply-task-applyInfo-contact{
+            .ant-checkbox-group{
+                .clearfix::after,.clearfix::before{
+                    content: "";
+                    display: block;
+                    height: 0px;
+                    visibility: hidden;
+                    clear: both;
+                }
+                .row{
+                    display: inline-block;
+                    margin-bottom: 8px;
+                    .ant-checkbox-wrapper{
+                        >span{
+                            height: 45px;
+                        }
+                        align-items: center;
+                        .telegram{
+                            color: #2198D5;
+                            opacity: 0.4;
+                        }
+                        .wechat{
+                            color: #00C800;
+                            opacity: 0.4;
+                        }
+                        .skype{
+                            opacity: 0.4;
+                            color: #01A1DC;
+                        }
+                        .discord{
+                            opacity: 0.4;
+                            color: #738BD8;
+                        }
+                        .phone{
+                            opacity: 0.4;
+                            color: #25D366;
+                        }
+                    }
+                    &:nth-of-type(1){
+                        margin-right: 159px;
+                    }
+                    &:nth-of-type(3){
+                        margin-right: 159px;
+                    }
+                    .iconfont{
+                        font-size: 39px;
+                        left: 20px;
+                        top: 0;
+                        margin-right: 5px;
+                    }
+                    .ant-checkbox-wrapper-checked{
+                            .telegram{
+                                color: #2198D5;
+                                opacity: 1;
+                            }
+                            .wechat{
+                                opacity: 1;
+                                color: #00C800;
+                            }
+                            .skype{
+                                opacity: 1;
+                                color: #01A1DC;
+                            }
+                            .discord{
+                                opacity: 1;
+                                color: #738BD8;
+                            }
+                            .phone{
+                                opacity: 1;
+                                color: #25D366;
+                            }
+                    }
+                    .ant-checkbox{
+                        width: 25px;
+                        height: 25px !important;
+                        .ant-checkbox-input{
+                            width: 25px;
+                            height: 25px;
+                        }
+                        .ant-checkbox-inner{
+                            width: 25px;
+                            height: 25px;
+                        }
+                    }
+                    .ant-checkbox-checked{
+                        .ant-checkbox-inner{
+                            background-color: #1F1E2E;
+                            border: 1px solid #1F1E2E;
+                            &::after{
+                                position: absolute;
+                                top: 50%;
+                                left: 6px;
+                                height: 13px;
+                                width: 8px;
+                            }
+                        }
+                    }
+                }
+                .ant-input{
+                    display: inline-block;
+                    width: 188px;
+                    height: 25px;
+                    margin-top: -6px;
+                    border: 0.5px solid #1F1E2E;
+                    box-shadow: none;
+                }
+                .ant-input-disabled{
+                    background-color: white;
+                    border: 0.5px solid #979797;
+                }
+            }
+        }
+        .apply-task-applyInfo-self{
+            margin-top: 33px;
+            margin-bottom: 55px;
+            .apply-task-applyInfo-text{
+                height: 161px;
+                border: 1px solid #979797;
+                border-radius: 10px;
+            }
+        }
+    }
+    .apply-task-btn{
+        width: 280px;
+        height: 90px;
+        background-color: #1F1E2E;
+        color: white;
+        box-shadow: 0px 0px 19px -5px #898989;
+        border-radius: 45px;
+        margin-left: 270px;
+        font-size: 28px;
+        letter-spacing: 1px;
+        font-weight: 400;
+    }
+}
