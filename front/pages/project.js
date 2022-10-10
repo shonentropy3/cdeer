@@ -15,7 +15,7 @@ import Modal_applyTask from '../components/Modal_applyTask';
 import { getMyInfo } from '../http/api/user';
 
 
-export default function project() {
+export default function Project() {
     
     const router = useRouter();
     const { address } = useAccount();
@@ -106,7 +106,7 @@ export default function project() {
             onClick: () => {
             notification.destroy()
               setTimeout(() => {
-                router.push('/myInfo');
+                router.push('/MyInfo');
               }, 1000);
             },
           });

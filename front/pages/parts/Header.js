@@ -24,7 +24,7 @@ export default function Header(props) {
     let item = [
         {title: intl.get("home"), url: '/', value: 'home'},
         {title: '寻找项目', url: '/projects', value: 'task'},
-        {title: '我的项目', url: '/myInfo', value: 'my'}
+        {title: '我的项目', url: '/MyInfo', value: 'my'}
     ]
     const [isModalVisible, setIsModalVisible] = useState(false);
     let [wagmi,setWagmi] = useState({});
@@ -37,7 +37,7 @@ export default function Header(props) {
             {
               key: '1',
               label: (
-                <Link href={{pathname: '/myInfo'}}>
+                <Link href={{pathname: '/MyInfo'}}>
                     我的资料
                 </Link>
               ),

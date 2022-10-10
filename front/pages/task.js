@@ -181,9 +181,7 @@ export default function Task() {
                                         </div>
                                     </div>
                                     <div className="li-right">
-                                        {/* <Link href={{pathname: '/order', query: {oid: e.oid, who: who, tid: e.tid}}}> */}
-                                            <Button type="primary" onClick={() => {router.push({pathname: '/order', query: {oid: e.oid, who: who, tid: e.tid}})}}>阶段详情</Button>
-                                        {/* </Link> */}
+                                        <Button type="primary" onClick={() => {router.push({pathname: '/Order', query: {oid: e.oid, who: who, tid: e.tid}})}}>阶段详情</Button>
                                     </div>
                                 </div>
                             )
@@ -197,7 +195,7 @@ export default function Task() {
                         <Empty />
                         :
                         selectItem.data.map((e,i) => 
-                        <Link key={e.id} href={{pathname: '/issuer/applylist', search: e.id}}>
+                        <Link key={e.id} href={{pathname: '/issuer/Applylist', search: e.id}}>
                             <div className="li">
                                 <div className="li-info">
                                     <p className="title">{e.title}</p>

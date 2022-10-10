@@ -12,7 +12,7 @@ import { modifyApplySort } from "../../http/api/apply";
 
 
 
-export default function applylist() {
+export default function Applylist() {
     
     const { Option } = Select;
     const { Step } = Steps;
@@ -320,8 +320,8 @@ export default function applylist() {
                                 <div className="product-apply-desc">
                                     <span></span>
                                     <p className="product-apply-desc-text">
-                                    Hey, I'm interested in your Task. Please send me a message so that we can discuss more.
-Good at technology development and promotion
+                                        Hey, I&apos;m interested in your Task. Please send me a message so that we can discuss more.
+                                        Good at technology development and promotion
                                     </p>
                                 </div>
                             </div>

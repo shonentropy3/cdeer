@@ -2,7 +2,7 @@ import { Button, Card, Checkbox, InputNumber, message, Select, Tabs } from "antd
 import { ethers } from "ethers";
 import { useEffect, useRef, useState } from "react";
 import { useAccount, useNetwork } from 'wagmi'
-import { multicallWrite, muticallEncode, useContracts, useRead, useSignAppendData, permitNonce } from "../controller";
+import { multicallWrite, muticallEncode, useContracts, useRead, useSignAppendData } from "../controller";
 import { getProlongStage, updateSignature } from "../http/api/order";
 import Stage_card from "./Stage_card";
 import Stage_list from "./Stage_list";
@@ -11,7 +11,7 @@ import Stage_list from "./Stage_list";
 
 export default function Stage_info(props) {
 
-    const { Query, Amount, OrderInfo, Data, Step, StagesData, isModify, Attachment } = props;   //  StagesData 数据库阶段
+    const { Query, Amount, OrderInfo, Data, Step, StagesData, isModify, Attachment, permitNonce } = props;   //  StagesData 数据库阶段
     let [advance,setAdvance] = useState(false);
     let [stage0,setStage0] = useState();
     let [stages,setStages] = useState([]);   

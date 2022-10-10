@@ -2,7 +2,7 @@ import { Input, Select, Button } from "antd"
 import { useEffect } from "react";
 
 const {TextArea} = Input
-
+const { Option } = Select;
 export default function Modal_applyTask (props) {
    
     const { setParams, params, submit } = props;

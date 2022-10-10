@@ -15,7 +15,7 @@ import {
 
 import { setMyInfo,getMyInfo,modifyMyInfo } from '../http/api/user';
 
-export default function myInfo() {
+export default function MyInfo() {
 
     let [hasInfo,setHasInfo] = useState(false)
     let [info,setInfo] = useState({})

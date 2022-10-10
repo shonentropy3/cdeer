@@ -10,7 +10,7 @@ import { getOrdersInfo, getStagesHash, getStagesJson } from "../http/api/order";
 import { getDate } from "../utils/getDate";
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 
-export default function order(props) {
+export default function Order(props) {
     
     let [query,setQuery] = useState({});
     let [task,setTask] = useState({});

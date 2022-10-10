@@ -19,7 +19,7 @@ export default function Home() {
 
           <div className="banner">
             <div className="banner-left">
-              <p className="title">GUARANTEE THE DEVELOPER'S EXPENSES</p>
+              <p className="title">GUARANTEE THE DEVELOPER&apos;S EXPENSES</p>
               <div className="info">
                 <Link href={{pathname:'/publish'}}>
                   <Button className="btn">发布需求</Button>
@@ -77,7 +77,7 @@ export default function Home() {
                   <p className="title">Release requirements</p>
                   <div className="content">
                     <p>Release project requirements and find reliable developers。</p>
-                    <p>Here, through the developer's NFT, evaluate the developer's ability。</p>
+                    <p>Here, through the developer&apos;s NFT, evaluate the developer&apos;s ability。</p>
                     <p>Get project NFT and improve your credibility</p>
                   </div>
                   <Button className="btn">Learn more</Button>
@@ -89,7 +89,7 @@ export default function Home() {
                   <p className="title">Release requirements</p>
                   <div className="content">
                     <p>Release project requirements and find reliable developers。</p>
-                    <p>Here, through the developer's NFT, evaluate the developer's ability。</p>
+                    <p>Here, through the developer&apos;s NFT, evaluate the developer&apos;s ability。</p>
                     <p>Get project NFT and improve your credibility</p>
                   </div>
                   <Button className="btn">Learn more</Button>
@@ -211,7 +211,7 @@ export default function Home() {
                   <p className="info-role">Designer</p>
                 </div>
                 <div className="li-content">
-                  “I think as detask becomes bigger and bigger, more and more people begin to understand the power of crowdsourcing, which is the way of working in the future. I'm glad to be involved.”
+                  “I think as detask becomes bigger and bigger, more and more people begin to understand the power of crowdsourcing, which is the way of working in the future. I&apos;m glad to be involved.”
                 </div>
               </div>
 
@@ -222,7 +222,7 @@ export default function Home() {
                   <p className="info-role">Designer</p>
                 </div>
                 <div className="li-content">
-                  “I think as detask becomes bigger and bigger, more and more people begin to understand the power of crowdsourcing, which is the way of working in the future. I'm glad to be involved.”
+                  “I think as detask becomes bigger and bigger, more and more people begin to understand the power of crowdsourcing, which is the way of working in the future. I&apos;m glad to be involved.”
                 </div>
               </div>
 
@@ -233,7 +233,7 @@ export default function Home() {
                   <p className="info-role">Designer</p>
                 </div>
                 <div className="li-content">
-                  “I think as detask becomes bigger and bigger, more and more people begin to understand the power of crowdsourcing, which is the way of working in the future. I'm glad to be involved.”
+                  “I think as detask becomes bigger and bigger, more and more people begin to understand the power of crowdsourcing, which is the way of working in the future. I&apos;m glad to be involved.”
                 </div>
               </div>
 
