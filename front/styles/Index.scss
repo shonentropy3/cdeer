@@ -38,6 +38,7 @@
         display: flex;
         justify-content: space-between;
         position: relative;
+        user-select: none;
         .absolute{
             position: absolute;
             display: flex;

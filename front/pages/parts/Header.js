@@ -4,17 +4,28 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useDisconnect, useConnect, useAccount } from 'wagmi';
 import Identicon, { IdenticonOptions } from "identicon.js";
-export default function Header() {
+import intl from 'react-intl-universal';
+import { emit } from "../../locales/emit";
+import { ChangeLanguage } from '../../utils/ChangeLanguage';
+import { useRouter } from 'next/router';
+export default function Header(props) {
 
+    const { setLan, language } = props;
+    const lanSwitch = [
+        {title: '中文', value:'en_US'},
+        {title: '英文', value:'zh_CN'}
+    ]
+    const router = useRouter()
     const {connect,chainId,connectors,error,isLoading,pendingConnector} = useConnect()
     const {isConnected, address} = useAccount()
     const {disconnect} = useDisconnect()
     
-    let [selectItem,setSelectItem] = useState([
-        {title: '首页', url: '/', checked: true},
-        {title: '寻找项目', url: '/projects', checked: false},
-        {title: '我的项目', url: '/', checked: false}
-    ])
+    let [selectItem,setSelectItem] = useState('')
+    let item = [
+        {title: intl.get("home"), url: '/', value: 'home'},
+        {title: '寻找项目', url: '/projects', value: 'task'},
+        {title: '我的项目', url: '/myInfo', value: 'my'}
+    ]
     const [isModalVisible, setIsModalVisible] = useState(false);
     let [wagmi,setWagmi] = useState({});
     let [account,setAccount] = useState('');
@@ -79,14 +90,20 @@ export default function Header() {
       setIsModalVisible(false);
     };
 
-    const onchange = (title) => {
-        selectItem.map((e,i) => {
-            e.checked = false;
-            if (e.title === title) {
-                e.checked = true;
-            }
-        })
-        setSelectItem([...selectItem]);
+    const languageSwitch = async(value) => {
+        await router.push({href:'/', search: value})
+        checkLanguage()
+    }
+
+    const checkLanguage = () => {
+        let l = ChangeLanguage()
+        setLan( l )
+        emit.emit('change_language', l);
+    }
+
+    const onchange = (value) => {
+        selectItem = value;
+        setSelectItem(selectItem);
     }
 
     const handlerCancel = ()=>{
@@ -113,13 +130,12 @@ export default function Header() {
     }
 
     useEffect(() => {
-        selectItem.map(e => {
-            e.checked = false;
+        item.map(e => {
             if (e.url === location.pathname) {
-                e.checked = true;
+                selectItem = e.value;
             }
         })
-        setSelectItem([...selectItem])
+        setSelectItem(selectItem)
     },[])
 
     useEffect(()=>{
@@ -168,9 +184,9 @@ export default function Header() {
             </div>
             <div className="header-nav">
                 {
-                    selectItem.map((e,i) => 
+                    item.map((e,i) => 
                         <Link key={i} href={{pathname:e.url}}>
-                            <div className={`li ${e.checked ? 'li-active':''}`} onClick={() => onchange(e.title)}>
+                            <div className={`li ${selectItem === e.value ? 'li-active':''}`} onClick={() => onchange(e.value)}>
                                 {e.title}
                                 <div className="line" />
                             </div>
@@ -180,7 +196,17 @@ export default function Header() {
 
             </div>
             <div className="header-info">
-                
+                {/* img or font */}
+                {/* {
+                    lanSwitch.map((e,i) => 
+                      e.value !== language ? 
+                      <div className="img" key={i} >
+                          <p value={e.value} onClick={() => languageSwitch(e.value)}>{e.title}</p>
+                      </div>
+                      :
+                      ''
+                    )
+                } */}
                 {
                     wagmi.isActive ? 
                         <>

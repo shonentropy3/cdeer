@@ -3,6 +3,7 @@ import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import { Button } from 'antd';
 import Link from 'next/link'
+import intl from 'react-intl-universal';
 export default function Home() {
 
   return (

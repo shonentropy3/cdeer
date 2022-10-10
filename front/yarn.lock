@@ -1472,6 +1472,18 @@
     "@ethersproject/properties" "^5.7.0"
     "@ethersproject/strings" "^5.7.0"
 
+"@formatjs/intl-unified-numberformat@^3.2.0":
+  "integrity" "sha512-KnWgLRHzCAgT9eyt3OS34RHoyD7dPDYhRcuKn+/6Kv2knDF8Im43J6vlSW6Hm1w63fNq3ZIT1cFk7RuVO3Psag=="
+  "resolved" "https://registry.npmmirror.com/@formatjs/intl-unified-numberformat/-/intl-unified-numberformat-3.3.7.tgz"
+  "version" "3.3.7"
+  dependencies:
+    "@formatjs/intl-utils" "^2.3.0"
+
+"@formatjs/intl-utils@^2.3.0":
+  "integrity" "sha512-KWk80UPIzPmUg+P0rKh6TqspRw0G6eux1PuJr+zz47ftMaZ9QDwbGzHZbtzWkl5hgayM/qrKRutllRC7D/vVXQ=="
+  "resolved" "https://registry.npmmirror.com/@formatjs/intl-utils/-/intl-utils-2.3.0.tgz"
+  "version" "2.3.0"
+
 "@hapi/hoek@^9.0.0":
   "integrity" "sha512-/c6rf4UJlmHlC9b5BaNvzAcFv7HZ2QHaV0D4/HNlBdvFnvQq8RI4kYdhyPCl7Xj+oWvTWQ8ujhqS53LIgAe6KQ=="
   "resolved" "https://registry.npmmirror.com/@hapi/hoek/-/hoek-9.3.0.tgz"
@@ -3498,6 +3510,11 @@
   "resolved" "https://registry.npmmirror.com/cookie-signature/-/cookie-signature-1.0.6.tgz"
   "version" "1.0.6"
 
+"cookie@^0.3.1":
+  "integrity" "sha512-+IJOX0OqlHCszo2mBUq+SrEbCj6w7Kpffqx60zYbPTFaO4+yYgRjHwcZNpWvaTylDHaV7PPmBHzSecZiMhtPgw=="
+  "resolved" "https://registry.npmmirror.com/cookie/-/cookie-0.3.1.tgz"
+  "version" "0.3.1"
+
 "cookie@0.5.0":
   "integrity" "sha512-YZ3GUyn/o8gfKJlnlX7g7xq4gyO6OSuhGPKaaGssGB2qgDUS0gPgtTvoyZLTt9Ab6dC4hfc9dV5arkvc/OCmrw=="
   "resolved" "https://registry.npmmirror.com/cookie/-/cookie-0.5.0.tgz"
@@ -4041,7 +4058,7 @@
   "resolved" "https://registry.npmmirror.com/escalade/-/escalade-3.1.1.tgz"
   "version" "3.1.1"
 
-"escape-html@~1.0.3":
+"escape-html@^1.0.3", "escape-html@~1.0.3":
   "integrity" "sha512-NiSupZ4OeuGwr68lGIeym/ksIZMJodUGOSCZ/FSnTxcrekbvqrgdUxlJOMpijaKZVjAJrWrGs/6Jy8OMuyj9ow=="
   "resolved" "https://registry.npmmirror.com/escape-html/-/escape-html-1.0.3.tgz"
   "version" "1.0.3"
@@ -5378,7 +5395,32 @@
     "has" "^1.0.3"
     "side-channel" "^1.0.4"
 
-"invariant@^2.2.4":
+"intl-format-cache@^4.2.21":
+  "integrity" "sha512-OEUYNA7D06agqPOYhbTkl0T8HA3QKSuwWh1HiClEnpd9vw7N+3XsQt5iZ0GUEchp5CW1fQk/tary+NsbF3yQ1Q=="
+  "resolved" "https://registry.npmmirror.com/intl-format-cache/-/intl-format-cache-4.3.1.tgz"
+  "version" "4.3.1"
+
+"intl-messageformat-parser@^3.6.4":
+  "integrity" "sha512-RgPGwue0mJtoX2Ax8EmMzJzttxjnva7gx0Q7mKJ4oALrTZvtmCeAw5Msz2PcjW4dtCh/h7vN/8GJCxZO1uv+OA=="
+  "resolved" "https://registry.npmmirror.com/intl-messageformat-parser/-/intl-messageformat-parser-3.6.4.tgz"
+  "version" "3.6.4"
+  dependencies:
+    "@formatjs/intl-unified-numberformat" "^3.2.0"
+
+"intl-messageformat@^7.8.4":
+  "integrity" "sha512-yS0cLESCKCYjseCOGXuV4pxJm/buTfyCJ1nzQjryHmSehlptbZbn9fnlk1I9peLopZGGbjj46yHHiTAEZ1qOTA=="
+  "resolved" "https://registry.npmmirror.com/intl-messageformat/-/intl-messageformat-7.8.4.tgz"
+  "version" "7.8.4"
+  dependencies:
+    "intl-format-cache" "^4.2.21"
+    "intl-messageformat-parser" "^3.6.4"
+
+"intl@^1.2.5":
+  "integrity" "sha512-rK0KcPHeBFBcqsErKSpvZnrOmWOj+EmDkyJ57e90YWaQNqbcivcqmKDlHEeNprDWOsKzPsh1BfSpPQdDvclHVw=="
+  "resolved" "https://registry.npmmirror.com/intl/-/intl-1.2.5.tgz"
+  "version" "1.2.5"
+
+"invariant@^2.2.2", "invariant@^2.2.4":
   "integrity" "sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA=="
   "resolved" "https://registry.npmmirror.com/invariant/-/invariant-2.2.4.tgz"
   "version" "2.2.4"
@@ -6990,7 +7032,7 @@
   "resolved" "https://registry.npmmirror.com/object-inspect/-/object-inspect-1.12.2.tgz"
   "version" "1.12.2"
 
-"object-keys@^1.1.1":
+"object-keys@^1.0.11", "object-keys@^1.1.1":
   "integrity" "sha512-NuAESUOUMrlIXOfHKzD6bpPu3tYt3xvjNdRIQ+FeT0lNb4K8WR70CaDxhuNguS2XG+GjkyMwOzsN5ZktImfhLA=="
   "resolved" "https://registry.npmmirror.com/object-keys/-/object-keys-1.1.1.tgz"
   "version" "1.1.1"
@@ -7505,6 +7547,11 @@
     "split-on-first" "^1.0.0"
     "strict-uri-encode" "^2.0.0"
 
+"querystring@^0.2.0":
+  "integrity" "sha512-wkvS7mL/JMugcup3/rMitHmd9ecIGd2lhFhK9N3UUQ450h66d1r3Y9nvXzQAW1Lq+wyx61k/1pfKS5KuKiyEbg=="
+  "resolved" "https://registry.npmmirror.com/querystring/-/querystring-0.2.1.tgz"
+  "version" "0.2.1"
+
 "queue-microtask@^1.2.2":
   "integrity" "sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A=="
   "resolved" "https://registry.npmmirror.com/queue-microtask/-/queue-microtask-1.2.3.tgz"
@@ -7929,6 +7976,20 @@
   dependencies:
     "loose-envify" "^1.1.0"
     "scheduler" "^0.23.0"
+
+"react-intl-universal@^2.6.6":
+  "integrity" "sha512-ed0DJuAMi4EgJQVwpGLN5M7YcB83OkDLdw6H7FUUKpFi6RJE9f9KpKONp4UvLljYZF65cb+l/p2ndX/R6s2JhQ=="
+  "resolved" "https://registry.npmmirror.com/react-intl-universal/-/react-intl-universal-2.6.6.tgz"
+  "version" "2.6.6"
+  dependencies:
+    "cookie" "^0.3.1"
+    "escape-html" "^1.0.3"
+    "intl" "^1.2.5"
+    "intl-messageformat" "^7.8.4"
+    "invariant" "^2.2.2"
+    "lodash.merge" "^4.6.2"
+    "object-keys" "^1.0.11"
+    "querystring" "^0.2.0"
 
 "react-is@^16.12.0", "react-is@^16.12.0 || ^17.0.0 || ^18.0.0", "react-is@^16.13.1":
   "integrity" "sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ=="
