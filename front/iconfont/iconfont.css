@@ -1,16 +1,28 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3690236 */
-  src: url('iconfont.woff2?t=1665194535664') format('woff2'),
-       url('iconfont.woff?t=1665194535664') format('woff'),
-       url('iconfont.ttf?t=1665194535664') format('truetype');
+  src: url('iconfont.woff2?t=1665383640702') format('woff2'),
+       url('iconfont.woff?t=1665383640702') format('woff'),
+       url('iconfont.ttf?t=1665383640702') format('truetype');
 }
 
 .iconfont {
   font-family: "iconfont" !important;
-  font-size: 26px;
+  font-size: 16px;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-dianhua-yuankuang:before {
+  content: "\e8be";
+}
+
+.icon-discord:before {
+  content: "\e60b";
+}
+
+.icon-shijian:before {
+  content: "\e6c2";
 }
 
 .icon-skype-fill:before {

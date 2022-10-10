@@ -1,15 +1,43 @@
-import { Input, Select, Button } from "antd"
-import { useEffect } from "react";
+import { Input, Select, Button, Checkbox, Col, Row } from "antd"
+import { useEffect, useState } from "react";
 
 const {TextArea} = Input
 const { Option } = Select;
 export default function Modal_applyTask (props) {
    
-    const { setParams, params, submit } = props;
+    const { setParams, params, submit, project } = props;
+
+
+    let [disabled,setDisabled] = useState({
+        telegram: true,
+        wechat: true,
+        skype: true,
+        discord: true,
+        phone: true
+    })
+    let [infoValue,setInfoValue] = useState({
+        telegramValue: '',
+        wechatValue: '',
+        skypeValue: '',
+        discordValue: '',
+        phoneValue: ''
+    })
+
+    let [contactInfo,setContactInfo] = useState([])
 
     const onchange = (e,type) => {
         params[type] = e;
         setParams({...params});
+    }
+
+    const changeDisabled = (e) => {
+        disabled[e] = !disabled[e]
+        setDisabled({...disabled})
+    }
+
+    const valueChange = (e,type) => {
+        infoValue[type] = e
+        setInfoValue({...infoValue})
     }
 
     useEffect(() => {
@@ -17,42 +45,145 @@ export default function Modal_applyTask (props) {
         setParams({...params});
     },[])
 
+    useEffect(()=>{
+        console.log(infoValue);
+    },[infoValue])
+
     return <div className="apply-task">
-        <p className="apply-task-top">报名此项目<span>X</span></p>
-        <div>
-            <div>
-                <div></div>
-                <div>
-                    <p>数据系统开发</p>
-                    <p>技术要求：</p>
-                    <p>项目周期：</p>
+        <p className="apply-task-top">
+            <span className="apply-task-top-text">Sign up for this Task</span>
+        </p>
+        <div className="apply-task-detail">
+            <div className="apply-task-img"></div>
+            <div className="apply-task-detail-info">
+                <p className="apply-task-detail-title">
+                    <span>{project.title}</span>
+                </p>
+                <p className="apply-task-detail-time">
+                    <span className="apply-task-detail-time-ago">
+                        <i className="iconfont time-icon">&#xe6c2;</i>
+                        Issued 10 hours ago
+                    </span>
+                    <span className="apply-task-detail-time-cycle">
+                        cycle: 
+                        <i>{project.period / 86400}days</i>
+                    </span>
+                </p>
+                <p className="apply-task-detail-skill">
+                    <span className="apply-task-detail-skill-title">Recruitment type：</span>
+                    <span className="apply-task-detail-skill-li">
+                        {
+                            project.role?.map((e,i)=>(
+                                <span key={i}>{e}</span>
+                            ))
+                        }
+                    </span>
+                </p>
+            </div>
+            <div className="apply-task-detail-cost">
+                <p>
+                    Cost: 
+                    <span>{project.budget / 1000000000000000000}ETH</span>
+                </p>
+            </div>
+        </div>
+
+        <div className="apply-task-applyInfo">
+            <p className="apply-task-applyInfo-title">Registration information</p>
+            <div className="apply-task-applyInfo-priceAndtime">
+                <div className="apply-task-applyInfo-price">
+                    <p>Give your quotation</p>
+                    <Input className="applyPrice" onChange={e => onchange(e.target.value,'valuation')} />
+                    <Select className="applyCurrency" defaultValue="1" onChange={(e) => onchange(e,'currency')} disabled >
+                        <Option value="1">ETH</Option>
+                    </Select>
                 </div>
-                <div>
-                    <p>项目估算：</p>
-                    <p></p>
+                <div className="apply-task-applyInfo-time">
+                    <p>Estimated completion time</p>
+                    <Input />
+                    <Select defaultValue="1" disabled>
+                        <Option value="1">DAY</Option>
+                    </Select>
                 </div>
             </div>
-            <p>项目文档：</p>
-        </div>
-        <div>
-            <p>报名信息</p>
-            <div>
-                <p>给出你的报价</p>
-                <Input className="applyPrice" onChange={e => onchange(e.target.value,'valuation')} />
-                <Select defaultValue="1" onChange={(e) => onchange(e,'currency')} disabled >
-                    <Option value="1">ETH</Option>
-                </Select>
-                <p>自我推荐</p>
-                <TextArea rows={4} onChange={e => onchange(e.target.value,'desc')} />
-                <p>联系方式</p>
+            <div className="apply-task-applyInfo-contact">
+                <p>Contact information</p>
                 <Select defaultValue="telegram" onChange={(e) => onchange(e,'contactName')} >
                     <Option value="telegram">telegram</Option>
                     <Option value="wechat">wechat</Option>
                     <Option value="skype">skype</Option>
                 </Select>
                 <Input className="applyPrice" onChange={e => onchange(e.target.value,'contactValue')} />
+                {/* <Checkbox.Group options={options} /> */}
+                <Checkbox.Group>
+                    <Row 
+                        justify="cetenr"
+                        align="middle"
+                        className="clearfix"
+                    >
+                        <Col className="row">
+                            <Checkbox 
+                                value="telegram" 
+                                onChange={(e)=>changeDisabled(e.target.value)}
+                            ><span className="iconfont telegram">&#xec25;</span></Checkbox>
+                            <Input 
+                                disabled={disabled.telegram} 
+                                value={infoValue.telegramValue} 
+                                onChange={(e)=>valueChange(e.target.value,"telegramValue")}
+                            />
+                        </Col>
+                        <Col className="row">
+                            <Checkbox
+                                value="wechat" 
+                                onChange={(e)=>changeDisabled(e.target.value)}
+                            ><span className="iconfont wechat">&#xec26;</span></Checkbox>
+                            <Input 
+                                disabled={disabled.wechat} 
+                                value={infoValue.wechatValue} 
+                                onChange={(e)=>valueChange(e.target.value,"wechatValue")} 
+                            />
+                        </Col>
+                        <Col className="row">
+                            <Checkbox 
+                                value="skype" 
+                                onChange={(e)=>changeDisabled(e.target.value)}
+                            ><span className="iconfont skype">&#xe882;</span></Checkbox>
+                            <Input 
+                                disabled={disabled.skype} 
+                                value={infoValue.skypeValue}
+                                onChange={(e)=>valueChange(e.target.value,"skypeValue")}
+                            />
+                        </Col>
+                        <Col className="row">
+                            <Checkbox 
+                                value="discord" 
+                                onChange={(e)=>changeDisabled(e.target.value)}
+                            ><span className="iconfont discord">&#xe60b;</span></Checkbox>
+                            <Input 
+                                disabled={disabled.discord} 
+                                value={infoValue.discordValue}
+                                onChange={(e)=>valueChange(e.target.value,"discordValue")}
+                            />
+                        </Col>
+                        <Col className="row">
+                            <Checkbox 
+                                value="phone" 
+                                onChange={(e)=>changeDisabled(e.target.value)}
+                            ><span className="iconfont phone">&#xe8be;</span></Checkbox>
+                            <Input 
+                                disabled={disabled.phone} 
+                                value={infoValue.phoneValue}
+                                onChange={(e)=>valueChange(e.target.value,"phoneValue")}
+                            />
+                        </Col>
+                    </Row>
+                </Checkbox.Group>
             </div>
-            <Button onClick={() => submit()}>报名参与</Button>
+            <div className="apply-task-applyInfo-self">
+                <p>Self recommendation</p>
+                <TextArea className="apply-task-applyInfo-text" rows={4} onChange={e => onchange(e.target.value,'desc')} />
+            </div>
+            <Button className="apply-task-btn" onClick={() => submit()}>Sign up</Button>
         </div>
     </div>
 }

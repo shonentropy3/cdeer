@@ -23,8 +23,9 @@ server_data：基于nest框架的nodejs项目，作用为同步数据库和链�
 
 创建数据库：
 ```
+sudo su postgres
 create database detask;
-create user ethereum detask 'detask@123';
+create user detask password 'detask@123';
 
 ```
 
