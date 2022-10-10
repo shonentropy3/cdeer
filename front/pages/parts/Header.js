@@ -54,21 +54,25 @@ export default function Header() {
                     我的NFT
                 </Link>
               ),
-            },
-            {
+            }
+          ]}
+        />
+    );
+    const menu1 = (
+        <Menu
+          items={[{
                 key: '5',
                 label: (
                   <Button type="default" onClick={() => disconnect()}>
                       退出登陆
                   </Button>
-                ),
-              }
-          ]}
+                )
+          }]}
         />
-      );
+    );
+    
     const showModal = () => {
       setIsModalVisible(true);
-
     };
   
     const handleCancel = () => {
@@ -93,9 +97,6 @@ export default function Header() {
         if (!address) {
             return
         }
-        let r = Math.floor(Math.random() * (155 - 0 + 1)) + 0;
-        let g = Math.floor(Math.random() * (155 - 0 + 1)) + 0;
-        let b = Math.floor(Math.random() * (155 - 0 + 1)) + 0;
         var hash = address;  // 15+ hex chars
         // var options = {
         //     foreground: [r, g, b, 255],               // rgba black
@@ -184,16 +185,19 @@ export default function Header() {
                     wagmi.isActive ? 
                         <>
                             <Dropdown overlay={menu} placement="bottom">
-                            {/* <a onClick={(e) => e.preventDefault()}> */}
                                 <div>
                                     <img className="img" src={hashAvt()} alt="" />
                                 </div>
-                            {/* </a> */}
                             </Dropdown>
-                            <p className="btn">{account}</p>
+                            <Dropdown overlay={menu1} placement="bottom" trigger={['click']}>
+                                <p className="btn" style={{cursor: "pointer"}}>{account}</p>
+                            </Dropdown>
                         </>
                         :
-                        <Button className="btn" onClick={showModal}>链接钱包</Button>
+                        <>
+                            <div/>
+                            <Button className="btn" onClick={showModal}>链接钱包</Button>
+                        </>
                 }
             </div>
         </div>
