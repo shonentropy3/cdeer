@@ -28,8 +28,10 @@ export default function Publish() {
         // {title: '技能LOGO', type: 'select', value: []},
     ])
     let [isModalVisibleC, setIsModalVisibleC] = useState(false);
+    let [flag, setFlag] = useState(false);
     let [data,setData] = useState({});
     let [fromdata,setFromdata] = useState();
+    let [progress,setProgress] = useState();
     let [suffix,setSuffix] = useState("");
     let [skills,setSkills] = useState({
         title: '技能要求',
@@ -92,35 +94,46 @@ export default function Publish() {
 
             default:
                 return <Upload
-                            listType="picture"
+                            // listType="picture"
                             maxCount={1}
                             name="file"
                             onChange={handleChange}
-                            className="upload-button"
+                            // className="upload-button"
                             customRequest={upload}
+                            progress={{
+                                strokeColor: {
+                                  '0%': '#108ee9',
+                                  '100%': '#87d068',
+                                },
+                                strokeWidth: 3,
+                                format: (percent) => percent && `${parseFloat(percent.toFixed(2))}%`,
+                              }}
                         >
                 <Button icon={<FolderAddOutlined />}>上传项目需求文档（Word、Excel、PPT、PDF、图像、视频，20MB以内）</Button>
               </Upload>
                 // <FolderAddOutlined />
         }
     }
-
     const upload = async(info) => {
-        // info.onProgress()
         var formData=new FormData();
-        console.log(info.file);
         formData.append('files',info.file);
         fromdata = formData
         setFromdata(fromdata)
+        
         return await new Promise ((resolve,reject)=>{
           resolve(beforeUpload(info))
        })
        .then((res)=>{
-          res ? info.onSuccess() : info.onError()
+            if (res) {
+                info.onSuccess()
+                info.onProgress({percent: 100})
+            }else{
+                info.onError()
+            }
        })
     }
 
-    const handleChange = (info) => {
+    const handleChange = (info, list) => {
         suffix = info.file.name;
         setSuffix(suffix);
           if (info.file.status === 'done') {

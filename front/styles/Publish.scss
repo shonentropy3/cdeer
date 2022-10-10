@@ -45,6 +45,12 @@
         box-shadow: 0px 0px 44px -24px #7C7879;
         .container-li{
             margin-bottom: 53px;
+            &:nth-child(3){
+                height: auto !important;
+                .ant-upload-list{
+                    width: 644px;
+                }
+            }
             .ant-input{
                 font-size: 18px;
                 color: #1F1E2E;

@@ -196,15 +196,13 @@ export default function Header(props) {
 
             </div>
             <div className="header-info">
-                {/* img or font */}
+                {/* TODO: 中英文切换入口 ==> img or font */}
                 {/* {
                     lanSwitch.map((e,i) => 
                       e.value !== language ? 
                       <div className="img" key={i} >
                           <p value={e.value} onClick={() => languageSwitch(e.value)}>{e.title}</p>
-                      </div>
-                      :
-                      ''
+                      </div> : ''
                     )
                 } */}
                 {
