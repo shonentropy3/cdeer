@@ -2,10 +2,11 @@ require("@nomiclabs/hardhat-waffle");
 // npx hardhat size-contracts
 // require('hardhat-contract-sizer');
 
+let dotenv = require('dotenv')
+dotenv.config({ path: "./.env" })
 
-const fs = require('fs');
-const mnemonic = fs.readFileSync(".env").toString().trim();
-const infurakey='9aa3d95b3bc440fa88ea12eaa4456161';
+const mnemonic = process.env.MNEMONIC
+const infurakey = process.env.INFURA_API_KEY
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -51,6 +52,14 @@ module.exports = {
       url: "https://goerli.infura.io/v3/d3fe47cdbf454c9584113d05a918694f",
       accounts: ["0x391aa244dd1808334d3fb3b0998ba951f244104d1725168f36e393ad61f1a88c"],
       chainId: 5,
+    },
+
+    mumbai: {
+      url: "https://matic-mumbai.chainstacklabs.com",
+      accounts: {
+        mnemonic: mnemonic,
+      },
+      chainId: 80001,
     },
     testbsc: {
       // url: "https://data-seed-prebsc-2-s3.binance.org:8545",
