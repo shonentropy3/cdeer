@@ -2,7 +2,7 @@ import { Button, Modal, Dropdown, Menu } from 'antd';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { useDisconnect, useConnect, useAccount } from 'wagmi';
+import { useDisconnect, useConnect, useAccount, useNetwork, useSwitchNetwork } from 'wagmi';    // 切换链 
 import Identicon, { IdenticonOptions } from "identicon.js";
 import intl from 'react-intl-universal';
 import { emit } from "../../locales/emit";
@@ -15,6 +15,9 @@ export default function Header(props) {
         {title: '中文', value:'en_US'},
         {title: '英文', value:'zh_CN'}
     ]
+      // 网络切换
+    const { chain } = useNetwork()
+    const { chains, switchNetwork } = useSwitchNetwork()
     const router = useRouter()
     const {connect,chainId,connectors,error,isLoading,pendingConnector} = useConnect()
     const {isConnected, address} = useAccount()
@@ -175,7 +178,18 @@ export default function Header(props) {
         setIsScroll(isScroll);
     }
 
-
+    useEffect(() => {
+        if (switchNetwork) {
+            console.log(chains);
+            console.log(chain.id);
+            console.log(switchNetwork.data);
+            /**
+             * if(合约网络 !== chain.id){
+             *  switchNetwork(合约网络id)
+             * }
+             */
+        }
+    },[switchNetwork])
 
     return <div className="Header">
         <div className={`content ${isScroll ? 'scroll':''}`}>
