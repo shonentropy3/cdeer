@@ -180,14 +180,7 @@ export default function Header(props) {
 
     useEffect(() => {
         if (switchNetwork) {
-            console.log(chains);
-            console.log(chain.id);
-            console.log(switchNetwork.data);
-            /**
-             * if(合约网络 !== chain.id){
-             *  switchNetwork(合约网络id)
-             * }
-             */
+            switchNetwork(80001)
         }
     },[switchNetwork])
 
