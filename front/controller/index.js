@@ -1,16 +1,22 @@
-import { useContractWrite, useSignTypedData, useAccount, useContractReads, useContractRead, usePrepareContractWrite, useContract, useProvider } from 'wagmi';
+import { useContractWrite, useSignTypedData, useContractReads, useContractRead, useNetwork } from 'wagmi';
 import task from '../../deployments/abi/DeTask.json'
-import taskAddr from '../../deployments/dev/DeTask.json'
 import order from '../../deployments/abi/DeOrder.json'
-import orderAddr from '../../deployments/dev/DeOrder.json'
 import stage from '../../deployments/abi/DeStage.json'
-import stageAddr from '../../deployments/dev/DeStage.json'
+import { useEffect } from 'react';
 var Web3 = require('web3');
 var web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:8545");
 
 export function ConfigTask(functionName) { 
+  const { chain } = useNetwork()
+  let _data = '';
+  useEffect(() => {
+    let name;
+    chain.network === 'hardhat' ? name = 'dev' : name = chain.network;
+    _data = require(`../../deployments/${name}/DeOrder.json`)
+  },[])
+
   let taskConfig = {
-    addressOrName: taskAddr.address,
+    addressOrName: _data.address,
     contractInterface: task.abi,
     functionName: functionName,
   }
@@ -18,8 +24,15 @@ export function ConfigTask(functionName) {
 }
 
 export function ConfigOrder(functionName) { 
+  const { chain } = useNetwork()
+  let _data = '';
+  useEffect(() => {
+    let name;
+    chain.network === 'hardhat' ? name = 'dev' : name = chain.network;
+    _data = require(`../../deployments/${name}/DeOrder.json`)
+  },[])
   const orderConfig = {
-    addressOrName: orderAddr.address,
+    addressOrName: _data.address,
     contractInterface: order.abi,
     functionName: functionName,
   }
@@ -27,8 +40,15 @@ export function ConfigOrder(functionName) {
 }
 
 export function ConfigStage(functionName) { 
+  const { chain } = useNetwork()
+  let _data = '';
+  useEffect(() => {
+    let name;
+    chain.network === 'hardhat' ? name = 'dev' : name = chain.network;
+    _data = require(`../../deployments/${name}/DeOrder.json`)
+  },[])
   const stageConfig = {
-    addressOrName: stageAddr.address,
+    addressOrName: _data.address,
     contractInterface: stage.abi,
     functionName: functionName,
   }

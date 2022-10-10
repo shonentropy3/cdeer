@@ -18,6 +18,12 @@ async function writeAbiAddr(artifacts, addr, name, network){
   const deployments = {};
   deployments["address"] = addr;
   deployments["contractName"] = artifacts.contractName;
+
+  // //写入react前端
+  // const deploymentPathDeploy = path.resolve(__dirname, `../front/deployments/${name}.json`);
+  // await writeFile(deploymentPathDeploy, JSON.stringify(deployments, null, 2));
+
+
   await writeLog(deployments, name, network);
 
   //写入server后端
@@ -33,6 +39,11 @@ async function writeAbiAddr(artifacts, addr, name, network){
   // 写入server后端
   const deploymentPath_node = path.resolve(__dirname, `../server/deployments/abi/${abis["contractName"]}.json`);
   await writeFile(deploymentPath_node, JSON.stringify(abis, null, 2));
+
+  //   // 写入react前端
+  // const deploymentPathReact = path.resolve(__dirname, `../front/deployments/abi/${abis["contractName"]}.json`);
+  // await writeFile(deploymentPathReact, JSON.stringify(abis, null, 2));
+
 }
 
 // for Truffle deployment
