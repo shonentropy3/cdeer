@@ -1,7 +1,7 @@
 const hre = require("hardhat");
 const { writeAbiAddr } = require('./artifact_log.js');
 
-const TaskAddr = require(`../deployments/${hre.network.name}/Task.json`);
+const TaskAddr = require(`../deployments/${hre.network.name}/DeTask.json`);
 
 async function main() {
     await hre.run('compile');
