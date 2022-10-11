@@ -80,7 +80,9 @@ export function useContracts(functionName) {
 
   const useStageContractWrite = useContractWrite(ConfigStage(functionName))
 
-  return { useTaskContractWrite, useOrderContractWrite, useStageContractWrite }
+  const config = ConfigTask(functionName)
+
+  return { useTaskContractWrite, config, useOrderContractWrite, useStageContractWrite }
 }
 
 export function useRead(functionName,args) {
