@@ -2,26 +2,30 @@ import { useContractWrite, useSignTypedData, useContractReads, useContractRead, 
 import task from '../../deployments/abi/DeTask.json'
 import order from '../../deployments/abi/DeOrder.json'
 import stage from '../../deployments/abi/DeStage.json'
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 var Web3 = require('web3');
 var web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:8545");
 
+export function ContractAddress(name) {
+  const _data = require(`../../deployments/${name}/DeTask.json`);
+  return _data.address
+}
+
 export function ConfigTask(functionName) { 
   const { chain } = useNetwork()
-  let _data = '';
+  let [name,setName] = useState('mumbai')
   useEffect(() => {
-    if (chain.network) {
-      let name;
-      // chain.network === 'hardhat' ? name = 'dev' : name = chain.network;
+    if (chain) {
+      chain.network === 'hardhat' ? name = 'dev' : name = chain.network;
       if (chain.network == 80001) {
         name = 'mumbai'
+        setName(name)
       }
-      _data = require(`../../deployments/${name}/DeTask.json`)
     }
   },[chain])
 
   let taskConfig = {
-    addressOrName: _data.address,
+    addressOrName: ContractAddress(name),
     contractInterface: task.abi,
     functionName: functionName,
   }
@@ -30,19 +34,19 @@ export function ConfigTask(functionName) {
 
 export function ConfigOrder(functionName) { 
   const { chain } = useNetwork()
+  let [name,setName] = useState('mumbai')
   let _data = '';
   useEffect(() => {
     if (chain) {
-      let name;
-      // chain.network === 'hardhat' ? name = 'dev' : name = chain.network;
+      chain.network === 'hardhat' ? name = 'dev' : name = chain.network;
       if (chain.network == 80001) {
         name = 'mumbai'
+        setName(name)
       }
-      _data = require(`../../deployments/${name}/DeTask.json`)
     }
   },[chain])
   const orderConfig = {
-    addressOrName: _data.address,
+    addressOrName: ContractAddress(name),
     contractInterface: order.abi,
     functionName: functionName,
   }
@@ -51,19 +55,19 @@ export function ConfigOrder(functionName) {
 
 export function ConfigStage(functionName) { 
   const { chain } = useNetwork()
+  let [name,setName] = useState('mumbai')
   let _data = '';
   useEffect(() => {
     if (chain) {
-      let name;
-      // chain.network === 'hardhat' ? name = 'dev' : name = chain.network;
+      chain.network === 'hardhat' ? name = 'dev' : name = chain.network;
       if (chain.network == 80001) {
         name = 'mumbai'
+        setName(name)
       }
-      _data = require(`../../deployments/${name}/DeTask.json`)
     }
   },[chain])
   const stageConfig = {
-    addressOrName: _data.address,
+    addressOrName: ContractAddress(name),
     contractInterface: stage.abi,
     functionName: functionName,
   }
@@ -78,7 +82,9 @@ export function useContracts(functionName) {
 
   const useStageContractWrite = useContractWrite(ConfigStage(functionName))
 
-  return { useTaskContractWrite, useOrderContractWrite, useStageContractWrite }
+  const config = ConfigTask(functionName)
+
+  return { useTaskContractWrite, config, useOrderContractWrite, useStageContractWrite }
 }
 
 export function useRead(functionName,args) {
