@@ -23,23 +23,18 @@ export class ResolutionService {
     TransHashes = async () => {
 
         // 创建task任务
+        const log = await rpcProvider.waitForTransaction('0xf137a6ff05c115fa607a4251eb6ad5d7063c076bf69415715207be5ac892b5e1')
+        console.log(log);
+
+        return
+
         let taskHash = await this.applyInfoRepository.query(getTaskHash());
         for (let v of taskHash) {
             console.log(taskHash, '<====>', v.hash);
             
-            await rpcProvider.waitForTransaction(v.hash)
-            .then(res => {
-                console.log(res);
-                
-            })
-            .catch(err => {
-                console.log(err);
-                
-            })
-            return
-            const log = await rpcProvider.getTransactionReceipt(v.hash);
-
-            // console.log(log);
+            const log = await rpcProvider.waitForTransaction('0xf137a6ff05c115fa607a4251eb6ad5d7063c076bf69415715207be5ac892b5e1')
+            
+            console.log(log);
             
             const createTask = new ethers.utils.Interface(
                 ["event TaskCreated(uint256 indexed,address,tuple(string,string,string,uint8,uint112,uint32,uint48,bool))"]

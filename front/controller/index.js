@@ -1,7 +1,10 @@
 import { useContractWrite, useSignTypedData, useContractReads, useContractRead, useNetwork } from 'wagmi';
 import task from '../../deployments/abi/DeTask.json'
+import taskAddr from '../../deployments/mumbai/DeTask.json'
 import order from '../../deployments/abi/DeOrder.json'
+import orderAddr from '../../deployments/mumbai/DeOrder.json'
 import stage from '../../deployments/abi/DeStage.json'
+import stageAddr from '../../deployments/mumbai/DeStage.json'
 var Web3 = require('web3');
 var web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:8545");
 
@@ -13,7 +16,7 @@ export function ContractAddress(name) {
 export function ConfigTask(functionName) { 
 
   let taskConfig = {
-    addressOrName: ContractAddress('mumbai'),
+    addressOrName: taskAddr.address,
     contractInterface: task.abi,
     functionName: functionName,
   }
@@ -22,7 +25,7 @@ export function ConfigTask(functionName) {
 
 export function ConfigOrder(functionName) { 
   const orderConfig = {
-    addressOrName: ContractAddress('mumbai'),
+    addressOrName: orderAddr.address,
     contractInterface: order.abi,
     functionName: functionName,
   }
@@ -31,7 +34,7 @@ export function ConfigOrder(functionName) {
 
 export function ConfigStage(functionName) { 
   const stageConfig = {
-    addressOrName: ContractAddress('mumbai'),
+    addressOrName: stageAddr.address,
     contractInterface: stage.abi,
     functionName: functionName,
   }
