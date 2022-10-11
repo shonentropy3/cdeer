@@ -27,7 +27,6 @@ export class ResolutionService {
         for (let v of taskHash) {
             console.log(taskHash, '<====>', v.hash);
             
-            // const log = await rpcProvider.getTransactionReceipt(v.hash);
             await rpcProvider.waitForTransaction(v.hash)
             .then(res => {
                 console.log(res);
@@ -38,6 +37,8 @@ export class ResolutionService {
                 
             })
             return
+            const log = await rpcProvider.getTransactionReceipt(v.hash);
+
             // console.log(log);
             
             const createTask = new ethers.utils.Interface(
