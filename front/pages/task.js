@@ -195,7 +195,7 @@ export default function Task() {
                         <Empty />
                         :
                         selectItem.data.map((e,i) => 
-                        <Link key={e.id} href={{pathname: '/issuer/Applylist', search: e.id}}>
+                        <Link key={e.id} href={{pathname: '/issuer/applylist', search: e.id}}>
                             <div className="li">
                                 <div className="li-info">
                                     <p className="title">{e.title}</p>

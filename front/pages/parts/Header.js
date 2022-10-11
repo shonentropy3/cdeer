@@ -4,13 +4,13 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useDisconnect, useConnect, useAccount, useNetwork, useSwitchNetwork } from 'wagmi';    // 切换链 
 import Identicon, { IdenticonOptions } from "identicon.js";
-import intl from 'react-intl-universal';
-import { emit } from "../../locales/emit";
-import { ChangeLanguage } from '../../utils/ChangeLanguage';
+// import intl from 'react-intl-universal';
+// import { emit } from "../../locales/emit";
+// import { ChangeLanguage } from '../../utils/ChangeLanguage';
 import { useRouter } from 'next/router';
 export default function Header(props) {
 
-    const { setLan, language } = props;
+    // const { setLan, language } = props;
     const lanSwitch = [
         {title: '中文', value:'en_US'},
         {title: '英文', value:'zh_CN'}
@@ -25,7 +25,7 @@ export default function Header(props) {
     
     let [selectItem,setSelectItem] = useState('')
     let item = [
-        {title: intl.get("home"), url: '/', value: 'home'},
+        {title: '首页', url: '/', value: 'home'},
         {title: '寻找项目', url: '/projects', value: 'task'},
         {title: '我的项目', url: '/MyInfo', value: 'my'}
     ]
@@ -93,16 +93,16 @@ export default function Header(props) {
       setIsModalVisible(false);
     };
 
-    const languageSwitch = async(value) => {
-        await router.push({href:'/', search: value})
-        checkLanguage()
-    }
+    // const languageSwitch = async(value) => {
+    //     await router.push({href:'/', search: value})
+    //     checkLanguage()
+    // }
 
-    const checkLanguage = () => {
-        let l = ChangeLanguage()
-        setLan( l )
-        emit.emit('change_language', l);
-    }
+    // const checkLanguage = () => {
+    //     let l = ChangeLanguage()
+    //     setLan( l )
+    //     emit.emit('change_language', l);
+    // }
 
     const onchange = (value) => {
         selectItem = value;

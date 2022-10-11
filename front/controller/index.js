@@ -2,7 +2,6 @@ import { useContractWrite, useSignTypedData, useContractReads, useContractRead, 
 import task from '../../deployments/abi/DeTask.json'
 import order from '../../deployments/abi/DeOrder.json'
 import stage from '../../deployments/abi/DeStage.json'
-import { useEffect, useState } from 'react';
 var Web3 = require('web3');
 var web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:8545");
 
@@ -12,20 +11,9 @@ export function ContractAddress(name) {
 }
 
 export function ConfigTask(functionName) { 
-  const { chain } = useNetwork()
-  let [name,setName] = useState('mumbai')
-  useEffect(() => {
-    if(chain){
-    chain.network === 'hardhat' ? name = 'dev' : name = chain.network;
-    if(chain.network === 80001) {
-    	name = 'mumbai'
-	setName(name)
-    }
-    }
-  },[chain])
 
   let taskConfig = {
-    addressOrName: ContractAddress(name),
+    addressOrName: ContractAddress('mumbai'),
     contractInterface: task.abi,
     functionName: functionName,
   }
@@ -33,19 +21,8 @@ export function ConfigTask(functionName) {
 }
 
 export function ConfigOrder(functionName) { 
-  const { chain } = useNetwork()
-  let [name,setName] = useState('mumbai')
-  useEffect(() => {
-    if(chain){
-    chain.network === 'hardhat' ? name = 'dev' : name = chain.network;
-    if(chain.network === 80001){
-    	name = 'mumbai'
-	setName(name)
-    }
-    }
-  },[chain])
   const orderConfig = {
-    addressOrName: ContractAddress(name),
+    addressOrName: ContractAddress('mumbai'),
     contractInterface: order.abi,
     functionName: functionName,
   }
@@ -53,19 +30,8 @@ export function ConfigOrder(functionName) {
 }
 
 export function ConfigStage(functionName) { 
-  const { chain } = useNetwork()
-  let [name,setName] = useState('mumbai');
-  useEffect(() => {
-    if(chain){
-    chain.network === 'hardhat' ? name = 'dev' : name = chain.network;
-    if(chain.network === 80001){
-    	name = 'mumbai'
-	setName(name)
-    }
-    }
-  },[chain])
   const stageConfig = {
-    addressOrName: ContractAddress(name),
+    addressOrName: ContractAddress('mumbai'),
     contractInterface: stage.abi,
     functionName: functionName,
   }

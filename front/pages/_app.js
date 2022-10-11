@@ -75,34 +75,35 @@ const client = createClient({
 
 function MyApp({ Component, pageProps }) {
 
-  let [language,setLanguage] = useState('zh_CN')
-  let [initDone,setInitDone] = useState(false)
+  // let [language,setLanguage] = useState('zh_CN')
+  // let [initDone,setInitDone] = useState(false)
 
-  const loadLocales = () => {
-    intl.init({
-        currentLocale: ChangeLanguage(),  // 设置初始语言
-        locales
-    })
-    .then(() => {
-      initDone = true
-      setInitDone(initDone)
-    })
-  }
+  // const loadLocales = () => {
+  //   intl.init({
+  //       currentLocale: ChangeLanguage(),  // 设置初始语言
+  //       locales
+  //   })
+  //   .then(() => {
+  //     initDone = true
+  //     setInitDone(initDone)
+  //   })
+  // }
 
-  const change = (value) => {
-    language = value
-    setLanguage(language)
-  }
+  // const change = (value) => {
+  //   language = value
+  //   setLanguage(language)
+  // }
 
-  useEffect(() => {
-    emit.on('change_language', () => loadLocales( ChangeLanguage() )); // 监听语言改变事件
-    loadLocales(); // 初始化语言
-  },[])
+  // useEffect(() => {
+  //   emit.on('change_language', () => loadLocales( ChangeLanguage() )); // 监听语言改变事件
+  //   loadLocales(); // 初始化语言
+  // },[])
 
-  return initDone &&
-  <>
+  // return initDone &&
+  return <>
     <WagmiConfig client={client} >
-      <Header setLan={change} language={language} ></Header>
+      {/* <Header setLan={change} language={language} ></Header> */}
+      <Header></Header>
       <Component {...pageProps} />
     </WagmiConfig>
   </>
