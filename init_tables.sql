@@ -77,6 +77,7 @@ CREATE TABLE trans_hashes (
  id serial PRIMARY KEY,
   "hash" varchar(128) UNIQUE,
 	"task_id" BIGINT,
+  -- "selector" varchar(),
   "category" int2,
 	"send_addr" varchar(64),
 	"is_update" int2 DEFAULT 0,
