@@ -1,8 +1,7 @@
 import { Body, Controller, Get, Post, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { ApplyforService } from '../service/applyfor';
 import { ResolutionService } from '../service/resolution';
-
+import { ApplyforService } from '../service/applyfor';
 
 @Controller('applyFor')
 export class ApplyforController {

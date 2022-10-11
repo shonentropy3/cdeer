@@ -237,7 +237,7 @@ export default function Publish() {
             period: inner[5].value * 24 * 60 * 60,
             skills: inner[3].subValue,
         }
-        let fee = { value: ethers.utils.parseEther("1") };
+        let fee = { value: ethers.utils.parseEther("0") };
         if (fromdata) {
             await getHash(fromdata)
               .then((res) => {
