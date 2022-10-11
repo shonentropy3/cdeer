@@ -2,37 +2,34 @@ import { useContractWrite, useSignTypedData, useContractReads, useContractRead, 
 import task from '../../deployments/abi/DeTask.json'
 import order from '../../deployments/abi/DeOrder.json'
 import stage from '../../deployments/abi/DeStage.json'
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 var Web3 = require('web3');
 var web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:8545");
 
+export function ContractAddress(name) {
+  if (name.length === 0) {
+    return ''
+  }else{
+    const _data = require(`../../deployments/${name}/DeTask.json`);
+    return _data.address
+  }
+}
+
 export function ConfigTask(functionName) { 
-  const { chain } = useNetwork()
-  let _data = '';
-  useEffect(() => {
-    let name;
-    chain.network === 'hardhat' ? name = 'dev' : name = chain.network;
-    _data = require(`../../deployments/${name}/DeOrder.json`)
-  },[])
 
   let taskConfig = {
-    addressOrName: _data.address,
+    addressOrName: ContractAddress('dev'),
     contractInterface: task.abi,
     functionName: functionName,
   }
   return taskConfig
 }
 
+
 export function ConfigOrder(functionName) { 
-  const { chain } = useNetwork()
-  let _data = '';
-  useEffect(() => {
-    let name;
-    chain.network === 'hardhat' ? name = 'dev' : name = chain.network;
-    _data = require(`../../deployments/${name}/DeOrder.json`)
-  },[])
+
   const orderConfig = {
-    addressOrName: _data.address,
+    addressOrName: ContractAddress('dev'),
     contractInterface: order.abi,
     functionName: functionName,
   }
@@ -40,15 +37,9 @@ export function ConfigOrder(functionName) {
 }
 
 export function ConfigStage(functionName) { 
-  const { chain } = useNetwork()
-  let _data = '';
-  useEffect(() => {
-    let name;
-    chain.network === 'hardhat' ? name = 'dev' : name = chain.network;
-    _data = require(`../../deployments/${name}/DeOrder.json`)
-  },[])
+
   const stageConfig = {
-    addressOrName: _data.address,
+    addressOrName: ContractAddress('dev'),
     contractInterface: stage.abi,
     functionName: functionName,
   }
@@ -62,6 +53,7 @@ export function useContracts(functionName) {
   const useOrderContractWrite = useContractWrite(ConfigOrder(functionName))
 
   const useStageContractWrite = useContractWrite(ConfigStage(functionName))
+
 
   return { useTaskContractWrite, useOrderContractWrite, useStageContractWrite }
 }
