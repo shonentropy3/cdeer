@@ -10,10 +10,15 @@ export function ConfigTask(functionName) {
   const { chain } = useNetwork()
   let _data = '';
   useEffect(() => {
-    let name;
-    chain.network === 'hardhat' ? name = 'dev' : name = chain.network;
-    _data = require(`../../deployments/${name}/DeOrder.json`)
-  },[])
+    if (chain.network) {
+      let name;
+      // chain.network === 'hardhat' ? name = 'dev' : name = chain.network;
+      if (chain.network == 80001) {
+        name = 'mumbai'
+      }
+      _data = require(`../../deployments/${name}/DeTask.json`)
+    }
+  },[chain])
 
   let taskConfig = {
     addressOrName: _data.address,
@@ -27,10 +32,15 @@ export function ConfigOrder(functionName) {
   const { chain } = useNetwork()
   let _data = '';
   useEffect(() => {
-    let name;
-    chain.network === 'hardhat' ? name = 'dev' : name = chain.network;
-    _data = require(`../../deployments/${name}/DeOrder.json`)
-  },[])
+    if (chain) {
+      let name;
+      // chain.network === 'hardhat' ? name = 'dev' : name = chain.network;
+      if (chain.network == 80001) {
+        name = 'mumbai'
+      }
+      _data = require(`../../deployments/${name}/DeTask.json`)
+    }
+  },[chain])
   const orderConfig = {
     addressOrName: _data.address,
     contractInterface: order.abi,
@@ -43,10 +53,15 @@ export function ConfigStage(functionName) {
   const { chain } = useNetwork()
   let _data = '';
   useEffect(() => {
-    let name;
-    chain.network === 'hardhat' ? name = 'dev' : name = chain.network;
-    _data = require(`../../deployments/${name}/DeOrder.json`)
-  },[])
+    if (chain) {
+      let name;
+      // chain.network === 'hardhat' ? name = 'dev' : name = chain.network;
+      if (chain.network == 80001) {
+        name = 'mumbai'
+      }
+      _data = require(`../../deployments/${name}/DeTask.json`)
+    }
+  },[chain])
   const stageConfig = {
     addressOrName: _data.address,
     contractInterface: stage.abi,
