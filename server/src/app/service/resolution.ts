@@ -26,9 +26,11 @@ export class ResolutionService {
         let taskHash = await this.applyInfoRepository.query(getTaskHash());
         for (let v of taskHash) {
             console.log('开始解析');
-            console.log(taskHash);
+            console.log(taskHash, '<====>', v.hash);
             
             const log = await rpcProvider.getTransactionReceipt(v.hash);
+            console.log(log);
+            
             console.log('2');
             
             console.log(v);
