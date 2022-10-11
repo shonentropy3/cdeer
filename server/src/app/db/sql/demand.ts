@@ -78,8 +78,6 @@ export const setDemand = params => {
         sql: sql,
         sqlHash: sqlHash
     }
-    console.log(obj);
-    
     return obj
 }
 

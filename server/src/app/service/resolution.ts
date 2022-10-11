@@ -26,6 +26,10 @@ export class ResolutionService {
         let taskHash = await this.applyInfoRepository.query(getTaskHash());
         for (let v of taskHash) {
             const log = await rpcProvider.getTransactionReceipt(v.hash);
+            console.log(v);
+            
+            console.log(log);
+            
             const createTask = new ethers.utils.Interface(
                 ["event TaskCreated(uint256 indexed,address,tuple(string,string,string,uint8,uint112,uint32,uint48,bool))"]
             );
