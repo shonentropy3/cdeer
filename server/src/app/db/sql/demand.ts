@@ -66,19 +66,23 @@ export const getFilter = params => {
 
 
 export const setDemand = params => {
-    let sql = `
-            insert into tasks(issuer, hash, "desc", role, suffix) 
-            VALUES ('${params.u_address}','${params.payhash}','${params.pro_content}', ${params.recruiting_role}, '${params.suffix}');
-        `;
+    let sql = ` insert into tasks(issuer, hash, "desc", role, suffix) 
+            VALUES ('${params.u_address}','${params.payhash}','${params.pro_content}', ${params.recruiting_role}, '${params.suffix}');`;
 
     let sqlHash = ` insert into trans_hashes("send_addr", category, hash) 
-        VALUES ('${params.u_address}', 1, '${params.payhash}')`;
+        VALUES ('${params.u_address}', 1, '${params.payhash}');`;
     
     let obj = {
         sql: sql,
         sqlHash: sqlHash
     }
     return obj
+}
+
+export const updateTask = params => {
+    let sqlUpdate = `update tasks SET issuer = '${params.u_address}', hash = ${params.payhash},
+    "desc" = '${params.pro_content}' ,role = '${params.recruiting_role}' where id = ${params.task_id} ;`
+    return sqlUpdate
 }
 
 

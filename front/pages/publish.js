@@ -237,7 +237,7 @@ export default function Publish() {
             period: inner[5].value * 24 * 60 * 60,
             skills: inner[3].subValue,
         }
-        let fee = { value: ethers.utils.parseEther("1") };
+        let fee = { value: ethers.utils.parseEther("0") };
         if (fromdata) {
             await getHash(fromdata)
               .then((res) => {
@@ -268,13 +268,13 @@ export default function Publish() {
           }
         createDemand({"proLabel": JSON.stringify(obj)})
               .then(res => {
-                if (res.code == '200') {
+                if (res.code == 'SUCCESS') {
                   message.success('创建成功');
                   setTimeout(() => {
-                    router.push({pathname: '/task', search: 'issuer'})    //  跳转链接
+                    // router.push({pathname: '/task', search: 'issuer'})    //  跳转链接
                   }, 500);
                 }else{
-                  message.error('连接超时');
+                  message.error('创建失败');
                 }
               })
               .catch(err => {

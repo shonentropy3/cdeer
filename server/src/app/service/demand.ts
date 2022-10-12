@@ -1,12 +1,14 @@
 import { BadRequestException, Body, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { AxiosError } from 'axios';
-import { throwError } from 'rxjs';
+import { async, throwError } from 'rxjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Tasks } from '../db/entity/Tasks';	//引入entity
+const { ethers } = require('ethers');
 
 // dbUtils
-import { getDemandDate, getDemandInfoDate, setDemand, moDemand, delDemand, getFilter, getOrdersDate, getOrderInfo, getSearchData, getIssuerOrdersDate } from '../db/sql/demand';
+import { getDemandDate, getDemandInfoDate, setDemand, moDemand, delDemand, getFilter, getOrdersDate, getOrderInfo, getSearchData, getIssuerOrdersDate, updateTask } from '../db/sql/demand';
+import { createTaskSql } from '../db/sql/sql';
 
 
 @Injectable()
@@ -152,24 +154,27 @@ export class MarketService {
     async createDemand(@Body() body: any){
         let bodyData = JSON.parse(body.proLabel);
         let sql = setDemand(bodyData)
-        try {
-            let sqlResult = await this.tasksRepository.query(sql.sql);
-            if (-1 != sqlResult[1]) {
-                return await this.tasksRepository.query(sql.sqlHash)
-                .then(res => {
-                    return {
-                        code: 200
-                    }
-                })
-                .catch(err => {
-                    return {
-                        code: 505
-                    }
-                })
+        // 解析交易哈希
+        return await this.taskInterval(bodyData.payhash)
+        .then(async(res: any) => {
+            if (res.code === 'SUCCESS') {
+                // 解析成功 ==> update tables.tasks
+                bodyData.task_id = res.data.tid;
+                await this.tasksRepository.query(updateTask(bodyData))
+
+                return {
+                    code: 'SUCCESS'
+                }
+            }else{
+                // 解析失败 ==> insert tables.trans_hashes ==> insert tables.task
+                await this.tasksRepository.query(sql.sql)
+                await this.tasksRepository.query(sql.sqlHash)
+
+                return {
+                    code: 'ERROR'
+                }
             }
-        } catch (error) {
-            console.log(error);
-        }
+        })
     }
 
 
@@ -206,6 +211,50 @@ export class MarketService {
         .catch(err => {
             console.log('deleteDemand err=>', err);
             return err
+        })
+    }
+
+    // 定时任务
+    async taskInterval(hash: any) {
+        // const rpcProvider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
+        const rpcProvider = new ethers.providers.JsonRpcProvider("https://matic-mumbai.chainstacklabs.com");
+        return await new Promise((resolve, reject) => {
+            rpcProvider.waitForTransaction(hash, 1, 4000)   //  4秒等待时长 ==>
+            .then((res: any) => { resolve(res) })
+            .catch((err: any) => { reject(err) })
+        })
+        .then(async(res: any) => {
+            const createTask = new ethers.utils.Interface(
+                ["event TaskCreated(uint256 indexed,address,tuple(string,string,string,uint8,uint112,uint32,uint48,bool))"]
+            );
+            
+            let decodedData = createTask.parseLog(res.logs[2]);
+            const taskId = decodedData.args[0].toString();
+            const _data = decodedData.args[2];
+    
+            let params = {
+                taskId: taskId,
+                hash: hash,
+                title: _data[0],
+                desc: _data[1],
+                attachment: _data[2],
+                budget: _data[4].toString(),
+                period: _data[5]
+            }
+            let sql = createTaskSql(params)
+            // 写入数据库
+            await this.tasksRepository.query(sql)
+            return {
+                code: 'SUCCESS',
+                data: {
+                    tid: taskId
+                }
+            }
+        })
+        .catch(err => {
+            return {
+                code: 'ERROR'
+            }
         })
     }
 

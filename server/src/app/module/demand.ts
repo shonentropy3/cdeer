@@ -11,12 +11,11 @@ import { Tasks } from '../db/entity/Tasks';
 import { Nfts } from '../db/entity/Nfts';
 import { ApplyInfo } from '../db/entity/ApplyInfo';
 import { Users } from '../db/entity/Users';
-import { ResolutionService } from '../service/resolution';
 
 
 @Module({
   controllers: [MarketController, CommonController, UserController],
-  providers: [MarketService, CommonService, UserService, ResolutionService],
+  providers: [MarketService, CommonService, UserService],
   imports: [
     HttpModule,
     TypeOrmModule.forFeature([Tasks, Nfts, ApplyInfo, Users]),

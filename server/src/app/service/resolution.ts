@@ -7,7 +7,8 @@ import { ApplyInfo } from '../db/entity/ApplyInfo';
 const { ethers } = require('ethers');
 // TODO:更改配置文件
 // const rpcProvider = new ethers.providers.JsonRpcProvider("https://goerli.infura.io/v3/d3fe47cdbf454c9584113d05a918694f");
-const rpcProvider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
+// const rpcProvider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
+const rpcProvider = new ethers.providers.JsonRpcProvider("https://matic-mumbai.chainstacklabs.com");
 
 // 信息同步hash表：待同步类型：1.创建需求 2.修改需求 3.报名 4.修改报名 5.取消报名, 6.创建订单或者修改订单
 
@@ -46,16 +47,16 @@ export class ResolutionService {
                 period: _data[5]
             }
             let sql = createTaskSql(params)
-            try {
-                let sqlResult = await this.applyInfoRepository.query(sql.sql);
+            // try {
+            //     let sqlResult = await this.applyInfoRepository.query(sql.sql);
                 
-                if (-1 != sqlResult[1]) {
-                    await this.applyInfoRepository.query(sql.sqlUpdateTH);
-                }
-                this.logger.debug('createTasks');
-            } catch (error) {
-                console.log(error);
-            }
+            //     if (-1 != sqlResult[1]) {
+            //         await this.applyInfoRepository.query(sql.sqlUpdateTH);
+            //     }
+            //     this.logger.debug('createTasks');
+            // } catch (error) {
+            //     console.log(error);
+            // }
         }
 
         // 创建订单

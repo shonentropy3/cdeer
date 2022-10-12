@@ -41,24 +41,33 @@ export const getHash = use_type => {
     return sql
 }
 
-export const createTaskSql = (params) => {
-    let sql = `
-        UPDATE tasks 
-        SET id = temp.taskId, title = temp.title, "desc" = temp.desc, budget = temp.budget,
-        period = temp.period, attachment = temp.attachment, update_time = now() from (values (${params.taskId}, '${params.hash}',  
-            '${params.title}', ${params.budget}, '${params.desc}', '${params.attachment}', ${params.period})) as temp (
-            taskId, hash, title,  budget, "desc", attachment, period) where tasks.hash=temp.hash;
-    `
+// export const createTaskSql = (params) => {
+//     let sql = `
+//         UPDATE tasks 
+//         SET id = temp.taskId, title = temp.title, "desc" = temp.desc, budget = temp.budget,
+//         period = temp.period, attachment = temp.attachment, update_time = now() from (values (${params.taskId}, '${params.hash}',  
+//             '${params.title}', ${params.budget}, '${params.desc}', '${params.attachment}', ${params.period})) as temp (
+//             taskId, hash, title,  budget, "desc", attachment, period) where tasks.hash=temp.hash;
+//     `
 
-    let sqlUpdateTH = ` 
-        UPDATE trans_hashes SET is_update = 1, update_time = now() 
-        where trans_hashes.hash= '${params.hash}';
-    `
-    let obj = {
-        sql: sql,
-        sqlUpdateTH: sqlUpdateTH
-    }
-    return obj
+//     let sqlUpdateTH = ` 
+//         UPDATE trans_hashes SET is_update = 1, update_time = now() 
+//         where trans_hashes.hash= '${params.hash}';
+//     `
+//     let obj = {
+//         sql: sql,
+//         sqlUpdateTH: sqlUpdateTH
+//     }
+//     return obj
+// }
+
+export const createTaskSql = (params) => {
+    let sql = ` insert into tasks SET id = temp.taskId, title = temp.title, "desc" = temp.desc, budget = temp.budget,
+    period = temp.period, attachment = temp.attachment, update_time = now() from (values (${params.taskId}, '${params.hash}',  
+        '${params.title}', ${params.budget}, '${params.desc}', '${params.attachment}', ${params.period})) as temp (
+        taskId, hash, title,  budget, "desc", attachment, period);`
+
+    return sql
 }
 
 export const createOrderSql = (params) => {

@@ -12,8 +12,9 @@ import { Nfts } from '../db/entity/Nfts';
 const { ethers } = require('ethers');
 // TODO:更改配置文件
 // const rpcProvider = new ethers.providers.JsonRpcProvider("https://goerli.infura.io/v3/d3fe47cdbf454c9584113d05a918694f");
-const rpcProvider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
+// const rpcProvider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
 // const USDR_ADDR = require('../../../deployments/dev/DeTask.json');
+const rpcProvider = new ethers.providers.JsonRpcProvider("https://matic-mumbai.chainstacklabs.com");
 
 // 信息同步hash表：待同步类型：1.创建需求 2.修改需求 3.报名 4.修改报名 5.取消报名, 6.创建订单或者修改订单
 
@@ -34,15 +35,8 @@ export class TaskService {
 
     insertApplyFor = async () => {
         //获取未同步的信息
-        let latest = await rpcProvider.getBlockNumber();
-        
-        let last = await this.applyInfoRepository.query(getLastBlock());
-        
-        let logBlock = last[0].block;
-        if (logBlock >= latest) return; // 区块已监听过了
-        logBlock = Math.max(logBlock, (latest - 100)); // 最多往前100区块
-        
-        
+        // TODO: 完成方法分类 ==> 从穷举改为 方法名 判断
+
         // 创建task任务
         let taskHash = await this.applyInfoRepository.query(getTaskHash());
         
@@ -188,18 +182,15 @@ export class TaskService {
     //     this.nftsRepository.query(getCacheNfts(min10))
     // }
 
-    @Interval(5000)  //每隔5秒执行一次
+    @Interval(2000)  //每隔5秒执行一次
     handleInterval() {
-        // this.modifyDemandLog()  
         this.insertApplyFor()
-        // this.clearNftCache()
-        // this.logger.debug('Called 5 seconds');
     }
 
-    @Timeout(1000)
-    async handleTimeout() {
-        // this.insertCreateDemand()
-        // this.modifyDemandLog()  
-        // this.insertApplyFor()
-    }
+    // @Timeout(1000)
+    // async handleTimeout() {
+    //     // this.insertCreateDemand()
+    //     // this.modifyDemandLog()  
+    //     // this.insertApplyFor()
+    // }
 }
