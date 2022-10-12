@@ -29,12 +29,17 @@ create user detask password 'detask@123';
 
 ```
 
+进入 psql： 
+```
+sql -p5432 -U detask -d detask -h 127.0.0.1 -W
+```
+
 建表：
    ```js
    // 第一个detask为用户名，第二个detask为库名，可以更改
    psql -p5432 "detask" -d detask -f init_tables.sql
    // 或(Mac) 
-   /Applications/Postgres.app/Contents/Versions/14/bin/psql -p5432 -p5432 "detask" -d detask -f init_tables.sql
+   /Applications/Postgres.app/Contents/Versions/14/bin/psql -p5432  "detask" -d detask -f init_tables.sql
    ```
 
 
