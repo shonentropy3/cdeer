@@ -271,7 +271,7 @@ export default function Publish() {
                 if (res.code == 'SUCCESS') {
                   message.success('创建成功');
                   setTimeout(() => {
-                    // router.push({pathname: '/task', search: 'issuer'})    //  跳转链接
+                    router.push({pathname: '/task', search: 'issuer'})    //  跳转链接
                   }, 500);
                 }else{
                   message.error('创建失败');

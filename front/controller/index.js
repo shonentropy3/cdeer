@@ -100,13 +100,15 @@ export function useReads(functionName,list) {
       ...ConfigTask(functionName),
       args: list[i]
     })
+
+    console.log(arrB);
   }
-  
+  const useTaskReads = useContractReads({ contracts: arrB })
+   
   const useOrderReads = useContractReads({ contracts: arr })
 
   const useStageReads = useContractReads({ contracts: arrA })
 
-  const useTaskReads = useContractReads({ contracts: arrB })
 
   return { useOrderReads, useStageReads, useTaskReads }
 }

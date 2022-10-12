@@ -171,7 +171,7 @@ export class MarketService {
                 await this.tasksRepository.query(sql.sqlHash)
 
                 return {
-                    code: 'ERROR'
+                    code: 'SUCCESS'
                 }
             }
         })

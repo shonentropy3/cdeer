@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Link from 'next/link'
 import { useAccount } from 'wagmi'
 import { useRouter } from 'next/router'
-import { useReads } from "../controller";
+import { useRead, useReads } from "../controller";
 import { getApplyData, getOrdersData, getTasksData } from "../http/api/user";
 import { deform_Skills } from "../utils/Deform";
 import { useContracts } from "../controller";
@@ -33,6 +33,7 @@ export default function Task() {
     const router = useRouter()
     const { address } = useAccount();
     const { useTaskReads } = useReads('tasks', tidList);
+    const { useTaskRead } = useRead('tasks', tidList[0]);
 
     const changeItem = value => {
         selectItem.item = value;
@@ -46,7 +47,9 @@ export default function Task() {
             let arr = [];
             res.map(e => {
                 e.role = deform_Skills(e.role);
-                arr.push(e.id);
+                if (e.id) {
+                    arr.push(e.id);
+                }
             })
             tidList = arr;
             setTidList([...arr])
@@ -79,7 +82,9 @@ export default function Task() {
             let arr = [];
             res.map(e => {
                 e.role = deform_Skills(e.role);
-                arr.push(e.id);
+                if (e.id) {
+                    arr.push(e.id);
+                }
             })
             tidList = arr;
             setTidList([...arr])
@@ -295,8 +300,9 @@ export default function Task() {
     },[selectItem.item])
 
     useEffect(() => {
-        if (tidList.length !== 0 && useTaskReads.data) {
-            let data = useTaskReads.data;
+        let data = useTaskReads.data;
+        console.log(useTaskRead.data);
+        if (tidList.length !== 0 && useTaskReads.data && data[0]) {
             selectItem.data.map((e,i) => {
                 // TODO: 根据币种计算budget
                 let multiple = data[i].currency === 1 ? Math.pow(10,18) : 1;
