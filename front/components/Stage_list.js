@@ -195,7 +195,7 @@ export default function Stage_list(props) {
 
     useEffect(() => {
         if (stageJson && Step !== 0) {
-            stageJson.stages.map((e,i) => {
+            stageJson.stages?.map((e,i) => {
                 if (ongoingStage.data.stageIndex.toString() == i && e.delivery.content) {
                     isDelivery = {
                         status: true,

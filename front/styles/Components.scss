@@ -1,4 +1,9 @@
 .Panel_stageInfo, .Stage_info{
+    width: 1200px;
+    min-height: 518px;
+    box-shadow: 0px 0px 44px -24px #7C7879;
+    border-radius: 30px;
+    padding: 50px 71px 0 61px;
     .stageInfo-title{
         box-sizing: content-box;
         padding: 20px 30px;

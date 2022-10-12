@@ -31,6 +31,18 @@ export default function Order(props) {
     // json
     const [attachment, setAttachment] = useState({});
 
+    // 技能要求列表
+    let [skills,setSkills] = useState({
+        "101":"solidity",
+        "102":"javascript",
+        "103":"python",
+        "104":"Go",
+        "105":"C/C++",
+        "106":"Android",
+        "107":"HTML/CSS",
+        "108":"IOS"
+    });
+
     const { confirm } = Modal;
     const { Step } = Steps;
     const router = useRouter();
@@ -383,23 +395,30 @@ export default function Order(props) {
                     {/* <h1>{amount}</h1> */}
                     {/* TODO: 获取task */}
                     <div className="title-info">
-                        <strong>{task.title}</strong>
-                        <p>技术要求: {task.role}</p>
+                        <strong className="title-info-head">{task.title}</strong>
+                        <p className="title-info-role">Recruitment type: {
+                            task.role?.map((e,i)=>(
+                                <span className="title-info-role-li" key={i}>{e?skills[e]:""}</span>
+                            ))
+                        }</p>
                         <div>
-                            <p>项目周期: <span>{task.period / 24 / 60 / 60}天</span> </p>
-                            <p>项目预算: <span>{price.budget} {price.currency === 1 ? 'ETH' : 'BTC'}</span> </p>
+                            <p className="title-info-cycle">cycle: <span className="title-info-cycle-date">{task.period / 24 / 60 / 60}天</span> </p>
                         </div>
                     </div>
-                    <div className="title-num">
-                        报名人数
+                    <div className="title-cost">
+                        <p className="title-cost-line">cost: <span className="title-cost-price">{price.budget}{price.currency === 1 ? 'ETH' : 'BTC'}</span> </p>
                     </div>
                 </div>
                 <div className="worker-steps">
                     <Steps size="small" current={step}>
-                        <Step title="阶段划分" />
-                        <Step title="开发中" />
-                        <Step title="已完成" />
+                        <Step title="Start" />
+                        <Step className="steps-stage" title="Stage plan" />
+                        <Step title="Perform tasks" />
+                        <Step className="steps-finish" title="Finish" />
                     </Steps>
+                </div>
+                <div className="order-tip">
+                    <p className="order-tip-text">The demander has approved your application, please complete the phase division</p>
                 </div>
                 {
                     query.who === 'issuer' ? 

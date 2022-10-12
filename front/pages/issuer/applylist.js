@@ -45,7 +45,7 @@ export default function Applylist() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isModifyModal,setIsModifyModal] = useState(false)
     const [isModalDetial,setIsModalDetial] = useState(false)
-    const { useOrderContractWrite } = useContracts('createOrder');
+    const { useOrderContractWrite, Config } = useContracts('createOrder');
       
     const showModal = () => {
       setIsModalOpen(true);
@@ -109,6 +109,8 @@ export default function Applylist() {
     }
 
     const invitation = () => {
+        console.log(Number(taskId),address,worker,ethers.constants.AddressZero,ethers.utils.parseEther(`${amount}`));
+        console.log(Config);
         useOrderContractWrite.write({
             recklesslySetUnpreparedArgs: [
                 Number(taskId),

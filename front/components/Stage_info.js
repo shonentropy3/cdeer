@@ -332,7 +332,7 @@ export default function Stage_info(props) {
     },[useSign.data])
 
     return <div className="Stage_info">
-                <div className="stageInfo-title"> 项目阶段划分 </div>
+                <div className="stageInfo-title">Task stage division</div>
                  {
                     Step === 0 ? 
                         <div className="stageInfo-subtitle">

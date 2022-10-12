@@ -13,7 +13,7 @@ CREATE TABLE tasks (
   "issuer" varchar(64),
   "hash" varchar(128),
   "title" varchar(255),
-	"desc" varchar(64),
+	"desc" varchar(255),
   "period" BIGINT,
   "budget" varchar(64),
   "role" varchar[],

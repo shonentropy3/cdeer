@@ -1,7 +1,10 @@
 import { useContractWrite, useSignTypedData, useContractReads, useContractRead, useNetwork } from 'wagmi';
 import task from '../../deployments/abi/DeTask.json'
+import taskAdd from '../../deployments/dev/DeTask.json'
 import order from '../../deployments/abi/DeOrder.json'
+import orderAdd from '../../deployments/dev/DeOrder.json'
 import stage from '../../deployments/abi/DeStage.json'
+import stageAdd from '../../deployments/dev/DeStage.json'
 import { useEffect, useState } from 'react';
 var Web3 = require('web3');
 var web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:8545");
@@ -18,7 +21,7 @@ export function ContractAddress(name) {
 export function ConfigTask(functionName) { 
 
   let taskConfig = {
-    addressOrName: ContractAddress('dev'),
+    addressOrName: taskAdd.address,
     contractInterface: task.abi,
     functionName: functionName,
   }
@@ -29,7 +32,7 @@ export function ConfigTask(functionName) {
 export function ConfigOrder(functionName) { 
 
   const orderConfig = {
-    addressOrName: ContractAddress('dev'),
+    addressOrName: orderAdd.address,
     contractInterface: order.abi,
     functionName: functionName,
   }
@@ -39,7 +42,7 @@ export function ConfigOrder(functionName) {
 export function ConfigStage(functionName) { 
 
   const stageConfig = {
-    addressOrName: ContractAddress('dev'),
+    addressOrName: stageAdd.address,
     contractInterface: stage.abi,
     functionName: functionName,
   }
@@ -54,8 +57,9 @@ export function useContracts(functionName) {
 
   const useStageContractWrite = useContractWrite(ConfigStage(functionName))
 
+  const Config = ConfigOrder(functionName);
 
-  return { useTaskContractWrite, useOrderContractWrite, useStageContractWrite }
+  return { useTaskContractWrite, Config, useOrderContractWrite, useStageContractWrite }
 }
 
 export function useRead(functionName,args) {
@@ -111,7 +115,7 @@ export function useSignData(params) {
 
   let obj = {
       chainId: params.chainId,
-      contractAddress: orderAddr.address,
+      contractAddress: orderAdd.address,
       owner: params.address,
       orderId: params.oid,
       amounts: params.amounts,
@@ -158,7 +162,7 @@ export function useSignProData(params) {
 
   let obj = {
     chainId: params.chainId,
-    contractAddress: orderAddr.address,
+    contractAddress: orderAdd.address,
     owner: params.address,
     orderId: params.orderId,
     stageIndex: params.stageIndex,
@@ -204,7 +208,7 @@ export function useSignAppendData(params) {
 
   let obj = {
     chainId: params.chainId,
-    contractAddress: orderAddr.address,
+    contractAddress: orderAdd.address,
     orderId: params.orderId,
     amount: params.amount,
     period: params.period,
