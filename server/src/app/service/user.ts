@@ -42,6 +42,8 @@ export class UserService {
           return new Promise(async(resolve, reject) => {
             this.tasksRepository.query(getMyPjcDBa(body.hash))
             .then(res => {
+              console.log(res);
+              
               res.map(async(e,i) => {
                 await this.tasksRepository.query(getTaskApplyCount(e.id))
                 .then(arr => {

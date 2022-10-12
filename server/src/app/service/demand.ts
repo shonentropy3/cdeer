@@ -4,9 +4,11 @@ import { throwError } from 'rxjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Tasks } from '../db/entity/Tasks';	//引入entity
+const { ethers } = require('ethers');
 
 // dbUtils
 import { getDemandDate, getDemandInfoDate, setDemand, moDemand, delDemand, getFilter, getOrdersDate, getOrderInfo, getSearchData, getIssuerOrdersDate } from '../db/sql/demand';
+import { createTaskSql } from '../db/sql/sql';
 
 
 @Injectable()
@@ -151,6 +153,10 @@ export class MarketService {
     // 发布需求
     async createDemand(@Body() body: any){
         let bodyData = JSON.parse(body.proLabel);
+        console.log(bodyData);
+        
+        await this.resolution(bodyData.payhash)
+        // bodyData.payhas
         let sql = setDemand(bodyData)
         try {
             let sqlResult = await this.tasksRepository.query(sql.sql);
@@ -207,6 +213,43 @@ export class MarketService {
             console.log('deleteDemand err=>', err);
             return err
         })
+    }
+
+    // 解析交易哈希
+
+    async resolution(hash: any) {
+        const rpcProvider = new ethers.providers.JsonRpcProvider("https://matic-mumbai.chainstacklabs.com");
+        console.log(hash);
+        
+        const log = await rpcProvider.waitForTransaction(hash)
+        console.log(log);
+        
+        const createTask = new ethers.utils.Interface(["event TaskCreated(uint256 indexed,address,tuple(string,string,string,uint8,uint112,uint32,uint48,bool))"]);
+        if (!log) {
+            return
+        }
+        let decodedData = createTask.parseLog(log.logs[2]);
+        const taskId = decodedData.args[0].toString();
+        const _data = decodedData.args[2];
+        let params = {
+            taskId: taskId,
+            hash: hash,
+            title: _data[0],
+            desc: _data[1],
+            attachment: _data[2],
+            budget: _data[4].toString(),
+            period: _data[5]
+        }
+        let sql = createTaskSql(params)
+        try {
+            let sqlResult = await this.tasksRepository.query(sql.sql);
+            
+            if (-1 != sqlResult[1]) {
+                await this.tasksRepository.query(sql.sqlUpdateTH);
+            }
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     // AxiosErrorTip

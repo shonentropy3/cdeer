@@ -14,10 +14,13 @@ export class MarketController {
     @Post('createDemand')  // 发布需求
     async createProject(@Body() body: any){
         return await this.marketService.createDemand(body)
-        .then(res => {
-            this.resolutionService.TransHashes()
-            return res
-        })
+
+        // .then(res => {
+        //     console.log('res =>', res);
+            
+        //     this.resolutionService.TransHashes()
+        //     return res
+        // })
     }
     
     
