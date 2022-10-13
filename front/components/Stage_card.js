@@ -31,9 +31,8 @@ export default function Stage_card(params) {
     const checkPercent = e => {
         selectPercent = e.title;
         setSelectPercent(selectPercent);
-        stage.budget = amount * e.value;
+        stage.budget = (amount / Math.pow(10,18)) * e.value;
         stage.percent = e.title;
-        set([...stages]);
     }
 
     const changeBudget = e => {
@@ -93,7 +92,7 @@ export default function Stage_card(params) {
                         )
                     }
                     <Form.Item label="阶段费用" name='budget'>
-                        <InputNumber min={1} addonAfter="ETH" onChange={e => changeBudget(e)} />
+                        <InputNumber min={0} addonAfter="ETH" onChange={e => changeBudget(e)} />
                     </Form.Item>
             </div>
             
