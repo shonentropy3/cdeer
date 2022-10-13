@@ -216,8 +216,8 @@ export class MarketService {
 
     // 定时任务
     async taskInterval(hash: any) {
-        // const rpcProvider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
-        const rpcProvider = new ethers.providers.JsonRpcProvider("https://matic-mumbai.chainstacklabs.com");
+        const rpcProvider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
+        // const rpcProvider = new ethers.providers.JsonRpcProvider("https://matic-mumbai.chainstacklabs.com");
         return await new Promise((resolve, reject) => {
             rpcProvider.waitForTransaction(hash, 1, 4000)   //  4秒等待时长 ==>
             .then((res: any) => { resolve(res) })

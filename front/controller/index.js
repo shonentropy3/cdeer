@@ -1,10 +1,10 @@
 import { useContractWrite, useSignTypedData, useContractReads, useContractRead, useNetwork } from 'wagmi';
 import task from '../../deployments/abi/DeTask.json'
-import taskAddr from '../../deployments/mumbai/DeTask.json'
+import taskAddr from '../../deployments/dev/DeTask.json'
 import order from '../../deployments/abi/DeOrder.json'
-import orderAddr from '../../deployments/mumbai/DeOrder.json'
+import orderAddr from '../../deployments/dev/DeOrder.json'
 import stage from '../../deployments/abi/DeStage.json'
-import stageAddr from '../../deployments/mumbai/DeStage.json'
+import stageAddr from '../../deployments/dev/DeStage.json'
 import { useEffect, useState } from 'react';
 var Web3 = require('web3');
 var web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:8545");

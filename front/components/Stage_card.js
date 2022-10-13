@@ -39,7 +39,6 @@ export default function Stage_card(params) {
     const changeBudget = e => {
         stage.budget = e;
         stage.percent = '';
-        set([...stages]);
         selectPercent = '';
         setSelectPercent(selectPercent);
     }
