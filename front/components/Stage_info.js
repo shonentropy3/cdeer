@@ -4,6 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { useAccount, useNetwork } from 'wagmi'
 import { multicallWrite, muticallEncode, useContracts, useRead, useSignAppendData } from "../controller";
 import { getProlongStage, updateSignature } from "../http/api/order";
+import { getDate } from "../utils/getDate";
+
+
 import Stage_card from "./Stage_card";
 import Stage_list from "./Stage_list";
 
@@ -28,6 +31,8 @@ export default function Stage_info(props) {
     let [nonce,setNonce] = useState();
     let [appendObj,setAppendObj] = useState({});  //  新增阶段签名
     let [isSigner,setIsSigner] = useState(false);   //  签名flag
+
+
     
     const { chain } = useNetwork();
     const { address } = useAccount()
@@ -39,6 +44,9 @@ export default function Stage_info(props) {
     const { useOrderContractWrite: prolongStage } = useContracts('prolongStage');
     const { useOrderContractWrite: useAppendStage } = useContracts('appendStage');
     const { useSign, obj } = useSignAppendData(appendObj);  //  延长签名
+
+
+   
 
     const appendStage = () => {
         // TODO: 添加阶段==>签名
@@ -61,6 +69,34 @@ export default function Stage_info(props) {
         setAppendObj({...appendObj})
         setIsSigner(true);
     }
+
+    // 计算阶段划分的费用和数据
+    const total = () => {
+        if (!Data) {
+            return
+        }
+        let allPeriod = 0;
+        let allTotal = 0;
+        let now = new Date().getTime();
+        return <>
+                {
+                    Data.map((e,i) => {
+                        allPeriod += e.period;
+                        allTotal += e.budget;
+                        if (e.period === 0) {
+                            return <p className="worker-total-advance" key={i}>Advance charge：<span>{Data[0].budget}ETH</span></p>
+                        }else{
+                            let p = Data[0].period === 0 ? i : i+1;
+                            return <p className="worker-total-stageCost" key={i}>P{p} stage cost: <span>{e.budget}ETH</span></p>
+                        }})
+                }
+                <p className="worker-total-estimated">Estimated time：<span>{allPeriod}</span>DAYS</p>
+                <p className="worker-total-cycle">Development cycle：<span>{getDate(now,'d')} / {getDate(now + (allPeriod * 24 * 60 * 60 * 1000),'d')}</span></p>
+                <strong className="worker-total-totalExpenses">Total expenses：<span>{allTotal} ETH</span></strong>
+        </>
+    }
+
+    
 
     // 甲方确认新增并付款
     const pay = async() => {
@@ -331,15 +367,17 @@ export default function Stage_info(props) {
         }
     },[useSign.data])
 
-    return <div className="Stage_info">
+ 
+
+    return <div className="order-stage"><div className="Stage_info">
                 <div className="stageInfo-title">Task stage division</div>
                  {
                     Step === 0 ? 
                         <div className="stageInfo-subtitle">
-                            <Checkbox checked={advance} className={`subtitle-check ${advance ? 'mb10' : ''}`} onChange={onChange}>增加预付款 <span className='check-span'>项目方确认阶段划分后,你将得到预付款</span></Checkbox>
+                            <Checkbox checked={advance} className={`subtitle-check ${advance ? 'mb10' : ''}`} onChange={onChange}><span className='check-span'>Increase advance payment<i>?</i></span></Checkbox>
                             { 
                                 advance ? 
-                                  <InputNumber defaultValue={stage0} min={0} className='subtitle-inner' addonAfter={<Select defaultValue="ETH" disabled />} onChange={e => change0(e)} />
+                                  <InputNumber controls={false} defaultValue={stage0} min={0} className='subtitle-inner' addonAfter={<span>ETH</span>} onChange={e => change0(e)} />
                                   :
                                   ''
                             }
@@ -361,10 +399,7 @@ export default function Stage_info(props) {
                             {
                                 items.length === 0 ? 
                                     <div className="signIn-empty">
-                                        <div className="empty-tips">
-                                            需求方通过了你的申请,请完成阶段划分.
-                                        </div>
-                                        <Button className="empty-btn" onClick={() => add()}>建立阶段划分</Button>
+                                        <Button className="empty-btn" onClick={() => add()}><span className="empty-icon-add">+</span> Establish</Button>
                                     </div>
                                     :
                                     <div className="signIn-list">
@@ -377,8 +412,8 @@ export default function Stage_info(props) {
                                             style={{ width: '100%' }}
                                         />
                                             <div className="btns">
-                                                <Button className="btn" onClick={() => isCancel()}>取消</Button>
-                                                <Button className="btn" type="primary" onClick={() => isOk()}>编辑完成</Button>                              
+                                                <Button className="btn" onClick={() => isCancel()}>Cancel</Button>
+                                                <Button className="btn" type="primary" onClick={() => isOk()}>Confirm</Button>                              
                                             </div> 
                                     </div>
                             }
@@ -424,5 +459,7 @@ export default function Stage_info(props) {
                             }
                         </div>
                 }
+                <div className="worker-total">{total()}</div>
+            </div>
             </div>
 }

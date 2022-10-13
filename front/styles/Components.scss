@@ -3,53 +3,275 @@
     min-height: 518px;
     box-shadow: 0px 0px 44px -24px #7C7879;
     border-radius: 30px;
-    padding: 50px 71px 0 61px;
+    padding: 50px 71px 49px 61px;
     .stageInfo-title{
         box-sizing: content-box;
-        padding: 20px 30px;
-        font-size: 30px;
-        font-weight: 500;
-        border-bottom: 1px solid #000;
+        font-size: 38px;
+        font-weight: 600;
+        border-bottom: 2px solid #E2E2E2;
+        color: #1F1E2E;
+        height: 85px;
+        line-height: 53px;
+        font-family: PingFangSC-Semibold, PingFang SC;
     }
     .stageInfo-subtitle{
         box-sizing: content-box;
-        padding: 20px 30px;
+        padding: 31px 0 30px 0;
         display: flex;
         flex-direction: column;
-        border-bottom: 1px solid #000;
+        border-bottom: 2px solid #E2E2E2;
         .subtitle-check{
-            font-size: 16px;
-            color: rgb(40, 40, 40);
+            height: 25px;
+            position: relative;
+            font-size: 18px;
             .check-span{
                 color: gray;
-                font-size: 14px;
-                margin-left: 20px;
+                position: absolute;
+                top: 13px;
+                font-size: 18px;
+                margin-top: -5px;
+                height: 25px;
+                line-height: 15px;
+                i{
+                    font-style: normal;
+                    display: inline-block;
+                    width: 14px;
+                    height: 14px;
+                    background-color: #000;
+                    border-radius: 7px;
+                    color: white;
+                    font-size: 12px;
+                    padding-left: 3px;
+                    margin-left: 13px;
+                }
+            }
+            .ant-checkbox{
+                width: 25px;
+                height: 25px;
+                >span{
+                    width: 100%;
+                    height: 25px;
+                }
+                .ant-checkbox-input{
+                    width: 25px;
+                    height: 25px;
+                }
+                .ant-checkbox-inner{
+                    width: 25px;
+                    height: 25px;
+                    border-radius: 5px;
+                    border: 1px solid #1F1E2E;
+                    &::after{
+                        width: 8px;
+                        height: 14px;
+                        margin-left: 2px;
+                        margin-top: -1px;
+                    }
+                }
+            }
+            .ant-checkbox-checked{
+                border-radius: 5px;
+                &::after{
+                    border: none;
+                }
+                .ant-checkbox-inner{
+                    border: 1px solid #1F1E2E;
+                    background-color: #1F1E2E;
+                    border-radius: 5px;
+                }
+            }
+        }
+        .subtitle-inner{
+            width: 222px;
+            height: 42px;
+            line-height: 42px;
+            border: none;
+            .ant-input-number-input-wrap{
+                height: 42px;
+                box-sizing: border-box;
+                border-radius: 10px;
+                border: 1px solid #979797;
+                input{
+                    text-align: center;
+                    font-size: 18px;
+                    color: #1F1E2E;
+                    font-family: PingFangSC-Medium, PingFang SC;
+                    font-weight: 500;
+                    letter-spacing: 1px;
+                }
+            }
+            .ant-input-number-focused{
+                box-shadow: none;
+            }
+        }
+        .ant-input-number-group-addon{
+            border: none;
+            background-color: white;
+            font-size: 18px;
+            padding-left: 21px;
+            span{
+                color: #1F1E2E;
+
             }
         }
         .mb10{
-            margin-bottom: 10px;
+            margin-bottom: 17px;
         }
     }
     .stageInfo-signIn{
         .signIn-empty{
             width: 100%;
-            min-height: 500px;
-            padding: 50px 30px;
+            padding-top: 97px;
             display: flex;
             flex-direction: column;
-            .empty-tips{
-                box-sizing: content-box;
-                padding: 20px 0 ;
-                background-color: rgb(230, 230, 230);
-                text-align: center;
-                margin-bottom: 150px;
-            }
             .empty-btn{
                 margin: 0 auto;
+                width: 240px;
+                height: 80px;
+                background-color: #1F1E2E;
+                color: white;
+                font-size: 28px;
+                font-family: PingFangSC-Regular, PingFang SC;
+                font-weight: 400;
+                .empty-icon-add{
+                    font-size: 36px;
+                    margin-right: 6px;
+                }
             }
         }
         .signIn-list{
             position: relative;
+            margin-top: 31px;
+            box-shadow: 0px 0px 44px -24px #7C7879;
+            border-radius: 20px;
+            padding-bottom: 49px;
+            .ant-tabs{
+                .ant-tabs-nav{
+                    height: 85px;
+                    .ant-tabs-tab{
+                        border-radius: 20px;
+                        font-size: 48px;
+                        color: #1F1E2E;
+                        width: 150px;
+                        .ant-tabs-tab-btn{
+                            margin: 0 auto;
+                        }
+                    }
+                    .ant-tabs-tab-active{
+                        width: 280px;
+                        .ant-tabs-tab-btn{
+                            color: #1F1E2E;
+                            margin: 0 auto;
+                        }
+                    }
+                    .ant-tabs-nav-add{
+                        width: 150px;
+
+                    }
+                }
+                .ant-tabs-content-holder{
+                    padding: 0 25px 0 33px;
+                    .ant-form{
+                        .ant-form-item{
+                            &:nth-of-type(2){
+                                margin-bottom: 66px;
+                            }
+                            .ant-form-item-row{
+                                display: block;
+                                .ant-form-item-label{
+                                    display: block;
+                                    text-align: left;
+                                    height: 33px;
+                                    font-family: PingFangSC-Medium, PingFang SC;
+                                    font-weight: 500;
+                                    color: #1F1E2E;
+                                    line-height: 33px;
+                                    >label{
+                                        font-size: 24px;
+                                    }
+                                }
+                                .ant-form-item-control{
+                                    margin-top: 10px;
+                                    .ant-form-item-control-input-content{
+                                        input{
+                                            height: 65px;
+                                            border-radius: 10px;
+                                            border: 1px solid #979797;
+                                            box-shadow: none;
+                                            font-size: 18px;
+                                        }
+                                    }
+                                    .ant-input-number{
+                                        border: none;
+                                        box-shadow: none;
+                                    }
+                                    .ant-input-number-group-addon{
+                                        border: none;
+                                        background-color: white;
+                                        font-size: 18px;
+                                        padding-left: 20px;
+                                    }
+                                }
+                            }
+                            &:nth-of-type(4){
+                                .ant-form-item-control{
+                                    height: 200px;
+                                    .ant-form-item-control-input{
+                                        .ant-form-item-control-input-content{
+                                            .ant-input{
+                                                height: 200px;
+                                                box-shadow: none;
+                                                border: 1px solid #979797;
+                                                border-radius: 10px;
+                                                font-size: 18px;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        .check-percent{
+                            position: relative;
+                            .ant-form-item{
+                                .ant-form-item-label{
+                                    position: absolute;
+                                    left: 0;
+                                    top: -45px;
+                                }
+                                .ant-form-item-control{
+                                    height: 42px;
+                                    margin-top: 0;
+                                    margin-left: 41px;
+                                    font-size: 18px;
+
+                                    input{
+                                        height: 42px !important;
+                                    }
+                                    .ant-input-number-group-addon{
+                                        padding-left: 10px;
+                                    }
+                                }
+                            }
+                            .li{
+                                width: 95px;
+                                height: 42px;
+                                line-height: 32px;
+                                text-align: center;
+                                font-size: 18px;
+                                border-radius: 10px;
+                                border: 1px solid #1F1E2E;
+                                background-color: white;
+                                color: #1F1E2E;
+                                margin-right: 20px;
+                            }
+                            .active{
+                                background-color: #1F1E2E;
+                                color: white;
+                            }
+                        }
+                    }
+                }
+            }
             .add{
                 cursor: pointer;
                 position: absolute;
@@ -68,7 +290,22 @@
                 display: flex;
                 justify-content: flex-end;
                 .btn{
-                    margin-left: 20px;
+                    font-size: 14px;
+                    width: 134px;
+                    font-weight: 400;
+                    letter-spacing: 1px;
+                    font-family: PingFangSC-Regular, PingFang SC;
+                    padding: 10px 40px 10px 41px;
+                    margin-left: 16px;
+                    line-height: 20px;
+                    height: 40px;
+                    border-radius: 31px;
+                    &:nth-last-of-type(1){
+                        background-color: #1F1E2E;
+                    }
+                    &:nth-of-type(1){
+                        color: #1F1E2E;
+                    }
                 }
             }
         }
@@ -76,6 +313,86 @@
     .stageInfo-inspection{
         padding: 50px;
         background-color: rgb(250, 250, 250);
+    }
+    .worker-total{
+        height: 379px;
+        padding: 63px 50px 62px 0;
+        border: none;
+        border-top: 1px solid #E2E2E2;
+        border-bottom: 1px solid #E2E2E2;
+        margin-top: 45px;
+        position: relative;
+        .worker-total-estimated{
+            position: absolute;
+            bottom: 106px;
+            left: 7px;
+            height: 25px;
+            font-size: 18px;
+            font-family: PingFangSC-Regular, PingFang SC;
+            font-weight: 400;
+            color: #828282;
+            line-height: 25px;
+            >span{
+                color: #828282;
+                font-size: 18px;
+                margin-left: 33px;
+            }
+        }
+        .worker-total-cycle{
+            position: absolute;
+            bottom: 73px;
+            left: 7px;
+            height: 25px;
+            font-size: 18px;
+            font-family: PingFangSC-Regular, PingFang SC;
+            font-weight: 400;
+            color: #828282;
+            line-height: 25px;
+            >span{
+                color: #828282;
+                font-size: 18px;
+            }
+        }
+        .worker-total-advance,.worker-total-stageCost{
+            height: 40px;
+            font-size: 28px;
+            font-family: PingFangSC-Regular, PingFang SC;
+            font-weight: 400;
+            color: #828282;
+            line-height: 40px;
+            letter-spacing: 1px;
+            margin-bottom: 13px;
+            >span{
+                height: 40px;
+                font-size: 28px;
+                font-family: PingFangSC-Medium, PingFang SC;
+                font-weight: 500;
+                color: #1F1E2E;
+                line-height: 40px;
+                letter-spacing: 1px;
+            }
+        }
+        .worker-total-totalExpenses{
+            position: absolute;
+            right: 50px;
+            bottom: 62px;
+            height: 40px;
+            font-size: 28px;
+            font-family: PingFangSC-Medium, PingFang SC;
+            font-weight: 500;
+            color: #1F1E2E;
+            line-height: 40px;
+            letter-spacing: 1px;
+            >span{
+                height: 56px;
+                font-size: 40px;
+                font-family: PingFangSC-Medium, PingFang SC;
+                font-weight: 500;
+                color: #1F1E2E;
+                line-height: 56px;
+                letter-spacing: 1px;
+            }
+        }
     }
 }
 .Stage_inspection{
@@ -150,4 +467,10 @@
     }
 }
 
+
+.order-stage{
+    .content-container{
+        margin-top: 59px;
+    }
+}
 

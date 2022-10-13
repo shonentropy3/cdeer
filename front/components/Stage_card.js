@@ -31,7 +31,7 @@ export default function Stage_card(params) {
     const checkPercent = e => {
         selectPercent = e.title;
         setSelectPercent(selectPercent);
-        stage.budget = (amount / Math.pow(10,18)) * e.value;
+        stage.budget = Math.floor( (amount / Math.pow(10,18)) * e.value );
         stage.percent = e.title;
     }
 
@@ -74,12 +74,12 @@ export default function Stage_card(params) {
                     { "name": ["content"], "value": data.content },
                   ]}
             >
-            <Form.Item label="阶段名称" name="title">
+            <Form.Item label="Stage Name" name="title">
                 <Input onChange={e => onchange('title',e.target.value)}/>
             </Form.Item>
 
-            <Form.Item label="阶段时长" name="period">
-                <InputNumber min={1} addonAfter="DAY" onChange={e => onchange('period',e)}/>
+            <Form.Item label="Delivery duration" name="period">
+                <InputNumber min={1} controls={false} addonAfter={<span>Day</span>} onChange={e => onchange('period',e)}/>
             </Form.Item>
             <div className="check-percent">
                     {
@@ -91,14 +91,14 @@ export default function Stage_card(params) {
                             >{e.title}</div>
                         )
                     }
-                    <Form.Item label="阶段费用" name='budget'>
+                    <Form.Item label="stage cost" name='budget'>
                         <InputNumber min={0} addonAfter="ETH" onChange={e => changeBudget(e)} />
                     </Form.Item>
             </div>
             
 
-            <Form.Item label="阶段说明" name="content">
-                <TextArea rows={4} onChange={e => onchange('content',e.target.value)} />
+            <Form.Item label="Delivery instructions" name="content">
+                <TextArea onChange={e => onchange('content',e.target.value)} />
             </Form.Item>
             </Form>
       </div>

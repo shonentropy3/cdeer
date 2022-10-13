@@ -10,6 +10,8 @@ import { getOrdersInfo, getStagesHash, getStagesJson } from "../http/api/order";
 import { getDate } from "../utils/getDate";
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 
+import { deform_Skills } from '../utils/Deform';
+
 export default function Order(props) {
     
     let [query,setQuery] = useState({});
@@ -30,6 +32,9 @@ export default function Order(props) {
     let [signature,setSignature] = useState('');
     // json
     const [attachment, setAttachment] = useState({});
+
+    let [taskID,setTaskID] = useState('');
+    let [project,setProject] = useState({});
 
     // 技能要求列表
     let [skills,setSkills] = useState({
@@ -87,6 +92,22 @@ export default function Order(props) {
             })
             
         }
+    }
+
+    // 获取任务详情
+    const getProject = async() => {
+        await getDemandInfo({id: taskID})
+        .then(res=>{
+            let obj = res.data[0]
+            console.log(obj);
+            obj.role = deform_Skills(obj.role);
+            project = obj;
+            setProject({...project});
+            console.log(project);
+        })
+        .catch(err=>{
+            console.log(err);
+        })
     }
 
     const init = () => {
@@ -390,6 +411,12 @@ export default function Order(props) {
         }
     },[Order.data])
 
+    useEffect(() => {
+        taskID = location.search.split('=')[3];
+        setTaskID(taskID);
+        getProject()
+    },[])
+
     return <div className="WorkerProject">
                 <div className="worker-title">
                     {/* <h1>{amount}</h1> */}
@@ -449,6 +476,52 @@ export default function Order(props) {
                 </div>
                 <div className="worker-total">{total()}</div>
                 {btn()}
+                <div className="content-container">
+            <p className='task-details'>Task Details</p>
+            <div className='task-detail-list'>
+                <p className='task-type task-li'>
+                    <span className='task-type-title title'>Type：</span>
+                    <span className='task-type-text content'>Blockchain</span>
+                </p>
+                <p className='task-cost task-li'>
+                    <span className='task-cost-title title'>Cost：</span>
+                    <span className='task-cost-price content'>{project.budget / 1000000000000000000}ETH</span>
+                </p>
+                <p className='task-date task-li'>
+                    <span className='task-date-title title'>Cycle：</span>
+                    <span className='task-date-time content'>{project.period / 86400}days</span>
+                </p>
+            </div>
+            <div className="content-li">
+                <p className="li-title">Task Description：</p>
+                <div className="li-box">
+                    <p className="detail content">
+                        {project.desc}
+                    </p>
+                </div>
+            </div>
+            <div className="content-li">
+                <p className="li-title">Task document：</p>
+                <div className="li-box">
+                    <div className="upload">
+                        <p className="upload-title">{project.suffix}</p>
+                        {/* <p>下载</p> */}
+                    </div>
+                </div>
+            </div>
+            <div className="content-li">
+                <p className="li-title">Skill requirements：</p>
+                <div className="li-box boxs">
+                {
+                        project.role ? 
+                        project.role.map((e,i) => <div className="box" key={i}>{e}</div> )
+                        :
+                        ''
+                    }
+                </div>
+            </div>
+
+        </div>
                 <div className="h50"></div>
             </div>
 }
