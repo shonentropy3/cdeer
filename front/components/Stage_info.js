@@ -14,7 +14,19 @@ import Stage_list from "./Stage_list";
 
 export default function Stage_info(props) {
 
-    const { Query, Amount, OrderInfo, Data, Step, StagesData, isModify, Attachment, permitNonce } = props;   //  StagesData 数据库阶段
+    const { 
+        Query, 
+        Amount, 
+        OrderInfo, 
+        Data, 
+        Step, 
+        StagesData, 
+        isModify, 
+        Attachment, 
+        permitNonce, 
+        isSignObj,
+        ModifyStatus 
+    } = props;   //  StagesData 数据库阶段
     let [advance,setAdvance] = useState(false);
     let [stage0,setStage0] = useState();
     let [stages,setStages] = useState([]);   
@@ -31,6 +43,10 @@ export default function Stage_info(props) {
     let [nonce,setNonce] = useState();
     let [appendObj,setAppendObj] = useState({});  //  新增阶段签名
     let [isSigner,setIsSigner] = useState(false);   //  签名flag
+    let [deadLine,setDeadLine] = useState();
+    let [signObj,setSignObj] = useState({});
+
+
 
 
     
@@ -73,12 +89,12 @@ export default function Stage_info(props) {
     // 计算阶段划分的费用和数据
     const total = () => {
         if (!Data) {
-            return
+            return 
         }
         let allPeriod = 0;
         let allTotal = 0;
         let now = new Date().getTime();
-        return <>
+        return <div className="worker-total">
                 {
                     Data.map((e,i) => {
                         allPeriod += e.period;
@@ -93,7 +109,7 @@ export default function Stage_info(props) {
                 <p className="worker-total-estimated">Estimated time：<span>{allPeriod}</span>DAYS</p>
                 <p className="worker-total-cycle">Development cycle：<span>{getDate(now,'d')} / {getDate(now + (allPeriod * 24 * 60 * 60 * 1000),'d')}</span></p>
                 <strong className="worker-total-totalExpenses">Total expenses：<span>{allTotal} ETH</span></strong>
-        </>
+        </div>
     }
 
     
@@ -166,7 +182,7 @@ export default function Stage_info(props) {
         })
         newPanes.push({
             label: 'P' + newIndex,
-            children: <Stage_card stage={stages[stages.length - 1]} amount={Amount} set={setStages} stages={stages} />,
+            children: <Stage_card stage={stages[stages.length - 1]} amount={Amount} set={setStages} stages={stages} method={concat} />,
             key: newActiveKey,
             closable: false
         });
@@ -284,7 +300,7 @@ export default function Stage_info(props) {
                     arr.push(obj);
                     cards.push({
                         label: 'P' + arr.length,
-                        children: <Stage_card stage={arr[arr.length - 1]} amount={Amount} set={setStages} stages={stages} />,
+                        children: <Stage_card stage={arr[arr.length - 1]} amount={Amount} set={setStages} stages={stages} method={concat} />,
                         key: key,
                         closable: false
                     });
@@ -303,11 +319,56 @@ export default function Stage_info(props) {
         })
     }
 
+    // 提交阶段划分按钮
+    const btn = () => {
+        if(!Data){
+            return
+        }else{
+            if (Step === 0) {
+                return (
+                    Query.who === 'issuer' && !ModifyStatus ? <>
+                        <p className="tips"><ExclamationCircleOutlined style={{color: 'red', marginRight: '10px'}} />同意后,项目正式启动.并按照阶段划分作为项目交付计划和付款计划</p>
+                        <Button type='primary' className='worker-btn' onClick={() => overflow()}>同意阶段划分</Button></>
+                        :
+                        <Button type='primary' className='worker-btn' onClick={() => setStage()}>Complete and submit phasing</Button>
+                )
+            }
+        }
+    }
+
+    // 设置阶段划分
+    const setStage = () => {
+        // 设置阶段
+            let now = parseInt(new Date().getTime()/1000);
+            let setTime = 2 * 24 * 60 * 60;
+            deadLine = now+setTime;
+            setDeadLine(deadLine);
+            let _amounts = [];
+            let _periods = [];
+            console.log(Data);
+            Data.map(e => {
+                _amounts.push(ethers.utils.parseEther(`${e.budget}`));
+                _periods.push(`${e.period * 24 * 60 * 60}`)
+            })
+            signObj = {
+                amounts: _amounts,
+                periods: _periods,
+                chainId: chain.id,
+                address: address,
+                oid: Query.oid,
+                nonce: nonce,
+                deadline: `${now+setTime}`
+            }
+            console.log(signObj);
+            isSignObj({...signObj});
+            setIsSigner(true);
+    }
+
     useEffect(() => {
         if (Data && Data.length > 0) {
             init();
         }
-    },[Data])
+    },[])
 
     useEffect(() => {
         getWithdraw.isSuccess ? message.success('取款成功') : '';
@@ -459,7 +520,8 @@ export default function Stage_info(props) {
                             }
                         </div>
                 }
-                <div className="worker-total">{total()}</div>
+                <div>{total()}</div>
+                {btn()}
             </div>
             </div>
 }

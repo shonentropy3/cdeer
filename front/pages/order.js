@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from 'next/router'
-import { Steps, Button, message, Modal } from "antd";
+import { Steps, Button, message, Modal, Image } from "antd";
 import { getDemandInfo } from "../http/api/task";
 import { multicallWrite, muticallEncode, useRead, useSignData } from "../controller";
 import Stage_info from "../components/Stage_info";
@@ -36,6 +36,9 @@ export default function Order(props) {
     let [taskID,setTaskID] = useState('');
     let [project,setProject] = useState({});
 
+    // 账号身份
+    let [identity,setIdentity] = useState()
+
     // 技能要求列表
     let [skills,setSkills] = useState({
         "101":"solidity",
@@ -47,6 +50,12 @@ export default function Order(props) {
         "107":"HTML/CSS",
         "108":"IOS"
     });
+
+    // 擅长技能假数据
+    const [goodSkills,setGoodSkills] = useState([
+        "javascripts",
+        "solidity"
+    ])
 
     const { confirm } = Modal;
     const { Step } = Steps;
@@ -99,9 +108,7 @@ export default function Order(props) {
         await getDemandInfo({id: taskID})
         .then(res=>{
             let obj = res.data[0]
-            console.log(obj);
             obj.role = deform_Skills(obj.role);
-            project = obj;
             setProject({...project});
             console.log(project);
         })
@@ -331,30 +338,30 @@ export default function Order(props) {
         });
       };
 
-    const total = () => {
-        if (!stagesData) {
-            return
-        }
-        let allPeriod = 0;
-        let allTotal = 0;
-        let now = new Date().getTime();
-        return <>
-                {
-                    stagesData.map((e,i) => {
-                        allPeriod += e.period;
-                        allTotal += e.budget;
-                        if (e.period === 0) {
-                            return <p key={i}>预付款: <span>{stagesData[0].budget}</span>ETH</p>
-                        }else{
-                            let p = stagesData[0].period === 0 ? i : i+1;
-                            return <p key={i}>P{p}阶段费用: <span>{e.budget}</span>ETH </p>
-                        }})
-                }
-                <p>开发周期: <span>{allPeriod}</span>DAYS</p>
-                <p>预计时间: <span>{getDate(now,'d')} / {getDate(now + (allPeriod * 24 * 60 * 60 * 1000),'d')}</span></p>
-                <strong>总费用: {allTotal}ETH</strong>
-        </>
-    }
+    // const total = () => {
+    //     if (!stagesData) {
+    //         return
+    //     }
+    //     let allPeriod = 0;
+    //     let allTotal = 0;
+    //     let now = new Date().getTime();
+    //     return <>
+    //             {
+    //                 stagesData.map((e,i) => {
+    //                     allPeriod += e.period;
+    //                     allTotal += e.budget;
+    //                     if (e.period === 0) {
+    //                         return <p key={i}>预付款: <span>{stagesData[0].budget}</span>ETH</p>
+    //                     }else{
+    //                         let p = stagesData[0].period === 0 ? i : i+1;
+    //                         return <p key={i}>P{p}阶段费用: <span>{e.budget}</span>ETH </p>
+    //                     }})
+    //             }
+    //             <p>开发周期: <span>{allPeriod}</span>DAYS</p>
+    //             <p>预计时间: <span>{getDate(now,'d')} / {getDate(now + (allPeriod * 24 * 60 * 60 * 1000),'d')}</span></p>
+    //             <strong>总费用: {allTotal}ETH</strong>
+    //     </>
+    // }
 
     const btn = () => {
         if (step === 0) {
@@ -413,9 +420,16 @@ export default function Order(props) {
 
     useEffect(() => {
         taskID = location.search.split('=')[3];
+        identity = location.search.split('=')[2].split('&')[0]
         setTaskID(taskID);
+        setIdentity(identity);
+        console.log(identity);
         getProject()
     },[])
+
+    useEffect(()=>{
+        console.log(signObj);
+    },[signObj])
 
     return <div className="WorkerProject">
                 <div className="worker-title">
@@ -433,7 +447,7 @@ export default function Order(props) {
                         </div>
                     </div>
                     <div className="title-cost">
-                        <p className="title-cost-line">cost: <span className="title-cost-price">{price.budget}{price.currency === 1 ? 'ETH' : 'BTC'}</span> </p>
+                        <p className="title-cost-line">cost: <span className="title-cost-price">{price.budget / 1000000000000000000}{price.currency === 1 ? 'ETH' : 'BTC'}</span> </p>
                     </div>
                 </div>
                 <div className="worker-steps">
@@ -444,37 +458,62 @@ export default function Order(props) {
                         <Step className="steps-finish" title="Finish" />
                     </Steps>
                 </div>
-                <div className="order-tip">
+                {
+                    identity == "worker" ? <div className="order-tip">
                     <p className="order-tip-text">The demander has approved your application, please complete the phase division</p>
-                </div>
+                </div> : ""
+                }
                 {
                     query.who === 'issuer' ? 
                         <div className="issuer-workerInfo">
-                            <div className="workerInfo-title">接单者信息</div>
+                            <div className="workerInfo-title">Task stage division：</div>
                             <div className="workerInfo-content">
                                 <div className="img"></div>
                                 <div className="info">
-                                    <p className="title">托尼</p>
-                                    <p className="subtitle">他的技能: Solidity、Java、Go</p>
-                                    <p className="detail">查看他的NFT</p>
+                                    <p className="title">Tony<span>View personal information</span></p>
+                                    <p className="subtitle">Good at skills： 
+                                        {
+                                            goodSkills.map((e,i) => (
+                                                <span key={i}>{e}</span>
+                                            ))
+                                        }
+                                    </p>
                                     <div className="boxs">
                                         <div className="box">
-                                            <div className="icon"></div>
-                                            <p>Tonny Hool</p>
+                                            <div className="icon">
+                                                <Image src="/telegram .png" />
+                                            </div>
                                         </div>
                                         <div className="box">
-                                            <div className="icon"></div>
-                                            <p>Tonny Hool</p>
+                                            <div className="icon">
+                                                <Image src="/skype .png" />
+                                            </div>
+                                        </div>
+                                        <div className="box">
+                                            <div className="icon">
+                                                <Image src="/wechat.png" />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div> : ''
                 }
-                    <Stage_info Query={query} Amount={task.budget} OrderInfo={Order} Step={step} StagesData={setStagesData} Data={stagesData} isModify={setModifyStatus} Attachment={attachment} permitNonce={permitNonce} />
+                    <Stage_info 
+                        Query={query} 
+                        Amount={task.budget} 
+                        OrderInfo={Order} Step={step} 
+                        StagesData={setStagesData} 
+                        Data={stagesData} 
+                        isModify={setModifyStatus} 
+                        Attachment={attachment} 
+                        permitNonce={permitNonce}
+                        isSignObj={setSignObj}
+                        ModifyStatus = {modifyStatus}
+                    />
                 <div className="worker-signInStage">
                 </div>
-                <div className="worker-total">{total()}</div>
+                {/* <div className="worker-total">{total()}</div> */}
                 {btn()}
                 <div className="content-container">
             <p className='task-details'>Task Details</p>

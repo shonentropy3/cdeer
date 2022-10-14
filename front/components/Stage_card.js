@@ -8,6 +8,7 @@ export default function Stage_card(params) {
     const { stage } = params;
     const { stages } = params;
     const { set } = params;
+    const { method } = params;
     let [data,setData] = useState({
         budget: '', content: '', key: '', percent: '', period: '', stageIndex: '', title: ''
     });
@@ -33,6 +34,10 @@ export default function Stage_card(params) {
         setSelectPercent(selectPercent);
         stage.budget = Math.floor( (amount / Math.pow(10,18)) * e.value );
         stage.percent = e.title;
+        
+        if (method) {
+            method()
+        }
     }
 
     const changeBudget = e => {
@@ -40,10 +45,18 @@ export default function Stage_card(params) {
         stage.percent = '';
         selectPercent = '';
         setSelectPercent(selectPercent);
+
+        if (method) {
+            method()
+        }
     }
 
     const onchange = (name,value) => {
         stage[name] = value;
+
+        if (method) {
+            method()
+        }
     }
 
     useEffect(() => {

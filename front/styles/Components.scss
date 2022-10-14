@@ -311,8 +311,158 @@
         }
     }
     .stageInfo-inspection{
-        padding: 50px;
-        background-color: rgb(250, 250, 250);
+        padding-top: 50px;
+        .Stage_inspection{
+            margin-bottom: 30px;
+            position: relative;
+            box-shadow: 0px 0px 44px -24px #7C7879;
+            .inspection-info{
+                position: absolute;
+                width: 180px;
+                right: 20px;
+                top: 20px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-size: 16px;
+                font-weight: 500;
+                p{
+                    color: #1890FF;
+                    cursor: pointer;
+                    &:last-child{
+                        color: rgb(255, 74, 74);
+                    }
+                }
+            }
+            .ant-collapse{
+                .ant-collapse-item{
+                    padding: 0;
+                    background-color: white;
+                    .ant-collapse-header{
+                        height: 63px;
+                        padding: 0;
+                        padding-left: 30px;
+                        position: relative;
+                        .ant-collapse-expand-icon{
+                            height: 27px;
+                            width: 27px;
+                            background-color: #FFDA00;
+                            border-radius: 50%;
+                            position: absolute;
+                            top: 18px;
+                            right: 60px;
+                            svg{
+                                margin-left: 5px;
+                                margin-top: 5px;
+                                font-size: 16px;
+                                transform: rotate(90deg);
+                            }
+                        }
+                        .ant-collapse-header-text{
+                            height: 25px;
+                            margin-top: 19px;
+                            >div{
+                                display: flex; 
+                                .box{
+                                    height: 25px;
+                                    line-height: 25px;
+                                    font-size: 18px;
+                                    font-family: PingFangSC-Regular, PingFang SC;
+                                    font-weight: 400;
+                                    line-height: 25px;
+                                    margin-right: 60px;
+                                    .box-title{
+                                        color: #828282;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    .ant-collapse-content{
+                        .ant-collapse-content-box{
+                            padding-left: 30px;
+                            padding-top: 0;
+                            .box{
+                                >.box-title{
+                                    height: 25px;
+                                    font-size: 18px;
+                                    font-family: PingFangSC-Regular, PingFang SC;
+                                    font-weight: 400;
+                                    color: #828282;
+                                    line-height: 25px;
+                                    margin-bottom: 9px;
+                                }
+                                >.box-desc{
+                                    height: 25px;
+                                    font-size: 18px;
+                                    font-family: PingFangSC-Medium, PingFang SC;
+                                    font-weight: 500;
+                                    color: #1F1E2E;
+                                    line-height: 25px;
+                                }
+                            }
+                        }
+                    } 
+                }
+                .ant-collapse-item-active{
+                    .ant-collapse-header{
+                        .ant-collapse-expand-icon{
+                            svg{
+                                transform: rotate(270deg) !important;
+                            }
+                        }
+                    }
+                }
+            }
+            .inspection-nav{
+                padding: 0;
+                background-color: #1F1E2E;
+                color: white;
+                height: 85px;
+                font-size: 32px;
+                padding-top: 17px;
+                padding-left: 30px;
+                border-radius: 10px 10px 0 0;
+                .inspection-nav-stage{
+                    font-family: PingFangSC-Semibold, PingFang SC;
+                    font-weight: 600;
+                    margin-right: 25px;
+                }
+                .inspection-nav-title{
+                    font-weight: 500;
+                    font-family: PingFangSC-Medium, PingFang SC;
+
+                }
+            }
+            .inspection-content{
+                display: flex;
+                flex-wrap: wrap;
+                padding: 20px;
+                background-color: white;
+                position: relative;
+                .box{
+                    width: 50%;
+                    margin-bottom: 20px;
+                    p{
+                        font-size: 18px;
+                        &:first-child{
+                            font-weight: 800;
+                        }
+                    }
+                    &:last-child{
+                        margin-bottom: 0;
+                    }
+                }
+                .btns{
+                    width: 250px;
+                    display: flex;
+                    justify-content: space-between;
+                    position: absolute;
+                    bottom: 20px;
+                    right: 20px;
+                }
+            }
+        }
     }
     .worker-total{
         height: 379px;
@@ -376,12 +526,12 @@
             position: absolute;
             right: 50px;
             bottom: 62px;
-            height: 40px;
+            height: 56px;
             font-size: 28px;
             font-family: PingFangSC-Medium, PingFang SC;
             font-weight: 500;
             color: #1F1E2E;
-            line-height: 40px;
+            line-height: 56px;
             letter-spacing: 1px;
             >span{
                 height: 56px;
@@ -394,70 +544,23 @@
             }
         }
     }
-}
-.Stage_inspection{
-    border: 1px solid #000;
-    margin-bottom: 30px;
-    position: relative;
-    .inspection-info{
-        position: absolute;
-        width: 180px;
-        right: 20px;
-        top: 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 16px;
-        font-weight: 500;
-        p{
-            color: #1890FF;
-            cursor: pointer;
-            &:last-child{
-                color: rgb(255, 74, 74);
-            }
-        }
-    }
-    .inspection-nav{
-        padding: 20px;
-        font-size: 20px;
-        font-weight: 500;
-        border-bottom: 1px solid #000;
-        background-color: rgb(238, 238, 238);
-        .line{
-            background-color: rgb(209, 209, 209);
-            height: 20px;
-            width: 2px;
-        }
-    }
-    .inspection-content{
-        display: flex;
-        flex-wrap: wrap;
-        padding: 20px;
-        background-color: white;
-        position: relative;
-        .box{
-            width: 50%;
-            margin-bottom: 20px;
-            p{
-                font-size: 18px;
-                &:first-child{
-                    font-weight: 800;
-                }
-            }
-            &:last-child{
-                margin-bottom: 0;
-            }
-        }
-        .btns{
-            width: 250px;
-            display: flex;
-            justify-content: space-between;
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-        }
+    .worker-btn{
+        width: 582px;
+        height: 90px;
+        background-color: #1F1E2E;
+        box-shadow: none;
+        border: none;
+        box-shadow: 0px 0px 19px -5px #898989;
+        border-radius: 5px;
+        font-size: 28px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        letter-spacing: 1px;
+        margin-left: 243px;
     }
 }
+
+
 
 .comfirm-task{
     width: 900px;
