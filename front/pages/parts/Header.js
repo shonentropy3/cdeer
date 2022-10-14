@@ -44,7 +44,7 @@ export default function Header(props) {
             {
               key: '1',
               label: (
-                <Link href={{pathname: '/MyInfo'}}>
+                <Link href={{pathname: '/myInfo'}}>
                     我的资料
                 </Link>
               ),
