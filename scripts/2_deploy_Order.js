@@ -4,6 +4,8 @@ const hre = require("hardhat");
 const { writeAbiAddr } = require('./artifact_log.js');
 
 const TaskAddr = require(`../deployments/${hre.network.name}/DeTask.json`);
+const WETHAddr = require(`../deployments/${hre.network.name}/WETH.json`);
+
 
 async function main() {
     await hre.run('compile');
@@ -11,7 +13,7 @@ async function main() {
 
     const contractFactory = await hre.ethers.getContractFactory("DeOrder");
 
-    const order = await contractFactory.deploy();
+    const order = await contractFactory.deploy(WETHAddr.address);
 
     await order.deployed();
     console.log("DeOrder deployed to:", order.address);
