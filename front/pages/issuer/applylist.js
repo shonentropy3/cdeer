@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
-import { Steps, Pagination, Modal, InputNumber, Select, Button, message, } from "antd";
-import { ClockCircleOutlined, MessageFilled, } from "@ant-design/icons"
+import { Modal, InputNumber, Select, Button, message, } from "antd";
+import { ClockCircleOutlined } from "@ant-design/icons"
 import { useAccount } from 'wagmi'
 import { getMyApplylist, getMyInfo } from "../../http/api/user";
 import { createOrder } from "../../http/api/order";
@@ -9,13 +9,13 @@ import { Modal_ModifyTask } from "../../components/Modal_modifyTask"
 import { ethers } from "ethers";
 import { getTasksData,delDemand,modifyApplySwitch } from "../../http/api/user";
 import { modifyApplySort } from "../../http/api/apply";
+import Image from "next/image";
 
 
 
 export default function Applylist() {
     
     const { Option } = Select;
-    const { Step } = Steps;
     const { address } = useAccount();
     const selectAfter = (
         <Select
@@ -103,8 +103,8 @@ export default function Applylist() {
             }
             let arr = res.normal.concat(res.sort);
             data = arr;
-            console.log(arr);
             setData([...data]);
+            console.log(data);
         })
     }
 
@@ -304,10 +304,21 @@ export default function Applylist() {
                                             <span>javascripts</span>
                                         </p>
                                         <p className="applicant-mess">
-                                            <span className="applicant-mess-item iconfont skype">&#xe882;</span>
-                                            <span className="applicant-mess-item iconfont telegram">&#xec25;</span>
-                                            <span className="applicant-mess-item iconfont weixin">&#xec26;</span>
-                                            <span className="applicant-mess-item iconfont facebook">&#xebfc;</span>
+                                            <div className="applicant-mess-item">
+                                                <Image src="/telegram.png" alt="" quality={100} width={29} height={29} />
+                                            </div>
+                                            <div className="applicant-mess-item">
+                                                <Image src="/skype.png" alt="" quality={100} width={29} height={29} />
+                                            </div>
+                                            <div className="applicant-mess-item">
+                                                <Image src="/wechat.png" alt="" quality={100} width={29} height={29} />
+                                            </div>
+                                            <div className="applicant-mess-item">
+                                                <Image src="/discord.png" alt="" quality={100} width={29} height={29} />
+                                            </div>
+                                            <div className="applicant-mess-item">
+                                                <Image src="/whatsapp.png" alt="" quality={100} width={29} height={29} />
+                                            </div>
                                         </p>
                                     </div>
                                     <div className="product-apply">
@@ -321,10 +332,9 @@ export default function Applylist() {
                                 </div>
                                 <div className="product-apply-desc">
                                     <span></span>
-                                    <p className="product-apply-desc-text">
-                                        Hey, I&apos;m interested in your Task. Please send me a message so that we can discuss more.
-                                        Good at technology development and promotion
-                                    </p>
+                                    <div className="product-apply-desc-text">
+                                        <p>{e.desc}</p>
+                                    </div>
                                 </div>
                             </div>
                             <div>

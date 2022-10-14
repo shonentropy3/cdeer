@@ -71,7 +71,7 @@
     width: 1200px;
     margin: 0 auto;
     .sort{
-        background-color: #666;
+        background: #E4E4E4;
     }
     .task-info{
         height: 207px;
@@ -274,22 +274,11 @@
                                 }
                                 .applicant-mess{
                                     cursor: pointer;
-                                    margin-top: 25px;
+                                    margin-top: 31px;
+                                    display: flex;
+
                                     .applicant-mess-item{
                                         margin-right: 21px;
-                                    }
-                                    .skype{
-                                        color: #019DD8;
-                                        font-size: 26px;
-                                    }
-                                    .telegram{
-                                        color: #2BA2DB;
-                                    }
-                                    .weixin{
-                                        color: #00C800;
-                                    }
-                                    .facebook{
-                                        color: #3379EA;
                                     }
                                 }
                             }
@@ -350,12 +339,19 @@
                                 margin-top: -5px;
                             }
                             .product-apply-desc-text{
-                                height: 95px;
+                                width: 100%;
                                 background-color: #F1F1F1;
                                 margin-top: -15px;
                                 padding: 16px;
                                 font-size: 16px;
                                 color: #1F1E2E;
+                                p{
+                                    height: calc(95px - (16px * 2));
+                                    line-height: 22px;
+                                    word-wrap: break-word;
+                                    overflow:hidden; //超出的文本隐藏
+                                    text-overflow:ellipsis; //溢出用省略号显示
+                                }
                             }
                         }
                     }
