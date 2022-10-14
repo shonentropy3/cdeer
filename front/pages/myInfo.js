@@ -77,7 +77,7 @@ export default function MyInfo() {
             wechat:info.wechat,
             skype:info.skype,
             address,
-            role:info.role,
+            role:info.role ? info.role : [],
             avatar: ""
         }
         if(hasInfo){
