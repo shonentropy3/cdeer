@@ -586,55 +586,96 @@
         }
     }
     .issuer-workerInfo{
-        border: 1px solid #000;
-        height: 250px;
+        height: 180px;
         margin-bottom: 50px;
-        padding: 20px;
         display: flex;
-        flex-direction: column;
-        justify-content: space-between;
+        flex-direction: row;
+        justify-content: center;
+        margin-top: 33px;
         .workerInfo-title{
-            font-size: 24px;
+            font-size: 38px;
+            height: 53px;
+            line-height: 53px;
+            margin-top: 64px;
+            font-family: PingFangSC-Semibold, PingFang SC;
+            font-weight: 600;
+            color: #1F1E2E;
+            margin-right: 25px;
         }
         .workerInfo-content{
-            height: auto;
-            border: 1px solid #000;
-            padding: 20px;
+            height: auto;   
+            box-shadow: 0px 0px 44px -24px #7C7879;
             display: flex;
+            padding: 31px 40px 30px 34px;
+            border-radius: 9px;
             .img{
-                width: 120px;
-                height: 120px;
+                width: 119px;
+                height: 119px;
                 border-radius: 50%;
                 background-color: chartreuse;
-                margin-right: 30px;
+                margin-right: 28px;
             }
             .info{
                 display: flex;
                 flex-direction: column;
-                justify-content: space-between;
+                // justify-content: space-between;
                 .title{
-                    font-size: 20px;
+                    height: 40px;
+                    font-size: 28px;
+                    font-family: PingFangSC-Medium, PingFang SC;
+                    font-weight: 500;
+                    color: #1F1E2E;
+                    line-height: 40px;
+                    letter-spacing: 1px;
+                    margin-bottom: 2px;
+                    >span{
+                        font-size: 12px;
+                        font-family: PingFangSC-Regular, PingFang SC;
+                        font-weight: 400;
+                        color: #554AFF;
+                        text-decoration: underline;
+                        margin-left: 17px;
+                    }
                 }
                 .subtitle{
-                    color: gray;
-                }
-                .detail{
-                    color: #37a0fc;
-                    cursor: pointer;
+                    height: 17px;
+                    font-size: 12px;
+                    font-family: PingFangSC-Regular, PingFang SC;
+                    font-weight: 400;
+                    color: #6C6C6C;
+                    line-height: 17px;
+                    letter-spacing: 1px;
+                    margin-bottom: 31px;
+                    >span{
+                        display: inline-block;
+                        height: 17px;
+                        line-height: 17px;
+                        color: #000;
+                        padding: 0 3px;
+                        margin-right: 5px;
+                        &:nth-of-type(3n+1){
+                            background-color: #FFB1BE;
+                        }
+                        &:nth-of-type(3n+2){
+                            background-color: #FEE7B9;
+                        }
+                        &:nth-of-type(3n+3){
+                            background-color: #C9B1FF;
+                        }
+                    }
                 }
                 .boxs{
                     width: 230px;
                     display: flex;
-                    justify-content: space-between;
                     .box{
                         display: flex;
                         align-items: center;
                         .icon{
                             margin-right: 5px;
-                            width: 20px;
-                            height: 20px;
-                            background-color: greenyellow;
+                            width: 29px;
+                            height: 29px;
                             border-radius: 50%;
+                            margin-right: 21px;
                         }
                     }
                 }

@@ -1,4 +1,4 @@
-import { Button, Divider, InputNumber, message, Modal } from "antd";
+import { Button, Divider, InputNumber, message, Modal, Collapse } from "antd";
 import { useEffect, useState } from "react";
 import { multicallWrite, muticallEncode, useContracts, useRead, useSignProData } from "../controller";
 import { getProlongStage, getStagesJson, updateSignature } from "../http/api/order";
@@ -15,6 +15,7 @@ export default function Stage_list(props) {
     const { useStageRead: ongoingStage } = useRead('ongoingStage', Query.oid);
     const { useStageRead: stagesChain } = useRead('getStages', Query.oid);
     const { useOrderRead: nonces } = useRead('nonces', address);
+    const {Panel} = Collapse
 
     let [delayValue,setDelayValue] = useState(null);
     let [stageIndex,setStageIndex] = useState();
@@ -276,6 +277,7 @@ export default function Stage_list(props) {
                     <Button onClick={() => abort()}>中止阶段</Button>
                 </div>
             </Modal>
+            
             <div className="inspection-info">
                 {
                     Step === 0 ? 
@@ -291,21 +293,39 @@ export default function Stage_list(props) {
                 }
             </div>
             <div className="inspection-nav">
-                P{index+1}阶段<Divider type="vertical" className="line" />{data.title}
+                <span className="inspection-nav-stage">P{index+1}</span>
+                <span className="inspection-nav-title">{data.title}</span>
             </div>
+            <Collapse
+                bordered={false}
+                defaultActiveKey={['1']}
+                className="site-collapse-custom-collapse"
+            >
+                <Panel header={
+                    <div> 
+                        <div className="box">
+                            <span className="box-title">Delivery duration：</span>
+                            <span>{ data.prolong ? data.prolong : data.period } 天</span>
+                        </div>
+                        <div className="box">
+                            <span className="box-title">Delivery date：</span>
+                            <span>2022.10.30</span>
+                        </div>
+                        <div className="box">
+                            <span className="box-title">Stage cost：</span>
+                            <span>{data.budget}ETH</span>
+                        </div>
+                    </div>
+                    } key="1" className="site-collapse-custom-panel"
+                    >
+                        <div className="box">
+                            <p className="box-title">Delivery instructions：</p>
+                            <p className="box-desc">{data.content}</p>
+                        </div>
+                </Panel>
+            </Collapse>
             <div className="inspection-content">
-                <div className="box">
-                    <p>交付时长</p>
-                    <p>{ data.prolong ? data.prolong : data.period } 天</p>
-                </div>
-                <div className="box">
-                    <p>阶段费用</p>
-                    <p>{data.budget}ETH</p>
-                </div>
-                <div className="box">
-                    <p>交付说明</p>
-                    <p>{data.content}</p>
-                </div>
+                
                 {
                     data.prolong && doingStage == index + 1 ? 
                         <div className="deliveryDetail">

@@ -4,11 +4,13 @@ pragma solidity ^0.8.0;
 
 import "./interface/IOrder.sol";
 import "./interface/IStage.sol";
+import './interface/IWETH9.sol';
 import "@openzeppelin/contracts/token/ERC20/extensions/draft-IERC20Permit.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import './libs/TransferHelper.sol';
 import "./libs/ECDSA.sol";
 import './Multicall.sol';
+
 
 
 contract DeOrder is IOrder, Multicall, Ownable {
@@ -24,6 +26,8 @@ contract DeOrder is IOrder, Multicall, Ownable {
     address public feeTo;
 
     address public deStage;
+    IWETH9 public weth;
+
     uint public currOrderId;
 
     // orderId  = > 
@@ -44,8 +48,8 @@ contract DeOrder is IOrder, Multicall, Ownable {
     event FeeUpdated(uint fee, address feeTo);
     event StageUpdated(address stage);
 
-    constructor() {
-        
+    constructor(address _weth) {
+        weth = IWETH9(_weth);
         feeTo = msg.sender;
 
         DOMAIN_SEPARATOR = keccak256(
@@ -138,7 +142,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
 
     function prolongStage(uint _orderId, uint _stageIndex, uint _appendPeriod,
         uint nonce, uint deadline, uint8 v, bytes32 r, bytes32 s) external {
-        Order memory order = orders[_orderId];
+        Order storage order = orders[_orderId];
         if(order.progress != OrderProgess.Ongoing) revert ProgressError();
 
 
@@ -190,14 +194,14 @@ contract DeOrder is IOrder, Multicall, Ownable {
         payOrder(orderId, amount);
     }
 
-    //TODO: multicall bug?
     // anyone can pay for this order
     function payOrder(uint orderId, uint amount) public payable {
         Order storage order = orders[orderId];
         address token = order.token;
 
         if (token == address(0)) {
-            order.payed += msg.value;
+            IWETH9(weth).deposit{value: address(this).balance}();
+            order.payed += address(this).balance;
         } else {
             TransferHelper.safeTransferFrom(token, msg.sender, address(this), amount);
             order.payed += amount;
@@ -310,6 +314,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
         if (_amount == 0) return;
 
         if (address(0) == _token) {
+            IWETH9(weth).withdraw(_amount);
             TransferHelper.safeTransferETH(_to, _amount);
         } else {
             TransferHelper.safeTransfer(_token, _to, _amount);
