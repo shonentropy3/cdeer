@@ -1,4 +1,5 @@
-import { Button, Modal, Dropdown, Menu } from 'antd';
+import { Button, Modal, Dropdown, Menu, } from 'antd';
+import { CloseOutlined } from "@ant-design/icons"
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -22,6 +23,9 @@ export default function Header(props) {
     const {connect,chainId,connectors,error,isLoading,pendingConnector} = useConnect()
     const {isConnected, address} = useAccount()
     const {disconnect} = useDisconnect()
+
+    // 记录需要的连接方式
+    let [needConnector,setNeedConnector] = useState([])
     
     let [selectItem,setSelectItem] = useState('')
     let item = [
@@ -132,6 +136,16 @@ export default function Header(props) {
         return data
     }
 
+    // 筛选所需要的连接方式
+    const selectConnector = () => {
+        connectors.map((e,i) => {
+            if(e.name == "MetaMask" || e.name == "WalletConnect") {
+                    needConnector.push(e)
+            }
+        })
+        setNeedConnector([...new Set(needConnector)])
+    }
+
     useEffect(() => {
         item.map(e => {
             if (e.url === location.pathname) {
@@ -186,6 +200,11 @@ export default function Header(props) {
         }
     },[switchNetwork])
 
+    useEffect(() => {
+        selectConnector()
+    },[])
+
+
     return <div className="Header">
         <div className={`content ${isScroll ? 'scroll':''}`}>
             <div className="header-logo">
@@ -235,18 +254,22 @@ export default function Header(props) {
             </div>
         </div>
         <Modal 
-            title="连接钱包" 
+            title={<p>Link Wallet <CloseOutlined onClick={handleCancel} /></p>} 
             footer={null} 
             open={isModalVisible} 
             closable={false}
             onCancel={handleCancel}
+            className="connect"
         >
-            {connectors.map((connector) => (
+            {needConnector.map((connector) => (
                 <Button
                     key={connector.id}
                     onClick={() => {connect({ connector }), handlerCancel()}}
                 >
-                {connector.name}
+                    <p className='connect-img'>
+                        <img src={"/"+connector.name+".png"} />
+                    </p>
+                    <p className='connect-text'>{connector.name}</p>
                 </Button>
             ))}
         </Modal>
