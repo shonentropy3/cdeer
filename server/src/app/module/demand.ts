@@ -15,7 +15,7 @@ import { Users } from '../db/entity/Users';
 
 @Module({
   controllers: [MarketController, CommonController, UserController],
-  providers: [MarketService, CommonService, UserService],
+  providers: [MarketService, CommonService, UserService, ],
   imports: [
     HttpModule,
     TypeOrmModule.forFeature([Tasks, Nfts, ApplyInfo, Users]),

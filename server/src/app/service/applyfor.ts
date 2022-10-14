@@ -17,7 +17,7 @@ export class ApplyforService {
 
     async apply(@Body() body: any) {
         let bodyData = JSON.parse(body.proLabel)
-        
+
         await this.applyInfoRepository.query(setApply(bodyData))
 
         await this.applyInfoRepository.query(getMyApply(bodyData))

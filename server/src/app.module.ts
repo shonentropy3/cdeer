@@ -12,6 +12,7 @@ import { OrderModule } from './app/module/order';
 @Module({
   imports: [ 
     ConfigModule.forRoot({
+      isGlobal: true, // 允许全局
       load: [configuration],
     }),
     TypeOrmModule.forRootAsync({

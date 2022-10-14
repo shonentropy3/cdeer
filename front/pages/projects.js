@@ -41,7 +41,7 @@ export default function Projects() {
     }
 
     const goProject = (id) => {
-        router.push({pathname:'/Project',search: id})
+        router.push({pathname:'/project',search: id})
     }
 
     // const searchData = () => {

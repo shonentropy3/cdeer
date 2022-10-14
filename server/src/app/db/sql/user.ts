@@ -20,12 +20,20 @@ export const getMyInfo = (params) => {
 }
 
 export const modifyContacts = params => {
-    let sql = `update users SET ${params.contactName} = '${params.contactValue}' where address = '${params.address}'`;
+    let sql = `update users SET 
+    telegram = '${params.contact.telegramValue}' , 
+    wechat = '${params.contact.wechatValue}' , 
+    skype = '${params.contact.skypeValue}' , 
+    discord = '${params.contact.discordValue}' , 
+    phone = '${params.contact.phoneValue}'
+    where address = '${params.address}'`;
     return sql
 }
 
 export const setContacts = params => {
-    let sql = `INSERT INTO users (address, ${params.contactName})
-        VALUES ('${params.address}', '${params.contactValue}')`;
+    let sql = `INSERT INTO users (address, telegram, wechat, skype, discord, phone)
+        VALUES ('${params.address}', '${params.contact.telegramValue}', '${params.contact.wechatValue}',
+        '${params.contact.skypeValue}', '${params.contact.discordValue}', '${params.contact.phoneValue}')`;
+        
     return sql
 }

@@ -23,14 +23,12 @@ export default function Modal_applyTask (props) {
         phoneValue: ''
     })
 
-    let [contactInfo,setContactInfo] = useState([])
-
     const onchange = (e,type) => {
         params[type] = e;
         setParams({...params});
     }
 
-    const changeDisabled = (e) => {
+    const changeDisabled = (e,title) => {
         disabled[e] = !disabled[e]
         setDisabled({...disabled})
     }
@@ -40,13 +38,9 @@ export default function Modal_applyTask (props) {
         setInfoValue({...infoValue})
     }
 
-    useEffect(() => {
-        params.contactName = 'telegram';
-        setParams({...params});
-    },[])
-
     useEffect(()=>{
-        console.log(infoValue);
+        params.contact = infoValue;
+        setParams({...params});
     },[infoValue])
 
     return <div className="apply-task">
@@ -108,13 +102,6 @@ export default function Modal_applyTask (props) {
             </div>
             <div className="apply-task-applyInfo-contact">
                 <p>Contact information</p>
-                <Select defaultValue="telegram" onChange={(e) => onchange(e,'contactName')} >
-                    <Option value="telegram">telegram</Option>
-                    <Option value="wechat">wechat</Option>
-                    <Option value="skype">skype</Option>
-                </Select>
-                <Input className="applyPrice" onChange={e => onchange(e.target.value,'contactValue')} />
-                {/* <Checkbox.Group options={options} /> */}
                 <Checkbox.Group>
                     <Row 
                         justify="cetenr"
@@ -124,7 +111,7 @@ export default function Modal_applyTask (props) {
                         <Col className="row">
                             <Checkbox 
                                 value="telegram" 
-                                onChange={(e)=>changeDisabled(e.target.value)}
+                                onChange={(e)=>changeDisabled(e.target.value, 'telegram')}
                             ><span className="iconfont telegram">&#xec25;</span></Checkbox>
                             <Input 
                                 disabled={disabled.telegram} 
@@ -135,7 +122,7 @@ export default function Modal_applyTask (props) {
                         <Col className="row">
                             <Checkbox
                                 value="wechat" 
-                                onChange={(e)=>changeDisabled(e.target.value)}
+                                onChange={(e)=>changeDisabled(e.target.value, 'wechat')}
                             ><span className="iconfont wechat">&#xec26;</span></Checkbox>
                             <Input 
                                 disabled={disabled.wechat} 
@@ -146,7 +133,7 @@ export default function Modal_applyTask (props) {
                         <Col className="row">
                             <Checkbox 
                                 value="skype" 
-                                onChange={(e)=>changeDisabled(e.target.value)}
+                                onChange={(e)=>changeDisabled(e.target.value, 'skype')}
                             ><span className="iconfont skype">&#xe882;</span></Checkbox>
                             <Input 
                                 disabled={disabled.skype} 
@@ -157,7 +144,7 @@ export default function Modal_applyTask (props) {
                         <Col className="row">
                             <Checkbox 
                                 value="discord" 
-                                onChange={(e)=>changeDisabled(e.target.value)}
+                                onChange={(e)=>changeDisabled(e.target.value, 'discord')}
                             ><span className="iconfont discord">&#xe60b;</span></Checkbox>
                             <Input 
                                 disabled={disabled.discord} 
@@ -168,7 +155,7 @@ export default function Modal_applyTask (props) {
                         <Col className="row">
                             <Checkbox 
                                 value="phone" 
-                                onChange={(e)=>changeDisabled(e.target.value)}
+                                onChange={(e)=>changeDisabled(e.target.value, 'phone')}
                             ><span className="iconfont phone">&#xe8be;</span></Checkbox>
                             <Input 
                                 disabled={disabled.phone} 

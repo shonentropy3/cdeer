@@ -26,8 +26,6 @@ export const updateProject = params => {
         period = temp.period, attachment = temp.attachment, update_time = now() from (values ${params.value}) as temp (
             taskId, title, content, budget, period, attachment) where tasks.desc=temp.content;
     `
-    console.log(sql);
-    
     return sql
 }
 

@@ -62,7 +62,6 @@ export default function Project() {
         params.demandId = taskID;
         params.address = address;
         params.hash = Task.data.hash;
-        console.log(params);
         applyFor({proLabel: JSON.stringify(params)})
         .then(res => {
             guide()
@@ -76,7 +75,6 @@ export default function Project() {
         // TODO: 判断用户资料是否完整 > '报名成功,自动消失' : '报名成功,不消失,补充资料跳转'
         getMyInfo({address: address})
         .then(res => {
-            console.log(res);
             if (!res.data[0]) {
                 // 未填写资料
                 openNotification()

@@ -7,8 +7,8 @@ import { ApplyInfo } from '../db/entity/ApplyInfo';
 const { ethers } = require('ethers');
 // TODO:更改配置文件
 // const rpcProvider = new ethers.providers.JsonRpcProvider("https://goerli.infura.io/v3/d3fe47cdbf454c9584113d05a918694f");
-// const rpcProvider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
-const rpcProvider = new ethers.providers.JsonRpcProvider("https://matic-mumbai.chainstacklabs.com");
+const rpcProvider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
+// const rpcProvider = new ethers.providers.JsonRpcProvider("https://matic-mumbai.chainstacklabs.com");
 
 // 信息同步hash表：待同步类型：1.创建需求 2.修改需求 3.报名 4.修改报名 5.取消报名, 6.创建订单或者修改订单
 
@@ -22,42 +22,6 @@ export class ResolutionService {
     private readonly logger = new Logger(ResolutionService.name)
 
     TransHashes = async () => {
-
-        // 创建task任务
-        let taskHash = await this.applyInfoRepository.query(getTaskHash());
-        for (let v of taskHash) {
-            const log = await rpcProvider.getTransactionReceipt(v.hash);
-            const createTask = new ethers.utils.Interface(
-                ["event TaskCreated(uint256 indexed,address,tuple(string,string,string,uint8,uint112,uint32,uint48,bool))"]
-            );
-            if (!log) {
-                return
-            }
-            let decodedData = createTask.parseLog(log.logs[2]);
-            const taskId = decodedData.args[0].toString();
-            const _data = decodedData.args[2];
-
-            let params = {
-                taskId: taskId,
-                hash: v.hash,
-                title: _data[0],
-                desc: _data[1],
-                attachment: _data[2],
-                budget: _data[4].toString(),
-                period: _data[5]
-            }
-            let sql = createTaskSql(params)
-            // try {
-            //     let sqlResult = await this.applyInfoRepository.query(sql.sql);
-                
-            //     if (-1 != sqlResult[1]) {
-            //         await this.applyInfoRepository.query(sql.sqlUpdateTH);
-            //     }
-            //     this.logger.debug('createTasks');
-            // } catch (error) {
-            //     console.log(error);
-            // }
-        }
 
         // 创建订单
         let createOrderHash = await this.applyInfoRepository.query(getCreateOrderHash());

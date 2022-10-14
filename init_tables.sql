@@ -111,6 +111,8 @@ CREATE TABLE users (
   "telegram" varchar(64),
   "wechat" varchar(64),
   "skype" varchar(64),
+  "discord" varchar(64),
+  "phone" varchar(64),
   "role" varchar[],
   "date" date DEFAULT (now()),
   "update" date DEFAULT (now())
