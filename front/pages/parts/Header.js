@@ -31,7 +31,7 @@ export default function Header(props) {
     let item = [
         {title: '首页', url: '/', value: 'home'},
         {title: '寻找项目', url: '/projects', value: 'task'},
-        {title: '我的项目', url: '/MyInfo', value: 'my'}
+        {title: '我的项目', url: '/myInfo', value: 'my'}
     ]
     const [isModalVisible, setIsModalVisible] = useState(false);
     let [wagmi,setWagmi] = useState({});

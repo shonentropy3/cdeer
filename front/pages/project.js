@@ -104,7 +104,7 @@ export default function Project() {
             onClick: () => {
             notification.destroy()
               setTimeout(() => {
-                router.push('/MyInfo');
+                router.push('/myInfo');
               }, 1000);
             },
           });
