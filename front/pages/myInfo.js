@@ -45,12 +45,24 @@ export default function MyInfo() {
     const checkSkill = (e,i)=>{
         e.status = !e.status
         skills.map((ele,index)=>{
-            if(index === i){
-                ele = e
-                if(e.status){
-                    info.role.push(e.title)
-                }else{
-                    info.role = info.role.filter(item => item !== e.title)
+            if (!info.role) {
+                info.role = []
+                if(index === i){
+                    ele = e
+                    if(e.status){
+                        info.role.push(e.title)
+                    }else{
+                        info.role = info.role.filter(item => item !== e.title)
+                    }
+                }
+            }else{
+                if(index === i){
+                    ele = e
+                    if(e.status){
+                        info.role.push(e.title)
+                    }else{
+                        info.role = info.role.filter(item => item !== e.title)
+                    }
                 }
             }
         })
@@ -95,6 +107,7 @@ export default function MyInfo() {
     const getInfo = async () => {
         await getMyInfo({address: address})
         .then((res)=>{
+            console.log(res);
             if (res.data[0]) {
                 let obj = res.data[0]
                 info = obj;
