@@ -26,7 +26,12 @@ export const getDemandInfoDate = params => {
 }
 
 export const getMyPjcDBa = params => {
-    let sql = `SELECT * FROM public.tasks WHERE issuer = '${params}' and del = 0 `
+    let sql = `SELECT * FROM public.tasks WHERE issuer = '${params}' and del = 0 and id IS NOT NULL `   
+    return sql
+}
+
+export const getMyTaskIsn = params => {
+    let sql = `SELECT * FROM public.tasks WHERE issuer = '${params}' and del = 0 and id IS NULL `   
     return sql
 }
 

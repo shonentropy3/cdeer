@@ -101,7 +101,6 @@ export function useReads(functionName,list) {
       args: list[i]
     })
 
-    console.log(arrB);
   }
   const useTaskReads = useContractReads({ contracts: arrB })
    

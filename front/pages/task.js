@@ -33,7 +33,6 @@ export default function Task() {
     const router = useRouter()
     const { address } = useAccount();
     const { useTaskReads } = useReads('tasks', tidList);
-    const { useTaskRead } = useRead('tasks', tidList[0]);
 
     const changeItem = value => {
         selectItem.item = value;
@@ -46,7 +45,6 @@ export default function Task() {
         .then(res => {
             let arr = [];
             res.map(e => {
-                e.role = deform_Skills(e.role);
                 if (e.id) {
                     arr.push(e.id);
                 }
@@ -79,6 +77,7 @@ export default function Task() {
     const getApply = () => {
         getApplyData({hash: `'${address}'`})
         .then(res => {
+            console.log(res);
             let arr = [];
             res.map(e => {
                 e.role = deform_Skills(e.role);
@@ -186,7 +185,7 @@ export default function Task() {
                                         </div>
                                     </div>
                                     <div className="li-right">
-                                        <Button type="primary" onClick={() => {router.push({pathname: '/Order', query: {oid: e.oid, who: who, tid: e.tid}})}}>阶段详情</Button>
+                                        <Button type="primary" onClick={() => {router.push({pathname: '/order', query: {oid: e.oid, who: who, tid: e.tid}})}}>阶段详情</Button>
                                     </div>
                                 </div>
                             )
@@ -200,22 +199,28 @@ export default function Task() {
                         <Empty />
                         :
                         selectItem.data.map((e,i) => 
-                        <Link key={e.id} href={{pathname: '/issuer/applylist', search: e.id}}>
-                            <div className="li">
-                                <div className="li-info">
-                                    <p className="title">{e.title}</p>
-                                    <p className="role">技术要求: {e.role.map((ele,index) => <span key={index}>{ele}</span> )}</p>
-                                    <div>
-                                        <p>项目周期: {e.period / 60 / 60 / 24}天</p>
-                                        <p>项目预算: {e.budget}ETH</p>
+                            e.title ? 
+                            <Link key={e.id} href={{pathname: '/issuer/applylist', search: e.id}}>
+                                <div className="li">
+                                    <div className="li-info">
+                                        <p className="title">{e.title}</p>
+                                        <p className="role">技术要求: {e.role.map((ele,index) => <span key={index}>{ele}</span> )}</p>
+                                        <div>
+                                            <p>项目周期: {e.period / 60 / 60 / 24}天</p>
+                                            <p>项目预算: {e.budget}ETH</p>
+                                        </div>
+                                    </div>
+                                    <div className="li-num">
+                                        <p>{e.apply_count}</p>
+                                        <p>报名人数</p>
                                     </div>
                                 </div>
-                                <div className="li-num">
-                                    <p>{e.apply_count}</p>
-                                    <p>报名人数</p>
-                                </div>
+                            </Link>
+                            :
+                            <div className="li">
+                                待上链
                             </div>
-                        </Link>)
+                        )
                 }</>
     }
 
@@ -301,9 +306,11 @@ export default function Task() {
 
     useEffect(() => {
         let data = useTaskReads.data;
-        console.log(useTaskRead.data);
         if (tidList.length !== 0 && useTaskReads.data && data[0]) {
             selectItem.data.map((e,i) => {
+                if (!data[i]) {
+                    return
+                }
                 // TODO: 根据币种计算budget
                 let multiple = data[i].currency === 1 ? Math.pow(10,18) : 1;
                 if (selectItem.item === 'developping') {

@@ -187,6 +187,15 @@ export default function Applylist() {
 
     // 暂不合作
     const sort = (e, i) => {
+        // TODO: 点击直接下去
+        // console.log(data);
+        // data.map((ele,index) => {
+        //     if (index === i) {
+        //         data.unshift(data.splice(index , 1)[0]);
+        //     }
+        // })
+        // console.log(data);
+        // return
         data[i].sort = 0;
         setData([...data]);
         let obj = {
@@ -196,6 +205,9 @@ export default function Applylist() {
         modifyApplySort({proLabel: JSON.stringify(obj)})
         .then(res => {
             message.success('操作成功')
+
+            data.splice(i,1);
+            setData([...data])
         })
     }
 
@@ -243,10 +255,6 @@ export default function Applylist() {
         :
         ""
     },[demandData.applyNum])
-
-    useEffect(() => {
-        console.log(useOrderContractWrite.error);
-    },[useOrderContractWrite.error])
 
     useEffect(() => {
         taskId = location.search.slice('?')[1];
@@ -303,7 +311,7 @@ export default function Applylist() {
                                             <span>php</span>
                                             <span>javascripts</span>
                                         </p>
-                                        <p className="applicant-mess">
+                                        <div className="applicant-mess">
                                             <div className="applicant-mess-item">
                                                 <Image src="/telegram.png" alt="" quality={100} width={29} height={29} />
                                             </div>
@@ -319,7 +327,7 @@ export default function Applylist() {
                                             <div className="applicant-mess-item">
                                                 <Image src="/whatsapp.png" alt="" quality={100} width={29} height={29} />
                                             </div>
-                                        </p>
+                                        </div>
                                     </div>
                                     <div className="product-apply">
                                         <span className="product-apply-he">His offer:</span>

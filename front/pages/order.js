@@ -218,7 +218,7 @@ export default function Order(props) {
         .then(res => {
             message.success('项目开始')
             setTimeout(() => {
-                history.go(0)
+                // history.go(0)
             }, 500);
         })
         .catch(err => {
@@ -447,7 +447,7 @@ export default function Order(props) {
                         </div>
                     </div>
                     <div className="title-cost">
-                        <p className="title-cost-line">cost: <span className="title-cost-price">{price.budget / 1000000000000000000}{price.currency === 1 ? 'ETH' : 'BTC'}</span> </p>
+                        <p className="title-cost-line">cost: <span className="title-cost-price">{price.budget}{price.currency === 1 ? 'ETH' : 'BTC'}</span> </p>
                     </div>
                 </div>
                 <div className="worker-steps">
@@ -481,12 +481,12 @@ export default function Order(props) {
                                     <div className="boxs">
                                         <div className="box">
                                             <div className="icon">
-                                                <Image src="/telegram .png" />
+                                                <Image src="/telegram.png" />
                                             </div>
                                         </div>
                                         <div className="box">
                                             <div className="icon">
-                                                <Image src="/skype .png" />
+                                                <Image src="/skype.png" />
                                             </div>
                                         </div>
                                         <div className="box">

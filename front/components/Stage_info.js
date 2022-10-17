@@ -327,7 +327,8 @@ export default function Stage_info(props) {
             if (Step === 0) {
                 return (
                     Query.who === 'issuer' && !ModifyStatus ? <>
-                        <p className="tips"><ExclamationCircleOutlined style={{color: 'red', marginRight: '10px'}} />同意后,项目正式启动.并按照阶段划分作为项目交付计划和付款计划</p>
+                    {/* <ExclamationCircleOutlined style={{color: 'red', marginRight: '10px'}} /> */}
+                        <p className="tips">同意后,项目正式启动.并按照阶段划分作为项目交付计划和付款计划</p>
                         <Button type='primary' className='worker-btn' onClick={() => overflow()}>同意阶段划分</Button></>
                         :
                         <Button type='primary' className='worker-btn' onClick={() => setStage()}>Complete and submit phasing</Button>
@@ -368,7 +369,7 @@ export default function Stage_info(props) {
         if (Data && Data.length > 0) {
             init();
         }
-    },[])
+    },[Data])
 
     useEffect(() => {
         getWithdraw.isSuccess ? message.success('取款成功') : '';
