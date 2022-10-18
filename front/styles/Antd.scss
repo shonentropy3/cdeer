@@ -562,3 +562,100 @@
         font-weight: 400;
     }
 }
+
+.modal-order-receiver{
+    width: 528px !important;
+    .ant-modal-content{
+        height: 375px;
+        padding: 20px 28px 36px 34px;
+        .ant-modal-close-x{
+            width: 17px;
+            height: 17px;
+            line-height: 17px;
+            margin-top: 22px;
+            margin-right: 28px;
+            img{
+                width: 17px;
+                height: 17px;
+            }
+        }
+        .ant-modal-body{
+            padding: 0;
+            .order-receiver-icon{
+                padding-left: 187px;
+                margin-bottom: 26px;
+            }
+            .order-receiver-title{
+                height: 25px;
+                font-size: 18px;
+                font-family: PingFangSC-Regular, PingFang SC;
+                font-weight: 400;
+                color: #1F1E2E;
+                line-height: 25px;
+                margin-bottom: 9px;
+            }
+            .order-receiver-price{
+                display: block;
+                height: 45px;
+                border: none;
+                .ant-input-number-input-wrap{
+                    border-radius: 10px;
+                    border: 1px solid #979797;
+                    height: 45px;
+                    line-height: 45px;
+                    font-size: 18px;
+                    padding-left: 15px;
+                    color: #1F1E2E;
+                    
+                }
+                .ant-input-number-group-addon{
+                    margin-left: 16px;
+                    width: 118px;
+                    height: 45px;
+                    border-radius: 10px;
+                    border: 1px solid #1F1E2E;
+                    background-color: white;
+                    .ant-select{
+                        font-size: 18px;
+                        .ant-select-arrow{
+                            color: #1F1E2E;
+                            font-size: 14px;
+                        }
+                    }
+                }
+                .ant-input-number{
+                    margin-right: 16px !important;
+                    width: 326px;
+                }
+                .ant-input-number-focused{
+                    box-shadow: none !important;
+                }
+                
+            }
+            .order-receiver-inviteTip{
+                margin-top: 24px;
+                padding-top: 8px;
+                border-top: 1px solid #E2E2E2;
+                font-size: 12px;
+                height: 42px;
+                line-height: 17px;
+                font-family: PingFangSC-Regular, PingFang SC;
+                font-weight: 400;
+                color: #828282;
+            }
+            .btn{
+                width: 460px;
+                height: 46px;
+                background-color: #1F1E2E;
+                font-size: 16px;
+                color: white;
+                margin-top: 22px;
+                font-family: PingFangSC-Regular, PingFang SC;
+                font-weight: 400;
+                border-radius: 4px;
+                margin-left: 1px;
+                letter-spacing: 1px;
+            }
+        }
+    }
+}

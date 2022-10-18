@@ -360,10 +360,20 @@ export default function Applylist() {
             </div> */}
         </div>
         <div className="task-bottom">1</div>
-        <Modal title="选择接单者" open={isModalOpen} footer={null} onCancel={handleCancel}>
-            给出您的预算
-            <InputNumber addonAfter={selectAfter} onChange={onchange} />
-            <Button className="btn" type="primary" onClick={() => invitation()}>邀请合作</Button>
+        <Modal 
+            open={isModalOpen} 
+            footer={null} 
+            onCancel={handleCancel}
+            className="modal-order-receiver"
+            closeIcon={<img src="/closeIcon.png" />}
+        >
+            <div className="order-receiver-icon">
+                <Image src="/tipIcon.png" width={87} height={79} quality={100} />
+            </div>
+            <p className="order-receiver-title">Give your budget</p>
+            <InputNumber className="order-receiver-price" controls={false} addonAfter={selectAfter} onChange={onchange} />
+            <p className="order-receiver-inviteTip">After selecting the order to be received, please communicate with the order receiver and wait for the order receiver to submit the stage division。</p>
+            <Button className="btn" onClick={() => invitation()}>Invite cooperation</Button>
         </Modal>
         <Modal 
             footer={null}
