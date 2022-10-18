@@ -73,21 +73,21 @@ export class ResolutionService {
                 hash: v.hash
             }
             let sql = updateApplyInfo(params)
-        try {
-            let sqlBefore = await this.applyInfoRepository.query(sql.sqlBefore);
-            let sqlUpdateAI,insertAI;
-            if (sqlBefore.length > 0) {
-                sqlUpdateAI = await this.applyInfoRepository.query(sql.sqlUpdateAI);
-            } else {
-                insertAI = await this.applyInfoRepository.query(sql.insert);
+            try {
+                let sqlBefore = await this.applyInfoRepository.query(sql.sqlBefore);
+                let sqlUpdateAI,insertAI;
+                if (sqlBefore.length > 0) {
+                    sqlUpdateAI = await this.applyInfoRepository.query(sql.sqlUpdateAI);
+                } else {
+                    insertAI = await this.applyInfoRepository.query(sql.insert);
+                }
+                if (-1 != sqlUpdateAI[1] || -1 != insertAI[1]) {
+                    await this.applyInfoRepository.query(sql.sqlUpdateTH);
+                }
+                this.logger.debug('insertApplyFor');
+            } catch (error) {
+                console.log(error);
             }
-            if (-1 != sqlUpdateAI[1] || -1 != insertAI[1]) {
-                await this.applyInfoRepository.query(sql.sqlUpdateTH);
-            }
-            this.logger.debug('insertApplyFor');
-        } catch (error) {
-            console.log(error);
-        }
         }
 
         // 取消报名

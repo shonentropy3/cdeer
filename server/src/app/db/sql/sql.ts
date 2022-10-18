@@ -105,7 +105,7 @@ export const updateApplyInfo = (params) => {
         insert into apply_info(apply_addr, task_id, price) 
         VALUES ('${params.applyAddr}', ${params.taskId}, ${params.valuation});
     `
-
+    
     let sqlUpdateTH = ` 
         UPDATE trans_hashes SET is_update = 1, update_time = now() 
         where trans_hashes.hash= '${params.hash}';

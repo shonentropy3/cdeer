@@ -118,7 +118,7 @@ export const setApplylist = params => {
 }
 
 export const updateApply = params => {
-    let sql = ` UPDATE apply_info set "desc" = '${params.desc}'
+    let sql = ` UPDATE apply_info set "desc" = '${params.desc}' , sort = 1
                 where apply_addr = '${params.address}' and task_id = ${params.demandId}`;
     return sql
 }

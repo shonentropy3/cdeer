@@ -210,16 +210,14 @@ export default function Task() {
                                             <p>项目预算: {e.budget}ETH</p>
                                         </div>
                                     </div>
+                                    {/* TODO: 修改Task ==> resolution */}
+                                    {/* <Button onClick={() => }>修改</Button> */}
                                     <div className="li-num">
                                         <p>{e.apply_count}</p>
                                         <p>报名人数</p>
                                     </div>
                                 </div>
-                            </Link>
-                            :
-                            <div className="li">
-                                待上链
-                            </div>
+                            </Link> : <div className="li"> 待上链 </div>
                         )
                 }</>
     }

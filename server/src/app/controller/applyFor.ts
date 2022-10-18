@@ -14,9 +14,6 @@ export class ApplyforController {
     @Post('applyFor')  // 报名
     async applyFor(@Body() body: any){
         await this.applyforService.apply(body)
-        .then(() => {
-            this.resolutionService.TransHashes()
-        })
     }
 
     @Post('getApply')  // 展示列表
