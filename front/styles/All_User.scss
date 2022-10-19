@@ -880,6 +880,66 @@
         height: 50px;
     }
 }
+
+.stage-submit-tip{
+    height: 375px;
+    width: 528px !important;
+    .ant-modal-content{
+        width: 528px !important;
+        height: 375px;
+        border-radius: 30px;
+        .ant-modal-body{
+            padding: 29px 34px 36px;
+            .tip-icon{
+                text-align: center;
+                padding-bottom: 9px;
+                margin-bottom: 18px;
+                border-bottom: 1px solid #E2E2E2;
+                img{
+                    width: 87px;
+                    height: 83px;
+                    margin-bottom: 3px;
+                }
+                p{
+                    height: 33px;
+                    font-size: 24px;
+                    font-family: PingFangSC-Medium, PingFang SC;
+                    font-weight: 500;
+                    color: #1F1E2E;
+                    line-height: 33px;
+                }
+            }
+            .tip-text{
+                text-align: center;
+                font-size: 12px;
+                font-family: PingFangSC-Regular, PingFang SC;
+                font-weight: 400;
+                color: #828282;
+                line-height: 17px;
+                margin-bottom: 67px;
+            }
+            .ant-btn{
+                height: 46px;
+                width: 460px;
+                background-color: #1F1E2E;
+                color: white;
+                letter-spacing: 1px;
+            }
+        }
+        .ant-modal-close-x{
+            width: 17px;
+            height: 17px;
+            line-height: 17px;
+            margin-top: 22px;
+            margin-right: 28px;
+            img{
+                width: 17px;
+                height: 17px;
+            }
+        }
+    }
+}
+
 .check-percent{
     display: flex;
     align-items: center;

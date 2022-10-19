@@ -25,7 +25,8 @@ export default function Stage_info(props) {
         Attachment, 
         permitNonce, 
         isSignObj,
-        ModifyStatus 
+        ModifyStatus,
+        setIsTipShow 
     } = props;   //  StagesData 数据库阶段
     let [advance,setAdvance] = useState(false);
     let [stage0,setStage0] = useState();
@@ -331,7 +332,7 @@ export default function Stage_info(props) {
                         <p className="tips">同意后,项目正式启动.并按照阶段划分作为项目交付计划和付款计划</p>
                         <Button type='primary' className='worker-btn' onClick={() => overflow()}>同意阶段划分</Button></>
                         :
-                        <Button type='primary' className='worker-btn' onClick={() => setStage()}>Complete and submit phasing</Button>
+                        <Button type='primary' className='worker-btn' onClick={() => setIsTipShow()}>Complete and submit phasing</Button>
                 )
             }
         }

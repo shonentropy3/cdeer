@@ -57,6 +57,9 @@ export default function Order(props) {
         "solidity"
     ])
 
+    // 完成提交划分阶段的弹框显示
+    let [isTipModal,setIsTipModal] = useState(false)
+
     const { confirm } = Modal;
     const { Step } = Steps;
     const router = useRouter();
@@ -511,6 +514,8 @@ export default function Order(props) {
                         permitNonce={permitNonce}
                         isSignObj={setSignObj}
                         ModifyStatus = {modifyStatus}
+                        setIsTipShow={()=>setIsTipModal(!isTipModal)}
+
                     />
                 <div className="worker-signInStage">
                 </div>
@@ -560,8 +565,21 @@ export default function Order(props) {
                     }
                 </div>
             </div>
-
         </div>
-                <div className="h50"></div>
-            </div>
+            <div className="h50"></div>
+            <Modal
+                footer={null}
+                open={isTipModal}
+                className="stage-submit-tip"
+                closeIcon={<img src="/closeIcon.png" />}
+                onCancel={()=>setIsTipModal(false)}
+            >
+                <div className="tip-icon">
+                    <img src="/redLight.png" />
+                    <p>Remind</p>
+                </div>
+                <p className="tip-text">Reminder that the signature is valid for 3 days. Please confirm with Party A as soon as possible. If Party A does not agree after 3 days, it is necessary to resubmit the Phase Division.</p>
+                <Button onClick={() => setStage()}>I got it!</Button>
+            </Modal>
+    </div>
 }
