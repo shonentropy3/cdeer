@@ -389,6 +389,167 @@
         }
     }
 }
+.personal-info{
+    width: 775px !important;
+    .ant-modal-content{
+        width: 775px;
+        height: 848px;
+        box-shadow: 0px 0px 44px -24px #7C7879;
+        border-radius: 30px;
+        .ant-modal-body{
+            padding: 0;
+            .personal-info-topBackground{
+                height: 170px;
+                background-color: #7FF15D;
+                border-radius: 30px 30px 0 0;
+            }
+            .personal-info-btmBackground{
+                .personal-info-avator{
+                    width: 129px;
+                    height: 129px;
+                    background-color: #554AFF;
+                    border-radius: 50%;
+                    margin: -65px auto 0;
+                }
+                .personal-info-name{
+                    height: 40px;
+                    line-height: 40px;
+                    font-size: 28px;
+                    font-weight: 500;
+                    color: #1F1E2E;
+                    letter-spacing: 1px;
+                    text-align: center;
+                    margin-top: 5px;
+                    font-family: PingFangSC-Medium, PingFang SC;
+                }
+                .personal-info-contact{
+                    display: flex;
+                    justify-content: center;
+                    margin-top: 4px;
+                    height: 29px;
+                    .personal-info-contact-item{
+                        margin-right: 21px;
+                    }
+                }
+                .personal-info-goodSkill{
+                    margin-top: 21px;
+                    margin-left: 81px;
+                    .goodSkill-title{
+                        height: 40px;
+                        font-size: 28px;
+                        font-family: PingFangSC-Regular, PingFang SC;
+                        font-weight: 400;
+                        color: #6C6C6C;
+                        line-height: 40px;
+                        letter-spacing: 1px;
+                        margin-bottom: 10px;
+                    }
+                    .goodSkill-item{
+                        padding: 0 11px;
+                        display: inline-block;
+                        height: 26px;
+                        line-height: 26px;
+                        margin-right: 10px;
+                        &:nth-of-type(3n+1){
+                            background-color: #FFB1BE;
+                        }
+                        &:nth-of-type(3n+2){
+                            background-color: #FEE7B9;
+                        }
+                        &:nth-of-type(3n+3){
+                            background-color: #C9B1FF;
+                        }
+                    }
+                }
+                .personal-info-NFTs{
+                    margin: 55px 81px 0 81px;
+                    .NFTs-title{
+                        height: 40px;
+                        font-size: 28px;
+                        font-family: PingFangSC-Regular, PingFang SC;
+                        font-weight: 400;
+                        color: #6C6C6C;
+                        line-height: 40px;
+                        letter-spacing: 1px;
+                        display: flex;
+                        justify-content: space-between;
+                        >span{
+                            font-size: 14px;
+                            .anticon-double-right{
+                                margin-left: 13px;
+                                font-size: 12px;
+                            }
+                        }
+                    }
+                    .NFTs-img{
+                        margin-top: 10px;
+                        display: flex;
+                        justify-content: space-between;
+                        .NFTs-img-item{
+                            width: 189px;
+                            height: 297px;
+                            background: #FFFFFF;
+                            box-shadow: 0px 0px 44px -24px #7C7879;
+                            border-radius: 6px;
+                            padding: 13px;
+                            font-size: 12px;
+                            letter-spacing: 1px;
+                            .NFTs-img-item-image{
+                                width: 164px;
+                                height: 174px;
+                                border-radius: 12px;
+                                background-color: #C9B1FF;
+                                margin-bottom: 10px;
+                            }
+                            .NFTs-img-item-name{
+                                height: 17px;
+                                font-family: PingFangSC-Semibold, PingFang SC;
+                                font-weight: 600;
+                                color: #1F1E2E;
+                                line-height: 17px;
+                            }
+                            .NFTs-img-item-desc{
+                                height: 17px;
+                                font-family: PingFangSC-Regular, PingFang SC;
+                                font-weight: 400;
+                                color: #818181;
+                                line-height: 17px;
+                                margin-bottom: 7px;
+                            }
+                            .NFTs-img-item-price{
+                                height: 14px;
+                                font-size: 10px;
+                                font-family: PingFangSC-Medium, PingFang SC;
+                                font-weight: 500;
+                                color: #1F1E2E;
+                                line-height: 14px;
+                                margin-bottom: 19px;
+                            }
+                            .NFTs-img-item-time{
+                                height: 14px;
+                                font-size: 10px;
+                                font-family: PingFangSC-Regular, PingFang SC;
+                                font-weight: 400;
+                                color: #818181;
+                                line-height: 14px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    .ant-modal-close-x{
+        width: 53px;
+        height: 53px;
+        background-color: white;
+        border-radius: 50%;
+        margin: 20px 36px 0 0;
+        img{
+            margin-top: -5px;
+        }
+    }
+}
 .WorkerProject{
     padding-top: 88px;
     width: 1200px;

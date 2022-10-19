@@ -429,6 +429,10 @@ export default function Stage_info(props) {
         }
     },[useSign.data])
 
+
+    // useEffect(()=>{
+    //     console.log(Step);
+    // },[])
  
 
     return <div className="order-stage"><div className="Stage_info">

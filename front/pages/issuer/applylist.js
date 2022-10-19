@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Modal, InputNumber, Select, Button, message, } from "antd";
-import { ClockCircleOutlined } from "@ant-design/icons"
+import { ClockCircleOutlined, DoubleRightOutlined } from "@ant-design/icons"
 import { useAccount } from 'wagmi'
 import { getMyApplylist, getMyInfo } from "../../http/api/user";
 import { createOrder } from "../../http/api/order";
@@ -45,6 +45,7 @@ export default function Applylist() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isModifyModal,setIsModifyModal] = useState(false)
     const [isModalDetial,setIsModalDetial] = useState(false)
+    const [isInfoModal,setIsInfoModal] = useState(false)
     const { useOrderContractWrite, Config } = useContracts('createOrder');
       
     const showModal = () => {
@@ -304,7 +305,7 @@ export default function Applylist() {
                                 <div className="product-list-info">
                                     <div className="product-img"></div>
                                     <div className="product-info">
-                                        <p className="applicant-name">{e.address}<span>View personal information</span></p>
+                                        <p className="applicant-name" onClick={()=>setIsInfoModal(!isInfoModal)}>{e.address}<span>View personal information</span></p>
                                         <p className="applicant-skill">
                                             <i className="good-skill">Good at skills：</i>
                                             <span>solidity</span>
@@ -389,6 +390,69 @@ export default function Applylist() {
             <p>{info.amount}ETH</p>
             <p className="subtitle">报价者「{info.name ? info.name : info.address}」的自我介绍</p>
             <div> {info.desc} </div>
-      </Modal>
+        </Modal>
+        <Modal
+            footer={null}
+            open={isInfoModal}
+            onCancel={()=>setIsInfoModal(!isInfoModal)}
+            className="personal-info"
+            closeIcon={<img src="/closeIcon.png" />}
+        >
+            <div className="personal-info-topBackground"></div>
+            <div className="personal-info-btmBackground">
+                <div className="personal-info-avator"></div>
+                <p className="personal-info-name">Tony</p>
+                <div className="personal-info-contact">
+                    <div className="personal-info-contact-item">
+                        <Image src="/telegram.png" alt="" quality={100} width={29} height={29} />
+                    </div>
+                    <div className="personal-info-contact-item">
+                        <Image src="/skype.png" alt="" quality={100} width={29} height={29} />
+                    </div>
+                    <div className="personal-info-contact-item">
+                        <Image src="/wechat.png" alt="" quality={100} width={29} height={29} />
+                    </div>
+                    <div className="personal-info-contact-item">
+                        <Image src="/discord.png" alt="" quality={100} width={29} height={29} />
+                    </div>
+                    <div className="personal-info-contact-item">
+                        <Image src="/whatsapp.png" alt="" quality={100} width={29} height={29} />
+                    </div>
+                </div>
+                <div className="personal-info-goodSkill">
+                    <p className="goodSkill-title">Good at skills</p>
+                    <span className="goodSkill-item">solidity</span>
+                    <span className="goodSkill-item">javascript</span>
+                    <span className="goodSkill-item">Solidity</span>
+                    <span className="goodSkill-item">javascript</span>
+                </div>
+                <div className="personal-info-NFTs">
+                    <p className="NFTs-title">NFT held by him<span>more<DoubleRightOutlined /></span></p>
+                    <div className="NFTs-img">
+                        <div className="NFTs-img-item">
+                            <p className="NFTs-img-item-image"></p>
+                            <p className="NFTs-img-item-name">Okay Apes #12332</p>
+                            <p className="NFTs-img-item-desc">Okay Apes Club</p>
+                            <p className="NFTs-img-item-price">price</p>
+                            <p className="NFTs-img-item-time">Ends in 15 hours</p>
+                        </div>
+                        <div className="NFTs-img-item">
+                            <p className="NFTs-img-item-image"></p>
+                            <p className="NFTs-img-item-name">Okay Apes #12332</p>
+                            <p className="NFTs-img-item-desc">Okay Apes Club</p>
+                            <p className="NFTs-img-item-price">price</p>
+                            <p className="NFTs-img-item-time">Ends in 15 hours</p>
+                        </div>
+                        <div className="NFTs-img-item">
+                            <p className="NFTs-img-item-image"></p>
+                            <p className="NFTs-img-item-name">Okay Apes #12332</p>
+                            <p className="NFTs-img-item-desc">Okay Apes Club</p>
+                            <p className="NFTs-img-item-price">price</p>
+                            <p className="NFTs-img-item-time">Ends in 15 hours</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </Modal>
     </div>
 }

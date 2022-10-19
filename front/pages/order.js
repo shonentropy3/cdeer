@@ -70,6 +70,7 @@ export default function Order(props) {
     
     // 获取链上数据
     const readContract = async() => {
+        console.log(useTaskRead.data);
         if (query.tid && useTaskRead.data && Order.data) {
             let multiple = useTaskRead.data.currency === 1 ? Math.pow(10,18) : 1;
             // 价格从Order获取不从Task获取
@@ -77,7 +78,7 @@ export default function Order(props) {
             price.currency = useTaskRead.data.currency;
             setPrice({...price});
         }
-        if (query.oid && stagesChain.data) {
+        if (query.oid && stagesChain.data) {   
             // TODO: chain阶段详情
             await getStages()
             .then(() => {
@@ -109,8 +110,8 @@ export default function Order(props) {
         .then(res=>{
             let obj = res.data[0]
             obj.role = deform_Skills(obj.role);
+            project = obj
             setProject({...project});
-            console.log(project);
         })
         .catch(err=>{
             console.log(err);
@@ -423,13 +424,13 @@ export default function Order(props) {
         identity = location.search.split('=')[2].split('&')[0]
         setTaskID(taskID);
         setIdentity(identity);
-        console.log(identity);
         getProject()
     },[])
 
     useEffect(()=>{
-        console.log(signObj);
-    },[signObj])
+        console.log(Order);
+        console.log("====",query);
+    },[])
 
     return <div className="WorkerProject">
                 <div className="worker-title">
