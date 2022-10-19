@@ -282,8 +282,8 @@ export default function Stage_list(props) {
                 {
                     Step === 0 ? 
                         <>
-                            <p onClick={() => {set(false), setTab(data.key)}}>修改阶段划分</p>
-                            <p onClick={() => del(index)}>删除</p>
+                            <p onClick={() => {set(false), setTab(data.key)}}><img src="/modify.png" /></p>
+                            <p onClick={() => del(index)}><img src="/delete.png" /></p>
                         </> : ''
                 }
                 {/* index == stageIndex */}

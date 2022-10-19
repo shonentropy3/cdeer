@@ -93,6 +93,7 @@ export default function Applylist() {
     const getList = () => {
         getMyApplylist({demandId: taskId})
         .then(res => {
+            console.log(res);
             for (const i in res) {
                 res[i].map(e => {
                     e.address = e.apply_addr.slice(0,5) + "..." + e.apply_addr.slice(38,42)

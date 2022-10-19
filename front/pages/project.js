@@ -12,7 +12,7 @@ import { getDemandInfo } from '../http/api/task';
 import { applyFor } from '../http/api/apply';
 import { deform_Skills } from '../utils/Deform';
 import Modal_applyTask from '../components/Modal_applyTask';
-import { getMyInfo } from '../http/api/user';
+import { getMyInfo, getMyApplylist } from '../http/api/user';
 
 
 export default function Project() {
@@ -24,6 +24,9 @@ export default function Project() {
     let [project,setProject] = useState({});
     let [params,setParams] = useState({});
     let [isModalOpen,setIsModalOpen] = useState(false);
+
+    // 用于判断该用户是否报名此任务
+    let [isApply,setIsApply] = useState(false)
     
 
     const getProject = async() => {
@@ -110,6 +113,19 @@ export default function Project() {
           });
     }
 
+    const getApplyInfo = () => {
+        getMyApplylist({demandId:taskID})
+        .then((res)=>{
+            res.normal.map((e)=>{
+                console.log(e);
+                if(e.apply_addr == address) {
+                    isApply = true
+                    setIsApply(isApply)
+                }
+            })
+        })
+    }
+
     useEffect(() => {
         taskID = location.search.slice('?')[1];
         setTaskID(taskID);
@@ -122,6 +138,10 @@ export default function Project() {
             :
             ''
     },[Task.isSuccess])
+
+    useEffect(()=>{
+        getApplyInfo()
+    },[])
 
     return <div className="project">
         <div className="project-content">
@@ -146,8 +166,22 @@ export default function Project() {
                     </p>
                 </div>
             </div>
-            <Button className="btn" onClick={showModal}>Go to register</Button>
+            {
+                isApply ? 
+                <div className='applyed-btns'>
+                    <Button className='applyed-inspect'>Registration information</Button>
+                    <Button className='applyed-cancel'>Cancel registration</Button>
+                </div> 
+                :
+                <Button className="btn" onClick={showModal}>Go to register</Button>
+            }
         </div>
+        {
+            isApply ? 
+            <p className='applyed-tip'>The Task party is reviewing, and will contact your reserved social account after the review. Please check</p>
+            :
+            ""
+        }
         <div className="content-container">
             <p className='task-details'>Task Details</p>
             <div className='task-detail-list'>
