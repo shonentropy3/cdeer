@@ -51,9 +51,11 @@ export default function Modal_applyTask (props) {
             setParams({...params})
         }
         if(userContact){
-            params.contact.telegramValue = userContact.telegram
-            params.contact.wechatValue = userContact.wechat
-            params.contact.skypeValue = userContact.skype
+            params.contact.telegramValue = userContact.telegram;
+            params.contact.wechatValue = userContact.wechat;
+            params.contact.skypeValue = userContact.skype;
+            params.contact.discordValue = userContact.discord;
+            params.contact.phoneValue = userContact.phone
             setParams({...params})
         }
     },[])

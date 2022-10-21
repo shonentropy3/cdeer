@@ -1,7 +1,7 @@
 export const setMyInfo = params => {
-    let sql = `INSERT INTO users (address, username, avatar, telegram, wechat, skype, role)
+    let sql = `INSERT INTO users (address, username, avatar, telegram, wechat, skype, discord, phone, role)
         VALUES ('${params.address}', '${params.username}', '${params.avatar}', '${params.telegram}',
-            '${params.wechat}', '${params.skype}', '{${params.role}}'
+            '${params.wechat}', '${params.skype}', '${params.discord}', '${params.phone}', '{${params.role}}'
         )
     `;
     return sql
@@ -9,7 +9,7 @@ export const setMyInfo = params => {
 
 export const modifyMyInfo = params => {
     let sql = `update users SET username='${params.username}', avatar='${params.avatar}', telegram='${params.telegram}',
-    wechat='${params.wechat}', skype='${params.skype}', role='{${params.role}}' WHERE address = '${params.address}'
+    wechat='${params.wechat}', skype='${params.skype}', discord='${params.discord}', phone='${params.phone}' role='{${params.role}}' WHERE address = '${params.address}'
     `;
     return sql
 }

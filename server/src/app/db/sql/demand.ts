@@ -135,7 +135,7 @@ export const getApply = params => {
 
 export const delApply = params => {
     let sqlBefore = `
-        select * from trans_hashes where send_addr = '${params.applyAddr}' and task_id = '${params.demandId}' and is_update = 0 and category = 5;
+        select * from apply_info where send_addr = '${params.applyAddr}' and task_id = '${params.demandId}' and is_update = 0 and category = 5;
     `
     let insertSql = `insert into trans_hashes("send_addr", task_id, category, hash) 
         VALUES ('${params.applyAddr}', ${params.demandId}, 5, '${params.hash}');

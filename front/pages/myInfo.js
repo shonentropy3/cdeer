@@ -76,6 +76,8 @@ export default function MyInfo() {
             telegram:info.telegram,
             wechat:info.wechat,
             skype:info.skype,
+            discord: info.discord,
+            phone: info.phone,
             address,
             role:info.role ? info.role : [],
             avatar: ""
@@ -203,6 +205,24 @@ export default function MyInfo() {
                             placeholder='Skype' 
                             defaultValue={info.skype}
                             onChange={(e)=>setInfo({...info,skype:e.target.value})}
+                        />
+                    </div>
+
+                    <div className="inner">
+                        <Input 
+                            type="text" 
+                            placeholder='discord' 
+                            defaultValue={info.discord}
+                            onChange={(e)=>setInfo({...info,discord:e.target.value})}
+                        />
+                    </div>
+
+                    <div className="inner">
+                        <Input 
+                            type="text" 
+                            placeholder='phone' 
+                            defaultValue={info.phone}
+                            onChange={(e)=>setInfo({...info,phone:e.target.value})}
                         />
                     </div>
                 </div>

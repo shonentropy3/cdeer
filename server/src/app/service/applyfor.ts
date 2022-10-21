@@ -1,10 +1,10 @@
 import { Body, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Code, Repository } from 'typeorm';
 import { ApplyInfo } from '../db/entity/ApplyInfo';	
 import { Users } from '../db/entity/Users';
 import { setApply, getApply, delApply, modifyApplySwitch, setApplylist, getMyApply, updateApply, modifyApplySort } from '../db/sql/demand';
-import { updateApplyInfo } from '../db/sql/sql';
+import { updateApplyInfo, cancelApply } from '../db/sql/sql';
 import { getMyInfo, modifyContacts, setContacts } from '../db/sql/user';
 const { ethers } = require('ethers');
 
@@ -28,7 +28,7 @@ export class ApplyforService {
             if (res.code === 'SUCCESS') {
                 // 解析成功 ==> update tables.applyInfo
                 await this.applyInfoRepository.query(updateApply(bodyData))
-
+                
                 return {
                     code: 'SUCCESS'
                 }
@@ -80,38 +80,48 @@ export class ApplyforService {
         });
     }
 
-    async cancel(@Body() body: any): Promise<ApplyInfo[]> {
-        let sql = delApply(body)
-        let sqlBefore = await this.applyInfoRepository.query(sql.sqlBefore);
-        console.log("调用取消报名", sqlBefore)
-        if (sqlBefore.length > 0) {
-            await this.applyInfoRepository.query(sql.deldateSql)
-            return await this.applyInfoRepository.query(sql.updateSql)
-            .then(res =>{
-                let obj = {
-                    code: 200,
-                    data: res
-                }
-                return obj
-            })
-            .catch(err => {
-                console.log('cancel err =>', err)
-                return err
-            });
-        } else {
-            return await this.applyInfoRepository.query(sql.insertSql)
-            .then(res =>{
-                let obj = {
-                    code: 200,
-                    data: res
-                }
-                return obj
-            })
-            .catch(err => {
-                console.log('cancel err =>', err)
-                return err
-            });
-        }
+    async cancel(@Body() body: any) {
+        await this.cancelApplyInterval(body.hash)
+        .then(async(res)=>{
+            return {
+                code: "SUCCESS"
+            }
+        })
+        // console.log(body);
+        // let sql = delApply(body)
+        // console.log(sql.sqlBefore);
+        
+        // let sqlBefore = await this.applyInfoRepository.query(sql.sqlBefore);
+        
+        // console.log("调用取消报名", sqlBefore)
+        // if (sqlBefore.length > 0) {
+        //     await this.applyInfoRepository.query(sql.deldateSql)
+        //     return await this.applyInfoRepository.query(sql.updateSql)
+        //     .then(res =>{
+        //         let obj = {
+        //             code: 200,
+        //             data: res
+        //         }
+        //         return obj
+        //     })
+        //     .catch(err => {
+        //         console.log('cancel err =>', err)
+        //         return err
+        //     });
+        // } else {
+        //     return await this.applyInfoRepository.query(sql.insertSql)
+        //     .then(res =>{
+        //         let obj = {
+        //             code: 200,
+        //             data: res
+        //         }
+        //         return obj
+        //     })
+        //     .catch(err => {
+        //         console.log('cancel err =>', err)
+        //         return err
+        //     });
+        // }
     }
 
     // TODO:需要考虑验证问题
@@ -183,8 +193,47 @@ export class ApplyforService {
             }
         })
         .catch(err => {
+
             return {
                 code: 'ERROR'
+            }
+        })
+    }
+
+
+    // 取消报名定时任务
+    async cancelApplyInterval(hash: any) {
+        const rpcProvider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
+        return await new Promise((resolve, reject) => {
+            rpcProvider.waitForTransaction(hash, 1, 4000)
+            .then((res: any) => { resolve(res) })
+            .catch((err: any) => { reject(err) })
+        })
+        .then(async(res: any) => {
+            const CancelApply = new ethers.utils.Interface(["event CancelApply(uint256 indexed taskId, address taker)"]);
+            let decodedData = CancelApply.parseLog(res.logs[0]);
+            const taskId = decodedData.args.taskId.toString();
+            const taker = decodedData.args.taker
+            let params = {
+                taskId: taskId,
+                taker: taker,
+                hash: hash
+            }
+            let sql = cancelApply(params)
+            console.log(params);
+            
+            let sqlBefore = await this.applyInfoRepository.query(sql.sqlBefore)
+            let sqlDeletAI;
+            if (sqlBefore.length > 0) {
+                sqlDeletAI = await this.applyInfoRepository.query(sql.sqlDeletAI)
+            }
+            return {
+                code: "success"
+            }
+        })
+        .catch(err => {
+            return {
+                code: "error"
             }
         })
     }
