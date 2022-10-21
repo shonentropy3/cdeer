@@ -5,7 +5,7 @@ const {TextArea} = Input
 const { Option } = Select;
 export default function Modal_applyTask (props) {
    
-    const { setParams, params, submit, project } = props;
+    const { setParams, params, submit, project, applyInfo, userContact } = props;
 
 
     let [disabled,setDisabled] = useState({
@@ -26,6 +26,7 @@ export default function Modal_applyTask (props) {
     const onchange = (e,type) => {
         params[type] = e;
         setParams({...params});
+        console.log(params);
     }
 
     const changeDisabled = (e,title) => {
@@ -42,6 +43,20 @@ export default function Modal_applyTask (props) {
         params.contact = infoValue;
         setParams({...params});
     },[infoValue])
+
+    useEffect(()=>{
+        if(applyInfo.price){
+            params.valuation = applyInfo.price / Math.pow(10,18)
+            params.desc = applyInfo.desc
+            setParams({...params})
+        }
+        if(userContact){
+            params.contact.telegramValue = userContact.telegram
+            params.contact.wechatValue = userContact.wechat
+            params.contact.skypeValue = userContact.skype
+            setParams({...params})
+        }
+    },[])
 
     return <div className="apply-task">
         <p className="apply-task-top">
@@ -87,7 +102,7 @@ export default function Modal_applyTask (props) {
             <div className="apply-task-applyInfo-priceAndtime">
                 <div className="apply-task-applyInfo-price">
                     <p>Give your quotation</p>
-                    <Input className="applyPrice" onChange={e => onchange(e.target.value,'valuation')} />
+                    <Input className="applyPrice" onChange={e => onchange(e.target.value,'valuation')} value={params.valuation}  />
                     <Select className="applyCurrency" defaultValue="1" onChange={(e) => onchange(e,'currency')} disabled >
                         <Option value="1">ETH</Option>
                     </Select>
@@ -168,7 +183,7 @@ export default function Modal_applyTask (props) {
             </div>
             <div className="apply-task-applyInfo-self">
                 <p>Self recommendation</p>
-                <TextArea className="apply-task-applyInfo-text" rows={4} onChange={e => onchange(e.target.value,'desc')} />
+                <TextArea className="apply-task-applyInfo-text" rows={4} onChange={e => onchange(e.target.value,'desc')} value={params.desc} />
             </div>
             <Button className="apply-task-btn" onClick={() => submit()}>Sign up</Button>
         </div>

@@ -137,7 +137,6 @@ export default function Order(props) {
                 setTask({...task});
             }
         })
-
         if (nonces.data) {
             nonce = nonces.data.toString();
             setNonce(nonce)
@@ -385,6 +384,7 @@ export default function Order(props) {
 
     useEffect(() => {
         if (obj.chainId && isSigner) {
+            console.log(obj);
             useSign.signTypedData();
         }
     },[signObj])

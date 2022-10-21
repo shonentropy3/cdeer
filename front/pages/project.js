@@ -9,7 +9,7 @@ import { ethers } from "ethers";
 
 import { useContracts } from '../controller';
 import { getDemandInfo } from '../http/api/task';
-import { applyFor } from '../http/api/apply';
+import { applyFor, cancelApply } from '../http/api/apply';
 import { deform_Skills } from '../utils/Deform';
 import Modal_applyTask from '../components/Modal_applyTask';
 import { getMyInfo, getMyApplylist } from '../http/api/user';
@@ -20,11 +20,16 @@ export default function Project() {
     const router = useRouter();
     const { address } = useAccount();
     let { useTaskContractWrite: Task } = useContracts("applyFor");
+    let { useTaskContractWrite: celTask } = useContracts("cancelApply");
     let [taskID,setTaskID] = useState('');
     let [project,setProject] = useState({});
     let [params,setParams] = useState({});
     let [isModalOpen,setIsModalOpen] = useState(false);
 
+    // 记录当前任务的报名信息
+    let [userApplyInfo,setUserApplyInfo] = useState({})
+    // 记录用户的联系方式
+    let [userContact,setUserContact] = useState({})
     // 用于判断该用户是否报名此任务
     let [isApply,setIsApply] = useState(false)
     
@@ -113,19 +118,59 @@ export default function Project() {
           });
     }
 
+    // 获取任务报名信息
     const getApplyInfo = () => {
         getMyApplylist({demandId:taskID})
         .then((res)=>{
             res.normal.map((e)=>{
-                console.log(e);
                 if(e.apply_addr == address) {
+                    console.log(e);
                     isApply = true
                     setIsApply(isApply)
+                    userApplyInfo = e
+                    setUserApplyInfo({...userApplyInfo})
                 }
             })
+        })  
+    }
+
+    // 获取用户个人信息
+    const getUserInfo = () => {
+        getMyInfo({address:address})
+        .then((res) => {
+            console.log(res.data[0]);
+            if (res.data[0]) {
+                userContact = res.data[0]
+                setUserContact({...userContact})
+            }
         })
     }
 
+    // 用户取消报名
+    const celApply = () => {
+        celTask.write({
+            recklesslySetUnpreparedArgs:[
+                Number(taskID)
+            ] 
+        })
+    }
+
+    const celSuccess = () => {
+        let data = {
+            applyAddr: address,
+            demandId: taskID,
+            hash: celTask.data.hash
+        }
+        console.log(data);
+        cancelApply(data)
+        .then((res) => {
+            message.success("取消报名成功")
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    }
+ 
     useEffect(() => {
         taskID = location.search.slice('?')[1];
         setTaskID(taskID);
@@ -141,7 +186,14 @@ export default function Project() {
 
     useEffect(()=>{
         getApplyInfo()
+        getUserInfo()
     },[])
+
+    useEffect(() => {
+        celTask.isSuccess ?
+        celSuccess()
+        : ""
+    },[celTask.isSuccess])
 
     return <div className="project">
         <div className="project-content">
@@ -169,8 +221,8 @@ export default function Project() {
             {
                 isApply ? 
                 <div className='applyed-btns'>
-                    <Button className='applyed-inspect'>Registration information</Button>
-                    <Button className='applyed-cancel'>Cancel registration</Button>
+                    <Button className='applyed-inspect' onClick={()=>setIsModalOpen(true)}>Registration information</Button>
+                    <Button className='applyed-cancel' onClick={celApply}>Cancel registration</Button>
                 </div> 
                 :
                 <Button className="btn" onClick={showModal}>Go to register</Button>
@@ -236,7 +288,7 @@ export default function Project() {
             onCancel={handleCancel}
             className="modal-apply-task"
         >
-            <Modal_applyTask setParams={setParams} params={params} project={project} submit={apply} />
+            <Modal_applyTask setParams={setParams} params={params} project={project} submit={apply} applyInfo={userApplyInfo} userContact={userContact} />
         </Modal>
     </div>
 }
