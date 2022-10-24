@@ -16,6 +16,10 @@ export default function Projects() {
 
     let [selectA,setSelectA] = useState(null); //  临时的
     let [tagsA,setTagsA] = useState([]);
+
+    // 每页所显示的task
+    let [pageProjects,setPageProjects] = useState([])
+
     // const tagsA = ['全部','后端','全栈','区块链','solidity','DeFi','NFT','Design','Smart Contract'] //  临时的
     const router = useRouter();
 
@@ -66,10 +70,37 @@ export default function Projects() {
         setTagsA([...tagsA]);
     }
 
+    // 分页
+    const pageChange = (value) => {
+        console.log(value);
+        let page
+        if (!value) {
+            page = 1
+        }else{
+            page = value
+        }
+        let minValue = 0
+        let maxValue = 5
+        if (page <= 1) {
+            pageProjects = projects.slice(minValue,maxValue)
+            setPageProjects([...pageProjects])
+            console.log(pageProjects);
+        }else {
+            minValue = (page - 1) * 5
+            maxValue = (page - 1) * 5 + 5
+            pageProjects = projects.slice(minValue,maxValue)
+            setPageProjects([...pageProjects])
+        }
+    }
+
     useEffect(() => {
         getProjects()
         init()
     },[])
+    
+    useEffect(()=>{
+        pageChange()
+    },[projects])
 
     useEffect(() => {
         let obj = {
@@ -116,7 +147,7 @@ export default function Projects() {
             </div>
             <div className="items">
                 {
-                    projects.map((e,i) => 
+                    pageProjects.map((e,i) => 
                         <div key={i} className="item" onClick={() => goProject(e.id)}>
                             <div className="info">
                                 <div className="info-img">
@@ -160,7 +191,14 @@ export default function Projects() {
                     :
                     ''
                 }
-                <Pagination className='item-pagination' defaultCurrent={1} total={50} />
+                <Pagination 
+                    className='item-pagination' 
+                    pageSize={5} 
+                    defaultPageSize={5} 
+                    defaultCurrent={1} 
+                    total={projects.length} 
+                    onChange={pageChange}
+                />
             </div>
         </div>
     </div>
