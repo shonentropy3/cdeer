@@ -26,7 +26,6 @@ export default function Modal_applyTask (props) {
     const onchange = (e,type) => {
         params[type] = e;
         setParams({...params});
-        console.log(params);
     }
 
     const changeDisabled = (e,title) => {

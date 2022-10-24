@@ -21,8 +21,8 @@ CREATE TABLE tasks (
 	"apply_switch" int2 DEFAULT 1,
 	"del" int2 NOT NULL DEFAULT 0,
   "suffix" varchar(64),
-  "create_time" date DEFAULT (now()),
-  "update_time" date DEFAULT (now())
+  "create_time" timestamptz DEFAULT (now()),
+  "update_time" timestamptz DEFAULT (now())
 );
 
 COMMENT ON COLUMN "public"."tasks"."apply_switch" IS '报名开关: 0.关  1.开';
@@ -53,8 +53,8 @@ CREATE TABLE orders (
   "signaddress" varchar(64),
   "signnonce" Int,
   "stages" json,
-  "create_time" date DEFAULT (now()),
-  "update_time" date DEFAULT (now()),
+  "create_time" timestamptz DEFAULT (now()),
+  "update_time" timestamptz DEFAULT (now()),
   UNIQUE("order_id")
 );
 
@@ -66,8 +66,8 @@ CREATE TABLE apply_info (
 	"price" DECIMAL, 
   "sort" int2,
 	"desc" varchar(64),
-  "create_time" date DEFAULT (now()),
-  "update_time" date DEFAULT (now())
+  "create_time" timestamptz DEFAULT (now()),
+  "update_time" timestamptz DEFAULT (now())
 );
 COMMENT ON COLUMN "public"."apply_info"."sort" IS '排序: 0.底部  1.正常';
 
@@ -80,8 +80,8 @@ CREATE TABLE trans_hashes (
   "category" int2,
 	"send_addr" varchar(64),
 	"is_update" int2 DEFAULT 0,
-  "create_time" date DEFAULT (now()),
-  "update_time" date DEFAULT (now())
+  "create_time" timestamptz DEFAULT (now()),
+  "update_time" timestamptz DEFAULT (now())
 );
 
 COMMENT ON COLUMN "public"."trans_hashes"."category" IS '交易hash种类: 1.创建需求  2.修改需求  3.报名  4.修改报名  5.删除报名 6.创建订单以及修改订单';
@@ -114,6 +114,6 @@ CREATE TABLE users (
   "discord" varchar(64),
   "phone" varchar(64),
   "role" varchar[],
-  "date" date DEFAULT (now()),
-  "update" date DEFAULT (now())
+  "date" timestamptz DEFAULT (now()),
+  "update" timestamptz DEFAULT (now())
 )

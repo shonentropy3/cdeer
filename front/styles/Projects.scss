@@ -115,14 +115,29 @@
                             color: #6C6C6C;
                         }
                         .time{
-                            .time-icon{
-                                margin-right: 6px;
+                            height: 17px;
+                            line-height: 17px;
+                            display: flex;
+                            .time-about{
+                                display: flex;
+                                height: 17px;
+                                margin-right: 15px;
+                                .time-icon{
+                                    margin-right: 6px;
+                                    width: 14px;
+                                    height: 12px;
+                                    margin-top: 2px;
+                                }
+                                .time-text{
+                                    height: 17px;
+                                    line-height: 17px;
+                                }
                             }
                             margin-right: 15px;
                         }
                         .tags{
                             width: 220px;
-                            margin-top: 16px;
+                            margin-top: 19px;
                             .tags-title{
                                 color: #6C6C6C;
                                 font-size: 12px;

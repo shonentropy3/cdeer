@@ -148,7 +148,7 @@ export class TaskService {
             const CancelApply = new ethers.utils.Interface(["event CancelApply(uint256 indexed taskId, address taker)"]);
             let decodedData = CancelApply.parseLog(log.logs[0]);
             const taskId = decodedData.args.taskId.toString();
-            const taker = decodedData.args.taker.toLowerCase();
+            const taker = decodedData.args.taker;
             let params = {
                 taskId: taskId,
                 taker: taker,

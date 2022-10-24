@@ -1,7 +1,6 @@
 
 
 import { Button,Modal,message, notification } from 'antd';
-import { ClockCircleOutlined } from '@ant-design/icons'
 import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { useRouter } from 'next/router';
@@ -12,6 +11,7 @@ import { getDemandInfo } from '../http/api/task';
 import { applyFor, cancelApply } from '../http/api/apply';
 import { deform_Skills } from '../utils/Deform';
 import Modal_applyTask from '../components/Modal_applyTask';
+import Computing_time from '../components/Computing_time';
 import { getMyInfo, getMyApplylist } from '../http/api/user';
 
 
@@ -41,7 +41,6 @@ export default function Project() {
             obj.role = deform_Skills(obj.role);
             project = obj;
             setProject({...project});
-            console.log(project);
         })
         .catch(err=>{
             console.log(err);
@@ -124,7 +123,6 @@ export default function Project() {
         .then((res)=>{
             res.normal.map((e)=>{
                 if(e.apply_addr == address) {
-                    console.log(e);
                     isApply = true
                     setIsApply(isApply)
                     userApplyInfo = e
@@ -138,7 +136,6 @@ export default function Project() {
     const getUserInfo = () => {
         getMyInfo({address:address})
         .then((res) => {
-            console.log(res.data[0]);
             if (res.data[0]) {
                 userContact = res.data[0]
                 setUserContact({...userContact})
@@ -161,7 +158,6 @@ export default function Project() {
             demandId: taskID,
             hash: celTask.data.hash
         }
-        console.log(data);
         cancelApply(data)
         .then((res) => {
             message.success("取消报名成功")
@@ -204,10 +200,10 @@ export default function Project() {
                 </div>
                 <div className="info">
                     <p className="title">{project.title}</p>
-                    <p className='time'>
-                        <ClockCircleOutlined />
-                        <span className='time-text'>10 days ago</span>
-                    </p>
+                    <div className='time'>
+                        <img className='time-icon' src='/clock-white.jpg' />
+                        <Computing_time create_time={project.create_time} />
+                    </div>
                     <p className="skills">
                             Recruitment type： {
                             project.role ? 

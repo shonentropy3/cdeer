@@ -2,6 +2,7 @@ import { Input, Empty, Button,Pagination } from 'antd';
 import { SearchOutlined, HistoryOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router'
+import Computing_time from '../components/Computing_time';
 
 import { getDemand, getFilter, getSearch } from '../http/api/task';
 import { deform_Skills } from '../utils/Deform'
@@ -123,11 +124,13 @@ export default function Projects() {
                                 </div>
                                 <div className="info-detail">
                                     <p className="title">{e.title}</p>
-                                    <span className="time">
-                                        <HistoryOutlined className="time-icon" />
-                                        Issued 10 hours ago
-                                    </span>
-                                    <span className="date">cycle: &nbsp;{e.period / 60 / 60 / 24}天</span>
+                                    <div className='time'>
+                                        <div className='time-about'>
+                                            <img className='time-icon' src='/clock.jpg' />
+                                            <Computing_time create_time={e.create_time} />
+                                        </div>
+                                        <span className="date">cycle: &nbsp;{e.period / 60 / 60 / 24}天</span>
+                                    </div>
                                     <div className="tags">
                                         <p className='tags-title'>Recruitment type: </p>
                                         {

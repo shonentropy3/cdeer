@@ -43,9 +43,9 @@
                     height: 26px;
                     position: relative;
                     margin-bottom: 54px;
-                    svg{
-                        color: white;
-                        font-size: 26px;
+                    .time-icon{
+                        width: 27px;
+                        height: 26px;
                     }
                     .time-text{
                         display: inline-block;
@@ -54,7 +54,7 @@
                         left: 36;
                         color: white;
                         font-size: 18px;
-                        // line-height: 26px;
+                        line-height: 26px;
                         height: 26px;
                         padding-bottom: 8px;
                         margin-left: 10px;

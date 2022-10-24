@@ -6,6 +6,7 @@ import { getMyApplylist, getMyInfo } from "../../http/api/user";
 import { createOrder } from "../../http/api/order";
 import { useContracts } from "../../controller/index";
 import { Modal_ModifyTask } from "../../components/Modal_modifyTask"
+import Computing_time from "../../components/Computing_time";
 import { ethers } from "ethers";
 import { getTasksData,delDemand,modifyApplySwitch } from "../../http/api/user";
 import { modifyApplySort } from "../../http/api/apply";
@@ -334,10 +335,10 @@ export default function Applylist() {
                                     <div className="product-apply">
                                         <span className="product-apply-he">His offer:</span>
                                         <span className="product-apply-price">{e.price}ETH</span>
-                                        <p className="product-apply-time">
-                                            <span className="product-apply-time-icon"><ClockCircleOutlined /></span>
-                                            <span className="product-apply-time-text">30 minutes ago</span>
-                                        </p>
+                                        <div className="product-apply-time">
+                                            <span className="product-apply-time-icon"><img src="/clock.jpg" /></span>
+                                            <Computing_time create_time={e.create_time} />
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="product-apply-desc">
