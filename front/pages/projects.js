@@ -19,6 +19,8 @@ export default function Projects() {
 
     // 每页所显示的task
     let [pageProjects,setPageProjects] = useState([])
+    // 当前页数
+    let [pageNum,setPageNum] = useState(1)
 
     // const tagsA = ['全部','后端','全栈','区块链','solidity','DeFi','NFT','Design','Smart Contract'] //  临时的
     const router = useRouter();
@@ -78,19 +80,20 @@ export default function Projects() {
             page = 1
         }else{
             page = value
+            setPageNum(page)
         }
         let minValue = 0
         let maxValue = 5
         if (page <= 1) {
             pageProjects = projects.slice(minValue,maxValue)
             setPageProjects([...pageProjects])
-            console.log(pageProjects);
         }else {
             minValue = (page - 1) * 5
             maxValue = (page - 1) * 5 + 5
             pageProjects = projects.slice(minValue,maxValue)
             setPageProjects([...pageProjects])
         }
+        console.log(pageProjects);
     }
 
     useEffect(() => {
@@ -194,8 +197,7 @@ export default function Projects() {
                 <Pagination 
                     className='item-pagination' 
                     pageSize={5} 
-                    defaultPageSize={5} 
-                    defaultCurrent={1} 
+                    current={pageNum}
                     total={projects.length} 
                     onChange={pageChange}
                 />

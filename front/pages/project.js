@@ -168,7 +168,7 @@ export default function Project() {
     }
  
     useEffect(() => {
-        taskID = location.search.slice('?')[1];
+        taskID = location.search.split('?')[1];
         setTaskID(taskID);
         getProject()
     },[])
