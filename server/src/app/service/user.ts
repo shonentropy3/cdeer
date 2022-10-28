@@ -21,6 +21,8 @@ import { getDemandInfoDate, getMyPjcDBa, getMyPjcDBb, getMyTaskIsn, getTaskApply
 import { getApply, getMyApplylistA, getMyApplylistB } from '../db/sql/apply_info';
 import { getCacheNfts, hasNft, isOutTime, setNftlist, updateNftlist } from '../db/sql/nft';
 import { getMyInfo, modifyMyInfo, setMyInfo } from '../db/sql/user';
+import { resolve } from 'path';
+import { rejects } from 'assert';
 
 @Injectable()
 export class UserService {
@@ -205,6 +207,19 @@ export class UserService {
             data: res
         }
       })
+    }
+
+
+    // 获取所有报名人员的个人信息
+    async getApplicationInfo(@Body() body: any){
+      let allInfo = [];
+      for ( let i = 0; i < body.address.length; i++ ) {
+        await this.usersRepository.query(getMyInfo(body.address[i]))
+        .then(res => {
+          allInfo.push(res[0])
+        })
+      }
+      return allInfo
     }
     
 

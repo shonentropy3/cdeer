@@ -87,7 +87,7 @@ export default function Publish() {
             return multiSelect(i)
 
             case 'inputNumber':
-            return <InputNumber className="inner w100 eth-select" onChange={changeNum} addonAfter={selectAfter} />;
+            return <InputNumber className="inner w100 eth-select" onChange={changeNum} controls={false} addonAfter={selectAfter} />;
 
             case 'select':
             return period

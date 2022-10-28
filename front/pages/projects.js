@@ -74,7 +74,6 @@ export default function Projects() {
 
     // 分页
     const pageChange = (value) => {
-        console.log(value);
         let page
         if (!value) {
             page = 1
@@ -93,7 +92,6 @@ export default function Projects() {
             pageProjects = projects.slice(minValue,maxValue)
             setPageProjects([...pageProjects])
         }
-        console.log(pageProjects);
     }
 
     useEffect(() => {

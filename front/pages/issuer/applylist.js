@@ -8,7 +8,7 @@ import { useContracts } from "../../controller/index";
 import { Modal_ModifyTask } from "../../components/Modal_modifyTask"
 import Computing_time from "../../components/Computing_time";
 import { ethers } from "ethers";
-import { getTasksData,delDemand,modifyApplySwitch } from "../../http/api/user";
+import { getTasksData,delDemand,modifyApplySwitch, getApplicationInfo } from "../../http/api/user";
 import { modifyApplySort } from "../../http/api/apply";
 import Image from "next/image";
 
@@ -32,6 +32,13 @@ export default function Applylist() {
     let [worker,setWorker] = useState();
     let [amount,setAmount] = useState();
     let [allInfo,setAllInfo] = useState({})
+    // 记录报名者的个人信息
+    let [applicantInfo,setApplicantInfo] = useState()
+    // 记录用户查看的报名者的钱包地址
+    let [seeAddr,setSeeAddr] = useState()
+    // 记录用户未设置用户名时显示的缩写地址
+    let [nameAddr,setNameAddr] = useState()
+
     let [skills,setSkills] = useState({
         "101":"solidity",
         "102":"javascript",
@@ -63,6 +70,14 @@ export default function Applylist() {
 
     const ModifyHandler = () =>{
         setIsModifyModal(false)
+    }
+
+    // 设置当前查看的报名者
+    const seeHim = (addr,name) => {
+        seeAddr = addr
+        nameAddr = name
+        setSeeAddr(addr)
+        setNameAddr(nameAddr)
     }
 
     const getInfo = ()=>{
@@ -108,6 +123,19 @@ export default function Applylist() {
             data = arr;
             setData([...data]);
             console.log(data);
+        })
+    }
+
+    // 获取报名人员信息
+    const getApplyListInfo = () => {
+        let applyPerson = []
+        data.map((e)=>{ 
+            applyPerson.push(e.apply_addr)
+        })
+        getApplicationInfo({address: applyPerson})
+        .then((res)=>{
+            applicantInfo = res;
+            setApplicantInfo([...applicantInfo])
         })
     }
 
@@ -238,6 +266,84 @@ export default function Applylist() {
         })
     };
 
+    // 展示报名者的技能
+    const showSkills = (apply_addr) => {
+        return applicantInfo?.map((e,i)=>{
+            if ( e.address === apply_addr && e.role) {
+                return e.role.map((ele,index) => {
+                    return <span key={index}>{ele}</span>
+                })
+            }else if ( e.address === apply_addr && !e.role ) {
+                return <span key={i}>null</span>
+            }
+        })
+    }
+
+    //弹窗显示报名者的详细信息
+    const showApplyInfo = (addr,name) => {
+        return applicantInfo.map((e,i)=>{
+            if ( e.address === addr ) {
+                return <div key={i} className="personal-info-btmBackground">
+                    <div className="personal-info-avator"></div>
+                    <p className="personal-info-name">{e.username ? e.username : name}</p>
+                    <div className="personal-info-contact">
+                        <div className="personal-info-contact-item">
+                            <Image src="/telegram.png" alt="" quality={100} width={29} height={29} />
+                        </div>
+                        <div className="personal-info-contact-item">
+                            <Image src="/skype.png" alt="" quality={100} width={29} height={29} />
+                        </div>
+                        <div className="personal-info-contact-item">
+                            <Image src="/wechat.png" alt="" quality={100} width={29} height={29} />
+                        </div>
+                        <div className="personal-info-contact-item">
+                            <Image src="/discord.png" alt="" quality={100} width={29} height={29} />
+                        </div>
+                        <div className="personal-info-contact-item">
+                            <Image src="/whatsapp.png" alt="" quality={100} width={29} height={29} />
+                        </div>
+                    </div>
+                    <div className="personal-info-goodSkill">
+                        <p className="goodSkill-title">Good at skills</p>
+                        {
+                            e.role ? e.role.map((ele,index)=>(
+                                <span key={index} className="goodSkill-item">{ele}</span>
+                            ))
+                            :
+                            <span className="goodSkill-item">null</span>
+                        }
+                    </div>
+                    <div className="personal-info-NFTs">
+                        <p className="NFTs-title">NFT held by him<span>more<DoubleRightOutlined /></span></p>
+                        <div className="NFTs-img">
+                            <div className="NFTs-img-item">
+                                <p className="NFTs-img-item-image"></p>
+                                <p className="NFTs-img-item-name">Okay Apes #12332</p>
+                                <p className="NFTs-img-item-desc">Okay Apes Club</p>
+                                <p className="NFTs-img-item-price">price</p>
+                                <p className="NFTs-img-item-time">Ends in 15 hours</p>
+                            </div>
+                            <div className="NFTs-img-item">
+                                <p className="NFTs-img-item-image"></p>
+                                <p className="NFTs-img-item-name">Okay Apes #12332</p>
+                                <p className="NFTs-img-item-desc">Okay Apes Club</p>
+                                <p className="NFTs-img-item-price">price</p>
+                                <p className="NFTs-img-item-time">Ends in 15 hours</p>
+                            </div>
+                            <div className="NFTs-img-item">
+                                <p className="NFTs-img-item-image"></p>
+                                <p className="NFTs-img-item-name">Okay Apes #12332</p>
+                                <p className="NFTs-img-item-desc">Okay Apes Club</p>
+                                <p className="NFTs-img-item-price">price</p>
+                                <p className="NFTs-img-item-time">Ends in 15 hours</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        })
+    } 
+
     useEffect(() => {
         useOrderContractWrite.isSuccess ? 
             writeSuccess()
@@ -263,6 +369,11 @@ export default function Applylist() {
         taskId = location.search.slice('?')[1];
         setTaskId(taskId);
     },[])
+
+    useEffect(()=>{
+        getApplyListInfo()
+    },[data])
+
 
     return <div className="Applylist">
         <div className="task-info">
@@ -307,12 +418,10 @@ export default function Applylist() {
                                 <div className="product-list-info">
                                     <div className="product-img"></div>
                                     <div className="product-info">
-                                        <p className="applicant-name" onClick={()=>setIsInfoModal(!isInfoModal)}>{e.address}<span>View personal information</span></p>
+                                        <p className="applicant-name" >{e.address}<span onClick={()=>{setIsInfoModal(!isInfoModal), seeHim(e.apply_addr,e.address)}}>View personal information</span></p>
                                         <p className="applicant-skill">
                                             <i className="good-skill">Good at skills：</i>
-                                            <span>solidity</span>
-                                            <span>php</span>
-                                            <span>javascripts</span>
+                                            {showSkills(e.apply_addr)}
                                         </p>
                                         <div className="applicant-mess">
                                             <div className="applicant-mess-item">
@@ -401,60 +510,7 @@ export default function Applylist() {
             closeIcon={<img src="/closeIcon.png" />}
         >
             <div className="personal-info-topBackground"></div>
-            <div className="personal-info-btmBackground">
-                <div className="personal-info-avator"></div>
-                <p className="personal-info-name">Tony</p>
-                <div className="personal-info-contact">
-                    <div className="personal-info-contact-item">
-                        <Image src="/telegram.png" alt="" quality={100} width={29} height={29} />
-                    </div>
-                    <div className="personal-info-contact-item">
-                        <Image src="/skype.png" alt="" quality={100} width={29} height={29} />
-                    </div>
-                    <div className="personal-info-contact-item">
-                        <Image src="/wechat.png" alt="" quality={100} width={29} height={29} />
-                    </div>
-                    <div className="personal-info-contact-item">
-                        <Image src="/discord.png" alt="" quality={100} width={29} height={29} />
-                    </div>
-                    <div className="personal-info-contact-item">
-                        <Image src="/whatsapp.png" alt="" quality={100} width={29} height={29} />
-                    </div>
-                </div>
-                <div className="personal-info-goodSkill">
-                    <p className="goodSkill-title">Good at skills</p>
-                    <span className="goodSkill-item">solidity</span>
-                    <span className="goodSkill-item">javascript</span>
-                    <span className="goodSkill-item">Solidity</span>
-                    <span className="goodSkill-item">javascript</span>
-                </div>
-                <div className="personal-info-NFTs">
-                    <p className="NFTs-title">NFT held by him<span>more<DoubleRightOutlined /></span></p>
-                    <div className="NFTs-img">
-                        <div className="NFTs-img-item">
-                            <p className="NFTs-img-item-image"></p>
-                            <p className="NFTs-img-item-name">Okay Apes #12332</p>
-                            <p className="NFTs-img-item-desc">Okay Apes Club</p>
-                            <p className="NFTs-img-item-price">price</p>
-                            <p className="NFTs-img-item-time">Ends in 15 hours</p>
-                        </div>
-                        <div className="NFTs-img-item">
-                            <p className="NFTs-img-item-image"></p>
-                            <p className="NFTs-img-item-name">Okay Apes #12332</p>
-                            <p className="NFTs-img-item-desc">Okay Apes Club</p>
-                            <p className="NFTs-img-item-price">price</p>
-                            <p className="NFTs-img-item-time">Ends in 15 hours</p>
-                        </div>
-                        <div className="NFTs-img-item">
-                            <p className="NFTs-img-item-image"></p>
-                            <p className="NFTs-img-item-name">Okay Apes #12332</p>
-                            <p className="NFTs-img-item-desc">Okay Apes Club</p>
-                            <p className="NFTs-img-item-price">price</p>
-                            <p className="NFTs-img-item-time">Ends in 15 hours</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {applicantInfo?showApplyInfo(seeAddr,nameAddr):""}
         </Modal>
     </div>
 }

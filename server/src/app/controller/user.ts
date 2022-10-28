@@ -81,4 +81,9 @@ export class UserController {
         return await this.userService.getMyInfo(body)
     }
 
+    @Post('getApplicationInfo')
+    async getApplicationInfo(@Body() body: any) {
+        return await this.userService.getApplicationInfo(body)
+    }
+
 }

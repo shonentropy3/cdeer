@@ -70,6 +70,15 @@ export const modifyMyInfo = (data) => {
     })
 }
 
+// 获取报名列表中报名人员的个人信息
+export const getApplicationInfo = (data) => {
+    return serviceAxios({
+        url: "/user/getApplicationInfo",
+        method: "post",
+        data
+    })
+}
+
 // 修改个人Task报名开关
 export const modifyApplySwitch = (data) => {
     return serviceAxios({
