@@ -12,6 +12,7 @@ import {
     GithubOutlined,
     CameraOutlined
   } from '@ant-design/icons';
+import Identicon, { IdenticonOptions } from "identicon.js";
 
 import { setMyInfo,getMyInfo,modifyMyInfo } from '../http/api/user';
 
@@ -30,9 +31,11 @@ export default function MyInfo() {
         {title:'HTML/CSS', status: false},
         {title:'IOS', status: false},
     ])
+    let [wagmi,setWagmi] = useState({});
+
     const [isModalVisible, setIsModalVisible] = useState(false);
 
-    const { address } = useAccount()
+    const { address, isConnected } = useAccount()
 
     const showModal = () => {
       setIsModalVisible(true);
@@ -122,6 +125,17 @@ export default function MyInfo() {
         })
     }
 
+    // 用户初始头像
+    const hashAvt = () => {
+        if (!address) {
+            return
+        }
+        var hash = address;  // 15+ hex chars
+        var data = new Identicon(hash, {format: 'svg'}).toString();
+        data = `data:image/svg+xml;base64,${data}`
+        return data
+    }
+
     useEffect(()=>{
         getInfo()
     },[])
@@ -138,13 +152,34 @@ export default function MyInfo() {
         }
     },[info.role])
 
+    useEffect(()=>{
+        console.log(isConnected);
+        if(isConnected){
+            wagmi = {
+                isActive: isConnected
+            }
+        }else{
+            wagmi = {
+                isActive: isConnected
+            }
+        }
+        setWagmi({...wagmi})
+    },[isConnected])
+
     
     return <>
     <div style={{height: '100px'}} ></div>
 <div className="MyInfo">
         <div className="myInfo-top">
             <div className="top">
-                <div className="img"></div>
+                <div className="img">
+                    {
+                        wagmi.isActive ? 
+                        <img src={hashAvt()} alt="" />
+                        :
+                        ""
+                    }
+                </div>
                 <div className="info">
                     <p>{info.username?info.username:"未设置用户昵称"}</p>
                     <div className="li"><SkypeOutlined /><WechatOutlined /><GithubOutlined /></div>
