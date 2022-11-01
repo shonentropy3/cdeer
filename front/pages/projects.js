@@ -1,4 +1,4 @@
-import { Input, Empty, Button,Pagination } from 'antd';
+import { Input, Empty, Button,Pagination, message } from 'antd';
 import { SearchOutlined, HistoryOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router'
@@ -21,29 +21,52 @@ export default function Projects() {
     let [pageProjects,setPageProjects] = useState([])
     // 当前页数
     let [pageNum,setPageNum] = useState(1)
+    // 当前所获取的任务总数
+    let [taskLength,setTaskLength] = useState()
 
     // const tagsA = ['全部','后端','全栈','区块链','solidity','DeFi','NFT','Design','Smart Contract'] //  临时的
     const router = useRouter();
 
+    function debounce (func,delay) {
+        let timer
+        return function (...args) {
+            if (timer) {
+                clearTimeout(timer)
+            }
+            timer = setTimeout(func,delay)
+        }
+    }
+    
+    function getScreen () {
+        if (selectA) {
+            screenTask()
+        }else{
+            getProjects()
+        }
+    }
 
     const onChange = (value) => {
         search = value.target.value;
         setSearch(search);
+        let temp = debounce(getScreen,500)
+        temp()
     }
 
-    const getProjects = async() => {
-        await getDemand()
+    const getProjects = async () => {
+        await getDemand({page:pageNum,search:search})
             .then(res => {
                 let data = res.data;
                 data.map(e => {
                     e.role = deform_Skills(e.role);
-                    // e.task_type = deform_ProjectTypes(e.task_type);
                 })
                 projects = data;
+                taskLength = res.length
                 setProjects([...projects]);
+                setTaskLength(taskLength)
             })
             .catch(err => {
                 console.log(err);
+                message.error("获取任务列表失败")
             })
     }
 
@@ -51,21 +74,21 @@ export default function Projects() {
         router.push({pathname:'/project',search: id})
     }
 
-    // const searchData = () => {
-    //     getSearch(search)
-    //     .then(res => {
-    //         let data = res.data;
-    //             data.map(e => {
-    //                 e.role = deform_Skills(e.role);
-    //                 // e.task_type = deform_ProjectTypes(e.task_type);
-    //             })
-    //             projects = data;
-    //             setProjects([...projects]);
-    //     })
-    //     .catch(err => {
-    //         console.log(err);
-    //     })
-    // }
+    const searchData = () => {
+        getSearch(search)
+        .then(res => {
+            let data = res.data;
+                data.map(e => {
+                    e.role = deform_Skills(e.role);
+                    // e.task_type = deform_ProjectTypes(e.task_type);
+                })
+                projects = data;
+                setProjects([...projects]);
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    }
 
     const init = () => {
         tagsA = _data.skills;
@@ -79,33 +102,17 @@ export default function Projects() {
             page = 1
         }else{
             page = value
-            setPageNum(page)
         }
-        let minValue = 0
-        let maxValue = 5
-        if (page <= 1) {
-            pageProjects = projects.slice(minValue,maxValue)
-            setPageProjects([...pageProjects])
-        }else {
-            minValue = (page - 1) * 5
-            maxValue = (page - 1) * 5 + 5
-            pageProjects = projects.slice(minValue,maxValue)
-            setPageProjects([...pageProjects])
-        }
+        pageNum = page
+        setPageNum(pageNum)
     }
 
-    useEffect(() => {
-        getProjects()
-        init()
-    },[])
-    
-    useEffect(()=>{
-        pageChange()
-    },[projects])
-
-    useEffect(() => {
+    // 标签筛选
+    const screenTask = () => {
         let obj = {
-          role: selectA,
+            role: selectA,
+            page: pageNum,
+            search: search
         }
         obj = JSON.stringify(obj)
         getFilter({obj: obj})
@@ -116,9 +123,33 @@ export default function Projects() {
                 // e.task_type = deform_ProjectTypes(e.task_type);
             })
             projects = data;
+            taskLength = res.length
             setProjects([...projects]);
+            setTaskLength(taskLength)
         })
+    }
+
+    useEffect(() => {
+        getProjects()
+        init()
+    },[])
+    
+    // useEffect(()=>{
+    //     pageChange()
+    // },[projects])
+
+    useEffect(() => {
+        screenTask()
     },[selectA])
+
+
+    useEffect(() => {
+        if (selectA) {
+            screenTask()
+        }else{
+            getProjects()
+        }
+    },[pageNum])
 
     return <div className="Projects">
         <div className='banner'>
@@ -148,7 +179,7 @@ export default function Projects() {
             </div>
             <div className="items">
                 {
-                    pageProjects.map((e,i) => 
+                    projects.map((e,i) => 
                         <div key={i} className="item" onClick={() => goProject(e.id)}>
                             <div className="info">
                                 <div className="info-img">
@@ -196,7 +227,7 @@ export default function Projects() {
                     className='item-pagination' 
                     pageSize={5} 
                     current={pageNum}
-                    total={projects.length} 
+                    total={taskLength} 
                     onChange={pageChange}
                 />
             </div>

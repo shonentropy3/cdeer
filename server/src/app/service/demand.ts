@@ -19,13 +19,37 @@ export class MarketService {
     ) {}
 
     // 获取需求列表
-    async getDemand(): Promise<Tasks[]> {
+    async getDemand(@Body() body: any): Promise<Tasks[]> {
         // console.log(this. .get('PORT'), '当前的端口');
+        let pageProjects = []
+        let infoLength = 0
+        let minValue = 0;
+        let maxValue = 5;
         return await this.tasksRepository.query(getDemandDate())
         .then(res =>{
+            infoLength = res.length
+            let projects = res
+            if ( body.search ) {
+                let arr = [];
+                res.map((e)=>{
+                    if(e.title.indexOf(body.search) > -1){
+                        arr.push(e)
+                    }
+                })
+                projects = [...arr]
+                infoLength = projects.length
+            }
+            if(body.page == 1){
+                pageProjects = projects.slice(minValue,maxValue)
+            }else{
+                minValue = (body.page - 1) * 5
+                maxValue = (body.page - 1) * 5 + 5
+                pageProjects = projects.slice(minValue,maxValue)
+            }
             let obj = {
                 code: 200,
-                data: res
+                data: pageProjects,
+                length: infoLength
             }
             return obj
         })
@@ -119,11 +143,34 @@ export class MarketService {
     // 获取筛选列表
     async getFilter(@Body() body: any): Promise<Tasks[]> {
         let data = JSON.parse(body.obj);
+        let page = data.page
+        let pageProjects = []
+        let minValue = 0;
+        let maxValue = 5;
         return await this.tasksRepository.query(getFilter(data))
         .then(res =>{
+            let projects = res
+            if ( data.search ) {
+                let arr = []
+                projects.map(e=>{
+                    let num = e.title.indexOf(data.search)
+                    if( num > -1 ) {
+                        arr.push(e)
+                    }
+                })
+                projects = [...arr]
+            }
+            if(page == 1){
+                pageProjects = projects.slice(minValue,maxValue)
+            }else{
+                minValue = (page - 1) * 5
+                maxValue = (page - 1) * 5 + 5
+                pageProjects = projects.slice(minValue,maxValue)
+            }
             let obj = {
                 code: 200,
-                data: res
+                data: pageProjects,
+                length: projects.length
             }
             return obj
         })

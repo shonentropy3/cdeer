@@ -26,9 +26,9 @@ export class MarketController {
         return await this.marketService.deleteDemand(body)
     }
 
-    @Get('getDemand')  // 展示需求列表
-    async getDemand(){
-        return await this.marketService.getDemand()
+    @Post('getDemand')  // 展示需求列表
+    async getDemand(@Body() body: any){
+        return await this.marketService.getDemand(body)
     }
 
     @Get('getSearch')  // 展示搜索列表
