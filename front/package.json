@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "ahooks": "^3.7.2",
     "antd": "^4.22.8",
     "ethers": "^5.7.0",
     "identicon.js": "^2.3.3",

@@ -93,7 +93,7 @@ export default function Modal_applyTask (props) {
             <div className="apply-task-detail-cost">
                 <p>
                     Cost: 
-                    <span>{project.budget / 1000000000000000000}ETH</span>
+                    <span>{project.budget / Math.pow(10,18)}ETH</span>
                 </p>
             </div>
         </div>

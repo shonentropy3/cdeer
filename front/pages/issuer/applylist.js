@@ -17,7 +17,7 @@ import Image from "next/image";
 export default function Applylist() {
     
     const { Option } = Select;
-    const { address } = useAccount();
+    const { address, isConnected } = useAccount();
     const selectAfter = (
         <Select
           defaultValue="eth"
@@ -32,6 +32,7 @@ export default function Applylist() {
     let [worker,setWorker] = useState();
     let [amount,setAmount] = useState();
     let [allInfo,setAllInfo] = useState({})
+    let [wagmi,setWagmi] = useState({})
     // 记录报名者的个人信息
     let [applicantInfo,setApplicantInfo] = useState()
     // 记录用户查看的报名者的钱包地址
@@ -279,6 +280,17 @@ export default function Applylist() {
         })
     }
 
+    // 展示报名者的头像
+    const showAvatar = (apply_addr) => {
+        return applicantInfo?.map((e,i)=>{
+            if (e.address === apply_addr && e.avatar) {
+                return <img key={i} src={e.avatar} />
+            }else if (e.address === apply_addr && !e.avatar) {
+                return <img key={i} src={hashAvt(e.address)} />
+            }
+        })
+    }
+
     //弹窗显示报名者的详细信息
     const showApplyInfo = (addr,name) => {
         return applicantInfo.map((e,i)=>{
@@ -344,6 +356,26 @@ export default function Applylist() {
         })
     } 
 
+    // 用户头像
+    const hashAvt = (addr) => {
+        if (!addr) {
+            return
+        }
+        var hash = addr;  // 15+ hex chars
+        // var options = {
+        //     foreground: [r, g, b, 255],               // rgba black
+        //     background: [255, 255, 255, 255],         // rgba white
+        //     margin: 0.2,                              // 20% margin
+        //     size: 420,                                // 420px square
+        //     format: 'svg'                             // use SVG instead of PNG
+        //     };
+        // create a base64 encoded SVG
+        // var data = new Identicon(hash, options).toString();
+        var data = new Identicon(hash, {format: 'svg'}).toString();
+        data = `data:image/svg+xml;base64,${data}`
+        return data
+    }
+
     useEffect(() => {
         useOrderContractWrite.isSuccess ? 
             writeSuccess()
@@ -373,6 +405,19 @@ export default function Applylist() {
     useEffect(()=>{
         getApplyListInfo()
     },[data])
+
+    useEffect(()=>{
+        if(isConnected){
+            wagmi = {
+                isActive: isConnected
+            }
+        }else{
+            wagmi = {
+                isActive: isConnected
+            }
+        }
+        setWagmi({...wagmi})
+    },[isConnected])
 
 
     return <div className="Applylist">
@@ -416,7 +461,9 @@ export default function Applylist() {
                         data.map((e,i) => <li key={i} className={e.sort === 0 ? 'sort':''} >
                             <div className="product-list-item">
                                 <div className="product-list-info">
-                                    <div className="product-img"></div>
+                                    <div className="product-img">
+
+                                    </div>
                                     <div className="product-info">
                                         <p className="applicant-name" >{e.address}<span onClick={()=>{setIsInfoModal(!isInfoModal), seeHim(e.apply_addr,e.address)}}>View personal information</span></p>
                                         <p className="applicant-skill">

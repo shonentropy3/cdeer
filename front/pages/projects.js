@@ -1,6 +1,7 @@
 import { Input, Empty, Button,Pagination, message } from 'antd';
 import { SearchOutlined, HistoryOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
+import { useDebounce } from 'ahooks'
 import { useRouter } from 'next/router'
 import Computing_time from '../components/Computing_time';
 
@@ -12,6 +13,7 @@ export default function Projects() {
     const _data = require('../data/data.json')
     
     let [search,setSearch] = useState();
+    const debounceSearch = useDebounce(search,{wait:500})
     let [projects,setProjects] = useState([]);
 
     let [selectA,setSelectA] = useState(null); //  临时的
@@ -23,33 +25,18 @@ export default function Projects() {
     let [pageNum,setPageNum] = useState(1)
     // 当前所获取的任务总数
     let [taskLength,setTaskLength] = useState()
+    // 定时器开关
+    let [timer,setTimer] = useState(null)
 
     // const tagsA = ['全部','后端','全栈','区块链','solidity','DeFi','NFT','Design','Smart Contract'] //  临时的
     const router = useRouter();
 
-    function debounce (func,delay) {
-        let timer
-        return function (...args) {
-            if (timer) {
-                clearTimeout(timer)
-            }
-            timer = setTimeout(func,delay)
-        }
-    }
-    
-    function getScreen () {
-        if (selectA) {
+    const getScreen = () => {
+        if(selectA) {
             screenTask()
         }else{
             getProjects()
         }
-    }
-
-    const onChange = (value) => {
-        search = value.target.value;
-        setSearch(search);
-        let temp = debounce(getScreen,500)
-        temp()
     }
 
     const getProjects = async () => {
@@ -151,6 +138,11 @@ export default function Projects() {
         }
     },[pageNum])
 
+    useEffect(()=>{
+        console.log(search);
+        getScreen()
+    },[debounceSearch])
+
     return <div className="Projects">
         <div className='banner'>
             <div className='banner-content'>
@@ -160,7 +152,7 @@ export default function Projects() {
         </div>
         <div className='task-content'>
             <div className="search">
-                <Input placeholder="搜索项目" onChange={onChange} />
+                <Input placeholder="搜索项目" onChange={(e)=>setSearch(e.target.value)} />
                 {/* <SearchOutlined className="search-btn" onClick={() => searchData()} /> */}
                 <div className="tags">
                     <span className='tags-keyword'>Screen</span>

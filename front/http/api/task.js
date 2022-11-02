@@ -49,7 +49,7 @@ export const getDemandInfo = (data) => {
 export const getDemand = (data) => {
     return serviceAxios({
         url: "/demand/getDemand",
-        method: "get",
+        method: "post",
         data,
     });
 }
