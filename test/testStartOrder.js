@@ -3,6 +3,7 @@ const { expect } = require("chai");
 const { signPermitStage, signPermitProlongStage } = require("./signPermitStage.js");
 
 const DeOrderAddr = require(`../deployments/dev/DeOrder.json`)
+const WETHAddr = require(`../deployments/dev/WETH.json`)
 /** 
  * 测试用例：
  * 0 测试阶段金额与付款金额不匹配 （已验证）
@@ -18,6 +19,7 @@ describe("testStartOrder", function () {
   let account1;
   let account2;
   let orderId;
+  let weth;
 
   beforeEach(async function () {
     const accounts = await ethers.getSigners();
@@ -28,6 +30,9 @@ describe("testStartOrder", function () {
     console.log("account2:" + account2.address);
 
     DeOrder = await ethers.getContractAt("DeOrder", DeOrderAddr.address, account1);
+
+    weth = await ethers.getContractAt("WETH", WETHAddr.address, account1);
+
     orderId = await DeOrder.currOrderId()
     console.log("orderId:" + orderId)
 
@@ -40,8 +45,12 @@ describe("testStartOrder", function () {
 
   it("测试付款，开始订单", async function () {
     let amount = ethers.utils.parseEther("1")
+
     let tx = await DeOrder.payOrder(orderId, amount, {value: amount});
     await tx.wait();
+
+    let b = await weth.balanceOf(DeOrder.address);
+    console.log("weth balance:", b.toString())
 
     let order = await DeOrder.getOrder(orderId);
     console.log("order.amount", order.amount.toString())

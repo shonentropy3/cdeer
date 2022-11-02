@@ -66,6 +66,10 @@ contract DeOrder is IOrder, Multicall, Ownable {
         );
     }
 
+    receive() external payable {
+        assert(msg.sender == address(weth)); // only accept ETH via fallback from the WETH contract
+    }
+
     function createOrder(uint _taskId, address _issuer, address _worker, address _token, uint _amount) external payable {
         if(address(0) == _worker || address(0) == _issuer || _worker == _issuer) revert ParamError();
 
@@ -200,8 +204,9 @@ contract DeOrder is IOrder, Multicall, Ownable {
         address token = order.token;
 
         if (token == address(0)) {
-            IWETH9(weth).deposit{value: address(this).balance}();
-            order.payed += address(this).balance;
+            uint b = address(this).balance;
+            IWETH9(weth).deposit{value: b}();
+            order.payed += b;
         } else {
             TransferHelper.safeTransferFrom(token, msg.sender, address(this), amount);
             order.payed += amount;
