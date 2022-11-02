@@ -20,7 +20,6 @@ export class MarketService {
 
     // 获取需求列表
     async getDemand(@Body() body: any): Promise<Tasks[]> {
-        // console.log(this. .get('PORT'), '当前的端口');
         let pageProjects = []
         let infoLength = 0
         let minValue = 0;

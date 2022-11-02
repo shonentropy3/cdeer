@@ -51,7 +51,15 @@ export class ApplyforService {
         // })
         this.usersRepository.query(getMyInfo(bodyData.address))
         .then(res => {
-            let obj = bodyData.contact;    
+            let obj = bodyData.contact;
+            for (let key in obj) {
+                if (obj[key] === 'undefined'){
+                    obj[key] = ''
+                }
+            }
+            console.log(obj);
+            
+            
             for (const i in obj) {
                 if (obj[i].length > 0) {
                     if (res.length === 0) {
