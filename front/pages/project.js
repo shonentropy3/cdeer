@@ -56,6 +56,23 @@ export default function Project() {
     }
 
     const apply = () => {
+        console.log(params);
+        let nullNum = 0
+        let arr = []
+        if(!params.valuation) {
+            nullNum += 1
+        }
+        Object.keys(params.contact).map(e=>{
+            console.log(params.contact[e]);
+            if(!params.contact[e]){
+                arr.push(params.contact[e])
+            }
+            if(arr.length>=5){
+                nullNum += 1
+            }
+        })
+        console.log(arr);
+        nullNum === 0 ?
         Task.write({
             recklesslySetUnpreparedArgs:[
                 address,
@@ -63,6 +80,8 @@ export default function Project() {
                 ethers.utils.parseEther(`${params.valuation}`)
             ]
         })
+        :
+        message.error('请完善必填信息')
     }
 
     const writeSuccess = () => {

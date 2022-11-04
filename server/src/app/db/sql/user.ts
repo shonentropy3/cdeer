@@ -32,8 +32,8 @@ export const modifyContacts = params => {
 
 export const setContacts = params => {
     let sql = `INSERT INTO users (address, telegram, wechat, skype, discord, phone)
-        VALUES ('${params.address}', '${params.contact.telegramValue}', '${params.contact.wechatValue}',
-        '${params.contact.skypeValue}', '${params.contact.discordValue}', '${params.contact.phoneValue}')`;
+        VALUES ('${params.address}', '${params.contact.telegramValue?params.contact.telegramValue:''}', '${params.contact.wechatValue?params.contact.wechatValue:''}',
+        '${params.contact.skypeValue?params.contact.skype:''}', '${params.contact.discordValue?params.contact.discordValue:''}', '${params.contact.phoneValue?params.contact.phoneValue:''}')`;
         
     return sql
 }
