@@ -19,12 +19,12 @@ export default function Publish() {
     const { address } = useAccount()
     const { useTaskContractWrite: Task } = useContracts('createTask');
     const [inner,setInner] = useState([
-        {title: 'Entry Name', type: 'input', value: ''},
-        {title: 'Project Description', type: 'textarea', value: ''},
-        {title: '', type: 'upload', value: ''},
-        {title: 'Skill Requirements', type: 'model', value: [], subValue: []},
-        {title: 'Project Budget', type: 'inputNumber', value: '', subValue: 1},
-        {title: 'Project Cycle', type: 'select', value: ''},
+        {title: 'Entry Name', type: 'input', value: '', style:false },
+        {title: 'Project Description', type: 'textarea', value: '', style:false },
+        {title: '', type: 'upload', value: '', style:false },
+        {title: 'Skill Requirements', type: 'model', value: [], subValue: [], style:false },
+        {title: 'Project Budget', type: 'inputNumber', value: '', subValue: 1, style:false },
+        {title: 'Project Cycle', type: 'select', value: '', style:false },
         // {title: '技能LOGO', type: 'select', value: []},
     ])
     let [isModalVisibleC, setIsModalVisibleC] = useState(false);
@@ -50,7 +50,7 @@ export default function Publish() {
     );
 
     const period = (
-        <Select className="w100" defaultValue="预计周期" onChange={(e) => onchange(e)}>
+        <Select className={["w100",inner[5].style?"err":""].join(' ')} defaultValue="预计周期" onChange={(e) => onchange(e)}>
           <Option value={3}>3天</Option>
           <Option value={7}>1周</Option>
           <Option value={21}>3周</Option>
@@ -78,16 +78,16 @@ export default function Publish() {
     const print = (e,i) => {
         switch (e.type) {
             case 'input':
-                return <Input className="inner" onChange={(ele)=>changeStr(ele,i)} />;
+                return <Input className={[e.style?"err":"inner"].join('')} onChange={(ele)=>changeStr(ele,i)} />;
 
             case 'textarea':
-                return <TextArea className="inner h150" onChange={(ele)=>changeStr(ele,i)} />;
+                return <TextArea className={["h150",e.style?"err":"inner"].join(' ')} onChange={(ele)=>changeStr(ele,i)} />;
 
             case 'model':
             return multiSelect(i)
 
             case 'inputNumber':
-            return <InputNumber className="inner w100 eth-select" onChange={changeNum} controls={false} addonAfter={selectAfter} />;
+            return <InputNumber className={["w100","eth-select",e.style?"err":"inner"].join(' ')} onChange={changeNum} controls={false} addonAfter={selectAfter} />;
 
             case 'select':
             return period
@@ -159,7 +159,37 @@ export default function Publish() {
             // TODO: connect wallet
             return
         }
-        setIsModalVisibleC(true);
+        let isAllInfo = true
+        let nullNum = 0
+        inner.map(e => {
+            if(e.type == 'upload') {
+
+            }else if (e.type == 'model'){
+                if (e.value[0] == undefined){
+                    nullNum += 1
+                }
+                if (e.value[2] == '}'){
+                    nullNum += 1
+                }
+                // e.value==[] ? nullNum += 1 : e.style = false 
+                setInner([...inner])
+            }else if (e.type == 'select') {
+                if (!e.value) {
+                    nullNum += 1;
+                    e.style = true
+                    setInner([...inner])
+                }
+            }
+            else{
+                if(!e.value){
+                    nullNum += 1
+                    e.style=true
+                    setInner([...inner])
+                }
+            }
+        })
+        nullNum === 0 ? isAllInfo = true : isAllInfo = false
+        isAllInfo?setIsModalVisibleC(true):message.error('请填写必填信息')
     };
 
     const handleCancelC = () => {
@@ -169,11 +199,13 @@ export default function Publish() {
     // 获取数据
     const changeStr = (e,i) => {
         inner[i].value = e.target.value;
+        inner[i].style = false
         setInner([...inner])
     }
 
     const changeNum = (e) => {
         inner[4].value = e;
+        inner[4].style = false
         setInner([...inner]);
     }
 
@@ -187,12 +219,11 @@ export default function Publish() {
             message.error('最多可选择4个')
             return
         }
+        console.log(index);
         obj.list[i].status = !obj.list[i].status
-
-        obj.title === "项目类型" ? 
-            set(setProjectType, obj, index)
-            :
-            set(setSkills, obj, index)
+        skills.list[i] = obj.list[i]
+        setSkills({...skills})
+        set(setSkills, obj, index)
     }
 
     const limiter = (arr,i) => {
@@ -222,6 +253,7 @@ export default function Publish() {
 
     const onchange = (e) => {
         inner[5].value = e;
+        inner[5].style = false
         setInner([...inner]);
     }
     

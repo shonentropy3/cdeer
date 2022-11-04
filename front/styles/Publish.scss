@@ -54,6 +54,7 @@
             .ant-input{
                 font-size: 18px;
                 color: #1F1E2E;
+                border-color: #979797;
             }
             &:nth-child(2){
                 margin-bottom: 10px;
@@ -67,6 +68,12 @@
             }
             &:nth-child(4),&:nth-child(5){
                 margin-bottom: calc(58px - 17px);
+            }
+            &:nth-child(5){
+                .inner{
+                    border-color: #979797;
+                }
+                
             }
             &:nth-child(6){
                 .ant-select-arrow{
@@ -85,6 +92,9 @@
                 .ant-input-number-input-wrap{
                     width: 279px;
                     height: 53px;
+                    .ant-input-number{
+                        
+                    }
                 }
                 .inner{
                     width: 279px;
@@ -168,10 +178,27 @@
                 width: 900px;
                 height: 45px;
                 border-radius: 10px;
+                box-shadow: none;
                 input{
                     height: 53px;
                     font-size: 18px;
                     color: #1F1E2E;
+                }
+            }
+
+            .err{
+                width: 900px;
+                height: 45px;
+                border-radius: 10px;
+                box-shadow: none;
+                border-color: red;
+                input{
+                    height: 53px;
+                    font-size: 18px;
+                    color: #1F1E2E;
+                }
+                .ant-select-selector{
+                    border-color: red !important;
                 }
             }
             
@@ -190,7 +217,7 @@
                     border-radius: 10px;
                     display: flex;
                     align-items: center;
-
+                    box-shadow: none;
                 }
                 .ant-select-arrow{
                     font-weight: 900;
