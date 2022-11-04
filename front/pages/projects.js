@@ -3,6 +3,7 @@ import { SearchOutlined, HistoryOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import { useDebounce } from 'ahooks'
 import { useRouter } from 'next/router'
+import { useAccount } from 'wagmi';
 import Computing_time from '../components/Computing_time';
 
 import { getDemand, getFilter, getSearch } from '../http/api/task';
@@ -11,6 +12,7 @@ import { deform_Skills } from '../utils/Deform'
 export default function Projects() {
 
     const _data = require('../data/data.json')
+    const { address } = useAccount()
     
     let [search,setSearch] = useState();
     const debounceSearch = useDebounce(search,{wait:500})
@@ -18,6 +20,7 @@ export default function Projects() {
 
     let [selectA,setSelectA] = useState(null); //  临时的
     let [tagsA,setTagsA] = useState([]);
+
 
     // 每页所显示的task
     let [pageProjects,setPageProjects] = useState([])
@@ -58,6 +61,11 @@ export default function Projects() {
     }
 
     const goProject = (id) => {
+        projects.map(e=>{
+            if(e.id === id && e.issuer === address) {
+                router.push({pathname:'/issuer/applylist',search:id})
+            }
+        })
         router.push({pathname:'/project',search: id})
     }
 
