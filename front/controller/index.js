@@ -6,17 +6,10 @@ import orderAddr from '../../deployments/dev/DeOrder.json'
 import stage from '../../deployments/abi/DeStage.json'
 import stageAddr from '../../deployments/dev/DeStage.json'
 import { useEffect, useState } from 'react';
+
 var Web3 = require('web3');
 var web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:8545");
 
-export function ContractAddress(name) {
-  if (name.length === 0) {
-    return ''
-  }else{
-    const _data = require(`../../deployments/${name}/DeTask.json`);
-    return _data.address
-  }
-}
 
 export function ConfigTask(functionName) { 
 
@@ -57,9 +50,8 @@ export function useContracts(functionName) {
 
   const useStageContractWrite = useContractWrite(ConfigStage(functionName))
 
-  const Config = ConfigOrder(functionName);
 
-  return { useTaskContractWrite, Config, useOrderContractWrite, useStageContractWrite }
+  return { useTaskContractWrite, useOrderContractWrite, useStageContractWrite }
 }
 
 export function useRead(functionName,args) {

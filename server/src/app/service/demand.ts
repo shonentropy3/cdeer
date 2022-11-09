@@ -200,6 +200,7 @@ export class MarketService {
     // 发布需求
     async createDemand(@Body() body: any){
         let bodyData = JSON.parse(body.proLabel);
+        // bodyData.payhas
         let sql = setDemand(bodyData)
         // 解析交易哈希
         return await this.taskInterval(bodyData.payhash)

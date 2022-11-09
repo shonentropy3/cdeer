@@ -1,9 +1,10 @@
 const { ethers } = require("hardhat");
 const hre = require("hardhat");
-const taskJson = require('../deployments/dev/DeTask.json');
-const orderJson = require('../deployments/dev/Order.json');
+const taskJson = require('../deployments/mumbai/DeTask.json');
+const orderJson = require('../deployments/mumbai/DeOrder.json');
 const { abi } = require('../deployments/abi/DeTask.json');
 const orderAbi = require('../deployments/abi/Order.json');
+const rpcProvider = new ethers.providers.JsonRpcProvider("https://matic-mumbai.chainstacklabs.com");
 
 let accounts = [];
 let owner;
@@ -15,29 +16,34 @@ async function main() {
     // console.log(owner,"owner")
     const task = new ethers.Contract(taskJson.address, abi, owner);
     
-    console.log(task.methods.tokenURI(1).encodeABI());
-    await task.connect(owner).setOrder(orderJson.address);
+    // console.log('rpcProvider ==>', rpcProvider);
+    // console.log(task.methods.tokenURI(1).encodeABI());
+    // await task.connect(owner).setOrder(orderJson.address);
+
+    console.log('开始解析');
+    const log = await rpcProvider.waitForTransaction('0xf137a6ff05c115fa607a4251eb6ad5d7063c076bf69415715207be5ac892b5e1')
+    console.log('log ==> ', log);
     // console.log(owner.address,'============>');
     // //创建需求
-    await task.connect(accounts[3]).createTask(
-      '0x5f2CC90663c2599c306984c43E7C93F7FD8E773e',
-      {
-        title: "test",
-        desc: "desc",
-        attachment: "",
-        currency: 1,  //  币种,x10000,保留四位小数,前端只展示两位小数
-        budget: 222,
-        period: 123213,
-        categories: 1,
-        skills: 1,  //  原role,职业为1,2,3...整数型
-      },
-      {
-          value: ethers.utils.parseEther("1"),
-      }).then(res => {
-        console.log(res);
-      }).catch(err => {
-        console.log('=====>>>>>>>>>>>',err);
-      })
+    // await task.connect(accounts[3]).createTask(
+    //   '0x5f2CC90663c2599c306984c43E7C93F7FD8E773e',
+    //   {
+    //     title: "test",
+    //     desc: "desc",
+    //     attachment: "",
+    //     currency: 1,  //  币种,x10000,保留四位小数,前端只展示两位小数
+    //     budget: 222,
+    //     period: 123213,
+    //     categories: 1,
+    //     skills: 1,  //  原role,职业为1,2,3...整数型
+    //   },
+    //   {
+    //       value: ethers.utils.parseEther("1"),
+    //   }).then(res => {
+    //     console.log(res);
+    //   }).catch(err => {
+    //     console.log('=====>>>>>>>>>>>',err);
+    //   })
 
 
     // // 订单模块

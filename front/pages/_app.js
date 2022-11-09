@@ -98,7 +98,6 @@ function MyApp({ Component, pageProps }) {
   //   emit.on('change_language', () => loadLocales( ChangeLanguage() )); // 监听语言改变事件
   //   loadLocales(); // 初始化语言
   // },[])
-
   return (
     // initDone &&
     <>
