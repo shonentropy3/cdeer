@@ -8,7 +8,7 @@ import Identicon, { IdenticonOptions } from "identicon.js";
 // import intl from 'react-intl-universal';
 // import { emit } from "../../locales/emit";
 // import { ChangeLanguage } from '../../utils/ChangeLanguage';
-import { useRouter } from 'next/router';
+import { useRouter, withRouter } from 'next/router';
 export default function Header(props) {
 
     // const { setLan, language } = props;
@@ -201,7 +201,8 @@ export default function Header(props) {
     },[switchNetwork])
 
     useEffect(() => {
-        selectConnector()
+        // router
+        // useRouter
     },[])
 
 

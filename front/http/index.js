@@ -1,11 +1,9 @@
 import axios from "axios";
 import serverConfig from "./config.js";
 // import qs from "qs";
-
-
 // 创建 axios 请求实例
 const serviceAxios = axios.create({
-  baseURL: serverConfig.baseURL, // 基础请求地址
+  baseURL: `http://${window.document.location.hostname}:3005/codemarket`, // 基础请求地址
   timeout: 10000 // 请求超时设置
 //   withCredentials: false, // 跨域请求是否需要携带 cookie
 });
