@@ -12,7 +12,7 @@ import { Nfts } from '../db/entity/Nfts';
 const { ethers } = require('ethers');
 // TODO:更改配置文件
 // const rpcProvider = new ethers.providers.JsonRpcProvider("https://goerli.infura.io/v3/d3fe47cdbf454c9584113d05a918694f");
-const rpcProvider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
+// const rpcProvider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
 // const USDR_ADDR = require('../../../deployments/dev/DeTask.json');
 // const rpcProvider = new ethers.providers.JsonRpcProvider("https://matic-mumbai.chainstacklabs.com");
 
@@ -33,15 +33,17 @@ export class TaskService {
 
     private readonly logger = new Logger(TaskService.name)
 
+    rpcProvider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER_URL);
+
     insertApplyFor = async () => {
         //获取未同步的信息
         // TODO: 完成方法分类 ==> 从穷举改为 方法名 判断
-
+        
         // 创建task任务
         let taskHash = await this.applyInfoRepository.query(getTaskHash());
-        
         for (let v of taskHash) {
-            const log = await rpcProvider.getTransactionReceipt(v.hash);
+            const log = await this.rpcProvider.getTransactionReceipt(v.hash);
+            
             const createTask = new ethers.utils.Interface(
                 ["event TaskCreated(uint256 indexed,address,tuple(string,string,string,uint8,uint112,uint32,uint48,bool))"]
             );
@@ -77,7 +79,7 @@ export class TaskService {
         // 创建订单以及修改订单
         let createOrderHash = await this.applyInfoRepository.query(getCreateOrderHash());
         for (const v of createOrderHash) {
-            const log = await rpcProvider.getTransactionReceipt(v.hash);
+            const log = await this.rpcProvider.getTransactionReceipt(v.hash);
             const createOrder = new ethers.utils.Interface([
                 "event OrderCreated(uint indexed taskId, uint indexed orderId,  address issuer, address worker, address token, uint amount)"
             ]);
@@ -111,7 +113,7 @@ export class TaskService {
         // 报名
         let applyForHash = await this.applyInfoRepository.query(getApplyForHash());
         for (const v of applyForHash) {
-            const log = await rpcProvider.getTransactionReceipt(v.hash);
+            const log = await this.rpcProvider.getTransactionReceipt(v.hash);
             const ApplyFor = new ethers.utils.Interface(["event ApplyFor(uint256 indexed taskId, address indexed taker, uint256 valuation)"]);
             let decodedData = ApplyFor.parseLog(log.logs[0]);
             const taskId = decodedData.args.taskId.toString();
@@ -144,7 +146,7 @@ export class TaskService {
         // 取消报名
         let cancelApplyHash = await this.applyInfoRepository.query(getCancelApplyHash()); 
         for (const v of cancelApplyHash) {
-            const log = await rpcProvider.getTransactionReceipt(v.hash);
+            const log = await this.rpcProvider.getTransactionReceipt(v.hash);
             const CancelApply = new ethers.utils.Interface(["event CancelApply(uint256 indexed taskId, address taker)"]);
             let decodedData = CancelApply.parseLog(log.logs[0]);
             const taskId = decodedData.args.taskId.toString();

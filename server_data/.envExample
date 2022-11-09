@@ -1,5 +1,5 @@
 MNEMONIC = "助记词"
-PROVIDER_URL = "http://127.0.0.1:8545"
+PROVIDER_URL = "https://matic-mumbai.chainstacklabs.com"
 
 LOGGER_LEVEL= "warn"
 

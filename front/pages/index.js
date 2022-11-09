@@ -5,7 +5,7 @@ import { Button } from 'antd';
 import Link from 'next/link'
 import intl from 'react-intl-universal';
 export default function Home() {
-
+  
   return (
     <div>
       <Head>

@@ -1,11 +1,18 @@
 import { useContractWrite, useSignTypedData, useContractReads, useContractRead, useNetwork } from 'wagmi';
-import task from '../../deployments/abi/DeTask.json'
-import taskAddr from '../../deployments/dev/DeTask.json'
-import order from '../../deployments/abi/DeOrder.json'
-import orderAddr from '../../deployments/dev/DeOrder.json'
-import stage from '../../deployments/abi/DeStage.json'
-import stageAddr from '../../deployments/dev/DeStage.json'
+// import task from '../../deployments/abi/DeTask.json'
+// import taskAddr from '../../deployments/dev/DeTask.json'
+// import order from '../../deployments/abi/DeOrder.json'
+// import orderAddr from '../../deployments/dev/DeOrder.json'
+// import stage from '../../deployments/abi/DeStage.json'
+// import stageAddr from '../../deployments/dev/DeStage.json'
 import { useEffect, useState } from 'react';
+
+const task = require(`../../deployments/abi/DeTask.json`);
+const taskAddr = require(`../../deployments/${process.env.NEXT_PUBLIC_ENV_CHAIN}/DeTask.json`);
+const order = require(`../../deployments/abi/DeOrder.json`);
+const orderAddr = require(`../../deployments/${process.env.NEXT_PUBLIC_ENV_CHAIN}/DeOrder.json`);
+const stage = require(`../../deployments/abi/DeStage.json`);
+const stageAddr = require(`../../deployments/${process.env.NEXT_PUBLIC_ENV_CHAIN}/DeStage.json`);
 
 var Web3 = require('web3');
 var web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:8545");

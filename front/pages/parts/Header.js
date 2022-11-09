@@ -194,7 +194,7 @@ export default function Header(props) {
 
     useEffect(() => {
         if (switchNetwork) {
-            // switchNetwork(chain.id)
+            switchNetwork(Number(process.env.NEXT_PUBLIC_ENV_CHAIN_ID))
             // console.log(chain);
             // TODO: 切换网络
         }
