@@ -203,6 +203,7 @@ export default function Header(props) {
     useEffect(() => {
         // router
         // useRouter
+        selectConnector()
     },[])
 
 
