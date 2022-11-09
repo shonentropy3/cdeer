@@ -13,7 +13,7 @@ export class OrderController {
     async createOrder(@Body() body: any){
         return await this.orderService.createOrder(body)
         .then(res => {
-            this.resolutionService.TransHashes()
+            // this.resolutionService.TransHashes()
             return res
         })
     }

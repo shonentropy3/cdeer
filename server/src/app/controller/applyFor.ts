@@ -24,7 +24,7 @@ export class ApplyforController {
     async cancelApply(@Body() body: any){
         return await this.applyforService.cancel(body)
         .then(res => {
-            this.resolutionService.TransHashes()
+            // this.resolutionService.TransHashes()
             return res
         })
     }
