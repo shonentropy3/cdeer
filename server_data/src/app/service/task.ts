@@ -43,6 +43,8 @@ export class TaskService {
         let taskHash = await this.applyInfoRepository.query(getTaskHash());
         for (let v of taskHash) {
             const log = await this.rpcProvider.getTransactionReceipt(v.hash);
+            console.log(v.hash);
+            console.log(log);
             
             const createTask = new ethers.utils.Interface(
                 ["event TaskCreated(uint256 indexed,address,tuple(string,string,string,uint8,uint112,uint32,uint48,bool))"]
@@ -50,6 +52,7 @@ export class TaskService {
             if (!log) {
                 return
             }
+            
             let decodedData = createTask.parseLog(log.logs[2]);
             const taskId = decodedData.args[0].toString();
             const _data = decodedData.args[2];
