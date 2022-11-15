@@ -10,7 +10,7 @@ import { Tasks } from '../db/entity/Tasks';
 const fs  = require('fs');
 var upyun = require("upyun")
 const ipfsAPI = require('ipfs-api');
-const ipfs = ipfsAPI({host: 'localhost', port: '5001', protocol: 'http'});
+const ipfs = ipfsAPI({host: '127.0.0.1', port: '5001', protocol: 'http'});
 const service = new upyun.Service('ipfs0','upchain', 'upchain123')
 const client = new upyun.Client(service);
 
@@ -31,9 +31,11 @@ export class CommonService {
 
     // Get hash
     getFile(files: any) {
+        console.log(1);
         if (files.length === 0 ) {
             return false
         }
+        
         return new Promise((resolve, reject) => {
             const file = files[0]
             let time = `${Date.now()}-${file.originalname}`
@@ -167,6 +169,8 @@ export class CommonService {
     }
 
     async getStagesJson(body: any){
+        console.log(3);
+        
       return new Promise(async(resolve, reject) => {
         await this.tasksRepository.query(getStageJson(body.oid))
         .then(res => {

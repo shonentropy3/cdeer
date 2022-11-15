@@ -215,7 +215,7 @@ export default function Order(props) {
             params: [query.oid]
         })
         
-
+        console.log(1);
         let params = muticallEncode(arr);
         multicallWrite(params,address,value)
         .then(res => {

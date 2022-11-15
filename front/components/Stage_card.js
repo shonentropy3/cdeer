@@ -35,9 +35,9 @@ export default function Stage_card(params) {
         stage.budget = Math.floor( (amount / Math.pow(10,18)) * e.value );
         stage.percent = e.title;
         
-        if (method) {
-            method()
-        }
+        // if (method) {
+        //     method()
+        // }
     }
 
     const changeBudget = e => {
@@ -46,17 +46,17 @@ export default function Stage_card(params) {
         selectPercent = '';
         setSelectPercent(selectPercent);
 
-        if (method) {
-            method()
-        }
+        // if (method) {
+        //     method()
+        // }
     }
 
     const onchange = (name,value) => {
         stage[name] = value;
 
-        if (method) {
-            method()
-        }
+        // if (method) {
+        //     method()
+        // }
     }
 
     useEffect(() => {
