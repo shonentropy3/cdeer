@@ -19,8 +19,7 @@ export class ApplyforService {
 
 
     async apply(@Body() body: any) {
-        let bodyData = JSON.parse(body.proLabel)
-
+        let bodyData = JSON.parse(body.proLabel)       
         await this.applyInterval(bodyData.hash)
         .then(async(res: any) => {
             console.log('res ==>',res);
@@ -34,8 +33,8 @@ export class ApplyforService {
                 }
             }else{
                 // 解析失败 ==> insert tables.trans_hashes
+                await this.applyInfoRepository.query(setApplylist(bodyData))
                 await this.applyInfoRepository.query(setApply(bodyData))
-
                 return {
                     code: 'SUCCESS'
                 }
@@ -188,7 +187,6 @@ export class ApplyforService {
             let sql = updateApplyInfo(params)
             // 写入数据库
             let sqlBefore = await this.applyInfoRepository.query(sql.sqlBefore);
-            
             let sqlUpdateAI,insertAI;
             if (sqlBefore.length > 0) {
                 sqlUpdateAI = await this.applyInfoRepository.query(sql.sqlUpdateAI);
