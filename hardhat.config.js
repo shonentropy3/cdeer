@@ -1,12 +1,14 @@
 require("@nomiclabs/hardhat-waffle");
 // npx hardhat size-contracts
 // require('hardhat-contract-sizer');
+require("@nomiclabs/hardhat-etherscan");
 
 let dotenv = require('dotenv')
 dotenv.config({ path: "./.env" })
 
 const mnemonic = process.env.MNEMONIC
 const infurakey = process.env.INFURA_API_KEY
+const scankey = process.env.ETHERSCAN_API_KEY
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -72,5 +74,11 @@ module.exports = {
       },
       chainId: 97,
     }
-  }
+  },
+
+  etherscan: {
+    // Your API key for Etherscan
+    // Obtain one at https://etherscan.io/
+    apiKey: scankey
+},
 };
