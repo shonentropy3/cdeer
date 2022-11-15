@@ -103,7 +103,8 @@ export default function Applylist() {
                     // console.log(deData);
                 }
             })
-            setDemandData({...deData})
+            demandData = deData;
+            setDemandData({...demandData})
         })
     }
 
@@ -398,7 +399,7 @@ export default function Applylist() {
     },[demandData.applyNum])
 
     useEffect(() => {
-        taskId = location.search.slice('?')[1];
+        taskId = location.search.split('?')[1];
         setTaskId(taskId);
     },[])
 
