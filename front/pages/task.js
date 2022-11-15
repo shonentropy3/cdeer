@@ -77,7 +77,6 @@ export default function Task() {
     const getApply = () => {
         getApplyData({hash: `'${address}'`})
         .then(res => {
-            console.log(res);
             let arr = [];
             res.map(e => {
                 e.role = deform_Skills(e.role);
@@ -339,7 +338,7 @@ export default function Task() {
                 {panel()}
             </div>
             <Modal 
-                open={isModal}
+                open={isModal} 
                 onCancel={() => {setIsModal(false)}}
                 footer={null}              
             >

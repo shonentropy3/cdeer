@@ -36,9 +36,11 @@ import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { useEffect, useState } from 'react'
 import { emit } from '../locales/emit'
 
+ 
 
-const {chains, provider} = configureChains([chain.mainnet,chain.goerli,chain.hardhat],[
-  infuraProvider({ apiKey: 'd3fe47cdbf454c9584113d05a918694f' }),
+const {chains, provider} = configureChains([chain.mainnet,chain.goerli,chain.hardhat,chain.polygonMumbai],
+  [
+  // infuraProvider({ apiKey: 'd3fe47cdbf454c9584113d05a918694f' }),
   jsonRpcProvider({
     rpc: (chain) => ({ http: chain.rpcUrls.default }),
   }),
