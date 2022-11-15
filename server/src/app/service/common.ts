@@ -31,7 +31,6 @@ export class CommonService {
 
     // Get hash
     getFile(files: any) {
-        console.log(1);
         if (files.length === 0 ) {
             return false
         }

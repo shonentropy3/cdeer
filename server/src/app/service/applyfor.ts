@@ -33,6 +33,8 @@ export class ApplyforService {
                 }
             }else{
                 // 解析失败 ==> insert tables.trans_hashes
+                console.log(1);
+                
                 await this.applyInfoRepository.query(setApplylist(bodyData))
                 await this.applyInfoRepository.query(setApply(bodyData))
                 return {

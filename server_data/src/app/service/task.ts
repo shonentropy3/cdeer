@@ -43,9 +43,6 @@ export class TaskService {
         let taskHash = await this.applyInfoRepository.query(getTaskHash());
         for (let v of taskHash) {
             const log = await this.rpcProvider.getTransactionReceipt(v.hash);
-            console.log(v.hash);
-            console.log(log);
-            
             const createTask = new ethers.utils.Interface(
                 ["event TaskCreated(uint256 indexed,address,tuple(string,string,string,uint8,uint112,uint32,uint48,bool))"]
             );
@@ -109,7 +106,9 @@ export class TaskService {
                 }
                 this.logger.debug('createOrders');
             } catch (error) {
-                console.log(error);
+                console.log(6);
+                console.log("error=====",error);
+                
             }
         }
 
@@ -187,7 +186,7 @@ export class TaskService {
     //     this.nftsRepository.query(getCacheNfts(min10))
     // }
 
-    @Interval(2000)  //每隔5秒执行一次
+    @Interval(3000)  //每隔5秒执行一次
     handleInterval() {
         this.insertApplyFor()
     }
