@@ -168,7 +168,7 @@ export class CommonService {
     }
 
     async getStagesJson(body: any){
-        console.log(3);
+
         
       return new Promise(async(resolve, reject) => {
         await this.tasksRepository.query(getStageJson(body.oid))

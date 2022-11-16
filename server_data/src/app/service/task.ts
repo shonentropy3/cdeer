@@ -4,7 +4,7 @@ import { Tasks } from 'src/app/db/entity/Tasks';
 import { BlockLogs } from 'src/app/db/entity/BlockLogs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { getLastBlock,getModifyDemandLastBlock, getTaskHash, createTaskSql,createOrderSql, getApplyForHash, getCancelApplyHash, getCreateOrderHash, getCacheNfts} from 'src/app/db/sql/sql';
+import { getLastBlock,getModifyDemandLastBlock, getTaskHash, createTaskSql,createOrderSql, getApplyForHash, getCancelApplyHash, getCreateOrderHash, getWaitHash, getCacheNfts} from 'src/app/db/sql/sql';
 import { updateProject, updateApplyInfo, cancelApply } from 'src/app/db/sql/sql';
 import { updateBlock } from 'src/app/db/sql/sql';
 import { ApplyInfo } from '../db/entity/ApplyInfo';
@@ -35,14 +35,63 @@ export class TaskService {
 
     rpcProvider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER_URL);
 
+    taskFlag = false;
+    orderFlag = false;
+    applyFlag = false;
+    cancelApplyFlag = false;
+ 
     insertApplyFor = async () => {
         //获取未同步的信息
         // TODO: 完成方法分类 ==> 从穷举改为 方法名 判断
         
+
+        
+
+        // 报名
+        let applyForHash = await this.applyInfoRepository.query(getApplyForHash());
+        for (const v of applyForHash) {
+            this.applyFlag = true;
+
+            const log = await this.rpcProvider.waitForTransaction(v.hash,1,10000);
+            const ApplyFor = new ethers.utils.Interface(["event ApplyFor(uint256 indexed taskId, address indexed taker, uint256 valuation)"]);
+            let decodedData = ApplyFor.parseLog(log.logs[0]);
+            const taskId = decodedData.args.taskId.toString();
+            const taker = decodedData.args.taker;
+            const valuation = decodedData.args.valuation.toString();
+            let params = {
+                taskId: taskId,
+                applyAddr: taker,
+                valuation: valuation,
+                hash: v.hash
+            }
+            let sql = updateApplyInfo(params)
+        try {
+            let sqlBefore = await this.applyInfoRepository.query(sql.sqlBefore);
+            let sqlUpdateAI,insertAI;
+            if (sqlBefore.length > 0) {
+                sqlUpdateAI = await this.applyInfoRepository.query(sql.sqlUpdateAI);
+            } else {
+                insertAI = await this.applyInfoRepository.query(sql.insert);
+            }
+            if (-1 != sqlUpdateAI[1] || -1 != insertAI[1]) {
+                await this.applyInfoRepository.query(sql.sqlUpdateTH);
+                this.applyFlag = false;
+            }
+            this.logger.debug('insertApplyFor');
+        } catch (error) {
+            console.log(error);
+        }
+        }
+        // 未同步连上数据
+    }
+
+    insertCreatTask = async () => {
         // 创建task任务
         let taskHash = await this.applyInfoRepository.query(getTaskHash());
         for (let v of taskHash) {
-            const log = await this.rpcProvider.getTransactionReceipt(v.hash);
+            this.taskFlag = true;
+
+            const log = await this.rpcProvider.waitForTransaction(v.hash,1,10000);
             const createTask = new ethers.utils.Interface(
                 ["event TaskCreated(uint256 indexed,address,tuple(string,string,string,uint8,uint112,uint32,uint48,bool))"]
             );
@@ -69,17 +118,24 @@ export class TaskService {
                 
                 if (-1 != sqlResult[1]) {
                     await this.applyInfoRepository.query(sql.sqlUpdateTH);
+                    this.taskFlag = false;
                 }
                 this.logger.debug('createTasks');
             } catch (error) {
                 console.log(error);
             }
         }
+    }
 
+    insertCreateOrder = async () => {
         // 创建订单以及修改订单
         let createOrderHash = await this.applyInfoRepository.query(getCreateOrderHash());
         for (const v of createOrderHash) {
-            const log = await this.rpcProvider.getTransactionReceipt(v.hash);
+            this.orderFlag = true;
+
+            const log = await this.rpcProvider.waitForTransaction(v.hash,1.10000);
+            console.log("order");
+            
             const createOrder = new ethers.utils.Interface([
                 "event OrderCreated(uint indexed taskId, uint indexed orderId,  address issuer, address worker, address token, uint amount)"
             ]);
@@ -103,52 +159,23 @@ export class TaskService {
                 let sqlResult = await this.applyInfoRepository.query(sql.sql);
                 if (-1 != sqlResult[1]) {
                     await this.applyInfoRepository.query(sql.sqlUpdateTH);
+                    this.orderFlag = false;
                 }
                 this.logger.debug('createOrders');
             } catch (error) {
-                console.log(6);
                 console.log("error=====",error);
                 
             }
         }
+    }
 
-        // 报名
-        let applyForHash = await this.applyInfoRepository.query(getApplyForHash());
-        for (const v of applyForHash) {
-            const log = await this.rpcProvider.getTransactionReceipt(v.hash);
-            const ApplyFor = new ethers.utils.Interface(["event ApplyFor(uint256 indexed taskId, address indexed taker, uint256 valuation)"]);
-            let decodedData = ApplyFor.parseLog(log.logs[0]);
-            const taskId = decodedData.args.taskId.toString();
-            const taker = decodedData.args.taker;
-            const valuation = decodedData.args.valuation.toString();
-            let params = {
-                taskId: taskId,
-                applyAddr: taker,
-                valuation: valuation,
-                hash: v.hash
-            }
-            let sql = updateApplyInfo(params)
-        try {
-            let sqlBefore = await this.applyInfoRepository.query(sql.sqlBefore);
-            let sqlUpdateAI,insertAI;
-            if (sqlBefore.length > 0) {
-                sqlUpdateAI = await this.applyInfoRepository.query(sql.sqlUpdateAI);
-            } else {
-                insertAI = await this.applyInfoRepository.query(sql.insert);
-            }
-            if (-1 != sqlUpdateAI[1] || -1 != insertAI[1]) {
-                await this.applyInfoRepository.query(sql.sqlUpdateTH);
-            }
-            this.logger.debug('insertApplyFor');
-        } catch (error) {
-            console.log(error);
-        }
-        }
-
+    insertCancelApply = async () => {
         // 取消报名
         let cancelApplyHash = await this.applyInfoRepository.query(getCancelApplyHash()); 
         for (const v of cancelApplyHash) {
-            const log = await this.rpcProvider.getTransactionReceipt(v.hash);
+            this.cancelApplyFlag = true;
+
+            const log = await this.rpcProvider.waitForTransaction(v.hash);
             const CancelApply = new ethers.utils.Interface(["event CancelApply(uint256 indexed taskId, address taker)"]);
             let decodedData = CancelApply.parseLog(log.logs[0]);
             const taskId = decodedData.args.taskId.toString();
@@ -159,27 +186,23 @@ export class TaskService {
                 hash: v.hash
             }
             let sql = cancelApply(params)
-        try {
-            let sqlBefore = await this.applyInfoRepository.query(sql.sqlBefore);
-            let sqlDeletAI;
-            if (sqlBefore.length > 0) {
-                sqlDeletAI = await this.applyInfoRepository.query(sql.sqlDeletAI);
-                if (-1 != sqlDeletAI[1]) {
-                await this.applyInfoRepository.query(sql.sqlUpdateTH);
+            try {
+                let sqlBefore = await this.applyInfoRepository.query(sql.sqlBefore);
+                let sqlDeletAI;
+                if (sqlBefore.length > 0) {
+                    sqlDeletAI = await this.applyInfoRepository.query(sql.sqlDeletAI);
+                    if (-1 != sqlDeletAI[1]) {
+                    await this.applyInfoRepository.query(sql.sqlUpdateTH);
+                    this.cancelApplyFlag = false;
+                }
+                } 
+
+                this.logger.debug('insertApplyFor');
+            } catch (error) {
+                console.log(error);
             }
-            } 
-
-            this.logger.debug('insertApplyFor');
-        } catch (error) {
-            console.log(error);
         }
-        }
-
-        // 未同步连上数据
-        
-
-
-}
+    }
 
     // clearNftCache = async () => {
     //     const min10 = Date.now()-600000;
@@ -187,8 +210,40 @@ export class TaskService {
     // }
 
     @Interval(3000)  //每隔5秒执行一次
-    handleInterval() {
-        this.insertApplyFor()
+    async handleInterval() {
+        let waitHash = await this.applyInfoRepository.query(getWaitHash())
+        if ( waitHash.length > 0 ) {
+            console.log(false);
+            
+            for (const item of waitHash) {
+                switch (item.category) {
+                    case 1: 
+                        if (!this.taskFlag) {
+                            this.insertCreatTask(); 
+                        }
+                        break;
+                    case 3: 
+                        if (!this.applyFlag) {
+                            this.insertApplyFor(); 
+                        }
+                        break;
+                    case 6: 
+                        if (!this.orderFlag) {
+                            this.insertCreateOrder(); 
+                        }
+                        break;
+                    default: break
+                }
+            }
+        }else{
+        }
+        // if ( !this.taskFlag && !this.orderFlag && !this.applyFlag && !this.cancelApplyFlag ) {
+        //     console.log(false);
+        //     this.insertApplyFor()
+        // }else{
+        //     console.log(true);
+            
+        // }
     }
 
     // @Timeout(1000)

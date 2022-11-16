@@ -133,6 +133,11 @@ export const getCancelApplyHash = () => {
     return sql
 }
 
+export const getWaitHash = () => {
+    let sql = `SELECT * FROM trans_hashes WHERE is_update = 0;`
+    return sql
+}
+
 export const cancelApply = (params) => {
     let sqlBefore = `
         select * from apply_info where apply_addr = '${params.taker}' and task_id = '${params.taskId}'

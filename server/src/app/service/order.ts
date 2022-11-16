@@ -29,16 +29,15 @@ export class OrderService {
         
         return await this.orderInterval(body.hash)
         .then(async (res)=>{
-            
             if (res.code === "SUCCESS") {
                 return {
-                    code: "SUCCESS"
+                    code: 200
                 }
             }else{
-                await this.ordersRepository.query(setOrder(body))
+                return await this.ordersRepository.query(setOrder(body))
                 .then((res)=>{
                     return {
-                        code: "SUCCESS"
+                        code: 200
                     }
                 })
             }
@@ -50,14 +49,12 @@ export class OrderService {
     async orderInterval(hash:any) {
         const rpcProvider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER_URL)
         return await new Promise ((resolve,reject)=>{
-            console.log(2);
             rpcProvider.waitForTransaction(hash,1,4000)
             .then((res:any)=>{resolve(res)})
             .catch((err:any)=>{reject(err)})
             
         })
         .then(async (res:any)=>{
-            console.log(3);
             
             const createOrder = new ethers.utils.Interface([
                 "event OrderCreated(uint indexed taskId, uint indexed orderId,  address issuer, address worker, address token, uint amount)"
@@ -76,8 +73,6 @@ export class OrderService {
                 issuer: issuer,
                 amount: amount
             }
-            console.log(params);
-            
             let sql = createOrderSql(params)
             await this.ordersRepository.query(sql.sql)
             return {
@@ -86,7 +81,6 @@ export class OrderService {
             }
         })
         .catch(err => {
-            console.log(3);
 
             return {
                 code: "Error"
