@@ -1,4 +1,4 @@
-export const getDate = (params, type) => {
+export default function getDate  (params, type)  {
     var date = new Date(params);
     let Y = date.getFullYear() + '-';
     let M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';

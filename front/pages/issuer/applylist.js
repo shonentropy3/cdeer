@@ -142,8 +142,6 @@ export default function Applylist() {
     }
 
     const invitation = () => {
-        console.log(Number(taskId),address,worker,ethers.constants.AddressZero,ethers.utils.parseEther(`${amount}`));
-        console.log(Config);
         useOrderContractWrite.write({
             recklesslySetUnpreparedArgs: [
                 Number(taskId),

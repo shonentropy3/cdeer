@@ -7,7 +7,6 @@ import Stage_info from "../components/Stage_info";
 import { ethers } from "ethers";
 import { useAccount, useNetwork } from 'wagmi'
 import { getOrdersInfo, getStagesHash, getStagesJson } from "../http/api/order";
-import { getDate } from "../utils/getDate";
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 import { deform_Skills } from '../utils/Deform';

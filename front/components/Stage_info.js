@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useAccount, useNetwork } from 'wagmi'
 import { multicallWrite, muticallEncode, useContracts, useRead, useSignAppendData } from "../controller";
 import { getProlongStage, updateSignature } from "../http/api/order";
-import { getDate } from "../utils/getDate";
+import getDate from "../utils/GetDate";
 
 
 import Stage_card from "./Stage_card";
