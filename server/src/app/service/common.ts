@@ -10,7 +10,7 @@ import { Tasks } from '../db/entity/Tasks';
 const fs  = require('fs');
 var upyun = require("upyun")
 const ipfsAPI = require('ipfs-api');
-const ipfs = ipfsAPI({host: 'localhost', port: '5001', protocol: 'http'});
+const ipfs = ipfsAPI({host: '47.242.152.213', port: '3022', protocol: 'http'});
 const service = new upyun.Service('ipfs0','upchain', 'upchain123')
 const client = new upyun.Client(service);
 
