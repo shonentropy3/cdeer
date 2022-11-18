@@ -26,7 +26,8 @@ export default function Stage_info(props) {
         permitNonce, 
         isSignObj,
         ModifyStatus,
-        setIsTipShow 
+        setIsTipShow ,
+        overflow
     } = props;   //  StagesData 数据库阶段
     let [advance,setAdvance] = useState(false);
     let [stage0,setStage0] = useState();

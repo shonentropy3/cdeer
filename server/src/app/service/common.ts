@@ -3,17 +3,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { AxiosError } from 'axios';
 import { createWriteStream } from 'fs';
 import { join } from 'path/posix';
-import { throwError } from 'rxjs';
+import { lastValueFrom, map, tap, throwError } from 'rxjs';
 import { Repository } from 'typeorm';
+import { HttpService } from '@nestjs/axios';
 import { Tasks } from '../db/entity/Tasks';
-
+var http = require('http');
 const fs  = require('fs');
 var upyun = require("upyun")
 const ipfsAPI = require('ipfs-api');
-const ipfs = ipfsAPI({host: '47.242.152.213', port: '3022', protocol: 'http'});
+// const ipfs = ipfsAPI({host: '47.242.152.213', port: '3022', protocol: 'http'});
+const ipfs = ipfsAPI({host: '127.0.0.1', port: '5001', protocol: 'http'});
 const service = new upyun.Service('ipfs0','upchain', 'upchain123')
 const client = new upyun.Client(service);
-
 
 // var fs = require("fs");
 var path = require("path");
@@ -27,6 +28,7 @@ export class CommonService {
     constructor(
         @InjectRepository(Tasks)
         private readonly tasksRepository: Repository<Tasks>,
+        private readonly httpService: HttpService
     ) {}
 
     // Get hash
@@ -105,45 +107,68 @@ export class CommonService {
 
     // Get stage hash
     getStage(body: any){
-        return new Promise((resolve, reject) => {
+        return new Promise(async(resolve, reject) => {
         let time = Date.now()+'.json'
         let path = './cache_area'+'/'+time
-        fs.writeFile(path, body.obj, function (err) {
-            if (err) {
-                console.error(err);
-            }else{
-                let res = 'cache_area/'+ time
-                    
-                    ipfs.add(fs.readFileSync(res), function (err, files) {
+        const http = this.httpService
+        // const result = this.httpService.post(`http://47.242.152.213:3022/v1/upload/json`,{"a":"1"})
+        // console.log(result);
+        try {
+            await lastValueFrom(
+                http.post('http://47.242.152.213:3022/v1/upload/json', {body: body}).pipe(
+                  map(resp => {
+                    console.log(resp.data)
+                    let obj = {
+                        hash: resp.data.hash,
+                    }
+                    resolve(obj)
+                })
+                )
+              );
+          } catch (error) {
+            console.log(error);
+          }
+        return
+        // return
+        // fs.writeFile(path, body.obj, async function (err) {
+        //     if (err) {
+        //         console.error(err);
+        //     }else{
+        //         let res = 'cache_area/'+ time;
+        //         let from = new FormData();
+        //         from.append("file",res)
+        //         console.log(body);
+        //         return
+                //     ipfs.add(fs.readFileSync(res), function (err, files) {
                         
-                        if (err || typeof files == "undefined") {
-                            console.log('Ipfs writeStream err==>', err);
-                        } else {
-                            let obj = {
-                                hash: files[0].hash,
-                                path: res
-                            }
-                            // 上传upyun
-                            client.putFile(obj.hash, fs.readFileSync(res))
-                            .then(res => {
-                                console.log(res);
+                //         if (err || typeof files == "undefined") {
+                //             console.log('Ipfs writeStream err==>', err);
+                //         } else {
+                //             let obj = {
+                //                 hash: files[0].hash,
+                //                 path: res
+                //             }
+                //             // 上传upyun
+                //             client.putFile(obj.hash, fs.readFileSync(res))
+                //             .then(res => {
+                //                 console.log(res);
                                 
-                                return true
-                            })
-                            .catch(err => {
-                                console.log(err);
+                //                 return true
+                //             })
+                //             .catch(err => {
+                //                 console.log(err);
                                 
-                                return false
-                            })
-                            fs.unlink(res, (err) => {
-                                if (err) throw err;
-                            });
-                            resolve(obj)
-                        }
-                    })
-            }
+                //                 return false
+                //             })
+                //             fs.unlink(res, (err) => {
+                //                 if (err) throw err;
+                //             });
+                //             resolve(obj)
+                //         }
+                //     })
+        //     }
             
-        })
+        // })
     }).then(async(res)=>{
         return await this.tasksRepository.query(updateStageJson({json: res, oid: body.oid, info: body.info, stages: body.stages}))
         .then(() => {

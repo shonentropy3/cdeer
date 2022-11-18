@@ -214,8 +214,8 @@ export default function Order(props) {
             params: [query.oid]
         })
         
-        console.log(1);
         let params = muticallEncode(arr);
+        console.log("params===",params);
         multicallWrite(params,address,value)
         .then(res => {
             message.success('项目开始')
@@ -312,13 +312,15 @@ export default function Order(props) {
                         setSignaddress(signaddress);
                     }
                     if (res.stages) {
-                        res.json.stages.map((e,i) => {
+                        let obj = JSON.parse(res.json.obj)
+                        let stages = JSON.parse(res.json.stages)
+                        Object.keys(obj.stages).map((e,i) => {
                             arr.push({
                                 budget: res.stages.amount[i],
                                 period: res.stages.period[i],
-                                content: e.milestone.content,
+                                content: obj.stages[i].milestone.content,
                                 percent: '',
-                                title: e.milestone.title
+                                title: obj.stages[i].milestone.title
                             })
                         })
                         stagesData = arr;
@@ -514,12 +516,11 @@ export default function Order(props) {
                         isSignObj={setSignObj}
                         ModifyStatus = {modifyStatus}
                         setIsTipShow={()=>setIsTipModal(!isTipModal)}
-
+                        overflow = {()=>overflow()}
                     />
                 <div className="worker-signInStage">
                 </div>
                 {/* <div className="worker-total">{total()}</div> */}
-                {btn()}
                 <div className="content-container">
             <p className='task-details'>Task Details</p>
             <div className='task-detail-list'>
