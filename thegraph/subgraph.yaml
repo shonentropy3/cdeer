@@ -3,54 +3,22 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum
-    name: Contract
+    name: DeTask
     network: mumbai
     source:
       address: "0xa049916c1C8a419fD4C364CC88984926006bD6a1"
-      abi: Contract
+      abi: DeTask
+      startBlock: 29175031
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
-        - ApplyFor
-        - Approval
-        - ApprovalForAll
-        - CancelApply
-        - Locked
-        - ModifyFee
-        - OwnershipTransferred
         - TaskCreated
-        - TaskDisabled
-        - TaskModified
-        - Transfer
-        - Unlocked
       abis:
-        - name: Contract
-          file: ./abis/Contract.json
+        - name: DeTask
+          file: ./abis/DeTask.json
       eventHandlers:
-        - event: ApplyFor(indexed uint256,indexed address,uint256)
-          handler: handleApplyFor
-        - event: Approval(indexed address,indexed address,indexed uint256)
-          handler: handleApproval
-        - event: ApprovalForAll(indexed address,indexed address,bool)
-          handler: handleApprovalForAll
-        - event: CancelApply(indexed uint256,address)
-          handler: handleCancelApply
-        - event: Locked(uint256)
-          handler: handleLocked
-        - event: ModifyFee(uint256,uint256,address)
-          handler: handleModifyFee
-        - event: OwnershipTransferred(indexed address,indexed address)
-          handler: handleOwnershipTransferred
         - event: TaskCreated(indexed uint256,address,(string,string,string,uint8,uint112,uint32,uint48,bool))
           handler: handleTaskCreated
-        - event: TaskDisabled(indexed uint256,bool)
-          handler: handleTaskDisabled
-        - event: TaskModified(indexed uint256,address,(string,string,string,uint8,uint112,uint32,uint48,bool))
-          handler: handleTaskModified
-        - event: Transfer(indexed address,indexed address,indexed uint256)
-          handler: handleTransfer
-        - event: Unlocked(uint256)
-          handler: handleUnlocked
-      file: ./src/contract.ts
+      file: ./src/DeTask.ts
