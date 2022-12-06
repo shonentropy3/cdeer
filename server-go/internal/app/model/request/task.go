@@ -7,4 +7,5 @@ import (
 type GetSearchListRequest struct {
 	model.Tasks
 	PageInfo
+	Role uint16 `gorm:"column:role" json:"role" form:"role"`
 }

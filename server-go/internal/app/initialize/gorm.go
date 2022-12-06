@@ -23,6 +23,8 @@ func RegisterTables(db *gorm.DB) {
 		model.Users{},
 		model.TransHashes{},
 		model.Tasks{},
+		model.TaskRole{},
+		model.TaskRoleRelate{},
 	)
 	if err != nil {
 		global.LOG.Error("register table failed", zap.Error(err))

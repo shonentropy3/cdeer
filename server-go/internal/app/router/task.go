@@ -8,6 +8,6 @@ import (
 func InitTaskRouter(Router *gin.RouterGroup) {
 	taskRouter := Router.Group("task")
 	{
-		taskRouter.GET("getSearchList", api.GetSearchList) // 查找项目
+		taskRouter.GET("getSearchList", api.GetTaskList) // 获取项目列表
 	}
 }
