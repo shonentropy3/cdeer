@@ -108,6 +108,7 @@ function MyApp({ Component, pageProps }) {
 
   useEffect(() => {
     zoom(detectZoom());
+
   },[])
 
   return (

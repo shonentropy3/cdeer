@@ -8,6 +8,10 @@ import Computing_time from '../components/Computing_time';
 
 import { getDemand, getFilter, getSearch } from '../http/api/task';
 import { deform_Skills } from '../utils/Deform'
+import { searchTask } from '../http/_api/public';
+
+
+
 
 export default function Projects() {
 
@@ -129,27 +133,19 @@ export default function Projects() {
         init()
     },[])
     
-    // useEffect(()=>{
-    //     pageChange()
-    // },[projects])
+    const getTask = (obj) => {
+        searchTask({
+            role: obj.role || '',
+            tilte: obj.title || ''
+        })
+        .then(res => {
+            console.log(res);
+        })
+    }
 
     useEffect(() => {
-        screenTask()
-    },[selectA])
-
-
-    useEffect(() => {
-        if (selectA) {
-            screenTask()
-        }else{
-            getProjects()
-        }
-    },[pageNum])
-
-    useEffect(()=>{
-        console.log(search);
-        getScreen()
-    },[debounceSearch])
+        getTask()
+    },[])
 
     return <div className="Projects">
         <div className='banner'>
