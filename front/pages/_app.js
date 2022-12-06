@@ -35,6 +35,7 @@ import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { useEffect, useState } from 'react'
 import { emit } from '../locales/emit'
+import Footer from './parts/Footer'
 
 
 const {chains, provider} = configureChains([chain.mainnet,chain.goerli,chain.hardhat],[
@@ -105,6 +106,7 @@ function MyApp({ Component, pageProps }) {
         {/* <Header setLan={change} language={language} ></Header> */}
         <Header></Header>
         <Component {...pageProps} />
+        <Footer />
       </WagmiConfig>
     </>
   )

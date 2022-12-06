@@ -94,6 +94,58 @@
     }
 }
 
+.Footer{
+    width: 100%;   
+    height: 134px;
+    background-color: #1F1E2E;
+    display: flex;
+    align-items: center;
+    .content{
+        width: 1066px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        color: white;
+
+        div{
+            display: flex;
+            align-items: center;
+        }
+        .logo{
+            width: 46px;
+            height: 50px;
+            background-color: yellowgreen;
+        }
+        p{
+            margin-left: 20px;
+        }
+        .list{
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            align-items: center;
+
+            .list-item{
+                margin-right: 50px;
+                height: 20px;
+                font-size: 14px;
+                font-family: PingFangSC-Regular, PingFang SC;
+                letter-spacing: 0.78px;
+                background-color: white;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                &:hover{
+                    background-image: linear-gradient(90deg, #C91D3B 0%, #FEE7B9 100%);
+                }
+                &:last-child{
+                    margin-right: 0;
+                }
+            }
+        }
+    }
+}
+
 .connect{
     .ant-modal-content{
         width: 379px;

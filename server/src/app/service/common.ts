@@ -277,6 +277,9 @@ export class CommonService {
     }
 
     async getProlongStage(body: any){
+        let arr = [1,2,3];
+        arr.push(5)
+        arr.push(19)
         return await this.tasksRepository.query(getSigner(body.oid))
         .then(res => {
             return {
