@@ -9,15 +9,7 @@ import '../styles/All_User.scss'
 import '../styles/Components.scss'
 import '../iconfont/iconfont.css'
 import Header from './parts/Header'
-import intl from 'react-intl-universal';
-import { ChangeLanguage } from "../utils/ChangeLanguage";
-
-require('intl/locale-data/jsonp/en.js');
-require('intl/locale-data/jsonp/zh.js');
-const locales = {
-  'en_US': require('../locales/en-US.json'),
-  'zh_CN': require('../locales/zh-CN.json'),
-};
+import Footer from './parts/Footer'
 
 import {
   WagmiConfig,
@@ -33,9 +25,8 @@ import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
-import { useEffect, useState } from 'react'
-import { emit } from '../locales/emit'
-import Footer from './parts/Footer'
+import { detectZoom } from '../utils/DetectZoom.js';
+import { useEffect } from 'react'
 
 
 const {chains, provider} = configureChains([chain.mainnet,chain.goerli,chain.hardhat],[
@@ -75,30 +66,50 @@ const client = createClient({
 
 
 function MyApp({ Component, pageProps }) {
+  
+  const zoom = (m) => {
+    if (window.screen.width * window.devicePixelRatio >=3840) {
+      switch (m) {
+        // 4k ==> 100%
+        case 100:
+          document.body.style.zoom = 100 / (0.625 * 1920);
+          break;
+          // 4k ==> 125%
+        case 125:
+          document.body.style.zoom = 100 / (0.625 * 1920);
+          break;
+          // 4k ==> 150%
+        case 150:
+          document.body.style.zoom = 100 / (0.75 * 1920);
+          break;
+          // 4k ==> 175%
+        case 175:
+          document.body.style.zoom = 100 / (0.874715 * 1920);
+          break;
+          // 4k ==> 200%
+        case 200:
+          document.body.style.zoom = 1920 / 1920;
+          break;
+          // 4k ==> 225%
+        case 225:
+          document.body.style.zoom = 100 / (1.12485 * 1920);
+          break;
+      
+        default:
+          break;
+      }
+    }
+    else if (window.screen.width <= 1921) {
+      document.body.style.zoom = 1440 / 1920;
+      // console.log('笔记本');
+      // console.log(window.screen.width + "====" + window.devicePixelRatio);
+    }
+  }
 
-  // let [language,setLanguage] = useState('zh_CN')
-  // let [initDone,setInitDone] = useState(false)
+  useEffect(() => {
+    zoom(detectZoom());
+  },[])
 
-  // const loadLocales = () => {
-  //   intl.init({
-  //       currentLocale: ChangeLanguage(),  // 设置初始语言
-  //       locales
-  //   })
-  //   .then(() => {
-  //     initDone = true
-  //     setInitDone(initDone)
-  //   })
-  // }
-
-  // const change = (value) => {
-  //   language = value
-  //   setLanguage(language)
-  // }
-
-  // useEffect(() => {
-  //   emit.on('change_language', () => loadLocales( ChangeLanguage() )); // 监听语言改变事件
-  //   loadLocales(); // 初始化语言
-  // },[])
   return (
     // initDone &&
     <>
