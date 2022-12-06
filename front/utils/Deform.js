@@ -4,7 +4,7 @@ export const deform_Skills = (arr) => {
     let newArr = []
     arr.forEach(e => {
         _data.skills.forEach(ele => {
-            if (e === ele.value) {
+            if (e == ele.value) {
                 newArr.push(ele.name)
             }
         })

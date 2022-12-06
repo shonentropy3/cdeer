@@ -1,69 +1,31 @@
 import { Input, Empty, Button,Pagination, message } from 'antd';
 import { SearchOutlined, HistoryOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
-import { useDebounce } from 'ahooks'
+import { useRequest } from 'ahooks'
 import { useRouter } from 'next/router'
 import { useAccount } from 'wagmi';
 import Computing_time from '../components/Computing_time';
 
-import { getDemand, getFilter, getSearch } from '../http/api/task';
+// import { getDemand, getFilter, getSearch } from '../http/api/task';
 import { deform_Skills } from '../utils/Deform'
 import { searchTask } from '../http/_api/public';
 
-
-
-
 export default function Projects() {
 
-    const _data = require('../data/data.json')
     const { address } = useAccount()
-    
-    let [search,setSearch] = useState();
-    const debounceSearch = useDebounce(search,{wait:500})
-    let [projects,setProjects] = useState([]);
-
-    let [selectA,setSelectA] = useState(null); //  临时的
-    let [tagsA,setTagsA] = useState([]);
-
-
-    // 每页所显示的task
-    let [pageProjects,setPageProjects] = useState([])
-    // 当前页数
-    let [pageNum,setPageNum] = useState(1)
-    // 当前所获取的任务总数
-    let [taskLength,setTaskLength] = useState()
-    // 定时器开关
-    let [timer,setTimer] = useState(null)
-
-    // const tagsA = ['全部','后端','全栈','区块链','solidity','DeFi','NFT','Design','Smart Contract'] //  临时的
     const router = useRouter();
 
-    const getScreen = () => {
-        if(selectA) {
-            screenTask()
-        }else{
-            getProjects()
-        }
-    }
-
-    const getProjects = async () => {
-        await getDemand({page:pageNum,search:search})
-            .then(res => {
-                let data = res.data;
-                data.map(e => {
-                    e.role = deform_Skills(e.role);
-                })
-                projects = data;
-                taskLength = res.length
-                setProjects([...projects]);
-                setTaskLength(taskLength)
-            })
-            .catch(err => {
-                console.log(err);
-                message.error("获取任务列表失败")
-            })
-    }
-
+    const _data = require('../data/data.json')
+    const role = _data.skills;
+    
+    let [projects,setProjects] = useState([]);
+    let [selectRole,setSelectRole] = useState(null);
+    let [title,setTitle] = useState();
+    let [pageConfig,setPageConfig] = useState({
+        page: 1, pageSize: 10, total: 1
+    })
+    
+    // 跳转
     const goProject = (id) => {
         projects.map(e=>{
             if(e.id === id && e.issuer === address) {
@@ -73,79 +35,41 @@ export default function Projects() {
         router.push({pathname:'/project',search: id})
     }
 
-    const searchData = () => {
-        getSearch(search)
+    // 获取Tasklist
+    const getTask = () => {
+        searchTask({
+            ...pageConfig,
+            role: selectRole,
+            title: title
+        })
         .then(res => {
-            let data = res.data;
+            if (res.code === 0) {
+                let data = res.data.list
                 data.map(e => {
                     e.role = deform_Skills(e.role);
-                    // e.task_type = deform_ProjectTypes(e.task_type);
                 })
                 projects = data;
                 setProjects([...projects]);
-        })
-        .catch(err => {
-            console.log(err);
-        })
-    }
-
-    const init = () => {
-        tagsA = _data.skills;
-        setTagsA([...tagsA]);
-    }
-
-    // 分页
-    const pageChange = (value) => {
-        let page
-        if (!value) {
-            page = 1
-        }else{
-            page = value
-        }
-        pageNum = page
-        setPageNum(pageNum)
-    }
-
-    // 标签筛选
-    const screenTask = () => {
-        let obj = {
-            role: selectA,
-            page: pageNum,
-            search: search
-        }
-        obj = JSON.stringify(obj)
-        getFilter({obj: obj})
-        .then(res => {
-            let data = res.data;
-            data.map(e => {
-                e.role = deform_Skills(e.role);
-                // e.task_type = deform_ProjectTypes(e.task_type);
-            })
-            projects = data;
-            taskLength = res.length
-            setProjects([...projects]);
-            setTaskLength(taskLength)
+                pageConfig.total = res.data.total;
+                setPageConfig({...pageConfig});
+            }
         })
     }
 
-    useEffect(() => {
-        getProjects()
-        init()
-    },[])
-    
-    const getTask = (obj) => {
-        searchTask({
-            role: obj.role || '',
-            tilte: obj.title || ''
-        })
-        .then(res => {
-            console.log(res);
-        })
+    const getTaskTitle = (e) => {
+        title = e;
+        setTitle(title);
     }
+
+    // 防抖
+    const { run } = useRequest(getTaskTitle, {
+        debounceWait: 300,
+        manual: true
+    });
 
     useEffect(() => {
         getTask()
-    },[])
+    },[selectRole, title, pageConfig.page])
 
     return <div className="Projects">
         <div className='banner'>
@@ -156,16 +80,16 @@ export default function Projects() {
         </div>
         <div className='task-content'>
             <div className="search">
-                <Input placeholder="搜索项目" onChange={(e)=>setSearch(e.target.value)} />
+                <Input placeholder="搜索项目" onChange={(e)=>run(e.target.value)} />
                 {/* <SearchOutlined className="search-btn" onClick={() => searchData()} /> */}
                 <div className="tags">
                     <span className='tags-keyword'>Screen</span>
                     <div className="tags-list">
                         {
-                            tagsA.map((e,i) => <div 
+                            role.map((e,i) => <div 
                                                 key={i} 
-                                                className={`tags-li ${selectA === e.value ? 'tags-li-active':''}`}
-                                                onClick={() =>{selectA = e.value,setSelectA(selectA)}}
+                                                className={`tags-li ${selectRole === e.value ? 'tags-li-active':''}`}
+                                                onClick={() =>{selectRole = e.value,setSelectRole(selectRole)}}
                                                 >
                                 {e.name}
                             </div>)
@@ -221,10 +145,10 @@ export default function Projects() {
                 }
                 <Pagination 
                     className='item-pagination' 
-                    pageSize={5} 
-                    current={pageNum}
-                    total={taskLength} 
-                    onChange={pageChange}
+                    pageSize={pageConfig.pageSize} 
+                    current={pageConfig.page}
+                    total={pageConfig.total}
+                    onChange={(e) => {pageConfig.page = e, setPageConfig({...pageConfig})}}
                 />
             </div>
         </div>
