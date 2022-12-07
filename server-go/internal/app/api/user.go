@@ -19,7 +19,7 @@ func GetUserInfo(c *gin.Context) {
 	var userInfo request.GetUserInfoRequest
 	_ = c.ShouldBindQuery(&userInfo)
 	// 校验字段
-	if err := utils.Verify(userInfo.User, utils.InfoInfoVerify); err != nil {
+	if err := utils.Verify(userInfo.User, utils.UserInfoVerify); err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
