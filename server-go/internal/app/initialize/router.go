@@ -50,6 +50,7 @@ func Routers() *gin.Engine {
 	DetaskGroup := Router.Group("")
 	{
 		router.InitTaskRouter(DetaskGroup)
+		router.InitUserRouter(DetaskGroup)
 	}
 
 	global.LOG.Info("router register success")

@@ -6,6 +6,19 @@ import (
 	"code-market-admin/internal/app/model/request"
 )
 
+// CreateUserInfo
+// @function: CreateUserInfo
+// @description: 创建用户信息
+// @param:
+// @return:
+func CreateUserInfo(createuserInfo request.CreateUserInfoRequest) (err error, user model.User) {
+	db := global.DB.Model(&model.User{})
+	if err = db.Model(&model.User{}).Create(&createuserInfo.User).Error; err != nil {
+		return err, user
+	}
+	return err, user
+}
+
 // GetUserInfo
 // @function: GetUserInfo
 // @description: 获取个⼈资料
@@ -20,11 +33,15 @@ func GetUserInfo(userInfo request.GetUserInfoRequest) (err error, user model.Use
 	return err, user
 }
 
-// updateUserInfo
-// @function: updateUserInfo
+// UpdateUserInfo
+// @function: UpdateUserInfo
 // @description: 修改个⼈资料
 // @param:
 // @return:
-func UpdateUserInfo() {
-
+func UpdateUserInfo(updateuserInfo request.UpdateUserInfoRequest) (err error, user model.User) {
+	db := global.DB.Model(&model.User{})
+	if err = db.Model(&model.User{}).Where("address = ?", updateuserInfo.Address).Updates(&updateuserInfo.User).Error; err != nil {
+		return err, user
+	}
+	return err, user
 }

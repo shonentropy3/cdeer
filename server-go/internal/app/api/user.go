@@ -11,7 +11,7 @@ import (
 )
 
 // GetUserInfo
-// @Summary 搜索项目
+// @Summary 获取个人资料
 // @accept application/json
 // @Produce application/json
 // @Router /task/getUserInfo [get]
@@ -24,6 +24,48 @@ func GetUserInfo(c *gin.Context) {
 		return
 	}
 	if err, userRes := service.GetUserInfo(userInfo); err != nil {
+		global.LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage("获取失败", c)
+	} else {
+		response.OkWithDetailed(userRes, "获取成功", c)
+	}
+}
+
+// UpdateUserInfo
+// @Summary 修改个人资料
+// @accept application/json
+// @Produce application/json
+// @Router /task/UpdateUserInfo [get]
+func UpdateUserInfo(c *gin.Context) {
+	var updateuserInfo request.UpdateUserInfoRequest
+	_ = c.ShouldBindJSON(&updateuserInfo)
+	// 校验字段
+	if err := utils.Verify(updateuserInfo.User, utils.UpdateUserInfoVerify); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	if err, userRes := service.UpdateUserInfo(updateuserInfo); err != nil {
+		global.LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage("获取失败", c)
+	} else {
+		response.OkWithDetailed(userRes, "获取成功", c)
+	}
+}
+
+// CreateUserInfo
+// @Summary 创建个人资料
+// @accept application/json
+// @Produce application/json
+// @Router /task/CreateUserInfo [get]
+func CreateUserInfo(c *gin.Context) {
+	var createuserInfo request.CreateUserInfoRequest
+	_ = c.ShouldBindJSON(&createuserInfo)
+	// 检验字段
+	if err := utils.Verify(createuserInfo.User, utils.CreateUserInfoVerify); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	if err, userRes := service.CreateUserInfo(createuserInfo); err != nil {
 		global.LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败", c)
 	} else {
