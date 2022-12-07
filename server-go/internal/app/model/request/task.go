@@ -9,3 +9,7 @@ type GetSearchListRequest struct {
 	PageInfo
 	Role uint16 `gorm:"column:role" json:"role" form:"role"`
 }
+type CreateTaskRequest struct {
+	model.Task
+	Role []uint16 `gorm:"column:role" json:"role" form:"role"`
+}

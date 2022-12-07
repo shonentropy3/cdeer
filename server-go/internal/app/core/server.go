@@ -31,7 +31,7 @@ func RunWindowsServer() {
 	fmt.Printf(`
 	欢迎使用 detask-admin
 	当前版本:V0.0.1
-	默认自动化文档地址:http://127.0.0.1%s/swagger/index.html
+	默认自动化文档地址:http://127.0.0.1%d/swagger/index.html
 `, global.CONFIG.System.Addr)
 	global.LOG.Error(s.ListenAndServe().Error())
 }

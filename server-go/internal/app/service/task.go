@@ -6,12 +6,14 @@ import (
 	"code-market-admin/internal/app/model/request"
 	"code-market-admin/internal/app/model/response"
 	_ "code-market-admin/internal/app/model/response"
+	"errors"
+	"fmt"
 	"gorm.io/gorm"
 )
 
 // GetTaskList
 // @function: GetTaskList
-// @description: 分页获取任务数据
+// @description: 分页获取需求数据
 // @param: task model.Tasks, info Req.PageInfo
 // @return: err error, list interface{}, total int64
 func GetTaskList(searchInfo request.GetSearchListRequest) (err error, list interface{}, total int64) {
@@ -64,4 +66,43 @@ func GetTaskList(searchInfo request.GetSearchListRequest) (err error, list inter
 		searchList = append(searchList, search)
 	}
 	return err, searchList, total
+}
+
+// CreateTask
+// @function: CreateTask
+// @description: 发布需求
+// @param: task model.Tasks, info Req.PageInfo
+// @return: err error, list interface{}, total int64
+func CreateTask(taskReq request.CreateTaskRequest) (err error) {
+	// 开始事务
+	tx := global.DB.Begin()
+	task := taskReq.Task
+	result := tx.Model(&model.Task{}).Create(&task)
+	if result.RowsAffected == 0 {
+		tx.Rollback()
+		return errors.New("新建失败")
+	}
+	// 技能要求
+	for _, v := range taskReq.Role {
+		roleRelate := model.TaskRoleRelate{TaskID: task.ID}
+		// 查找RoleID
+		if err = tx.Model(&model.TaskRole{}).Select("id").Where("role_num = ?", v).First(&roleRelate.RoleID).Error; err != nil {
+			tx.Rollback()
+			return errors.New("新建失败")
+		}
+		// 插入关系表
+		if roleRelateRes := tx.Model(&model.TaskRoleRelate{}).Save(&roleRelate); roleRelateRes.RowsAffected == 0 {
+			tx.Rollback()
+			return errors.New("新建失败")
+		}
+	}
+	// 保存交易hash
+	transHash := model.TransHash{SendAddr: task.Issuer, Category: 1, Hash: task.Hash}
+	fmt.Printf("%+v\n", transHash)
+	transHashRes := tx.Model(&model.TransHash{}).Create(&transHash)
+	if transHashRes.RowsAffected == 0 {
+		tx.Rollback()
+		return errors.New("新建失败")
+	}
+	return tx.Commit().Error
 }
