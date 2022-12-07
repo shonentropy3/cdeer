@@ -17,10 +17,12 @@ import (
 func GetTaskList(searchInfo request.GetSearchListRequest) (err error, list interface{}, total int64) {
 	// SELECT * FROM tasks where position('${params}' in title) > 0
 	var searchList []response.GetSearchListRespond
-	var taskList []model.Tasks
+	var taskList []model.Task
 	limit := searchInfo.PageSize
 	offset := searchInfo.PageSize * (searchInfo.Page - 1)
-	db := global.DB.Model(&model.Tasks{})
+	db := global.DB.Model(&model.Task{})
+	// 项目状态: 0.不删  1.删除
+	db = db.Where("del = 0")
 	// 根据标题过滤
 	if searchInfo.Title != "" {
 		if err = db.Where("title ILIKE ?", "%"+searchInfo.Title+"%").Error; err != nil {
@@ -32,6 +34,9 @@ func GetTaskList(searchInfo request.GetSearchListRequest) (err error, list inter
 		if err = db.Where("hash ILIKE ?", "%"+searchInfo.Hash+"%").Error; err != nil {
 			return err, list, total
 		}
+	} else {
+		//报名开关: 0.关  1.开
+		db = db.Where("apply_switch = 1")
 	}
 	// 根据技能要求过滤
 	if searchInfo.Role != 0 {
@@ -55,7 +60,7 @@ func GetTaskList(searchInfo request.GetSearchListRequest) (err error, list inter
 				return err, list, total
 			}
 		}
-		search.Tasks = t
+		search.Task = t
 		searchList = append(searchList, search)
 	}
 	return err, searchList, total

@@ -5,6 +5,7 @@ import (
 	"code-market-admin/internal/app/model/request"
 	response "code-market-admin/internal/app/model/response"
 	"code-market-admin/internal/app/service"
+	"code-market-admin/internal/app/utils"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -18,7 +19,11 @@ import (
 func GetTaskList(c *gin.Context) {
 	var searchInfo request.GetSearchListRequest
 	_ = c.ShouldBindQuery(&searchInfo)
-
+	// 校验字段
+	if err := utils.Verify(searchInfo.PageInfo, utils.PageInfoVerify); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	if err, list, total := service.GetTaskList(searchInfo); err != nil {
 		global.LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败", c)
