@@ -2,8 +2,8 @@ package model
 
 import "time"
 
-type TransHashes struct {
-	Id         int       `gorm:"column:id" json:"id" form:"id"`
+type TransHash struct {
+	ID         uint      `gorm:"column:id" json:"id" form:"id"`
 	Hash       string    `gorm:"column:hash" json:"hash" form:"hash"`
 	TaskId     int64     `gorm:"column:task_id" json:"task_id" form:"task_id"`
 	Category   int16     `gorm:"column:category" json:"category" form:"category"` //交易hash种类: 1.创建需求  2.修改需求  3.报名  4.修改报名  5.删除报名 6.创建订单以及修改订单

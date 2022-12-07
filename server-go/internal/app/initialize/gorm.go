@@ -16,13 +16,15 @@ func Gorm() *gorm.DB {
 // RegisterTables 注册数据库表专用
 func RegisterTables(db *gorm.DB) {
 	err := db.AutoMigrate(
-		model.Nfts{},
-		model.ApplyInfo{},
-		model.BlockLogs{},
-		model.Orders{},
-		model.Users{},
-		model.TransHashes{},
-		model.Tasks{},
+		model.Nft{},
+		model.Apply{},
+		model.BlockLog{},
+		model.Order{},
+		model.User{},
+		model.TransHash{},
+		model.Task{},
+		model.TaskRole{},
+		model.TaskRoleRelate{},
 	)
 	if err != nil {
 		global.LOG.Error("register table failed", zap.Error(err))
