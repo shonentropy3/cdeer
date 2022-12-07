@@ -2,8 +2,8 @@ package model
 
 import "time"
 
-type Users struct {
-	Id       int       `gorm:"column:id" json:"id" form:"id"`
+type User struct {
+	ID       uint      `gorm:"column:id" json:"id" form:"id"`
 	Address  string    `gorm:"column:address" json:"address" form:"address"`
 	Username string    `gorm:"column:username" json:"username" form:"username"`
 	Avatar   string    `gorm:"column:avatar" json:"avatar" form:"avatar"`

@@ -2,12 +2,12 @@ package model
 
 import "time"
 
-type Tasks struct {
-	ID          int64     `gorm:"column:id" json:"id" form:"id"`
+type Task struct {
+	ID          uint      `gorm:"column:id" json:"id" form:"id"`
 	Issuer      string    `gorm:"column:issuer" json:"issuer" form:"issuer"`
 	Hash        string    `gorm:"column:hash" json:"hash" form:"hash"`
-	Title       string    `gorm:"column:title" json:"title" form:"title"`
-	Desc        string    `gorm:"column:desc" json:"desc" form:"desc"`
+	Title       string    `gorm:"size:255;column:title" json:"title" form:"title"`
+	Desc        string    `gorm:"size:2047;column:desc" json:"desc" form:"desc"`
 	Period      int64     `gorm:"column:period" json:"period" form:"period"`
 	Budget      string    `gorm:"column:budget" json:"budget" form:"budget"`
 	Attachment  string    `gorm:"column:attachment" json:"attachment" form:"attachment"`
