@@ -1,7 +1,7 @@
 package model
 
 type Nft struct {
-	ID         uint   `gorm:"column:id" json:"id" form:"id"`
+	ID         uint   `gorm:"column:id;primarykey" json:"id" form:"id"`
 	Info       string `gorm:"column:info"  json:"info" form:"info"`
 	Account    string `gorm:"column:account"  json:"account" form:"account"`
 	Chain      string `gorm:"column:chain" json:"chain" form:"chain"`

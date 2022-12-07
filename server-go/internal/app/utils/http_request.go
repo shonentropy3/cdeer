@@ -5,8 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
-	"mime/multipart"
 	"net/http"
 	"strings"
 	"time"
@@ -49,61 +47,6 @@ func PostRequest(url string, data interface{}, contentType string) ([]byte, erro
 	defer resp.Body.Close()
 	result, _ := io.ReadAll(resp.Body)
 	return result, nil
-}
-
-// PostFileRequest 发送POST请求 上传文件
-// url：         请求地址
-// data：        POST请求提交的数据
-func PostFileRequest(url string, header *multipart.FileHeader) ([]byte, error) {
-	file, err := header.Open()
-	if err != nil {
-		return err, hash
-	}
-	defer file.Close()
-
-	body := &bytes.Buffer{}
-	//创建一个multipart类型的写文件
-	writer := multipart.NewWriter(body)
-	//使用给出的属性名paramName和文件名filePath创建一个新的form-data头
-	part, err := writer.CreateFormFile("file", header.Filename)
-	if err != nil {
-		fmt.Println(" post err=", err)
-	}
-	//将源复制到目标，将file写入到part   是按默认的缓冲区32k循环操作的，不会将内容一次性全写入内存中,这样就能解决大文件的问题
-	_, err = io.Copy(part, file)
-	err = writer.Close()
-	if err != nil {
-		fmt.Println(" post err=", err)
-	}
-	request, err := http.NewRequest("POST", uri, body)
-	request.Header.Add("S-COOKIE2", "a=2l=310260000000000&m=460&n=00")
-	//writer.FormDataContentType() ： 返回w对应的HTTP multipart请求的Content-Type的值，多以multipart/form-data起始
-	request.Header.Set("Content-Type", writer.FormDataContentType())
-	//设置host，只能用request.Host = “”，不能用request.Header.Add(),也不能用request.Header.Set()来添加host
-	request.Host = "api.shouji.com"
-	t := http.DefaultTransport.(*http.Transport).Clone()
-	t.MaxIdleConns = 100
-	t.MaxConnsPerHost = 100
-	t.MaxIdleConnsPerHost = 100
-	clt := http.Client{
-		Timeout:   10 * time.Second,
-		Transport: t,
-	}
-	defer clt.CloseIdleConnections()
-	res, err := clt.Do(request)
-	//http返回的response的body必须close,否则就会有内存泄露
-	defer func() {
-		res.Body.Close()
-		fmt.Println("finish")
-	}()
-	if err != nil {
-		fmt.Println("err is ", err)
-	}
-	body1, err1 := ioutil.ReadAll(res.Body)
-	if err != nil {
-		fmt.Println("ioutil.ReadAll  err is ", err1)
-		return
-	}
 }
 
 func GraphQlRequest(url string, payload *strings.Reader) (body []byte, err error) {

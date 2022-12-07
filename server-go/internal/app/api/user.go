@@ -10,6 +10,27 @@ import (
 	"go.uber.org/zap"
 )
 
+// CreateUserInfo
+// @Summary 创建个人资料
+// @accept application/json
+// @Produce application/json
+// @Router /task/CreateUserInfo [get]
+func CreateUserInfo(c *gin.Context) {
+	var createuserInfo request.CreateUserInfoRequest
+	_ = c.ShouldBindJSON(&createuserInfo)
+	// 检验字段
+	if err := utils.Verify(createuserInfo.User, utils.CreateUserInfoVerify); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	if err := service.CreateUserInfo(createuserInfo); err != nil {
+		global.LOG.Error("创建失败!", zap.Error(err))
+		response.FailWithMessage("创建失败", c)
+	} else {
+		response.OkWithMessage("创建成功", c)
+	}
+}
+
 // GetUserInfo
 // @Summary 获取个人资料
 // @accept application/json
@@ -44,31 +65,10 @@ func UpdateUserInfo(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if err, userRes := service.UpdateUserInfo(updateuserInfo); err != nil {
-		global.LOG.Error("获取失败!", zap.Error(err))
-		response.FailWithMessage("获取失败", c)
+	if err := service.UpdateUserInfo(updateuserInfo); err != nil {
+		global.LOG.Error("修改失败!", zap.Error(err))
+		response.FailWithMessage("修改失败", c)
 	} else {
-		response.OkWithDetailed(userRes, "获取成功", c)
-	}
-}
-
-// CreateUserInfo
-// @Summary 创建个人资料
-// @accept application/json
-// @Produce application/json
-// @Router /task/CreateUserInfo [get]
-func CreateUserInfo(c *gin.Context) {
-	var createuserInfo request.CreateUserInfoRequest
-	_ = c.ShouldBindJSON(&createuserInfo)
-	// 检验字段
-	if err := utils.Verify(createuserInfo.User, utils.CreateUserInfoVerify); err != nil {
-		response.FailWithMessage(err.Error(), c)
-		return
-	}
-	if err, userRes := service.CreateUserInfo(createuserInfo); err != nil {
-		global.LOG.Error("获取失败!", zap.Error(err))
-		response.FailWithMessage("获取失败", c)
-	} else {
-		response.OkWithDetailed(userRes, "获取成功", c)
+		response.OkWithMessage("修改成功", c)
 	}
 }

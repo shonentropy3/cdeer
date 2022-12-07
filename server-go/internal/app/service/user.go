@@ -11,12 +11,12 @@ import (
 // @description: 创建用户信息
 // @param:
 // @return:
-func CreateUserInfo(createuserInfo request.CreateUserInfoRequest) (err error, user model.User) {
+func CreateUserInfo(createuserInfo request.CreateUserInfoRequest) (err error) {
 	db := global.DB.Model(&model.User{})
 	if err = db.Model(&model.User{}).Create(&createuserInfo.User).Error; err != nil {
-		return err, user
+		return err
 	}
-	return err, user
+	return err
 }
 
 // GetUserInfo
@@ -29,7 +29,6 @@ func GetUserInfo(userInfo request.GetUserInfoRequest) (err error, user model.Use
 	if err = db.Where("address = ?", userInfo.Address).Error; err != nil {
 		return err, user
 	}
-	db.Where("address = ?", userInfo.Address).Find(&user)
 	return err, user
 }
 
@@ -38,10 +37,10 @@ func GetUserInfo(userInfo request.GetUserInfoRequest) (err error, user model.Use
 // @description: 修改个⼈资料
 // @param:
 // @return:
-func UpdateUserInfo(updateuserInfo request.UpdateUserInfoRequest) (err error, user model.User) {
+func UpdateUserInfo(updateuserInfo request.UpdateUserInfoRequest) (err error) {
 	db := global.DB.Model(&model.User{})
 	if err = db.Model(&model.User{}).Where("address = ?", updateuserInfo.Address).Updates(&updateuserInfo.User).Error; err != nil {
-		return err, user
+		return err
 	}
-	return err, user
+	return err
 }

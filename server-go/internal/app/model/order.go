@@ -3,7 +3,7 @@ package model
 import "time"
 
 type Order struct {
-	ID          uint      `gorm:"column:id" json:"id" form:"id"`
+	ID          uint      `gorm:"column:id;primarykey" json:"id" form:"id"`
 	OrderId     int64     `gorm:"column:order_id" json:"order_id" form:"order_id"`
 	TaskId      int64     `gorm:"column:task_id" json:"task_id" form:"task_id"`
 	Issuer      string    `gorm:"column:issuer" json:"issuer" form:"issuer"`
