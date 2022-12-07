@@ -33,49 +33,33 @@ export default function Header(props) {
         {title: '寻找项目', url: '/projects', value: 'task'},
         {title: '我的项目', url: '/myInfo', value: 'my'}
     ]
+    let options = [
+        {title: '我的资料', url: '/myInfo'},
+        {title: '发布的项目', url: '/task', search: 'issuer'},
+        {title: '参与的项目', url: '/task', search: 'worker'},
+        {title: '我的NFT', url: '/'}
+    ]
     const [isModalVisible, setIsModalVisible] = useState(false);
     let [wagmi,setWagmi] = useState({});
     let [account,setAccount] = useState('');
     let [isScroll,setIsScroll] = useState(false);
 
-    const menu = (
-        <Menu
-          items={[
-            {
-              key: '1',
-              label: (
-                <Link href={{pathname: '/myInfo'}}>
-                    我的资料
-                </Link>
-              ),
-            },
-            {
-              key: '2',
-              label: (
-                <Link href={{pathname: '/task', search: 'issuer'}}>
-                  发布的项目
-                </Link>
-              ),
-            },
-            {
-              key: '3',
-              label: (
-                <Link href={{pathname: '/task', search: 'worker'}}>
-                  参与的项目
-                </Link>
-                ),
-            },
-            {
-              key: '4',
-              label: (
-                <Link href={{pathname: '/'}}>
-                    我的NFT
-                </Link>
-              ),
-            }
-          ]}
+    const menu = () => {
+        const arr = [];
+        options.map((e,i) => 
+            arr.push({
+                key: i,
+                label: (
+                  <Link href={{pathname: e.url, search: e.search}}>
+                      {e.title}
+                  </Link>
+                ), 
+            })
+        )
+        return <Menu
+          items={arr}
         />
-    );
+    };
     const menu1 = (
         <Menu
           items={[{
@@ -96,17 +80,6 @@ export default function Header(props) {
     const handleCancel = () => {
       setIsModalVisible(false);
     };
-
-    // const languageSwitch = async(value) => {
-    //     await router.push({href:'/', search: value})
-    //     checkLanguage()
-    // }
-
-    // const checkLanguage = () => {
-    //     let l = ChangeLanguage()
-    //     setLan( l )
-    //     emit.emit('change_language', l);
-    // }
 
     const onchange = (value) => {
         selectItem = value;

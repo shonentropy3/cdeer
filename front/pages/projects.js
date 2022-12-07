@@ -45,11 +45,13 @@ export default function Projects() {
         .then(res => {
             if (res.code === 0) {
                 let data = res.data.list
-                data.map(e => {
-                    e.role = deform_Skills(e.role);
-                })
-                projects = data;
-                setProjects([...projects]);
+                if(data){
+                    data.map(e => {
+                        e.role = deform_Skills(e.role);
+                    })
+                    projects = data;
+                    setProjects([...projects]);
+                }
                 pageConfig.total = res.data.total;
                 setPageConfig({...pageConfig});
             }
