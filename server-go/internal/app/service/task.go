@@ -40,7 +40,7 @@ func GetTaskList(searchInfo request.GetSearchListRequest) (err error, list inter
 	}
 	// 根据技能要求过滤
 	if searchInfo.Role != 0 {
-		if err = db.Joins("JOIN task_role_relate ON task_role_relate.task_id=tasks.id "+
+		if err = db.Joins("JOIN task_role_relate ON task_role_relate.task_id=task.id "+
 			"JOIN task_role ON task_role.id=task_role_relate.role_id").Where("task_role.role_num = ?", searchInfo.Role).Error; err != nil {
 			return err, list, total
 		}

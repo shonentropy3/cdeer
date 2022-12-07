@@ -49,8 +49,9 @@ func Routers() *gin.Engine {
 
 	DetaskGroup := Router.Group("")
 	{
-		router.InitTaskRouter(DetaskGroup)
 		router.InitUserRouter(DetaskGroup)
+		router.InitTaskRouter(DetaskGroup)  // 需求
+		router.InitApplyRouter(DetaskGroup) // 报名
 	}
 
 	global.LOG.Info("router register success")

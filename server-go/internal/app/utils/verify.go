@@ -6,4 +6,5 @@ var (
 	UserInfoVerify       = Rules{"Address": {NotEmpty()}}
 	UpdateUserInfoVerify = Rules{"Address": {NotEmpty()}}
 	CreateUserInfoVerify = Rules{"Address": {NotEmpty()}}
+	ApplyListVerify      = Rules{"ApplyAddr": {NotEmpty()}}
 )
