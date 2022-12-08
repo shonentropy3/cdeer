@@ -20,7 +20,7 @@ func GetTaskList(c *gin.Context) {
 	var searchInfo request.GetSearchListRequest
 	_ = c.ShouldBindQuery(&searchInfo)
 	// 校验字段
-	if err := utils.Verify(searchInfo.PageInfo, utils.PageInfoVerify); err != nil {
+	if err := utils.Verify(searchInfo.PageInfo, utils.PageSizeLimitVerify); err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
