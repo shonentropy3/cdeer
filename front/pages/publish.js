@@ -13,6 +13,7 @@ import { uploadProps } from "../components/upload/config";
 import ConnectModal from "../components/CustomModal/connectModal";
 import ComfirmTaskModal from "../components/CustomModal/ComfirmTaskModal";
 import { omit } from 'lodash';
+import { createTask } from "../http/_api/task";
 
 export default function Publish() {
     
@@ -145,34 +146,29 @@ export default function Publish() {
     }
 
     const writeSuccess = () => {
-        console.log('createTask !!');
-        return
-        let obj = {
-            title: data.title,
-            pro_content: data.desc,
-            recruiting_role: inner[3].value,
-            period: data.period,
-            budget: data.budget / 100 * Math.pow(10,18),          //  Currency: 1: ETH 10^18
-            u_address: `${address}`,
-            suffix: suffix,
-            hash: data.attachment,
-            payhash: Task.data.hash,
-          }
-        createDemand({"proLabel": JSON.stringify(obj)})
-              .then(res => {
-                if (res.code == 'SUCCESS') {
-                  message.success('创建成功');
-                  setTimeout(() => {
+        var obj = _.omit(params,'skills');
+        obj.period = obj.period * 24 * 60 * 60;
+        obj.attachment = obj.attachment ? obj.attachment : '';
+        obj.budget = String(JSON.parse(ethers.utils.parseEther(obj.budget)));
+        obj.issuer = address;
+        obj.hash = Task.data.hash;
+        obj.suffix = obj.suffix ? obj.suffix : '';
+        var arr = [];
+        obj.role.map(e => {
+            arr.push(Number(e))
+        })
+        obj.role = arr;
+        createTask(obj)
+        .then(res => {
+            if (res.code === 0) {
+                message.success(res.msg);
+                setTimeout(() => {
                     router.push({pathname: '/task', search: 'issuer'})    //  跳转链接
-                  }, 500);
-                }else{
-                  message.error('创建失败');
-                }
-              })
-              .catch(err => {
-                console.log(err);
-                message.error('创建失败');
-              })
+                }, 500);
+            } else {
+                message.error(res.msg);
+            }
+        })
     }
 
     useEffect(() => {
