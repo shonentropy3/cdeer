@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
-import { Input, Select, InputNumber, Button, Modal, Upload, message } from 'antd';
-import { FolderAddOutlined } from '@ant-design/icons';
+import { Input, Select, InputNumber, Button, Modal, Upload, message, Form } from 'antd';
 import { useAccount } from 'wagmi';
 import { useRouter } from 'next/router'
 import { ethers } from "ethers";
@@ -11,6 +10,7 @@ import Modal_comfirmTask from "../components/Modal_comfirmTask";
 import { useContracts } from '../controller/index';
 import { createDemand, getHash } from "../http/api/task";
 import { BitOperation } from '../utils/BitOperation';
+import { uploadProps } from "../components/upload/config";
 
 export default function Publish() {
     
@@ -19,20 +19,20 @@ export default function Publish() {
     const { address } = useAccount()
     const { useTaskContractWrite: Task } = useContracts('createTask');
     const [inner,setInner] = useState([
-        {title: 'Entry Name', type: 'input', value: '', style:false },
-        {title: 'Project Description', type: 'textarea', value: '', style:false },
-        {title: '', type: 'upload', value: '', style:false },
-        {title: 'Skill Requirements', type: 'model', value: [], subValue: [], style:false },
-        {title: 'Project Budget', type: 'inputNumber', value: '', subValue: 1, style:false },
-        {title: 'Project Cycle', type: 'select', value: '', style:false },
-        // {title: '技能LOGO', type: 'select', value: []},
+        {title: 'Entry Name', type: 'input', desc: '项目名称', name: 'title'},
+        {title: 'Task Description', type: 'textarea', desc: '项目描述', name: 'desc'},
+        {type: 'upload', desc: '项目附件', name: 'attachment'},
+        {title: 'Skill Requirements', type: 'ul', desc: '项目要求', name: 'role'},
+        {title: 'Task Budget', type: 'inputNumber', desc: '预计金额', name: 'budget'},
+        {title: 'Task Cycle', type: 'select', desc: '预计周期', name: 'period'},
+        // {title: 'LOGO（Optional）', type: 'select', desc: '', name: ''},
     ])
+    let [params, setParams] = useState({});
     let [isModalVisibleC, setIsModalVisibleC] = useState(false);
-    let [flag, setFlag] = useState(false);
     let [data,setData] = useState({});
     let [fromdata,setFromdata] = useState();
-    let [progress,setProgress] = useState();
     let [suffix,setSuffix] = useState("");
+    let [fileList, setFileList] = useState([]);
     let [skills,setSkills] = useState({
         title: '技能要求',
         subtitle: '你擅长的技能*(最多4个)',
@@ -40,190 +40,59 @@ export default function Publish() {
     })
 
     const selectAfter = (
-        <Select
-          defaultValue={1}
-          onChange={(e) => changeSel(e)}
-        >
-          <Option value={1}>ETH</Option>
-          <Option value={2}>BTC</Option>
+        <Form.Item name="currency" noStyle>
+        <Select>
+          <Option value="ETH">ETH</Option>
+          <Option value="BTC">BTC</Option>
         </Select>
+        </Form.Item>
     );
 
     const period = (
-        <Select className={["w100",inner[5].style?"err":""].join(' ')} defaultValue="预计周期" onChange={(e) => onchange(e)}>
+        <Form.Item name="period" noStyle rules={[{
+            required: true,
+            message: `未选择预计周期`,
+        }]}>
+        <Select>
           <Option value={3}>3天</Option>
           <Option value={7}>1周</Option>
           <Option value={21}>3周</Option>
           <Option value={30}>1个月</Option>
           <Option value={60}>2个月</Option>
         </Select>
+        </Form.Item>
     )
 
-    const multiSelect = () => {
 
-        return (
-            <div className="multiSelect">
-                <div className="list">
-                    {
-                        skills.list.map((e,i) => 
-                            <div key={i} className={`li ${e.status ? 'active':''}`} onClick={() => changeSelect(skills,i,3)}>
-                                {e.title}
-                            </div>
-                        )
-                    }
-                </div>
-            </div>
-    )}
-
-    const print = (e,i) => {
-        switch (e.type) {
-            case 'input':
-                return <Input className={[e.style?"err":"inner"].join('')} onChange={(ele)=>changeStr(ele,i)} />;
-
-            case 'textarea':
-                return <TextArea className={["h150",e.style?"err":"inner"].join(' ')} onChange={(ele)=>changeStr(ele,i)} />;
-
-            case 'model':
-            return multiSelect(i)
-
-            case 'inputNumber':
-            return <InputNumber className={["w100","eth-select",e.style?"err":"inner"].join(' ')} onChange={changeNum} controls={false} addonAfter={selectAfter} />;
-
-            case 'select':
-            return period
-
-            default:
-                return <Upload
-                            // listType="picture"
-                            maxCount={1}
-                            name="file"
-                            onChange={handleChange}
-                            // className="upload-button"
-                            customRequest={upload}
-                            progress={{
-                                strokeColor: {
-                                  '0%': '#108ee9',
-                                  '100%': '#87d068',
-                                },
-                                strokeWidth: 3,
-                                format: (percent) => percent && `${parseFloat(percent.toFixed(2))}%`,
-                              }}
-                        >
-                <Button icon={<FolderAddOutlined />}>上传项目需求文档（Word、Excel、PPT、PDF、图像、视频，20MB以内）</Button>
-              </Upload>
-                // <FolderAddOutlined />
-        }
-    }
-    const upload = async(info) => {
-        var formData=new FormData();
-        formData.append('files',info.file);
-        fromdata = formData
-        setFromdata(fromdata)
-        
-        return await new Promise ((resolve,reject)=>{
-          resolve(beforeUpload(info))
-       })
-       .then((res)=>{
-            if (res) {
-                info.onSuccess()
-                info.onProgress({percent: 100})
-            }else{
-                info.onError()
-            }
-       })
-    }
 
     const handleChange = (info, list) => {
-        suffix = info.file.name;
-        setSuffix(suffix);
-          if (info.file.status === 'done') {
-            message.success(`${info.file.name} file uploaded successfully`);
-          } else if (info.file.status === 'error') {
-            message.error(`${info.file.name} file upload failed.`);
-          } 
+        params.suffix = info.file.name;
+        fileList = info.fileList;
+        setFileList([...fileList]);
     }
     
-    const beforeUpload = (info) => {
-        const isLt2M = info.file.size / 1024 / 1024 < 20;
-        if (!isLt2M) {
-          message.error('Must smaller than 20MB!');
-          return false
+    const uploadSuccess = (res, file) => {
+        if (res.code === 0) {
+            message.success(res.msg);
+            fileList[0].status = "success";
+        } else {
+            message.error(res.msg);
+            fileList[0].status = "error";
         }
-        return true
-    };
-
-    const showModalC = () => {
-        //  TODO: 钱包状态判断
-        if (!address) {
-            console.log('hh');
-            // TODO: connect wallet
-            return
+        if (res.code !== 7) {
+            params.attachment = res.data.hash;
         }
-        let isAllInfo = true
-        let nullNum = 0
-        inner.map(e => {
-            if(e.type == 'upload') {
-
-            }else if (e.type == 'model'){
-                if (e.value[0] == undefined){
-                    nullNum += 1
-                }
-                if (e.value[2] == '}'){
-                    nullNum += 1
-                }
-                // e.value==[] ? nullNum += 1 : e.style = false 
-                setInner([...inner])
-            }else if (e.type == 'select') {
-                if (!e.value) {
-                    nullNum += 1;
-                    e.style = true
-                    setInner([...inner])
-                }
-            }
-            else{
-                if(!e.value){
-                    nullNum += 1
-                    e.style=true
-                    setInner([...inner])
-                }
-            }
-        })
-        nullNum === 0 ? isAllInfo = true : isAllInfo = false
-        isAllInfo?setIsModalVisibleC(true):message.error('请填写必填信息')
-    };
-
-    const handleCancelC = () => {
-        setIsModalVisibleC(false);
-    };
-
-    // 获取数据
-    const changeStr = (e,i) => {
-        inner[i].value = e.target.value;
-        inner[i].style = false
-        setInner([...inner])
     }
 
-    const changeNum = (e) => {
-        inner[4].value = e;
-        inner[4].style = false
-        setInner([...inner]);
-    }
-
-    const changeSel = (e) => {
-        inner[4].subValue = e;
-        setInner([...inner]);
-    }
-
-    const changeSelect = (obj, i, index) => {
+    const changeSelect = (obj, i) => {
         if (limiter(obj.list, i) === false) {
             message.error('最多可选择4个')
             return
         }
-        console.log(index);
         obj.list[i].status = !obj.list[i].status
         skills.list[i] = obj.list[i]
         setSkills({...skills})
-        set(setSkills, obj, index)
+        set(obj)
     }
 
     const limiter = (arr,i) => {
@@ -236,25 +105,17 @@ export default function Publish() {
         }
     }
 
-    const set = (fun, obj, i) => {
+    const set = (obj) => {
         let arr = [];
-        let value = '';
+        let role = [];
         obj.list.map((ele,index) => {
             if (ele.status) {
                 arr.push(index+1)
-                value += ele.value + ','
+                role.push(ele.value)
             }
         })
-        fun({...obj});
-        inner[i].subValue = BitOperation(arr);
-        inner[i].value = "'{"+ value.substring(0,value.lastIndexOf(',')) + "}'"
-        setInner([...inner]);
-    }
-
-    const onchange = (e) => {
-        inner[5].value = e;
-        inner[5].style = false
-        setInner([...inner]);
+        params.skills = BitOperation(arr);
+        params.role = role;
     }
     
     const comfirm = async() => {
@@ -313,7 +174,7 @@ export default function Publish() {
                 console.log(err);
                 message.error('创建失败');
               })
-      }
+    }
 
     useEffect(() => {
         Task.isSuccess ? 
@@ -335,36 +196,116 @@ export default function Publish() {
         setSkills({...skills});
     },[])
 
+
+    const innerPrint = (e) => {
+        switch (e.type) {
+            case 'input':
+                return <Input className="item-input" onChange={value => {e.value = value}} />
+            case 'textarea':
+                return <TextArea className="item-text" onChange={value => {e.value = value.target.value}} />
+            case 'ul':
+                return <div className="item-ul">{
+                        skills.list.map((e,i) => 
+                            <div key={i} className={`li ${e.status ? 'active':''}`} onClick={() => changeSelect(skills,i)}>
+                                {e.title}
+                            </div>)}
+                    </div>
+            case 'inputNumber':
+                return <div className="item-num">
+                            <InputNumber controls={false} addonAfter={selectAfter} />
+                        </div>
+            case 'select': 
+                return <div className="item-select">
+                            {period}
+                        </div>
+            default:
+                return <Upload
+                            listType="picture"
+                            onChange={handleChange}
+                            onSuccess={uploadSuccess}
+                            className="item-upload"
+                            {...uploadProps}
+                            fileList={fileList}
+                            progress={{
+                                strokeColor: {
+                                  '0%': '#108ee9',
+                                  '100%': '#87d068',
+                                },
+                                strokeWidth: 3,
+                                format: (percent) => percent && `${parseFloat(percent.toFixed(2))}%`,
+                            }}
+                        >
+                <Button><div className="img" /><p>Upload Task requirement document（Word、Excel、PPT、PDF、image、video）<br/>maximum file size：20MB</p></Button>
+              </Upload>
+        }
+    }
+
+    const onFinish = (values) => {
+        // 判断是否登陆
+        if (!address) {
+            message.error('请登录!')
+            return
+        }
+        params = {...values, ...params}
+        params.period = params.period * 24 * 60 * 60;
+        console.log(params);
+        // setIsModalVisibleC(true)
+    };
+
     return <div className="Publish">
-        <div className="h100"></div>
         <div className="banner">
             <div className="banner-content">
-                <p className="content-title">
-                Release your project requirements
-                </p>
-                <p className="content-subtitle">
-                Become a partner with skilled developers
-                </p>
+                <p className="title">Release your Task requirements</p>
+                <p className="subtitle">Become a partner with skilled developers</p>
             </div>
         </div>
-        <div className="container">
-            {
-                inner.map((e,i) => 
-                    <div key={i} className="container-li">
-                        <p className="li-title">{e.title}</p>
-                        {print(e,i)}
-                    </div>
-                )
-            }
-            <Button className="container-btn" onClick={showModalC}>发布需求</Button>
+        <div className="content">
+            <div className="content-panel">
+            <Form
+                name="complex-form"
+                onFinish={onFinish}
+                initialValues={{
+                    currency: 'ETH'
+                }}
+            >
+                {
+                    inner.map((e,i) => 
+                        
+                            <div className="item" key={i}>
+                                {
+                                    e.title && <p className="item-title">{e.title}</p>
+                                }
+                                {
+                                    e.type !== 'ul' && e.type !== 'select' && e.type !== 'upload' ? 
+                                    <Form.Item name={e.name} 
+                                        rules={[{
+                                            required: true,
+                                            message: `${e.desc}未输入`,
+                                        }]}
+                                    >
+                                        {innerPrint(e)}
+                                    </Form.Item>
+                                    :
+                                    innerPrint(e)
+                                }
+                            </div>
+                        // </Form.Item>
+                    )
+                }
+                <Form.Item className="item-poa">
+                    <Button type="primary" htmlType="submit" className="panel-btn">
+                        Release
+                    </Button>
+                </Form.Item>
+            </Form>
+            </div>
         </div>
-        <div className="mb80"></div>
         <Modal
             className="Submit_item" 
             footer={null} 
             closable={false}
             open={isModalVisibleC} 
-            onCancel={handleCancelC}
+            onCancel={() => setIsModalVisibleC(false)}
         >
             <Modal_comfirmTask inner={inner} skills={skills} comfirm={() => comfirm()}/>
         </Modal>

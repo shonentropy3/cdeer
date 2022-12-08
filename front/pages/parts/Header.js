@@ -11,11 +11,6 @@ import Identicon, { IdenticonOptions } from "identicon.js";
 import { useRouter } from 'next/router';
 export default function Header(props) {
 
-    // const { setLan, language } = props;
-    const lanSwitch = [
-        {title: '中文', value:'en_US'},
-        {title: '英文', value:'zh_CN'}
-    ]
       // 网络切换
     const { chain } = useNetwork()
     const { chains, switchNetwork } = useSwitchNetwork()
