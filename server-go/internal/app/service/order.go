@@ -18,21 +18,15 @@ func GetOrderList(searchInfo request.GetOrderListRequest) (err error, list inter
 	db := global.DB.Model(&model.Order{})
 	// 根据乙方地址过滤
 	if searchInfo.Worker != "" {
-		if err = db.Where("worker = ?", searchInfo.Worker).Error; err != nil {
-			return err, list, total
-		}
+		db = db.Where("worker = ?", searchInfo.Worker)
 	}
 	// 根据甲方地址过滤
 	if searchInfo.Issuer != "" {
-		if err = db.Where("issuer = ?", searchInfo.Issuer).Error; err != nil {
-			return err, list, total
-		}
+		db = db.Where("issuer = ?", searchInfo.Issuer)
 	}
 	// 根据订单ID过滤
 	if searchInfo.OrderId != 0 {
-		if err = db.Where("order_id = ?", searchInfo.OrderId).Error; err != nil {
-			return err, list, total
-		}
+		db = db.Where("order_id = ?", searchInfo.OrderId)
 	}
 	err = db.Count(&total).Error
 	if err != nil {
