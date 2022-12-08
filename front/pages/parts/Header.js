@@ -5,22 +5,12 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useDisconnect, useConnect, useAccount, useNetwork, useSwitchNetwork } from 'wagmi';    // 切换链 
 import Identicon, { IdenticonOptions } from "identicon.js";
-// import intl from 'react-intl-universal';
-// import { emit } from "../../locales/emit";
-// import { ChangeLanguage } from '../../utils/ChangeLanguage';
-import { useRouter } from 'next/router';
+import ConnectModal from '../../components/CustomModal/connectModal';
 export default function Header(props) {
 
-      // 网络切换
-    const { chain } = useNetwork()
-    const { chains, switchNetwork } = useSwitchNetwork()
-    const router = useRouter()
-    const {connect,chainId,connectors,error,isLoading,pendingConnector} = useConnect()
     const {isConnected, address} = useAccount()
     const {disconnect} = useDisconnect()
 
-    // 记录需要的连接方式
-    let [needConnector,setNeedConnector] = useState([])
     
     let [selectItem,setSelectItem] = useState('')
     let item = [
@@ -28,33 +18,21 @@ export default function Header(props) {
         {title: '寻找项目', url: '/projects', value: 'task'},
         {title: '我的项目', url: '/myInfo', value: 'my'}
     ]
-    let options = [
-        {title: '我的资料', url: '/myInfo'},
-        {title: '发布的项目', url: '/task', search: 'issuer'},
-        {title: '参与的项目', url: '/task', search: 'worker'},
-        {title: '我的NFT', url: '/'}
-    ]
     const [isModalVisible, setIsModalVisible] = useState(false);
     let [wagmi,setWagmi] = useState({});
     let [account,setAccount] = useState('');
     let [isScroll,setIsScroll] = useState(false);
 
-    const menu = () => {
-        const arr = [];
-        options.map((e,i) => 
-            arr.push({
-                key: i,
-                label: (
-                  <Link href={{pathname: e.url, search: e.search}}>
-                      {e.title}
-                  </Link>
-                ), 
-            })
-        )
-        return <Menu
-          items={arr}
+    const menu = (
+        <Menu
+          items={[
+            { key: '1', label: ( <Link href={{pathname: '/myInfo'}}>我的资料</Link> ) },
+            { key: '2', label: ( <Link href={{pathname: '/task', search: 'issuer'}}>发布的项目</Link>) },
+            { key: '3', label: ( <Link href={{pathname: '/task', search: 'worker'}}>参与的项目</Link>) },
+            { key: '4', label: ( <Link href={{pathname: '/'}}>我的NFT</Link>) }
+          ]}
         />
-    };
+    );
     const menu1 = (
         <Menu
           items={[{
@@ -67,22 +45,11 @@ export default function Header(props) {
           }]}
         />
     );
-    
-    const showModal = () => {
-      setIsModalVisible(true);
-    };
-  
-    const handleCancel = () => {
-      setIsModalVisible(false);
-    };
+
 
     const onchange = (value) => {
         selectItem = value;
         setSelectItem(selectItem);
-    }
-
-    const handlerCancel = ()=>{
-        setIsModalVisible(false)
     }
 
     const hashAvt = () => {
@@ -104,15 +71,6 @@ export default function Header(props) {
         return data
     }
 
-    // 筛选所需要的连接方式
-    const selectConnector = () => {
-        connectors.map((e,i) => {
-            if(e.name == "MetaMask" || e.name == "WalletConnect") {
-                    needConnector.push(e)
-            }
-        })
-        setNeedConnector([...new Set(needConnector)])
-    }
 
     useEffect(() => {
         item.map(e => {
@@ -160,19 +118,6 @@ export default function Header(props) {
         setIsScroll(isScroll);
     }
 
-    useEffect(() => {
-        if (switchNetwork) {
-            // switchNetwork(chain.id)
-            // console.log(chain);
-            // TODO: 切换网络
-        }
-    },[switchNetwork])
-
-    useEffect(() => {
-        selectConnector()
-    },[])
-
-
     return <div className="Header">
         <div className={`content ${isScroll ? 'scroll':''}`}>
             <div className="header-logo">
@@ -189,6 +134,7 @@ export default function Header(props) {
                         </Link>
                     )
                 }
+
             </div>
             <div className="header-info">
                 {/* TODO: 中英文切换入口 ==> img or font */}
@@ -215,30 +161,11 @@ export default function Header(props) {
                         :
                         <>
                             <div/>
-                            <Button className="btn" onClick={showModal}>链接钱包</Button>
+                            <Button className="btn" onClick={() => setIsModalVisible(true)}>链接钱包</Button>
                         </>
                 }
             </div>
         </div>
-        <Modal 
-            title={<p>Link Wallet <CloseOutlined onClick={handleCancel} /></p>} 
-            footer={null} 
-            open={isModalVisible} 
-            closable={false}
-            onCancel={handleCancel}
-            className="connect"
-        >
-            {needConnector.map((connector) => (
-                <Button
-                    key={connector.id}
-                    onClick={() => {connect({ connector }), handlerCancel()}}
-                >
-                    <p className='connect-img'>
-                        <img src={"/"+connector.name+".png"} />
-                    </p>
-                    <p className='connect-text'>{connector.name}</p>
-                </Button>
-            ))}
-        </Modal>
+        <ConnectModal setStatus={setIsModalVisible} status={isModalVisible} />
     </div>
 }

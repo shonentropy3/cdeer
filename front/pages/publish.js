@@ -11,6 +11,7 @@ import { useContracts } from '../controller/index';
 import { createDemand, getHash } from "../http/api/task";
 import { BitOperation } from '../utils/BitOperation';
 import { uploadProps } from "../components/upload/config";
+import ConnectModal from "../components/CustomModal/connectModal";
 
 export default function Publish() {
     
@@ -28,7 +29,7 @@ export default function Publish() {
         // {title: 'LOGO（Optional）', type: 'select', desc: '', name: ''},
     ])
     let [params, setParams] = useState({});
-    let [isModalVisibleC, setIsModalVisibleC] = useState(false);
+    const [isModalVisible, setIsModalVisible] = useState(false);
     let [data,setData] = useState({});
     let [fromdata,setFromdata] = useState();
     let [suffix,setSuffix] = useState("");
@@ -243,7 +244,7 @@ export default function Publish() {
     const onFinish = (values) => {
         // 判断是否登陆
         if (!address) {
-            message.error('请登录!')
+            setIsModalVisible(true)
             return
         }
         params = {...values, ...params}
@@ -300,14 +301,6 @@ export default function Publish() {
             </Form>
             </div>
         </div>
-        <Modal
-            className="Submit_item" 
-            footer={null} 
-            closable={false}
-            open={isModalVisibleC} 
-            onCancel={() => setIsModalVisibleC(false)}
-        >
-            <Modal_comfirmTask inner={inner} skills={skills} comfirm={() => comfirm()}/>
-        </Modal>
+        <ConnectModal setStatus={setIsModalVisible} status={isModalVisible} />
     </div>
 }
