@@ -1,12 +1,12 @@
 package service
 
 import (
+	"code-market-admin/internal/app/blockchain"
 	"code-market-admin/internal/app/global"
 	"code-market-admin/internal/app/model"
 	"code-market-admin/internal/app/model/request"
 	_ "code-market-admin/internal/app/model/response"
 	"errors"
-	"fmt"
 )
 
 // GetTaskList
@@ -79,12 +79,14 @@ func CreateTask(taskReq request.CreateTaskRequest) (err error) {
 	}
 	// 保存交易hash
 	transHash := model.TransHash{SendAddr: task.Issuer, Category: 1, Hash: task.Hash}
-	fmt.Printf("%+v\n", transHash)
 	transHashRes := tx.Model(&model.TransHash{}).Create(&transHash)
 	if transHashRes.RowsAffected == 0 {
 		tx.Rollback()
 		return errors.New("新建失败")
 	}
+	// TODO: 延迟校验链上数据
+	// TODO: 使用channel通知
+	go blockchain.TraverseBlocks()
 	return tx.Commit().Error
 }
 

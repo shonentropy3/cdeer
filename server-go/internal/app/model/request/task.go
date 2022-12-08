@@ -15,6 +15,7 @@ type CreateTaskRequest struct {
 type UpdatedTaskRequest struct {
 	model.Task
 }
+
 type DeleteTaskRequest struct {
-	ID uint `gorm:"column:id" json:"id" form:"id"`
+	model.Task
 }

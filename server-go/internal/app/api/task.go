@@ -58,3 +58,53 @@ func CreateTask(c *gin.Context) {
 		response.OkWithMessage("创建成功", c)
 	}
 }
+
+// UpdatedTask
+// @Tags TaskApi
+// @Summary 更新需求信息
+// @accept application/json
+// @Produce application/json
+// @Param
+// @Success
+// @Router /task/UpdatedTask [post]
+func UpdatedTask(c *gin.Context) {
+	var task request.UpdatedTaskRequest
+	_ = c.ShouldBindJSON(&task)
+
+	if err := utils.Verify(task.Task, utils.UpdatedTaskVerify); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	if err := service.UpdatedTask(task); err != nil {
+		global.LOG.Error("更新失败!", zap.Error(err))
+		response.FailWithMessage(err.Error(), c)
+	} else {
+		response.OkWithMessage("更新成功", c)
+	}
+}
+
+// DeleteTask
+// @Tags TaskApi
+// @Summary 删除需求
+// @accept application/json
+// @Produce application/json
+// @Param
+// @Success
+// @Router /task/deleteTask [post]
+func DeleteTask(c *gin.Context) {
+	var task request.DeleteTaskRequest
+	_ = c.ShouldBindJSON(&task)
+
+	if err := utils.Verify(task.Task, utils.DeleteTaskVerify); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	if err := service.DeleteTask(task); err != nil {
+		global.LOG.Error("删除失败!", zap.Error(err))
+		response.FailWithMessage("删除失败", c)
+	} else {
+		response.OkWithMessage("删除成功", c)
+	}
+}

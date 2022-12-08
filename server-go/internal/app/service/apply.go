@@ -4,6 +4,7 @@ import (
 	"code-market-admin/internal/app/global"
 	"code-market-admin/internal/app/model"
 	"code-market-admin/internal/app/model/request"
+	"errors"
 )
 
 // GetApplyList
@@ -32,4 +33,47 @@ func GetApplyList(searchInfo request.GetApplyListRequest) (err error, list inter
 		err = db.Order("create_time desc").Find(&applyList).Error
 	}
 	return err, applyList, total
+}
+
+// CreateApply
+// @function: CreateApply
+// @description: 添加报名信息
+// @param: taskReq request.CreateTaskRequest
+// @return: err error
+func CreateApply(applyReq request.CreateApplyRequest) (err error) {
+	// 开始事务
+	tx := global.DB.Begin()
+	result := tx.Model(&model.Task{}).Create(&applyReq.Apply)
+	if result.RowsAffected == 0 {
+		tx.Rollback()
+		return errors.New("添加失败")
+	}
+
+	return tx.Commit().Error
+}
+
+// UpdatedApply
+// @function: UpdatedApply
+// @description: 修改报名信息
+// @param: applyReq request.UpdatedApplyRequest
+// @return: err error
+func UpdatedApply(applyReq request.UpdatedApplyRequest) (err error) {
+	result := global.DB.Model(&model.Apply{}).Where("id = ?", applyReq.ID).Updates(&applyReq.Apply)
+	if result.RowsAffected == 0 {
+		return errors.New("修改失败")
+	}
+	return result.Error
+}
+
+// DeleteApply
+// @function: DeleteApply
+// @description: 删除报名信息
+// @param: applyReq request.DeleteApplyRequest
+// @return: err error
+func DeleteApply(applyReq request.DeleteApplyRequest) (err error) {
+	result := global.DB.Delete(&model.Apply{}, applyReq.ID)
+	if result.RowsAffected == 0 {
+		return errors.New("删除失败")
+	}
+	return result.Error
 }

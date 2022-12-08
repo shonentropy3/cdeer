@@ -41,3 +41,71 @@ func GetApplyList(c *gin.Context) {
 		}, "获取成功", c)
 	}
 }
+
+// CreateApply
+// @Tags ApplyApi
+// @Summary 添加报名信息
+// @accept application/json
+// @Produce application/json
+// @Router /apply/createApply [post]
+func CreateApply(c *gin.Context) {
+	var apply request.CreateApplyRequest
+	_ = c.ShouldBindJSON(&apply)
+	// 校验字段
+	if err := utils.Verify(apply.Apply, utils.CreateTaskVerify); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	if err := service.CreateApply(apply); err != nil {
+		global.LOG.Error("添加失败!", zap.Error(err))
+		response.FailWithMessage("添加失败", c)
+	} else {
+		response.OkWithMessage("添加成功", c)
+	}
+}
+
+// UpdatedApply
+// @Tags ApplyApi
+// @Summary 更新报名信息
+// @accept application/json
+// @Produce application/json
+// @Param
+// @Success
+// @Router /apply/updateApply [post]
+func UpdatedApply(c *gin.Context) {
+	var apply request.UpdatedApplyRequest
+	_ = c.ShouldBindQuery(&apply)
+	if err := utils.Verify(apply.Apply, utils.UpdatedApplyVerify); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	if err := service.UpdatedApply(apply); err != nil {
+		global.LOG.Error("更新失败!", zap.Error(err))
+		response.FailWithMessage(err.Error(), c)
+	} else {
+		response.OkWithMessage("更新成功", c)
+	}
+}
+
+// DeleteApply
+// @Tags ApplyApi
+// @Summary 删除报名信息
+// @accept application/json
+// @Produce application/json
+// @Param
+// @Success
+// @Router /apply/deleteApply [post]
+func DeleteApply(c *gin.Context) {
+	var apply request.DeleteApplyRequest
+	_ = c.ShouldBindQuery(&apply)
+	if err := utils.Verify(apply.Apply, utils.DeleteApplyVerify); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	if err := service.DeleteApply(apply); err != nil {
+		global.LOG.Error("删除失败!", zap.Error(err))
+		response.FailWithMessage("删除失败", c)
+	} else {
+		response.OkWithMessage("删除成功", c)
+	}
+}

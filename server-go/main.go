@@ -1,6 +1,7 @@
 package main
 
 import (
+	"code-market-admin/internal/app/blockchain"
 	"code-market-admin/internal/app/core"
 	"code-market-admin/internal/app/global"
 	"code-market-admin/internal/app/initialize"
@@ -23,5 +24,6 @@ func main() {
 		db, _ := global.DB.DB()
 		defer db.Close()
 	}
-	core.RunWindowsServer()
+	blockchain.TraverseBlocks()
+	//core.RunWindowsServer()
 }
