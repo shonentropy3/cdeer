@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Input, Select, InputNumber, Button, Modal, Upload, message, Form } from 'antd';
-import { useAccount } from 'wagmi';
+import { useAccount, useNetwork } from 'wagmi';
 import { useRouter } from 'next/router'
 import { ethers } from "ethers";
 const { TextArea } = Input;
@@ -12,12 +12,14 @@ import { BitOperation } from '../utils/BitOperation';
 import { uploadProps } from "../components/upload/config";
 import ConnectModal from "../components/CustomModal/connectModal";
 import ComfirmTaskModal from "../components/CustomModal/ComfirmTaskModal";
+import { omit } from 'lodash';
 
 export default function Publish() {
     
     const _data = require("../data/data.json");
     const router = useRouter();
-    const { address } = useAccount()
+    const { chain, chains } = useNetwork()
+    const { address } = useAccount();
     const { useTaskContractWrite: Task } = useContracts('createTask');
     const [inner,setInner] = useState([
         {title: 'Entry Name', type: 'input', desc: '项目名称', name: 'title'},
@@ -121,35 +123,30 @@ export default function Publish() {
     }
     
     const comfirm = async() => {
-        // TODO: 币种处理 ==> 2、3
-        let budget = inner[4].subValue === 1 ? ethers.utils.parseEther(`${inner[4].value}`) : 1;
-        data = {
-            title: inner[0].value,
-            desc: inner[1].value,
-            attachment: inner[2].value,
-            currency: inner[4].subValue,
-            budget: budget,
-            period: inner[5].value * 24 * 60 * 60,
-            skills: inner[3].subValue,
-        }
+        
+        var obj = _.omit(params,'role');
+        obj.currency = obj.currency === 'ETH' ? 1 : 1;
+        obj.period = obj.period * 24 * 60 * 60;
+        obj.budget = ethers.utils.parseEther(obj.budget);
+        obj.attachment = obj.attachment ? obj.attachment : '';
         let fee = { value: ethers.utils.parseEther("0") };
-        if (fromdata) {
-            await getHash(fromdata)
-              .then((res) => {
-                data.attachment = res
-              })
-              .catch(err => {
-                console.log(err);
-                return err
-              })
-        }
-        setData({...data})
+        /**
+         *  title: task.title,
+            desc: task.desc,
+            attachment: task.attachment,
+            currency: task.currency,
+            budget: task.budget,
+            period: task.period,
+         *  skills: task.skills,
+         */
         Task.write({
-            recklesslySetUnpreparedArgs: [address, data, fee]
+            recklesslySetUnpreparedArgs: [address, obj, fee]
         })
     }
 
     const writeSuccess = () => {
+        console.log('createTask !!');
+        return
         let obj = {
             title: data.title,
             pro_content: data.desc,

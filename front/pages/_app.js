@@ -27,13 +27,22 @@ import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { detectZoom } from '../utils/DetectZoom.js';
 import { useEffect } from 'react'
+import Web3 from 'web3'
 
 
-const {chains, provider} = configureChains([chain.mainnet,chain.goerli,chain.hardhat],[
+const {chains, provider} = configureChains([chain.mainnet,chain.goerli,chain.hardhat,chain.polygonMumbai,{
+  id: 8478,
+  name: 'BuildBear',
+  network: 'buildBear',
+  rpcUrls: {
+    // default: 'https://backend.buildbear.io/node/charming-bohr-99d0de',
+    default: 'https://explorer.buildbear.io/node/charming-bohr-99d0de'
+  },
+}],[
   infuraProvider({ apiKey: 'd3fe47cdbf454c9584113d05a918694f' }),
   jsonRpcProvider({
     rpc: (chain) => ({ http: chain.rpcUrls.default }),
-  }),
+  })
 ])
 
 const client = createClient({
@@ -108,7 +117,6 @@ function MyApp({ Component, pageProps }) {
 
   useEffect(() => {
     zoom(detectZoom());
-
   },[])
 
   return (

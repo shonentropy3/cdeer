@@ -38,10 +38,15 @@ module.exports = {
   //   },
   // },
   networks: {
+    // dev: {
+    //   url: "http://127.0.0.1:8545",
+    //   chainId: 31337,
+    //   gas: 12000000,
+    // },
     dev: {
-      url: "http://127.0.0.1:8545",
-      chainId: 31337,
-      gas: 12000000,
+      url: "https://backend.buildbear.io/node/charming-bohr-99d0de",
+      accounts: ["42fcbcb9196e00f7e9b7e0cf0fb7cb1d1889b1d4c052fb6dbc2f3ff3a8944d44"],
+      chainId: 8478
     },
     ropsten: {
       url: `https://ropsten.infura.io/v3/${infurakey}`,

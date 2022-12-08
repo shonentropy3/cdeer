@@ -1,17 +1,51 @@
 import { CloseOutlined } from "@ant-design/icons"
-import { Button, Modal } from "antd"
+import { Button, message, Modal } from "antd"
 import { useEffect, useState } from "react";
-import { useConnect, useSwitchNetwork } from "wagmi";
-
+import { useConnect, useNetwork, useSwitchNetwork } from "wagmi";
+import Web3 from 'web3'
 
 
 export default function ConnectModal(params) {
     
     const { setStatus, status } = params;
     const { connect, connectors } = useConnect();
-    const { switchNetwork } = useSwitchNetwork();
+    const { chain } = useNetwork();
+    const {switchNetwork} = useSwitchNetwork({
+        onError(error) {
+          console.log('Error', error)
+          window.ethereum &&
+          window.ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [
+                  {
+                      chainId: Web3.utils.numberToHex(8478),
+                      chainName: 'BuildBear Charming Bohr 99d0de',
+                      nativeCurrency: {
+                      name: 'BuildBear',
+                      symbol: 'BB ETH', // 2-6 characters long
+                      decimals: 18
+                      },
+                      rpcUrls: ['https://backend.buildbear.io/node/charming-bohr-99d0de'],
+                      blockExplorerUrls: ['https://explorer.buildbear.io/node/charming-bohr-99d0de']
+                  }
+              ]
+            }).then(() => {
+                network()
+                setStatus(false)
+            })
+        },
+      });
     let [needConnector,setNeedConnector] = useState([]);
 
+    const network = () => {
+        switchNetwork &&
+        switchNetwork(Number(
+            process.env.NEXT_PUBLIC_DEVELOPMENT_CHAIN_ID ? 
+                process.env.NEXT_PUBLIC_DEVELOPMENT_CHAIN_ID
+                :
+                process.env.NEXT_PUBLIC_PRODUCTION_CHAIN_ID
+        ))
+    }
 
     useEffect(() => {
         connectors.map((e,i) => {
@@ -23,19 +57,8 @@ export default function ConnectModal(params) {
     },[])
 
     useEffect(() => {
-        if (switchNetwork) {
-            switchNetwork(Number(
-                process.env.NEXT_PUBLIC_DEVELOPMENT_CHAIN_ID ? 
-                process.env.NEXT_PUBLIC_DEVELOPMENT_CHAIN_ID
-                :
-                process.env.NEXT_PUBLIC_PRODUCTION_CHAIN_ID
-                ))
-            // switchNetwork(chain.id)
-            // console.log(chain);
-            // TODO: 切换网络
-        }
-    },[switchNetwork])
-
+        if (chain) { network() }
+    },[chain])
 
     return <Modal
             title={<p>Link Wallet <CloseOutlined onClick={() => setStatus(false)} /></p>} 
@@ -48,7 +71,7 @@ export default function ConnectModal(params) {
         {needConnector.map((connector) => (
             <Button
                 key={connector.id}
-                onClick={() => {connect({ connector }), setStatus(false)}}
+                onClick={() => connect({ connector })}
             >
                 <p className='connect-img'>
                     <img src={"/"+connector.name+".png"} />

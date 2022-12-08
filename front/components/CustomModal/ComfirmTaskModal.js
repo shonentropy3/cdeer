@@ -6,10 +6,6 @@ export default function ComfirmTaskModal(params) {
     
     const { comfirm, inner, skills, setStatus } = params
 
-    useEffect(() => {
-        console.log(params);
-    },[])
-
     let [needSkills,setNeedSkills] = useState([])
     
     useEffect(()=>{
