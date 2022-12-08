@@ -6,12 +6,12 @@ import { ethers } from "ethers";
 const { TextArea } = Input;
 const { Option } = Select;
 // 自定义部分
-import Modal_comfirmTask from "../components/Modal_comfirmTask";
 import { useContracts } from '../controller/index';
 import { createDemand, getHash } from "../http/api/task";
 import { BitOperation } from '../utils/BitOperation';
 import { uploadProps } from "../components/upload/config";
 import ConnectModal from "../components/CustomModal/connectModal";
+import ComfirmTaskModal from "../components/CustomModal/ComfirmTaskModal";
 
 export default function Publish() {
     
@@ -30,6 +30,7 @@ export default function Publish() {
     ])
     let [params, setParams] = useState({});
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isModalVisibleC, setIsModalVisibleC] = useState(false);
     let [data,setData] = useState({});
     let [fromdata,setFromdata] = useState();
     let [suffix,setSuffix] = useState("");
@@ -248,9 +249,8 @@ export default function Publish() {
             return
         }
         params = {...values, ...params}
-        params.period = params.period * 24 * 60 * 60;
-        console.log(params);
-        // setIsModalVisibleC(true)
+        setParams({...params});
+        setIsModalVisibleC(true)
     };
 
     return <div className="Publish">
@@ -302,5 +302,14 @@ export default function Publish() {
             </div>
         </div>
         <ConnectModal setStatus={setIsModalVisible} status={isModalVisible} />
+        <Modal
+            className="Submit_item" 
+            footer={null} 
+            closable={false}
+            open={isModalVisibleC} 
+            onCancel={() => setIsModalVisibleC(false)}
+        >
+            <ComfirmTaskModal inner={params} skills={skills} comfirm={() => comfirm()} setStatus={setIsModalVisibleC} />
+        </Modal>
     </div>
 }
