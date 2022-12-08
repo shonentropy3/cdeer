@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useRouter } from 'next/router'
-import { Steps, Button, message, Modal, Image } from "antd";
+import { Steps, Button, message, Modal, Image, Tooltip } from "antd";
 import { getDemandInfo } from "../http/api/task";
-import { multicallWrite, muticallEncode, useRead, useSignData } from "../controller";
+import { multicallWrite, muticallEncode, useContracts, useRead, useSignData } from "../controller";
 import Stage_info from "../components/Stage_info";
 import { ethers } from "ethers";
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount, useContract, useNetwork } from 'wagmi'
 import { getOrdersInfo, getStagesHash, getStagesJson } from "../http/api/order";
+import { getMyInfo } from "../http/api/user"
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 import { deform_Skills } from '../utils/Deform';
@@ -37,6 +38,12 @@ export default function Order(props) {
 
     // 账号身份
     let [identity,setIdentity] = useState()
+
+    // worker address
+    let [workerAddr,setWorkerAddr] = useState()
+
+    // worker info
+    let [workerInfo,setWorkerInfo] = useState({})
 
     // 技能要求列表
     let [skills,setSkills] = useState({
@@ -69,10 +76,9 @@ export default function Order(props) {
     const { useStageRead: stagesChain } = useRead('getStages', query.oid);
     const { useOrderRead: nonces } = useRead('nonces', address);
     const { useSign, obj } = useSignData(signObj);
-    
+
     // 获取链上数据
     const readContract = async() => {
-        console.log(useTaskRead.data);
         if (query.tid && useTaskRead.data && Order.data) {
             let multiple = useTaskRead.data.currency === 1 ? Math.pow(10,18) : 1;
             // 价格从Order获取不从Task获取
@@ -215,7 +221,6 @@ export default function Order(props) {
         })
         
         let params = muticallEncode(arr);
-        console.log("params===",params);
         multicallWrite(params,address,value)
         .then(res => {
             message.success('项目开始')
@@ -313,16 +318,47 @@ export default function Order(props) {
                     }
                     if (res.stages) {
                         let obj = JSON.parse(res.json.obj)
-                        let stages = JSON.parse(res.json.stages)
-                        Object.keys(obj.stages).map((e,i) => {
-                            arr.push({
-                                budget: res.stages.amount[i],
-                                period: res.stages.period[i],
-                                content: obj.stages[i].milestone.content,
-                                percent: '',
-                                title: obj.stages[i].milestone.title
+                        let stages1
+                        let stages2
+                        if (typeof(obj.stages) === 'object') {
+                            stages1 = obj.stages
+                        }else{
+                            stages1 = JSON.parse(obj.stages)
+                        }
+                        if (obj.obj) {
+                            stages2 = JSON.parse(obj?.obj)
+                            Object.keys(stages2.stages).map((e,i) => {
+                                arr.push({
+                                    budget: stages1.amount[i],
+                                    period: stages1.period[i],
+                                    content: stages2.stages[i].milestone.content,
+                                    percent: '',
+                                    title: stages2.stages[i].milestone.title
+                                })
                             })
-                        })
+                        }else{
+                            stages2 = JSON.parse(res.json.stages)
+                            Object.keys(stages1).map((e,i) => {
+                                arr.push({
+                                    budget: stages2.amount[i],
+                                    period: stages2.period[i],
+                                    content: stages1[i].milestone.content,
+                                    percent: '',
+                                    title: stages1[i].milestone.title
+                                })
+                            })
+                        }
+                        
+                        // Object.keys(stages2.stages).map((e,i) => {
+                        //     arr.push({
+                        //         budget: stages1.amount[i],
+                        //         period: stages1.period[i],
+                        //         content: stages2.stages[i].milestone.content,
+                        //         percent: '',
+                        //         title: stages2.stages[i].milestone.title
+                        //     })
+                        // })
+                        // let stages = JSON.parse(res.json.stages)
                         stagesData = arr;
                         setStagesData([...arr]);
                     }
@@ -341,6 +377,14 @@ export default function Order(props) {
           onCancel() {},
         });
       };
+
+      const getWorkerInfo = () => {
+        getMyInfo({address:workerAddr})
+        .then((res)=>{
+            workerInfo = res.data[0]
+            setWorkerInfo({...workerInfo})
+        })
+      }
 
     // const total = () => {
     //     if (!stagesData) {
@@ -367,17 +411,17 @@ export default function Order(props) {
     //     </>
     // }
 
-    const btn = () => {
-        if (step === 0) {
-            return (
-                query.who === 'issuer' && !modifyStatus ? <>
-                    <p className="tips"><ExclamationCircleOutlined style={{color: 'red', marginRight: '10px'}} />同意后,项目正式启动.并按照阶段划分作为项目交付计划和付款计划</p>
-                    <Button type='primary' className='worker-btn' onClick={() => overflow()}>同意阶段划分</Button></>
-                    :
-                    <Button type='primary' className='worker-btn' onClick={() => setStage()}>完成并提交阶段划分</Button>
-            )
-        }
-    }
+    // const btn = () => {
+    //     if (step === 0) {
+    //         return (
+    //             query.who === 'issuer' && !modifyStatus ? <>
+    //                 <p className="tips"><ExclamationCircleOutlined style={{color: 'red', marginRight: '10px'}} />同意后,项目正式启动.并按照阶段划分作为项目交付计划和付款计划</p>
+    //                 <Button type='primary' className='worker-btn' onClick={() => overflow()}>同意阶段划分</Button></>
+    //                 :
+    //                 <Button type='primary' className='worker-btn' onClick={() => setStage()}>完成并提交阶段划分</Button>
+    //         )
+    //     }
+    // }
 
     useEffect(() => {
         init()
@@ -385,7 +429,6 @@ export default function Order(props) {
 
     useEffect(() => {
         if (obj.chainId && isSigner) {
-            console.log(obj);
             useSign.signTypedData();
         }
     },[signObj])
@@ -399,6 +442,8 @@ export default function Order(props) {
             // 获取stagejson
             getOrdersInfo(query.oid)
             .then(res => {
+                workerAddr = res[0].worker;
+                setWorkerAddr(workerAddr)
                 stagejson = res[0].stagejson;
                 setStagejson(stagejson);
             })
@@ -424,16 +469,15 @@ export default function Order(props) {
     },[Order.data])
 
     useEffect(() => {
+        getWorkerInfo()
+    },[workerAddr])
+
+    useEffect(() => {
         taskID = location.search.split('=')[3];
         identity = location.search.split('=')[2].split('&')[0]
         setTaskID(taskID);
         setIdentity(identity);
         getProject()
-    },[])
-
-    useEffect(()=>{
-        console.log(Order);
-        console.log("====",query);
     },[])
 
     return <div className="WorkerProject">
@@ -470,12 +514,12 @@ export default function Order(props) {
                 }
                 {
                     query.who === 'issuer' ? 
-                        <div className="issuer-workerInfo">
+                            <div className="issuer-workerInfo">
                             <div className="workerInfo-title">Task stage division：</div>
                             <div className="workerInfo-content">
                                 <div className="img"></div>
                                 <div className="info">
-                                    <p className="title">Tony<span>View personal information</span></p>
+                                    <p className="title">tony<span>View personal information</span></p>
                                     <p className="subtitle">Good at skills： 
                                         {
                                             goodSkills.map((e,i) => (
@@ -486,7 +530,9 @@ export default function Order(props) {
                                     <div className="boxs">
                                         <div className="box">
                                             <div className="icon">
-                                                <Image src="/telegram.png" />
+                                                <Tooltip placement="top" title={workerInfo.telegram}>
+                                                    <Image src="/telegram.png" />
+                                                </Tooltip>
                                             </div>
                                         </div>
                                         <div className="box">
@@ -502,7 +548,8 @@ export default function Order(props) {
                                     </div>
                                 </div>
                             </div>
-                        </div> : ''
+                        </div>
+                        : ''
                 }
                     <Stage_info 
                         Query={query} 
@@ -522,50 +569,50 @@ export default function Order(props) {
                 </div>
                 {/* <div className="worker-total">{total()}</div> */}
                 <div className="content-container">
-            <p className='task-details'>Task Details</p>
-            <div className='task-detail-list'>
-                <p className='task-type task-li'>
-                    <span className='task-type-title title'>Type：</span>
-                    <span className='task-type-text content'>Blockchain</span>
-                </p>
-                <p className='task-cost task-li'>
-                    <span className='task-cost-title title'>Cost：</span>
-                    <span className='task-cost-price content'>{project.budget / 1000000000000000000}ETH</span>
-                </p>
-                <p className='task-date task-li'>
-                    <span className='task-date-title title'>Cycle：</span>
-                    <span className='task-date-time content'>{project.period / 86400}days</span>
-                </p>
-            </div>
-            <div className="content-li">
-                <p className="li-title">Task Description：</p>
-                <div className="li-box">
-                    <p className="detail content">
-                        {project.desc}
-                    </p>
-                </div>
-            </div>
-            <div className="content-li">
-                <p className="li-title">Task document：</p>
-                <div className="li-box">
-                    <div className="upload">
-                        <p className="upload-title">{project.suffix}</p>
-                        {/* <p>下载</p> */}
+                    <p className='task-details'>Task Details</p>
+                    <div className='task-detail-list'>
+                        <p className='task-type task-li'>
+                            <span className='task-type-title title'>Type：</span>
+                            <span className='task-type-text content'>Blockchain</span>
+                        </p>
+                        <p className='task-cost task-li'>
+                            <span className='task-cost-title title'>Cost：</span>
+                            <span className='task-cost-price content'>{project.budget / 1000000000000000000}ETH</span>
+                        </p>
+                        <p className='task-date task-li'>
+                            <span className='task-date-title title'>Cycle：</span>
+                            <span className='task-date-time content'>{project.period / 86400}days</span>
+                        </p>
+                    </div>
+                    <div className="content-li">
+                        <p className="li-title">Task Description：</p>
+                        <div className="li-box">
+                            <p className="detail content">
+                                {project.desc}
+                            </p>
+                        </div>
+                    </div>
+                    <div className="content-li">
+                        <p className="li-title">Task document：</p>
+                        <div className="li-box">
+                            <div className="upload">
+                                <p className="upload-title">{project.suffix}</p>
+                                {/* <p>下载</p> */}
+                            </div>
+                        </div>
+                    </div>
+                    <div className="content-li">
+                        <p className="li-title">Skill requirements：</p>
+                        <div className="li-box boxs">
+                        {
+                                project.role ? 
+                                project.role.map((e,i) => <div className="box" key={i}>{e}</div> )
+                                :
+                                ''
+                            }
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div className="content-li">
-                <p className="li-title">Skill requirements：</p>
-                <div className="li-box boxs">
-                {
-                        project.role ? 
-                        project.role.map((e,i) => <div className="box" key={i}>{e}</div> )
-                        :
-                        ''
-                    }
-                </div>
-            </div>
-        </div>
             <div className="h50"></div>
             <Modal
                 footer={null}

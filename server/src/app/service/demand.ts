@@ -84,6 +84,7 @@ export class MarketService {
                     arr.push({
                         oid: Number(e.order_id),
                         tid: Number(e.task_id),
+                        worker: e.worker,
                         stagejson: e.attachment
                     });
                 })
@@ -98,6 +99,7 @@ export class MarketService {
                     arr.push({
                         oid: Number(e.order_id),
                         tid: Number(e.task_id),
+                        worker: e.worker,
                         stagejson: e.attachment
                     });
                 })
@@ -111,6 +113,7 @@ export class MarketService {
                     arr.push({
                         oid: Number(e.order_id),
                         tid: Number(e.task_id),
+                        worker: e.worker,
                         stagejson: e.attachment
                     });
                 })

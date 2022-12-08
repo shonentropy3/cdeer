@@ -108,11 +108,7 @@ export class CommonService {
     // Get stage hash
     getStage(body: any){
         return new Promise(async(resolve, reject) => {
-        let time = Date.now()+'.json'
-        let path = './cache_area'+'/'+time
         const http = this.httpService
-        // const result = this.httpService.post(`http://47.242.152.213:3022/v1/upload/json`,{"a":"1"})
-        // console.log(result);
         try {
             await lastValueFrom(
                 http.post('http://47.242.152.213:3022/v1/upload/json', {body: body}).pipe(
@@ -129,46 +125,7 @@ export class CommonService {
             console.log(error);
           }
         return
-        // return
-        // fs.writeFile(path, body.obj, async function (err) {
-        //     if (err) {
-        //         console.error(err);
-        //     }else{
-        //         let res = 'cache_area/'+ time;
-        //         let from = new FormData();
-        //         from.append("file",res)
-        //         console.log(body);
-        //         return
-                //     ipfs.add(fs.readFileSync(res), function (err, files) {
-                        
-                //         if (err || typeof files == "undefined") {
-                //             console.log('Ipfs writeStream err==>', err);
-                //         } else {
-                //             let obj = {
-                //                 hash: files[0].hash,
-                //                 path: res
-                //             }
-                //             // 上传upyun
-                //             client.putFile(obj.hash, fs.readFileSync(res))
-                //             .then(res => {
-                //                 console.log(res);
-                                
-                //                 return true
-                //             })
-                //             .catch(err => {
-                //                 console.log(err);
-                                
-                //                 return false
-                //             })
-                //             fs.unlink(res, (err) => {
-                //                 if (err) throw err;
-                //             });
-                //             resolve(obj)
-                //         }
-                //     })
-        //     }
-            
-        // })
+
     }).then(async(res)=>{
         return await this.tasksRepository.query(updateStageJson({json: res, oid: body.oid, info: body.info, stages: body.stages}))
         .then(() => {
@@ -242,42 +199,29 @@ export class CommonService {
     }
 
     async updateAttachment(body: any){
-        return new Promise((resolve, reject) => {
-            let time = Date.now()+'.json'
-            let path = './cache_area'+'/'+time
-            fs.writeFile(path, body.obj, function (err) {
-                if (err) {
-                    console.error(err);
-                }else{
-                    let res = 'cache_area/'+ time
-                        ipfs.add(fs.readFileSync(res), function (err, files) {
-                            
-                            if (err || typeof files == "undefined") {
-                                console.log('Ipfs writeStream err==>', err);
-                            } else {
-                                let obj = {
-                                    hash: files[0].hash,
-                                    path: res
-                                }
-                                // 上传upyun
-                                client.putFile(obj.hash, fs.readFileSync(res))
-                                .then(res => {
-                                    return true
-                                })
-                                .catch(err => {
-                                    return false
-                                })
-                                resolve(obj)
-                            }
-                        })
-                }
-                
-            })
+        return new Promise( async (resolve, reject) => {
+            const http = this.httpService
+            try {
+                await lastValueFrom(
+                    http.post('http://47.242.152.213:3022/v1/upload/json', {body: body}).pipe(
+                      map(resp => {
+                        console.log(resp.data)
+                        let obj = {
+                            hash: resp.data.hash,
+                        }
+                        resolve(obj)
+                    })
+                    )
+                  );
+              } catch (error) {
+                console.log(error);
+              }
+            return
+    
         }).then(async(res: any)=>{
-            fs.unlink(res.path, (err) => {
-                if (err) throw err;
-            });
-            return await this.tasksRepository.query(updateJson({json: res, oid: body.oid}))
+            if(res.hash){
+                return await this.tasksRepository.query(updateJson({json: res, oid: body.oid}))
+            }
         })
     }
 

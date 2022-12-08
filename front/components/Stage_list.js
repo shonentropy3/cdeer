@@ -154,7 +154,8 @@ export default function Stage_list(props) {
     
     useEffect(() => {
         if (delivery.data) {
-            stageJson.stages[ongoingStage.data.stageIndex.toString()].delivery = {
+            let stages = JSON.parse(stageJson.obj).stages
+            stages[ongoingStage.data.stageIndex.toString()].delivery = {
                 attachment: '',
                 fileType: '',
                 content: '完成'
@@ -197,17 +198,30 @@ export default function Stage_list(props) {
     useEffect(() => {
         if (stageJson && Step !== 0) {
             let obj = JSON.parse(stageJson.obj)
-            obj.stages.map((e,i) => {
-                if (ongoingStage.data.stageIndex.toString() == i && e.delivery.content) {
-                    isDelivery = {
-                        status: true,
-                        data: e.delivery
+            if (typeof(obj.stages !== 'object')) {
+                let stages = JSON.parse(obj.obj)
+                stages.stages.map((e,i)=>{
+                    if (ongoingStage.data?.stageIndex.toString() == i && e.delivery.content) {
+                        isDelivery = {
+                            status: true,
+                            data: e.delivery
+                        }
+                        setIsDelivery({...isDelivery});
                     }
-                    setIsDelivery({...isDelivery});
-                }
-            })
+                })
+            }else{
+                obj.stages.map((e,i) => {
+                    if (ongoingStage.data?.stageIndex.toString() == i && e.delivery.content) {
+                        isDelivery = {
+                            status: true,
+                            data: e.delivery
+                        }
+                        setIsDelivery({...isDelivery});
+                    }
+                })
+            }
         }
-    },[stageJson])
+    },[stageJson,ongoingStage.data])
 
     useEffect(() => {
         abortOrder.data ? message.success('中止成功') : '';
@@ -231,7 +245,6 @@ export default function Stage_list(props) {
                 // {amount:[111,111,222],"period":[0,11,2],"deadline":1665386882}
             })
             _periods[ongoingStage.data.stageIndex.toString()] += delayValue;
-            console.log();
             let obj = {
                 amount: _amounts, period: _periods, deadline: deadline
             }

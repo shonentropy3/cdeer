@@ -348,7 +348,6 @@ export default function Stage_info(props) {
             setDeadLine(deadLine);
             let _amounts = [];
             let _periods = [];
-            console.log(Data);
             Data.map(e => {
                 _amounts.push(ethers.utils.parseEther(`${e.budget}`));
                 _periods.push(`${e.period * 24 * 60 * 60}`)
@@ -362,7 +361,6 @@ export default function Stage_info(props) {
                 nonce: nonce,
                 deadline: `${now+setTime}`
             }
-            console.log(signObj);
             isSignObj({...signObj});
             setIsSigner(true);
     }
@@ -432,9 +430,6 @@ export default function Stage_info(props) {
     },[useSign.data])
 
 
-    // useEffect(()=>{
-    //     console.log(Step);
-    // },[])
  
 
     return <div className="order-stage"><div className="Stage_info">
