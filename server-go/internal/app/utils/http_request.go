@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
+	"mime/multipart"
 	"net/http"
 	"strings"
 	"time"
@@ -39,7 +41,9 @@ func GetRequest(url string) (string, error) {
 func PostRequest(url string, data interface{}, contentType string) ([]byte, error) {
 	// 超时时间：60秒
 	client := &http.Client{Timeout: 60 * time.Second}
+	fmt.Println(data)
 	jsonStr, _ := json.Marshal(data)
+	fmt.Println(string(jsonStr))
 	resp, err := client.Post(url, contentType, bytes.NewBuffer(jsonStr))
 	if err != nil {
 		return nil, err
@@ -47,6 +51,58 @@ func PostRequest(url string, data interface{}, contentType string) ([]byte, erro
 	defer resp.Body.Close()
 	result, _ := io.ReadAll(resp.Body)
 	return result, nil
+}
+
+// PostFileRequest 发送POST请求 上传文件
+// url：         请求地址
+// data：        POST请求提交的数据
+func PostFileRequest(url string, header *multipart.FileHeader) (res []byte, err error) {
+	file, err := header.Open()
+	if err != nil {
+		return res, err
+	}
+	defer file.Close()
+
+	body := &bytes.Buffer{}
+	//创建一个multipart类型的写文件
+	writer := multipart.NewWriter(body)
+	//使用给出的属性名paramName和文件名filePath创建一个新的form-data头
+	part, err := writer.CreateFormFile("file", header.Filename)
+	if err != nil {
+		fmt.Println(" post err=", err)
+	}
+	//将源复制到目标，将file写入到part   是按默认的缓冲区32k循环操作的，不会将内容一次性全写入内存中,这样就能解决大文件的问题
+	_, err = io.Copy(part, file)
+	err = writer.Close()
+	if err != nil {
+		fmt.Println(" post err=", err)
+	}
+	request, err := http.NewRequest("POST", url, body)
+	//writer.FormDataContentType() ： 返回w对应的HTTP multipart请求的Content-Type的值，多以multipart/form-data起始
+	request.Header.Set("Content-Type", writer.FormDataContentType())
+	//设置host，只能用request.Host = “”，不能用request.Header.Add(),也不能用request.Header.Set()来添加host
+	//request.Host = "api.shouji.com"
+	t := http.DefaultTransport.(*http.Transport).Clone()
+	t.MaxIdleConns = 100
+	t.MaxConnsPerHost = 100
+	t.MaxIdleConnsPerHost = 100
+	clt := http.Client{
+		Timeout:   10 * time.Second,
+		Transport: t,
+	}
+	defer clt.CloseIdleConnections()
+	result, err := clt.Do(request)
+	//http返回的response的body必须close,否则就会有内存泄露
+	defer result.Body.Close()
+	if err != nil {
+		fmt.Println("err is ", err)
+	}
+	res, err = ioutil.ReadAll(result.Body)
+	if err != nil {
+		fmt.Println("ioutil.ReadAll  err is ", err)
+		return
+	}
+	return res, err
 }
 
 func GraphQlRequest(url string, payload *strings.Reader) (body []byte, err error) {
