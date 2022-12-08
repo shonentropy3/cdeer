@@ -10,5 +10,7 @@ func InitTaskRouter(Router *gin.RouterGroup) {
 	{
 		taskRouter.GET("getSearchList", api.GetTaskList) // 获取需求列表
 		taskRouter.POST("createTask", api.CreateTask)    // 创建需求
+		taskRouter.POST("updatedTask", api.UpdatedTask)  // 更新需求
+		taskRouter.POST("deleteTask", api.DeleteTask)    // 删除需求
 	}
 }

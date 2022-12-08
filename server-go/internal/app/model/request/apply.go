@@ -10,3 +10,15 @@ type GetOrderListRequest struct {
 	model.Order
 	PageInfo
 }
+
+type CreateApplyRequest struct {
+	model.Apply
+}
+
+type UpdatedApplyRequest struct {
+	model.Apply
+}
+
+type DeleteApplyRequest struct {
+	model.Apply
+}
