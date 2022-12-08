@@ -7,9 +7,14 @@ import (
 type GetSearchListRequest struct {
 	model.Task
 	PageInfo
-	Role uint16 `gorm:"column:role" json:"role" form:"role"`
 }
 type CreateTaskRequest struct {
 	model.Task
-	Role []uint16 `gorm:"column:role" json:"role" form:"role"`
+}
+
+type UpdatedTaskRequest struct {
+	model.Task
+}
+type DeleteTaskRequest struct {
+	ID uint `gorm:"column:id" json:"id" form:"id"`
 }

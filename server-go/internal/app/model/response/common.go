@@ -6,6 +6,7 @@ type PageResult struct {
 	Page     int         `json:"page"`
 	PageSize int         `json:"pageSize"`
 }
+
 type UploadResponse struct {
 	Hash string `json:"hash"`
 }
