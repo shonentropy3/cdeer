@@ -11,23 +11,26 @@ contract TaskMetadata is IMetadata {
     using MyStrings for string;
     using uint8a6 for uint;
     
-    function getValue(uint[] memory values) public view returns (uint) {
-        uint len = values.length;
-        require(len < 6 , "length mismatch");
-        uint va;
-
-        for (uint256 i = 0; i < len; i++) {
-            va = va.set(i, values[i]);
-        }
-        
-        return va;
-    }
 
     ITask public taskAddr;
-    string public background;
+
+    mapping (uint8=>string) currencyNames;
+    mapping (uint8=>string) skills;
 
     constructor(address _task) {
         taskAddr = ITask(_task);
+        currencyNames[1] = "ETH";
+        currencyNames[2] = "USD";
+        currencyNames[3] = "BNB";
+
+        skills[1] = "Development";
+        skills[2] = "Product";
+        skills[2] = "Design";
+        skills[3] = "Writing";
+        skills[4] = "Marketing";
+        skills[5] = "Research";
+        skills[6] = "Operation";
+
     }
 
 
@@ -43,7 +46,6 @@ contract TaskMetadata is IMetadata {
         string memory title = task.title;
         string memory desc = task.desc.shorten(20);
         // task.skills;
-
 
         return
             string(
@@ -77,8 +79,8 @@ contract TaskMetadata is IMetadata {
                     // Release time release time release time release time release time
                     '</text><text transform="translate(41 143.66)" style="font-size:8.63px;font-family:PingFangSC-Medium-GBpc-EUC-H,PingFang SC;letter-spacing:.08em">',
                     // 2000 USDT
-                    '</text><text class="c28" transform="translate(15.13 20.86)">Task</text><text class="c28" transform="translate(32.13 20.86)">#'
-                    // 001
+                    '</text><text class="c28" transform="translate(15.13 20.86)">Detask.xyz</text><text class="c28" transform="translate(48.13 20.86)">#',
+                    Strings.toString(taskId),
                     '</text></svg>'
 
                 )
