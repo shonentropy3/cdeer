@@ -108,7 +108,7 @@ function MyApp({ Component, pageProps }) {
           break;
       }
     }
-    else if (window.screen.width <= 1921) {
+    else if (window.screen.width <= 1915) {
       document.body.style.zoom = 1440 / 1920;
       // console.log('笔记本');
       // console.log(window.screen.width + "====" + window.devicePixelRatio);
@@ -117,6 +117,7 @@ function MyApp({ Component, pageProps }) {
 
   useEffect(() => {
     zoom(detectZoom());
+    console.log(window.screen.width * window.devicePixelRatio);
   },[])
 
   return (

@@ -9,6 +9,7 @@ import { deform_Skills } from "../utils/Deform";
 import { useContracts } from "../controller";
 import { ethers } from "ethers";
 import { applyFor,cancelApply } from "../http/api/apply";
+import { searchTask } from "../http/_api/public";
 
 export default function Task() {
 
@@ -41,18 +42,13 @@ export default function Task() {
     }
 
     const getTasks = () => {
-        getTasksData({hash: address})
+        searchTask({issuer: address})
         .then(res => {
-            let arr = [];
-            res.map(e => {
-                if (e.id) {
-                    arr.push(e.id);
-                }
-            })
-            tidList = arr;
-            setTidList([...arr])
-            selectItem.data = res;
-            setSelectItem({...selectItem});
+            if (res.code === 0) {
+                selectItem.data = res.data.list;
+                setSelectItem({...selectItem});
+                console.log(selectItem);
+            }
         })
     }
 
@@ -97,10 +93,10 @@ export default function Task() {
         switch (selectItem.item) {
             case 'tasks':
                 return Tasks()
-            case 'developping':
-                return Developping(selectItem.data)
-            case 'apply':
-                return Apply(selectItem.data)
+            // case 'developping':
+            //     return Developping(selectItem.data)
+            // case 'apply':
+            //     return Apply(selectItem.data)
             default:
                 break;
         }
@@ -194,13 +190,14 @@ export default function Task() {
     }
 
     const Tasks = () => {
+        console.log(selectItem.data.length);
         return  <>{
                     selectItem.data.length === 0 ?
                         <Empty />
                         :
                         selectItem.data.map((e,i) => 
                             e.title ? 
-                            <Link key={e.id} href={{pathname: '/issuer/applylist', search: e.id}}>
+                            <Link key={i} href={{pathname: '/issuer/applylist', search: e.id}}>
                                 <div className="li">
                                     <div className="li-info">
                                         <p className="title">{e.title}</p>
@@ -290,12 +287,12 @@ export default function Task() {
             case 'tasks':
                 getTasks()
                 break;
-            case 'developping':
-                getDevelopping()
-                break;
-            case 'apply':
-                getApply()
-                break;
+            // case 'developping':
+            //     getDevelopping()
+            //     break;
+            // case 'apply':
+            //     getApply()
+            //     break;
             default:
                 // getDevelopend()
                 break;

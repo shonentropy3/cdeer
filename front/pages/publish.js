@@ -7,7 +7,6 @@ const { TextArea } = Input;
 const { Option } = Select;
 // 自定义部分
 import { useContracts } from '../controller/index';
-import { createDemand, getHash } from "../http/api/task";
 import { BitOperation } from '../utils/BitOperation';
 import { uploadProps } from "../components/upload/config";
 import ConnectModal from "../components/CustomModal/connectModal";
@@ -19,7 +18,6 @@ export default function Publish() {
     
     const _data = require("../data/data.json");
     const router = useRouter();
-    const { chain, chains } = useNetwork()
     const { address } = useAccount();
     const { useTaskContractWrite: Task } = useContracts('createTask');
     const [inner,setInner] = useState([
@@ -34,9 +32,6 @@ export default function Publish() {
     let [params, setParams] = useState({});
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isModalVisibleC, setIsModalVisibleC] = useState(false);
-    let [data,setData] = useState({});
-    let [fromdata,setFromdata] = useState();
-    let [suffix,setSuffix] = useState("");
     let [fileList, setFileList] = useState([]);
     let [skills,setSkills] = useState({
         title: '技能要求',
