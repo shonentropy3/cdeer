@@ -1,7 +1,7 @@
 import { CloseOutlined } from "@ant-design/icons"
 import { Button, message, Modal } from "antd"
 import { useEffect, useState } from "react";
-import { useConnect, useNetwork, useSwitchNetwork } from "wagmi";
+import { useAccount, useConnect, useNetwork, useSwitchNetwork } from "wagmi";
 import Web3 from 'web3'
 
 
@@ -10,6 +10,7 @@ export default function ConnectModal(params) {
     const { setStatus, status } = params;
     const { connect, connectors } = useConnect();
     const { chain } = useNetwork();
+    const { address } = useAccount();
     const {switchNetwork} = useSwitchNetwork({
         onError(error) {
           console.log('Error', error)
@@ -59,6 +60,10 @@ export default function ConnectModal(params) {
     useEffect(() => {
         if (chain) { network() }
     },[chain])
+
+    useEffect(() => {
+        setStatus(false)
+    },[address])
 
     return <Modal
             title={<p>Link Wallet <CloseOutlined onClick={() => setStatus(false)} /></p>} 
