@@ -1,8 +1,8 @@
-const { ethers } = require("hardhat");
+const { network, ethers } = require("hardhat");
 const { expect } = require("chai");
 const { signPermitStage, signPermitProlongStage } = require("./signPermitStage.js");
 
-const DeOrderAddr = require(`../deployments/dev/DeOrder.json`)
+const DeOrderAddr = require(`../deployments/${hre.network.name}/DeOrder.json`)
 
 // const { expectRevert } = require("@openzeppelin/test-helpers");
 
