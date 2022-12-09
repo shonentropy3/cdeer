@@ -9,33 +9,38 @@ import (
 
 func DeTask(vLog types.Log) {
 	DeTaskABI := global.ContractABI["DeTask"]
-	if vLog.Topics[0] == DeTaskABI.Events["TaskCreated"].ID {
+	switch vLog.Topics[0] {
+	case DeTaskABI.Events["TaskCreated"].ID:
 		ParseTaskCreated(vLog)
 	}
-	_ = vLog
 }
 
-// ParseTaskCreated
+// ParseTaskCreated 解析TaskCreated事件
 func ParseTaskCreated(vLog types.Log) {
 	contractAbi := global.ContractABI["DeTask"]
-	var taskCreated DeTaskABI.StorageTaskCreated
+	var taskCreated DeTaskABI.DeTaskTaskCreated
 	ParseErr := contractAbi.UnpackIntoInterface(&taskCreated, "TaskCreated", vLog.Data)
 	// parse success
 	if ParseErr == nil {
 		// 开始事务
 		tx := global.DB.Begin()
-		// 更新数据
-		// TODO: 解析技能要求
+		// 更新数据--不存在则插入
 		task := model.Task{TaskID: vLog.Topics[1].Big().Uint64(), Status: 1, Title: taskCreated.Task.Title, Desc: taskCreated.Task.Desc, Period: taskCreated.Task.Period}
 		task.Budget = taskCreated.Task.Budget.String()
 		task.Attachment = taskCreated.Task.Attachment
-		if err := tx.Model(&model.Task{}).Where("hash = ?", vLog.TxHash).Updates(&task).Error; err != nil {
+		// 更新数据
+		raw := tx.Model(&model.Task{}).Where("hash = ?", vLog.TxHash.String()).Updates(&task)
+		if raw.Error != nil {
 			tx.Rollback()
 			return
 		}
+		//// 不存在则插入
+		//if raw.RowsAffected == 0 {
+		//	if err := tx.Model(&model.Task{})
+		//}
 
 		// 删除任务
-		if err := tx.Model(&model.TransHash{}).Where("id = ?", vLog.TxHash).Delete(&model.TransHash{}).Error; err != nil {
+		if err := tx.Model(&model.TransHash{}).Where("hash = ?", vLog.TxHash.String()).Delete(&model.TransHash{}).Error; err != nil {
 			tx.Rollback()
 			return
 		}
