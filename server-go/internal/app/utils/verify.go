@@ -17,4 +17,6 @@ var (
 	CreateTaskVerify  = Rules{"Issuer": {NotEmpty()}, "Hash": {NotEmpty()}, "Title": {NotEmpty()}, "Desc": {NotEmpty()}, "Budget": {NotEmpty()}, "Period": {NotEmpty()}, "Currency": {NotEmpty()}}
 	UpdatedTaskVerify = Rules{"TaskID": {NotEmpty()}}
 	DeleteTaskVerify  = Rules{"TaskID": {NotEmpty()}}
+	// 任务
+	GetOrderListVerify = Rules{"Issuer": {NotEmpty()}}
 )

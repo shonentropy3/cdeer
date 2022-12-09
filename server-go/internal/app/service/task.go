@@ -5,8 +5,10 @@ import (
 	"code-market-admin/internal/app/global"
 	"code-market-admin/internal/app/model"
 	"code-market-admin/internal/app/model/request"
+	"code-market-admin/internal/app/model/response"
 	_ "code-market-admin/internal/app/model/response"
 	"errors"
+	"go.uber.org/zap"
 )
 
 // GetTaskList
@@ -14,8 +16,8 @@ import (
 // @description: 分页获取需求数据
 // @param: task model.Tasks, info Req.PageInfo
 // @return: err error, list interface{}, total int64
-func GetTaskList(searchInfo request.GetSearchListRequest) (err error, list interface{}, total int64) {
-	// SELECT * FROM tasks where position('${params}' in title) > 0
+func GetTaskList(searchInfo request.GetTaskListRequest) (err error, list interface{}, total int64) {
+	var responses []response.GetTaskListRespond
 	var taskList []model.Task
 	limit := searchInfo.PageSize
 	offset := searchInfo.PageSize * (searchInfo.Page - 1)
@@ -28,12 +30,16 @@ func GetTaskList(searchInfo request.GetSearchListRequest) (err error, list inter
 	if searchInfo.Title != "" {
 		db = db.Where("title ILIKE ?", "%"+searchInfo.Title+"%")
 	}
-	// 根据Hash过滤
-	if searchInfo.Hash != "" {
-		db = db.Where("hash = ?", searchInfo.Hash)
+	// 根据创建者Hash过滤
+	if searchInfo.Issuer != "" {
+		db = db.Where("issuer = ?", searchInfo.Issuer)
 	} else {
 		//报名开关: 0.关  1.开
 		db = db.Where("apply_switch = 1")
+	}
+	// 根据技能要求过滤
+	if searchInfo.Status != 0 {
+		db = db.Where("status = ?", searchInfo.Status)
 	}
 	// 根据技能要求过滤
 	if searchInfo.Role != nil {
@@ -46,7 +52,16 @@ func GetTaskList(searchInfo request.GetSearchListRequest) (err error, list inter
 		db = db.Limit(limit).Offset(offset)
 		err = db.Order("created_at desc").Find(&taskList).Error
 	}
-	return err, taskList, total
+	// 获取报名人数
+	for _, task := range taskList {
+		res := response.GetTaskListRespond{Task: task}
+		if err = global.DB.Model(&model.Apply{}).Where("task_id = ?", task.TaskID).Count(&res.ApplyCount).Error; err != nil {
+			global.LOG.Error("", zap.Error(err))
+			return err, responses, total
+		}
+		responses = append(responses, res)
+	}
+	return err, responses, total
 }
 
 // CreateTask
@@ -78,7 +93,7 @@ func CreateTask(taskReq request.CreateTaskRequest) (err error) {
 		return errors.New("新建失败")
 	}
 	// 保存交易hash
-	transHash := model.TransHash{SendAddr: task.Issuer, Category: 1, Hash: task.Hash}
+	transHash := model.TransHash{SendAddr: task.Issuer, EventName: "TaskCreated", Hash: task.Hash}
 	transHashRes := tx.Model(&model.TransHash{}).Create(&transHash)
 	if transHashRes.RowsAffected == 0 {
 		tx.Rollback()
