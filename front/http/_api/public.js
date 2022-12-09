@@ -8,3 +8,12 @@ export const searchTask = (data) => {
         data,
     });
 }
+
+// 获取Task详情
+export const searchTaskDetail = (data) => {
+    return serviceAxios({
+        url: `/task/getTaskList?${data.issuer ? '&issuer='+data.issuer : ''}${data.id ? '&id='+data.id : ''}${data.task_id ? '&task_id='+data.task_id : ''}`,
+        method: "get",
+        data,
+    });
+}

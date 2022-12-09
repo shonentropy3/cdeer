@@ -16,7 +16,6 @@
     }
     .content-nav{
         height: 207px;
-        // border: 1px solid #000;
         background-color: #1F1E2E;
         padding: 21px 22px 28px 57px;
         display: flex;
@@ -34,43 +33,49 @@
             .info{
                 height: 150px;
                 .title{
-                    font-size: 38px;
+                    width: 700px;
                     height: 53px;
+                    font-size: 38px;
                     line-height: 53px;
-                    // margin-bottom: 20px;
                     color: white;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
                 }
                 .time{
                     height: 26px;
-                    position: relative;
                     margin-bottom: 54px;
+                    display: flex;
                     .time-icon{
                         width: 27px;
                         height: 26px;
+                        margin-right: 10px;
                     }
                     .time-text{
-                        display: inline-block;
-                        position: absolute;
-                        top: 0;
-                        left: 36;
-                        color: white;
                         font-size: 18px;
-                        line-height: 26px;
-                        height: 26px;
-                        padding-bottom: 8px;
-                        margin-left: 10px;
+                        font-family: PingFangSC-Regular, PingFang SC;
+                        color: #FFFFFF;
+                        line-height: 25px;
+                        letter-spacing: 0.9px;
                     }
                 }
                 .skills{
                     font-size: 18px;
-                    color: white;
+                    font-family: PingFangSC-Regular, PingFang SC;
+                    color: #FFFFFF;
+                    line-height: 25px;
+                    letter-spacing: 1px;
                     span{
-                        background-color: #F0F0F0;
+                        width: 50px;
+                        height: 17px;
+                        padding: 3px 12px;
+                        margin-left: 10px;
+                        font-size: 12px;
+                        font-family: PingFangSC-Regular, PingFang SC;
                         color: #000000;
-                        font-size: 14px;
-                        box-sizing: content-box;
-                        padding: 0 12px;
-                        margin-left: 15px;
+                        line-height: 17px;
+                        letter-spacing: 1.14px;
+
                         &:nth-of-type(3n+1){
                             background-color: #FFB1BE;
                         }
@@ -109,12 +114,15 @@
         .btn{
             width: 240px;
             height: 80px;
+            margin-top: 76px;
+            border-radius: 45px;
             background-color: #FFFFFF;
+            box-shadow: 0px 0px 19px -5px #898989;
+
             color: #1F1E2E;
             font-size: 24px;
-            border-radius: 45px;
-            font-weight: 400;
-            margin-top: 76px;
+            font-family: PingFangSC-Regular, PingFang SC;
+            letter-spacing: 0.86px;
         }
     }
     .applyed-tip{
@@ -139,6 +147,7 @@
             font-weight: 600;
             color: #1F1E2E;
             margin-bottom: 65px;
+            letter-spacing: 0.8px;
         }
         .task-detail-list{
             display: flex;
@@ -151,6 +160,8 @@
                     line-height: 40px;
                     font-weight: 400;
                     color: #828282;
+                    font-family: PingFangSC-Regular, PingFang SC;
+                    letter-spacing: 1px;
                 }
                 .content{
                     font-size: 28px;
@@ -158,6 +169,8 @@
                     height: 40px;
                     line-height: 40px;
                     font-weight: 500;
+                    font-family: PingFangSC-Medium, PingFang SC;
+                    letter-spacing: 1px;
                 }
             }
             .task-type{

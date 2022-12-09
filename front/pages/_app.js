@@ -108,6 +108,11 @@ function MyApp({ Component, pageProps }) {
           break;
       }
     }
+    else if(m === 100 && window.devicePixelRatio === 1){
+      document.body.style.zoom = window.screen.width / 1920;
+      // console.log('正常屏');
+      // console.log(window.screen.width + "====" + window.devicePixelRatio);
+    }
     else if (window.screen.width <= 1915) {
       document.body.style.zoom = 1440 / 1920;
       // console.log('笔记本');

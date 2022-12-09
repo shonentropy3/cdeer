@@ -26,7 +26,7 @@ export default function Task() {
     let [selectBar,setSelectBar] = useState('')
     let [isModal,setIsModal] = useState(false)
     let [pageConfig,setPageConfig] = useState({
-        page: 1, pageSize: 10, total: 1
+        page: 1, pageSize: 5, total: 1
     })
     const sidbar = {
         issuer: [
@@ -114,10 +114,10 @@ export default function Task() {
             console.log(err);
         })
     }
+// getApplyList 
 
     const init = () => {
-        const { search } = location;
-        const { w, bar } = qs.parse(search.slice(1));
+        const { w, bar } = qs.parse(location.search.slice(1));
         who = w;
         setWho(who);
 

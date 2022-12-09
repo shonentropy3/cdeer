@@ -1,12 +1,16 @@
-import { Input, Select, Button, Checkbox, Col, Row } from "antd"
+import { Input, Select, Button, Checkbox, Col, Row, InputNumber } from "antd"
 import { useEffect, useState } from "react";
+import Computing_time from "../Computing_time";
 
 const {TextArea} = Input
 const { Option } = Select;
-export default function Modal_applyTask (props) {
+export default function ApplyTaskModal (props) {
    
     const { setParams, params, submit, project, applyInfo, userContact } = props;
 
+    let [inner,setInner] = useState({
+        desc: '', valuation: ''
+    });
 
     let [disabled,setDisabled] = useState({
         telegram: true,
@@ -24,8 +28,8 @@ export default function Modal_applyTask (props) {
     })
 
     const onchange = (e,type) => {
-        params[type] = e;
-        setParams({...params});
+        inner[type] = e;
+        setInner({...inner});
     }
 
     const changeDisabled = (e,title) => {
@@ -63,49 +67,35 @@ export default function Modal_applyTask (props) {
         <p className="apply-task-top">
             <span className="apply-task-top-text">Sign up for this Task</span>
         </p>
-        <div className="apply-task-detail">
-            <div className="apply-task-img"></div>
-            <div className="apply-task-detail-info">
-                <p className="apply-task-detail-title">
-                    <span>{project.title}</span>
-                </p>
-                <p className="apply-task-detail-time">
-                    <span className="apply-task-detail-time-ago">
+        <div className="apply-detail">
+            <div className="detail-img"></div>
+            <div className="detail-info">
+                <p className="info-title">{project.title}</p>
+                <div className="info-content">
+                    <div className="bte">
                         <i className="iconfont time-icon">&#xe6c2;</i>
-                        Issued 10 hours ago
-                    </span>
-                    <span className="apply-task-detail-time-cycle">
-                        cycle: 
-                        <i>{project.period / 86400}days</i>
-                    </span>
+                        <Computing_time create_time={project.created_at} />
+                    </div>
+                    <p>
+                        cycle: {project.period / 24 / 60 / 60}
+                    </p>
+                </div>
+                <p className="info-role">
+                    Recruitment type: {
+                        project.role.map((e,i) => <span key={i}>{e}</span> )
+                    }
                 </p>
-                <p className="apply-task-detail-skill">
-                    <span className="apply-task-detail-skill-title">Recruitment type：</span>
-                    <span className="apply-task-detail-skill-li">
-                        {
-                            project.role?.map((e,i)=>(
-                                <span key={i}>{e}</span>
-                            ))
-                        }
-                    </span>
-                </p>
-            </div>
-            <div className="apply-task-detail-cost">
-                <p>
-                    Cost: 
-                    <span>{project.budget / Math.pow(10,18)}ETH</span>
-                </p>
-            </div>
+            </div>  
+            <p className="cost">Cost: <span>{project.budget}{project.currency}</span></p>
         </div>
-
         <div className="apply-task-applyInfo">
             <p className="apply-task-applyInfo-title">Registration information</p>
             <div className="apply-task-applyInfo-priceAndtime">
                 <div className="apply-task-applyInfo-price">
                     <p>Give your quotation</p>
-                    <Input className="applyPrice" onChange={e => onchange(e.target.value,'valuation')} value={params.valuation}  />
-                    <Select className="applyCurrency" defaultValue="1" onChange={(e) => onchange(e,'currency')} disabled >
-                        <Option value="1">ETH</Option>
+                    <InputNumber className="applyPrice" onChange={e => onchange(e, 'valuation')} value={inner.valuation}  keyboard={false} />
+                    <Select className="applyCurrency" defaultValue="ETH" disabled >
+                        <Option value="ETH">ETH</Option>
                     </Select>
                 </div>
                 <div className="apply-task-applyInfo-time">
@@ -116,7 +106,7 @@ export default function Modal_applyTask (props) {
                     </Select>
                 </div>
             </div>
-            <div className="apply-task-applyInfo-contact">
+            {/* <div className="apply-task-applyInfo-contact">
                 <p>Contact information</p>
                 <Checkbox.Group>
                     <Row 
@@ -181,12 +171,12 @@ export default function Modal_applyTask (props) {
                         </Col>
                     </Row>
                 </Checkbox.Group>
-            </div>
+            </div> */}
             <div className="apply-task-applyInfo-self">
                 <p>Self recommendation</p>
-                <TextArea className="apply-task-applyInfo-text" rows={4} onChange={e => onchange(e.target.value,'desc')} value={params.desc} />
+                <TextArea className="apply-task-applyInfo-text" rows={4} onChange={e => onchange(e.target.value, 'desc')} value={inner.desc} />
             </div>
-            <Button className="apply-task-btn" onClick={() => submit()}>Sign up</Button>
+            <Button className="apply-task-btn" onClick={() => submit(inner)}>Sign up</Button>
         </div>
     </div>
 }

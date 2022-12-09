@@ -25,6 +25,9 @@ export default function Projects() {
     
     // 跳转
     const goProject = (id) => {
+        router.push(`/project?task_id=${id}`)
+
+        return
         projects.map(e=>{
             if(e.task_id === id && e.issuer === address) {
                 router.push({pathname:'/issuer/applylist',search:id})
@@ -39,7 +42,7 @@ export default function Projects() {
             ...pageConfig,
             role: selectRole,
             title: title,
-            status: 1
+            status: 102  // 新建成功
         })
         .then(res => {
             if (res.code === 0) {
