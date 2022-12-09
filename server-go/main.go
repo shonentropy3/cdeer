@@ -5,6 +5,8 @@ import (
 	"code-market-admin/internal/app/core"
 	"code-market-admin/internal/app/global"
 	"code-market-admin/internal/app/initialize"
+	"fmt"
+	"github.com/ethereum/go-ethereum/crypto"
 	"go.uber.org/zap"
 )
 
@@ -24,6 +26,10 @@ func main() {
 		db, _ := global.DB.DB()
 		defer db.Close()
 	}
-	blockchain.TraverseBlocks()
-	//core.RunWindowsServer()
+	initialize.InitContract()
+	// 启动扫块任务
+	go blockchain.TraverseBlocks()
+	fmt.Println(global.ContractABI["DeTask"].Events["TaskCreated"].ID)
+	fmt.Println(crypto.Keccak256Hash([]byte("TaskCreated")))
+	core.RunWindowsServer()
 }
