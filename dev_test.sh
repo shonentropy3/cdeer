@@ -1,3 +1,3 @@
-npx hardhat test test/testCreateOrder_Sign.js --network dev
-npx hardhat test test/testStartOrder.js --network dev
-npx hardhat test test/testWithdraw.js --network dev
+npx hardhat test test/testCreateOrder_Sign.js --network $1
+npx hardhat test test/testStartOrder.js --network $1
+# npx hardhat test test/testWithdraw.js --network $1

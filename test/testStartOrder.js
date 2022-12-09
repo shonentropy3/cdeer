@@ -1,9 +1,9 @@
-const { ethers } = require("hardhat");
+const { ethers, network } = require("hardhat");
 const { expect } = require("chai");
 const { signPermitStage, signPermitProlongStage } = require("./signPermitStage.js");
 
-const DeOrderAddr = require(`../deployments/dev/DeOrder.json`)
-const WETHAddr = require(`../deployments/dev/WETH.json`)
+const DeOrderAddr = require(`../deployments/${network.name}/DeOrder.json`)
+const WETHAddr = require(`../deployments/${network.name}/WETH.json`)
 /** 
  * 测试用例：
  * 0 测试阶段金额与付款金额不匹配 （已验证）

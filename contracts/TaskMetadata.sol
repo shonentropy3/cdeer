@@ -42,53 +42,45 @@ contract TaskMetadata is IMetadata {
 
         string memory title = task.title;
         string memory desc = task.desc.shorten(20);
-        task.skills;
+        // task.skills;
 
 
         return
             string(
                 abi.encodePacked(
-                    '<svg id="l1" data-name="l_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 595.28 841.89">',
-                    "<defs>",
-                    "<style>",
-                    ".c1 {fill: #fff;}",
-                    ".c2 {font-size: 14px;}",
-                    ".c2,.c3,.c4,.c5,.c6 {fill: #040000;}",
-                    ".c2,.c3,.c5 {font-family: PingFangSC-Regular-GBpc-EUC-H, PingFang SC;}",
-                    ".c3 {font-size: 7px;}",
-                    ".c4 {font-size: 28px;font-family: PingFangSC-Medium-GBpc-EUC-H, PingFang SC;}",
-                    ".c5 {font-size: 14.7px;}",
-                    ".c6 {font-size: 15.47px;font-family: PingFangSC-Semibold-GBpc-EUC-H, PingFang SC;}",
-                    "</style>",
-                    "</defs>",
-                    '<path class="c1" d="M595.28,841.89H0V0H595.28Z" />',
-                    background,
-                    '<text class="c2" transform="translate(194.98 695.62)">',
-                    unicode"登链社区 — 中⽂区块链技术社区",
-                    "</text>",
-                    '<text class="c3" transform="translate(194.15 712.44)">Upchain Commutity-Chinese blockchain technology community</text>',
-                    '<text class="c4" transform="translate(185.64 298.41)">',
-                    unicode"原创作品存证证书",
-                    "</text>",
-                    '<text class="cls-5" transform="translate(130.43 420.13)">',
-                    unicode":",
-                    "</text>",
-                    '<text class="cls-5" transform="translate(203.07 419.55)">',
-                    "</text>",
-                    '<text class="cls-5" transform="translate(130.43 452.85)">',
-                    unicode"Token ID：",
-                    "</text>",
-                    '<text class="cls-5" transform="translate(203.07 452.42)">',
-                    Strings.toString(taskId),
-                    "</text>",
-                    '<text class="cls-5" transform="translate(130.43 485.57)">',
-                    unicode"预算:",
-                    "</text>",
-                    '<text class="cls-5" transform="translate(130.43 518.29)">',
-                    unicode"",
-                    "</text>",
-                    '<text class="c6" transform="translate(168.52 326.54)">CERTIFICATE OF ORIGINAL WORK</text>',
-                    "</svg>"
+                    '<svg id="l_1" data-name="l 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 170 192"><defs><linearGradient id="a_17" x1="85.12" y1="17.17" x2="85.13" y2="180.08" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#d3d9f7"/><stop offset="1" stop-color="#dff8fd"/></linearGradient><linearGradient id="a" x1="-.19" y1="100.25" x2="170.44" y2="100.25" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#00d600"/></linearGradient><linearGradient id="a-2" x1="6" y1="100.25" x2="164.25" y2="100.25" xlink:href="#a"/><linearGradient id="a-3" x1="12.2" y1="100.25" x2="158.05" y2="100.25" xlink:href="#a"/><linearGradient id="a-4" x1="18.39" y1="100.25" x2="151.86" y2="100.25" xlink:href="#a"/><linearGradient id="a-5" x1="24.58" y1="100.25" x2="145.67" y2="100.25" xlink:href="#a"/><linearGradient id="a-6" x1="30.78" y1="100.25" x2="139.47" y2="100.25" xlink:href="#a"/><linearGradient id="a-7" x1="36.97" y1="100.25" x2="133.28" y2="100.25" xlink:href="#a"/><linearGradient id="a-8" x1="43.17" y1="100.25" x2="127.08" y2="100.25" xlink:href="#a"/><linearGradient id="a-9" x1="49.36" y1="100.25" x2="120.89" y2="100.25" xlink:href="#a"/><linearGradient id="a-10" x1="55.56" y1="100.25" x2="114.69" y2="100.25" xlink:href="#a"/><linearGradient id="a-11" x1="61.75" y1="100.25" x2="108.5" y2="100.25" xlink:href="#a"/><linearGradient id="a-12" x1="67.95" y1="100.25" x2="102.3" y2="100.25" xlink:href="#a"/><linearGradient id="a_44" x1="-399.35" y1="-508.52" x2="-389" y2="-508.52" gradientTransform="rotate(90 -464.18 -27)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#d4dcf8"/><stop offset="1" stop-color="#999"/></linearGradient><style>.c26{fill-rule:evenodd}.c20,.c21{isolation:isolate}.c21{font-size:2.71px;letter-spacing:.09em}.c21,.c28{font-family:PingFangSC-Regular-GBpc-EUC-H,PingFang SC}.c25{fill:gray;font-family:PingFangSC-Light-GBpc-EUC-H,PingFang SC;font-size:3.4px;letter-spacing:.07em}.c26{fill:#ff0;opacity:.8}.c28{font-size:5px;letter-spacing:.07em}</style><mask id="mask" x="18.61" y="131.58" width="16.56" height="16.56" maskUnits="userSpaceOnUse"><path id="path-1" style="fill-rule:evenodd;fill:#fff" d="M18.61 131.58h16.56v16.56H18.61v-16.56z"/></mask></defs><path style="fill:url(#a_17)" d="M.13 0h170v192H.13z"/><g style="opacity:.2"><circle cx="85.13" cy="100.25" r="84.75" style="stroke-width:1.14px;stroke:url(#a);fill:none;stroke-miterlimit:10"/><circle cx="85.13" cy="100.25" r="78.6" style="stroke-width:1.05px;stroke:url(#a-2);fill:none;stroke-miterlimit:10"/><circle cx="85.13" cy="100.25" r="72.44" style="stroke-width:.97px;stroke:url(#a-3);fill:none;stroke-miterlimit:10"/><circle cx="85.13" cy="100.25" r="66.29" style="stroke-width:.89px;stroke:url(#a-4);fill:none;stroke-miterlimit:10"/><circle cx="85.13" cy="100.25" r="60.14" style="stroke-width:.81px;stroke:url(#a-5);fill:none;stroke-miterlimit:10"/><circle cx="85.13" cy="100.25" r="53.98" style="stroke-width:.72px;stroke:url(#a-6);fill:none;stroke-miterlimit:10"/><circle cx="85.13" cy="100.25" r="47.83" style="stroke-width:.64px;stroke:url(#a-7);fill:none;stroke-miterlimit:10"/><circle cx="85.13" cy="100.25" r="41.68" style="stroke-width:.56px;stroke:url(#a-8);fill:none;stroke-miterlimit:10"/><circle cx="85.13" cy="100.25" r="35.52" style="stroke-width:.48px;stroke:url(#a-9);fill:none;stroke-miterlimit:10"/><circle cx="85.13" cy="100.25" r="29.37" style="stroke-width:.39px;stroke:url(#a-10);fill:none;stroke-miterlimit:10"/><circle cx="85.13" cy="100.25" r="23.22" style="stroke-width:.31px;stroke:url(#a-11);fill:none;stroke-miterlimit:10"/><circle cx="85.13" cy="100.25" r="17.06" style="stroke-width:.23px;stroke:url(#a-12);fill:none;stroke-miterlimit:10"/></g><path style="stroke:#979797;stroke-width:.09px;fill:#fff" d="M14.67 128.37h80v22.99h-80z"/><g style="mask:url(#mask)"><path d="M27.52 134.79v1.5c1.47.19 2.51 1 2.56 2.1v.09h-1.27c0-.49-.72-.95-1.95-.95s-1.95.39-1.95.95.61.93 1.83 1h.12c1.92 0 3.23.86 3.23 2.23s-1.05 2-2.57 2.19v1.52h-1.27v-1.52c-1.5-.17-2.56-1-2.62-2.11v-.08h1.28c0 .49.72 1 1.95 1s1.95-.39 1.95-1-.61-.93-1.83-1h-.24c-1.86 0-3.11-.9-3.11-2.23s1.08-2 2.62-2.2v-1.49Zm-.63-1.93a7 7 0 1 0 7 7 7 7 0 0 0-7-7Zm0-1.28a8.28 8.28 0 1 1-8.28 8.28 8.28 8.28 0 0 1 8.28-8.28Z" style="fill:#2c2c2c;fill-rule:evenodd"/></g><path d="m17.34 43.35-1.56-2.23-.53.76 2.09 3 2.09-3-.53-.76Zm0-3.29-1.56-2.23-.53.76 2.09 3 2.09-3-.53-.76Zm0 6.59-1.56-2.24-.53.76 2.09 3 2.09-2.94-.53-.82Z" style="fill:url(#a_44)"/>',
+                    '<text transform="translate(14.49 74.47)" style="font-size:12px;font-family:PingFangSC-Semibold-GBpc-EUC-H,PingFang SC;letter-spacing:.07em">',
+                    title,
+                    '</text>',
+                    '<text transform="translate(14.95 99.51)" style="fill:gray;font-family:PingFangSC-Light-GBpc-EUC-H,PingFang SC;font-size:6px;letter-spacing:.08em">',
+                    desc,
+                    '<tspan x="0" y="8">',
+                    desc,
+                    '</tspan><tspan x="0" y="16">',
+                    desc,
+                    '</tspan></text>',
+                    '<text class="c25" transform="translate(15 126.77)">Task budget:</text>',
+                    '<path data-name="g" class="c26" d="M16 86.42h16.94a.9.9 0 0 1 1 .8V91a.91.91 0 0 1-1 .8H16a.91.91 0 0 1-1-.8v-3.78a.9.9 0 0 1 1-.8Z"/><g class="c20">',
+                    '<text class="c21" transform="translate(17.31 90.08)">',
+                    // skills,
+                    '</text></g>',
+                    '<path data-name="g" class="c26" d="M38 86.42h16.94a.9.9 0 0 1 1 .8V91a.91.91 0 0 1-1 .8H38a.91.91 0 0 1-1-.8v-3.78a.9.9 0 0 1 1-.8Z"/>',
+                    '<g class="c20"><text class="c21" transform="translate(39.31 90.08)">',
+                    // skills,
+                    '</text></g>',
+                    '<path class="c26" d="M60 86.42h16.94a.9.9 0 0 1 1 .8V91a.91.91 0 0 1-1 .8H60a.91.91 0 0 1-1-.8v-3.78a.9.9 0 0 1 1-.8Z"/>',
+                    '<g data-name="" class="c20"><text class="c21" transform="translate(60.31 90.08)">',
+                        // skills,
+                    '</text></g>',
+
+                    '<text class="c25" transform="translate(15 169.77)">'
+                    // Release time release time release time release time release time
+                    '</text><text transform="translate(41 143.66)" style="font-size:8.63px;font-family:PingFangSC-Medium-GBpc-EUC-H,PingFang SC;letter-spacing:.08em">',
+                    // 2000 USDT
+                    '</text><text class="c28" transform="translate(15.13 20.86)">Task</text><text class="c28" transform="translate(32.13 20.86)">#'
+                    // 001
+                    '</text></svg>'
+
                 )
             );
     }

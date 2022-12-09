@@ -26,7 +26,7 @@ func CreateUserInfo(createuserInfo request.CreateUserInfoRequest) (err error) {
 // @return:
 func GetUserInfo(userInfo request.GetUserInfoRequest) (err error, user model.User) {
 	db := global.DB.Model(&model.User{})
-	if err = db.Where("address = ?", userInfo.Address).Error; err != nil {
+	if err = db.Where("address = ?", userInfo.Address).Find(&user).Error; err != nil {
 		return err, user
 	}
 	return err, user

@@ -1,10 +1,10 @@
-const { ethers, p } = require("hardhat");
+const { ethers, network } = require("hardhat");
 const { expect } = require("chai");
 
 const { getBalance } =  require("./../scripts/utils/block")
 
-const DeOrderAddr = require(`../deployments/dev/DeOrder.json`)
-const DeStageAddr = require(`../deployments/dev/DeStage.json`)
+const DeOrderAddr = require(`../deployments/${network.name}/DeOrder.json`)
+const DeStageAddr = require(`../deployments/${network.name}/DeStage.json`)
 /** 
  * 测试用例：
  * 0 测试阶段金额与付款金额不匹配 （已验证）
