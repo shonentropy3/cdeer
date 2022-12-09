@@ -25,7 +25,7 @@ func InitContract() {
 	global.ContractAddr = make(map[string]common.Address)
 	global.AddrContract = make(map[common.Address]string)
 	// 遍历当前目录下的JSON文件，加载ABI
-	contractAbi, err := abi.JSON(strings.NewReader(DeTaskABI.StorageMetaData.ABI))
+	contractAbi, err := abi.JSON(strings.NewReader(DeTaskABI.DeTaskMetaData.ABI))
 	if err != nil {
 		fmt.Println(err)
 	}
