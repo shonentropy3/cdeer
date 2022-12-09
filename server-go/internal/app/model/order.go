@@ -15,4 +15,5 @@ type Order struct {
 	SignAddress string `gorm:"column:sign_address" json:"sign_address" form:"sign_address"`
 	SignNonce   int64  `gorm:"column:sign_nonce" json:"sign_nonce" form:"sign_nonce"`
 	Stages      string `gorm:"column:stages" json:"stages" form:"stages"`
+	Progress    uint   `gorm:"column:progress" json:"progress" form:"progress"` // 阶段
 }

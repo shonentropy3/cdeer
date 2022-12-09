@@ -1,12 +1,10 @@
 import { Input, Empty, Button,Pagination, message } from 'antd';
-import { SearchOutlined, HistoryOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import { useRequest } from 'ahooks'
 import { useRouter } from 'next/router'
 import { useAccount } from 'wagmi';
 import Computing_time from '../components/Computing_time';
 
-// import { getDemand, getFilter, getSearch } from '../http/api/task';
 import { deform_Skills } from '../utils/Deform'
 import { searchTask } from '../http/_api/public';
 
@@ -28,7 +26,7 @@ export default function Projects() {
     // 跳转
     const goProject = (id) => {
         projects.map(e=>{
-            if(e.id === id && e.issuer === address) {
+            if(e.task_id === id && e.issuer === address) {
                 router.push({pathname:'/issuer/applylist',search:id})
             }
         })
@@ -40,7 +38,8 @@ export default function Projects() {
         searchTask({
             ...pageConfig,
             role: selectRole,
-            title: title
+            title: title,
+            status: 1
         })
         .then(res => {
             if (res.code === 0) {
@@ -80,6 +79,7 @@ export default function Projects() {
                 <p className='content-subtitle'>There are skilled developers here</p>
             </div>
         </div>
+        <div className="content">
         <div className='task-content'>
             <div className="search">
                 <Input placeholder="搜索项目" onChange={(e)=>run(e.target.value)} />
@@ -102,7 +102,7 @@ export default function Projects() {
             <div className="items">
                 {
                     projects.map((e,i) => 
-                        <div key={i} className="item" onClick={() => goProject(e.id)}>
+                        <div key={i} className="item" onClick={() => goProject(e.task_id)}>
                             <div className="info">
                                 <div className="info-img">
                                     
@@ -112,7 +112,7 @@ export default function Projects() {
                                     <div className='time'>
                                         <div className='time-about'>
                                             <img className='time-icon' src='/clock.jpg' />
-                                            <Computing_time create_time={e.create_time} />
+                                            <Computing_time create_time={e.created_at} />
                                         </div>
                                         <span className="date">cycle: &nbsp;{e.period / 60 / 60 / 24}天</span>
                                     </div>
@@ -153,6 +153,7 @@ export default function Projects() {
                     onChange={(e) => {pageConfig.page = e, setPageConfig({...pageConfig})}}
                 />
             </div>
+        </div>
         </div>
     </div>
 }

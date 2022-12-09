@@ -17,7 +17,7 @@ import (
 // @Produce application/json
 // @Router /task/getTaskList [get]
 func GetTaskList(c *gin.Context) {
-	var searchInfo request.GetSearchListRequest
+	var searchInfo request.GetTaskListRequest
 	_ = c.ShouldBindQuery(&searchInfo)
 	// 校验字段
 	if err := utils.Verify(searchInfo.PageInfo, utils.PageSizeLimitVerify); err != nil {

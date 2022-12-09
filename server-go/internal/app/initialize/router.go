@@ -54,6 +54,7 @@ func Routers() *gin.Engine {
 		router.InitApplyRouter(DetaskGroup)  // 报名
 		router.InitCommonRouter(DetaskGroup) // 通用函数
 		router.InitNftRouter(DetaskGroup)
+		router.InitOrderRouter(DetaskGroup) // 任务
 	}
 
 	global.LOG.Info("router register success")
