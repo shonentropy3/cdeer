@@ -12,6 +12,14 @@ export const deform_Skills = (arr) => {
     return newArr
 }
 
+export const deform_Count = (count,currency) => {
+    if (currency === 'ETH') {
+        count = count / Math.pow(10,18);
+    }
+    return count
+}
+
+
 // export const deform_ProjectTypes = (arr) => {
 //     let newArr = []
 //     arr.forEach(e => {

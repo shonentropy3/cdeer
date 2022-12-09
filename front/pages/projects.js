@@ -38,7 +38,8 @@ export default function Projects() {
         searchTask({
             ...pageConfig,
             role: selectRole,
-            title: title
+            title: title,
+            status: 1
         })
         .then(res => {
             if (res.code === 0) {
@@ -111,7 +112,7 @@ export default function Projects() {
                                     <div className='time'>
                                         <div className='time-about'>
                                             <img className='time-icon' src='/clock.jpg' />
-                                            <Computing_time create_time={e.create_time} />
+                                            <Computing_time create_time={e.created_at} />
                                         </div>
                                         <span className="date">cycle: &nbsp;{e.period / 60 / 60 / 24}天</span>
                                     </div>

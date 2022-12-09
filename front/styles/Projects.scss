@@ -1,6 +1,7 @@
 .Projects{
     margin: 0 auto;
-    background-color: #EDEDED;
+    background-color: white;
+    overflow: hidden;
     .banner{
         height: 270px;
         background-color: #1F1E2E;
@@ -20,7 +21,7 @@
         }
     }
     .content{
-        height: calc(100vh - 270px - 68px - 134px);
+        min-height: calc(100vh - 270px - 68px - 134px);
     }
     .task-content{
         width: 1200px;
