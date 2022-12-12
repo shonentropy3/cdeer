@@ -1,19 +1,28 @@
 import { CloseOutlined } from "@ant-design/icons"
-import { Button, message, Modal } from "antd"
+import { Button, Modal } from "antd"
 import { useEffect, useState } from "react";
-import { useAccount, useConnect, useNetwork, useSwitchNetwork } from "wagmi";
+import { useAccount, useConnect, useDisconnect, useNetwork, useSigner, useSignMessage, useSwitchNetwork } from "wagmi";
 import Web3 from 'web3'
+import { authLoginSign, getLoginMessage } from "../../http/_api/sign";
 
 
 export default function ConnectModal(params) {
     
     const { setStatus, status } = params;
     const { connect, connectors } = useConnect();
+    const {disconnect} = useDisconnect()
+    const { address, isConnecting } = useAccount();
+    // 签名
+    const { data: signer } = useSigner();
+    const [message, setMessage] = useState();
+    // 链
     const { chain } = useNetwork();
-    const { address } = useAccount();
+    const chainID = process.env.NEXT_PUBLIC_DEVELOPMENT_CHAIN_ID || process.env.NEXT_PUBLIC_PRODUCTION_CHAIN_ID
     const {switchNetwork} = useSwitchNetwork({
+        onSuccess() {
+            setStatus(false)
+        },
         onError(error) {
-          console.log('Error', error)
           window.ethereum &&
           window.ethereum.request({
               method: 'wallet_addEthereumChain',
@@ -32,20 +41,17 @@ export default function ConnectModal(params) {
               ]
             }).then(() => {
                 network()
-                setStatus(false)
             })
-        },
+        }
       });
     let [needConnector,setNeedConnector] = useState([]);
 
     const network = () => {
-        switchNetwork &&
-        switchNetwork(Number(
-            process.env.NEXT_PUBLIC_DEVELOPMENT_CHAIN_ID ? 
-                process.env.NEXT_PUBLIC_DEVELOPMENT_CHAIN_ID
-                :
-                process.env.NEXT_PUBLIC_PRODUCTION_CHAIN_ID
-        ))
+        if (chain.id != chainID) {
+            switchNetwork(Number(chainID))
+        }else{
+            setStatus(false)
+        }
     }
 
     useEffect(() => {
@@ -58,12 +64,12 @@ export default function ConnectModal(params) {
     },[])
 
     useEffect(() => {
-        if (chain) { network() }
+        chain && network()
     },[chain])
 
     useEffect(() => {
-        setStatus(false)
-    },[address])
+
+    },[address,])
 
     return <Modal
             title={<p>Link Wallet <CloseOutlined onClick={() => setStatus(false)} /></p>} 
@@ -73,6 +79,7 @@ export default function ConnectModal(params) {
             onCancel={() => setStatus(false)}
             className="connect"
         >
+            <h1>{message}</h1>
         {needConnector.map((connector) => (
             <Button
                 key={connector.id}

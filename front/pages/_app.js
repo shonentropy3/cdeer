@@ -122,7 +122,6 @@ function MyApp({ Component, pageProps }) {
 
   useEffect(() => {
     zoom(detectZoom());
-    console.log(window.screen.width * window.devicePixelRatio);
   },[])
 
   return (

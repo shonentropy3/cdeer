@@ -1,19 +1,45 @@
 import axios from "axios";
-import serverConfig from "./config.js";
+import { useAccount, useSigner } from "wagmi";
+import { authLoginSign, getLoginMessage } from "./_api/sign.js";
 // import qs from "qs";
 
 
-// 创建 axios 请求实例
+export const addr = () => {
+  const { address } = useAccount();
+  return address
+}
+
+  // 创建 axios 请求实例
 const serviceAxios = axios.create({
   baseURL: process.env.NEXT_PUBLIC_DEVELOPMENT_API, // 基础请求地址
   timeout: 10000 // 请求超时设置
 //   withCredentials: false, // 跨域请求是否需要携带 cookie
 });
+  // 创建请求拦截
+  serviceAxios.interceptors.request.use(
+
+    async(config) => {
+        const accounts = await window.ethereum.request({ method: 'eth_accounts' })
+      // if (serverConfig.useTokenAuthorization) {
+        config.headers["x-token"] = localStorage.getItem(`session.${accounts[0]}`); // 请求头携带 token
+        config.headers["x-address"] = accounts[0]; // 请求头携带 address
+      // }
+      // console.log(useAccount());
+      return config;
+    },
+    error => {
+      Promise.reject(error);
+    }
+  );
 
 // 创建响应拦截
 serviceAxios.interceptors.response.use(
-  (res) => {
+  async(res) => {
     let data = res.data;
+    if (data.data.reload) {
+      localStorage.clear();
+      history.go(0)
+    }
     // 处理自己的业务逻辑，比如判断 token 是否过期等等
     // 代码块
     return data;

@@ -13,8 +13,10 @@ import { searchTask } from "../http/_api/public";
 import TaskItem from "../components/CustomItem/taskItem";
 
 import qs from 'querystring';
+import { getApplyList } from "../http/_api/task";
+import withAuth from "./middleware";
 
-export default function Task() {
+function Task() {
 
     const {TextArea} = Input
     const {Option} = Select
@@ -133,7 +135,7 @@ export default function Task() {
         searchTask({...pageConfig, issuer: address})
         .then(res => {
             if (res.code === 0) {
-                selectData = res.data.list;
+                selectData = res.data.list ? res.data.list : [];
                 selectData.map(e => {
                     e.role = deform_Skills(e.role);
                     e.budget = deform_Count(e.budget, e.currency)
@@ -145,7 +147,12 @@ export default function Task() {
 
     // 获取报名的需求
     const getApply = () => {
-
+        getApplyList({
+            apply_addr: address
+        })
+        .then(res => {
+            console.log(res);
+        })
     }
 
     useEffect(()=>{
@@ -239,3 +246,5 @@ export default function Task() {
         </div>
     )
 }
+
+export default withAuth(Task);
