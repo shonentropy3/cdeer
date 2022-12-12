@@ -24,6 +24,11 @@ func GetApplyList(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+	// 校验发起人地址
+	if err := utils.Verify(searchInfo.Apply, utils.ApplyListVerify); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
 	if err, list, total := service.GetApplyList(searchInfo); err != nil {
 		global.LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败", c)

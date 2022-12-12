@@ -1,7 +1,6 @@
 package service
 
 import (
-	"code-market-admin/internal/app/blockchain"
 	"code-market-admin/internal/app/global"
 	"code-market-admin/internal/app/model"
 	"code-market-admin/internal/app/model/request"
@@ -72,8 +71,6 @@ func CreateApply(applyReq request.CreateApplyRequest) (err error) {
 		tx.Rollback()
 		return errors.New("新建失败")
 	}
-
-	go blockchain.TraverseBlocks()
 	return tx.Commit().Error
 }
 

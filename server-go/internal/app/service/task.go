@@ -1,7 +1,6 @@
 package service
 
 import (
-	"code-market-admin/internal/app/blockchain"
 	"code-market-admin/internal/app/global"
 	"code-market-admin/internal/app/model"
 	"code-market-admin/internal/app/model/request"
@@ -116,9 +115,6 @@ func CreateTask(taskReq request.CreateTaskRequest) (err error) {
 		tx.Rollback()
 		return errors.New("新建失败")
 	}
-	// TODO: 延迟校验链上数据
-	// TODO: 使用channel通知
-	go blockchain.TraverseBlocks()
 	return tx.Commit().Error
 }
 
