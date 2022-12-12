@@ -7,7 +7,7 @@ import (
 
 type Task struct {
 	global.MODEL
-	TaskID      uint64        `gorm:"column:task_id" json:"task_id" json:"task_id"`                 // 链上任务ID
+	TaskID      uint64        `gorm:"column:task_id" json:"task_id" form:"task_id"`                 // 链上任务ID
 	Issuer      string        `gorm:"column:issuer;type:varchar(64)" json:"issuer" form:"issuer"`   // 发布人hash
 	Hash        string        `gorm:"column:hash;type:varchar(128);UNIQUE" json:"hash" form:"hash"` // 交易hash
 	Title       string        `gorm:"size:255;column:title" json:"title" form:"title"`              // 标题

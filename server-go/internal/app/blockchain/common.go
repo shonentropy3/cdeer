@@ -48,6 +48,7 @@ func TraverseBlocks() (err error) {
 		for _, v := range global.ContractAddr {
 			contractAddressList = append(contractAddressList, v)
 		}
+		fmt.Println(contractAddressList)
 		// 开始扫描
 		// get block height
 		header, err := client.HeaderByNumber(context.Background(), nil)
@@ -55,7 +56,7 @@ func TraverseBlocks() (err error) {
 			log.Fatal(err)
 		}
 		// Test
-		//header.Number = big.NewInt(29533037)
+		//header.Number = big.NewInt(29534913)
 		// from block height
 		fromBlock := big.NewInt(0)
 		fromBlock.Sub(header.Number, big.NewInt(100))
@@ -72,7 +73,7 @@ func TraverseBlocks() (err error) {
 			Addresses: contractAddressList,
 		}
 		// Load contract ABI
-		logs, err := client.FilterLogs(context.Background(), query)
+		logs, err := client.TransactionByHash(context.Background(), taskList)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -96,7 +97,7 @@ func ParseLog(vLog types.Log) {
 	case "DeTask":
 		DeTask(vLog)
 	case "DeOrder":
-
+		DeOrder(vLog)
 	}
 }
 
@@ -105,7 +106,7 @@ func TraverseFailed() {
 	db := global.DB.Model(&model.TransHash{})
 	// 查找次数大于20的任务
 	var transHashList []model.TransHash
-	if err := db.Where("try_times >=20").Find(&transHashList); err != nil {
+	if err := db.Where("try_times >=20").Find(&transHashList).Error; err != nil {
 		fmt.Println(err)
 		return
 	}

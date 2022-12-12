@@ -31,7 +31,7 @@ func InitContract() {
 	}
 	global.ContractABI["DeTask"] = contractAbi
 	// 遍历当前目录下的JSON文件，获取合约地址
-	if err := filepath.Walk(".", walkFunc); err != nil {
+	if err := filepath.Walk("./abi/mumbai", walkFunc); err != nil {
 		panic(err)
 	}
 }
