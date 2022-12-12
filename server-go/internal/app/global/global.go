@@ -2,6 +2,7 @@ package global
 
 import (
 	"code-market-admin/internal/app/config"
+	"github.com/allegro/bigcache/v3"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/spf13/viper"
@@ -14,6 +15,7 @@ var (
 	CONFIG       config.Server // 配置信息
 	LOG          *zap.Logger
 	VIP          *viper.Viper
+	Cache        *bigcache.BigCache
 	Traversed    bool                      // 扫块任务运行状态
 	ContractAddr map[string]common.Address // 合约地址
 	AddrContract map[common.Address]string // 合约地址
