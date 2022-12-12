@@ -32,6 +32,32 @@ func CreateUserInfo(c *gin.Context) {
 }
 
 // GetUserInfo
+// @Summary 获取个人资料(用户名和头像)
+// @accept application/json
+// @Produce application/json
+// @Router /task/getUserInfo [get]
+func GetUserAvatar(c *gin.Context) {
+	var userAvatar request.GetUserInfoRequest
+	_ = c.ShouldBindQuery(&userAvatar)
+	// 校验字段
+	if err := utils.Verify(userAvatar.User, utils.UserInfoVerify); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	if err, userRes := service.GetUserAvatar(userAvatar); err != nil {
+		global.LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage("获取失败", c)
+	} else if userRes.Address == "" {
+		response.FailWithMessage("查无此人", c)
+	} else {
+		response.OkWithDetailed(response.User_avatar{
+			Username: userRes.Username,
+			Avatar:   userRes.Avatar,
+		}, "获取成功", c)
+	}
+}
+
+// GetUserInfo
 // @Summary 获取个人资料
 // @accept application/json
 // @Produce application/json
@@ -47,6 +73,8 @@ func GetUserInfo(c *gin.Context) {
 	if err, userRes := service.GetUserInfo(userInfo); err != nil {
 		global.LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败", c)
+	} else if userRes.Address == "" {
+		response.FailWithMessage("查无此人", c)
 	} else {
 		response.OkWithDetailed(userRes, "获取成功", c)
 	}
