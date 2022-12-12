@@ -32,16 +32,17 @@ type CustomClaims struct {
 }
 
 type BaseClaims struct {
-	Address string
+	UserName string
+	Address  string
 }
 
 func (j *JWT) CreateClaims(baseClaims BaseClaims) CustomClaims {
 	claims := CustomClaims{
 		BaseClaims: baseClaims,
 		RegisteredClaims: jwt.RegisteredClaims{
-			NotBefore: jwt.NewNumericDate(time.Now().Add(-1)),                                           // 签名生效时间
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(global.CONFIG.JWT.ExpiresTime))), // 过期时间 7天  配置文件
-			Issuer:    global.CONFIG.JWT.Issuer,                                                         // 签名的发行者
+			NotBefore: jwt.NewNumericDate(time.Now().Add(-1)),                                                         // 签名生效时间
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(global.CONFIG.JWT.ExpiresTime) * time.Second)), // 过期时间
+			Issuer:    global.CONFIG.JWT.Issuer,                                                                       // 签名的发行者
 		},
 	}
 	return claims
