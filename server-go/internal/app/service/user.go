@@ -21,6 +21,19 @@ func CreateUserInfo(createuserInfo request.CreateUserInfoRequest) (err error) {
 
 // GetUserInfo
 // @function: GetUserInfo
+// @description: 获取个⼈资料(用户名和头像)
+// @param:
+// @return:
+func GetUserAvatar(userAvatar request.GetUserInfoRequest) (err error, user model.User) {
+	db := global.DB.Model(&model.User{})
+	if err = db.Where("address = ?", userAvatar.Address).Find(&user).Error; err != nil {
+		return err, user
+	}
+	return err, user
+}
+
+// GetUserInfo
+// @function: GetUserInfo
 // @description: 获取个⼈资料
 // @param:
 // @return:

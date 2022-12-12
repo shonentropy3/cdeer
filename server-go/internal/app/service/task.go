@@ -1,7 +1,6 @@
 package service
 
 import (
-	"code-market-admin/internal/app/blockchain"
 	"code-market-admin/internal/app/global"
 	"code-market-admin/internal/app/model"
 	"code-market-admin/internal/app/model/request"
@@ -25,6 +24,10 @@ func GetTaskList(searchInfo request.GetTaskListRequest) (err error, list interfa
 	// 根据ID过滤
 	if searchInfo.ID != 0 {
 		db = db.Where("id = ?", searchInfo.ID)
+	}
+	// 根据链上TaskID过滤
+	if searchInfo.TaskID != 0 {
+		db = db.Where("task_id = ?", searchInfo.TaskID)
 	}
 	// 根据标题过滤
 	if searchInfo.Title != "" {
@@ -73,11 +76,6 @@ func CreateTask(taskReq request.CreateTaskRequest) (err error) {
 	// 开始事务
 	tx := global.DB.Begin()
 	task := taskReq.Task
-	result := tx.Model(&model.Task{}).Create(&task)
-	if result.RowsAffected == 0 {
-		tx.Rollback()
-		return errors.New("新建失败")
-	}
 	// 查找技能要求是否在列表中
 	var roleList []int64
 	for _, v := range task.Role {
@@ -92,6 +90,24 @@ func CreateTask(taskReq request.CreateTaskRequest) (err error) {
 		tx.Rollback()
 		return errors.New("新建失败")
 	}
+	// 查找数据是否存在
+	var countTask int64
+	if err = tx.Model(&model.Task{}).Where("hash = ?", task.Hash).Count(&countTask).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	if countTask > 0 { // 数据已存在
+		if err = tx.Model(&model.Task{}).Update("suffix = ?", task.Attachment).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+	} else { // 数据不存在
+		result := tx.Model(&model.Task{}).Create(&task)
+		if result.RowsAffected == 0 {
+			tx.Rollback()
+			return errors.New("新建失败")
+		}
+	}
 	// 保存交易hash
 	transHash := model.TransHash{SendAddr: task.Issuer, EventName: "TaskCreated", Hash: task.Hash}
 	transHashRes := tx.Model(&model.TransHash{}).Create(&transHash)
@@ -99,9 +115,6 @@ func CreateTask(taskReq request.CreateTaskRequest) (err error) {
 		tx.Rollback()
 		return errors.New("新建失败")
 	}
-	// TODO: 延迟校验链上数据
-	// TODO: 使用channel通知
-	go blockchain.TraverseBlocks()
 	return tx.Commit().Error
 }
 

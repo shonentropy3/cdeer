@@ -1,7 +1,6 @@
 package main
 
 import (
-	"code-market-admin/internal/app/blockchain"
 	"code-market-admin/internal/app/core"
 	"code-market-admin/internal/app/global"
 	"code-market-admin/internal/app/initialize"
@@ -24,10 +23,12 @@ func main() {
 		db, _ := global.DB.DB()
 		defer db.Close()
 	}
+	// 初始化缓存
+	global.Cache = initialize.Cache()
+	// 初始化合约ABI
 	initialize.InitContract()
 
 	// 启动扫块任务
-	go blockchain.TraverseBlocks()
+	//go blockchain.HandleTransaction()
 	core.RunWindowsServer()
-
 }

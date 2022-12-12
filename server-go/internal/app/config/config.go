@@ -5,4 +5,8 @@ type Server struct {
 	System System `mapstructure:"system" json:"system" yaml:"system"`
 	// gorm
 	Pgsql Pgsql `mapstructure:"pgsql" json:"pgsql" yaml:"pgsql"`
+	// contract
+	Contract Contract `mapstructure:"contract" json:"contract" yaml:"contract"`
+	// JWT
+	JWT JWT `mapstructure:"jwt" json:"jwt" yaml:"jwt"`
 }
