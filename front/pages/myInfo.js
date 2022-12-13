@@ -14,7 +14,8 @@ import {
   } from '@ant-design/icons';
 import Identicon, { IdenticonOptions } from "identicon.js";
 
-import { setMyInfo,getMyInfo,modifyMyInfo } from '../http/api/user';
+// import { setMyInfo,getMyInfo,modifyMyInfo } from '../http/api/user';
+import { getUserInfo } from '../http/_api/user'
 
 export default function MyInfo() {
 
@@ -110,7 +111,7 @@ export default function MyInfo() {
     }
 
     const getInfo = async () => {
-        await getMyInfo({address: address})
+        await getUserInfo({address: address})
         .then((res)=>{
             console.log(res);
             if (res.data[0]) {

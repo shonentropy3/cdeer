@@ -10,7 +10,6 @@ import (
 
 func Upload(c *gin.Context) {
 	json := c.PostForm("json")
-
 	if json != "" {
 		err, hash := service.UploadJSON(json) // 文件上传后拿到文件路径
 		if err != nil {
