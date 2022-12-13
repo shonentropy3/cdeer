@@ -27,7 +27,7 @@ func GetLoginMessage(c *gin.Context) {
 		global.LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败", c)
 	} else {
-		response.OkWithDetailed(loginMessage, "获取成功", c)
+		response.OkWithDetailed(map[string]string{"loginMessage": loginMessage}, "获取成功", c)
 	}
 }
 
