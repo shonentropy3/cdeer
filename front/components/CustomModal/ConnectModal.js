@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useAccount, useConnect, useDisconnect, useNetwork, useSigner, useSignMessage, useSwitchNetwork } from "wagmi";
 import Web3 from 'web3'
 import { authLoginSign, getLoginMessage } from "../../http/_api/sign";
+import { getJwt } from "../../utils/GetJwt";
 
 
 export default function ConnectModal(params) {
