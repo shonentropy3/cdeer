@@ -50,7 +50,7 @@ func GetUserAvatar(c *gin.Context) {
 	} else if userRes.Address == "" {
 		response.FailWithMessage("查无此人", c)
 	} else {
-		response.OkWithDetailed(response.User_avatar{
+		response.OkWithDetailed(response.UserAvatar{
 			Username: userRes.Username,
 			Avatar:   userRes.Avatar,
 		}, "获取成功", c)

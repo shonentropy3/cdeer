@@ -12,10 +12,12 @@ type GetApplyRequest struct {
 }
 type CreateApplyRequest struct {
 	model.Apply
+	Hash string `gorm:"hash" json:"hash" form:"hash"` // 交易hash
 }
 
 type UpdatedApplyRequest struct {
 	model.Apply
+	Hash string `gorm:"hash" json:"hash" form:"hash"` // 交易hash
 }
 
 type UpdatedApplySortRequest struct {
@@ -24,4 +26,5 @@ type UpdatedApplySortRequest struct {
 
 type DeleteApplyRequest struct {
 	model.Apply
+	Hash string `gorm:"hash" json:"hash" form:"hash"` // 交易hash
 }
