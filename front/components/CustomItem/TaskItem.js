@@ -1,7 +1,13 @@
 import { Button, Empty } from "antd";
+import { useEffect } from "react";
 export default function TaskItem(params) {
     
-    const { taskList } = params;
+    const { taskList, select } = params;
+
+
+    useEffect(() => {
+        console.log(select);
+    },[select])
 
     return (
         taskList.length > 0 ?
@@ -18,12 +24,17 @@ export default function TaskItem(params) {
                         </div>
                         {/* TODO: 修改Task ==> resolution */}
                         {/* <Button onClick={() => }>修改</Button> */}
-                        <div className="li-num">
-                            <p>{e.apply_count}</p>
-                            <p>Number of applicants</p>
-                        </div>
+                        {
+                            select === 'tasks' && 
+                            <div className="li-num">
+                                <p>{e.apply_count}</p>
+                                <p>Number of applicants</p>
+                            </div>
+                        }
                     </div>
-                    <Button>Edit this item</Button>
+                    {
+                        select === 'tasks' && <Button>Edit this item</Button>
+                    }
                 </div>
             )
             :

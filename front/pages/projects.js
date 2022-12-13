@@ -25,15 +25,18 @@ export default function Projects() {
     
     // 跳转
     const goProject = (id) => {
-        router.push(`/project?task_id=${id}`)
-
-        return
+        console.log(id);
+        let flag = false;
         projects.map(e=>{
             if(e.task_id === id && e.issuer === address) {
                 router.push({pathname:'/issuer/applylist',search:id})
+                flag = true;
             }
         })
-        router.push({pathname:'/project',search: id})
+        if (flag) {
+            return
+        }
+        router.push(`/project?task_id=${id}`)
     }
 
     // 获取Tasklist

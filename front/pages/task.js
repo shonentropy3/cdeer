@@ -9,12 +9,12 @@ import { deform_Count, deform_Skills } from "../utils/Deform";
 import { useContracts } from "../controller";
 import { ethers } from "ethers";
 import { applyFor,cancelApply } from "../http/api/apply";
-import { searchTask } from "../http/_api/public";
 import TaskItem from "../components/CustomItem/taskItem";
 
 import qs from 'querystring';
-import { getApplyList } from "../http/_api/task";
 import withAuth from "./middleware";
+import { searchTask } from "../http/_api/public";
+import { getApplyList } from "../http/_api/task";
 
 function Task() {
 
@@ -146,12 +146,22 @@ function Task() {
     }
 
     // 获取报名的需求
-    const getApply = () => {
+    const getApplys = () => {
         getApplyList({
+            ...pageConfig,
             apply_addr: address
         })
         .then(res => {
             console.log(res);
+            const data = res.data.list;
+            let arr = [];
+            data.map(e => {
+                e.task.role = deform_Skills(e.task.role);
+                e.task.budget = deform_Count(e.task.budget, e.task.currency);
+                arr.push(e.task);
+            })
+            selectData = arr;
+            setSelectData([...selectData]);
         })
     }
 
@@ -181,7 +191,7 @@ function Task() {
                 console.log('查询结束的');
                 break;
             default:
-                getApply()
+                getApplys()
                 break;
         }
     },[selectBar])
@@ -209,7 +219,7 @@ function Task() {
                 }
             </div>
             <div className="content">
-                <TaskItem taskList={selectData} />
+                <TaskItem taskList={selectData} select={selectBar} />
                 {
                     selectData.length > 0 &&
                     <Pagination
