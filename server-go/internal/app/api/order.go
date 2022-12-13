@@ -5,7 +5,6 @@ import (
 	"code-market-admin/internal/app/model/request"
 	"code-market-admin/internal/app/model/response"
 	"code-market-admin/internal/app/service"
-	"code-market-admin/internal/app/utils"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -20,8 +19,8 @@ func GetOrderList(c *gin.Context) {
 	var searchInfo request.GetOrderListRequest
 	_ = c.ShouldBindQuery(&searchInfo)
 	// 校验字段
-	if err := utils.Verify(searchInfo.Order, utils.GetOrderListVerify); err != nil {
-		response.FailWithMessage(err.Error(), c)
+	if searchInfo.Issuer == "" && searchInfo.Worker == "" {
+		response.FailWithMessage("参数不能为空!", c)
 		return
 	}
 	if err, list, total := service.GetOrderList(searchInfo); err != nil {
