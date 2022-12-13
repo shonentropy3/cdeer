@@ -151,3 +151,13 @@ func DeleteTask(taskReq request.DeleteTaskRequest) (err error) {
 	}
 	return result.Error
 }
+
+// TODO:modifyApplySwitch 修改报名开关
+func ModifyApplySwitch(req request.ModifyApplySwitchRequest) (err error) {
+	// TODO:校验是否本人操作
+	res := global.DB.Model(&model.Task{}).Where("task_id", req.TaskID).Update("apply_switch", req.ApplySwitch)
+	if res.RowsAffected == 0 {
+		return errors.New("操作失败")
+	}
+	return res.Error
+}
