@@ -1,18 +1,22 @@
 import { useEffect, useState } from "react"
 import qs from 'querystring';
-import { getApply } from "../http/_api/task";
+import { getApply, updatedApplySort } from "../http/_api/task";
 import { searchTask, searchTaskDetail } from "../http/_api/public";
 import { deform_Count, deform_Skills } from "../utils/Deform";
 import { getDate } from "../utils/GetDate";
 import Image from "next/image";
 import Computing_time from "../components/Computing_time";
 import UserInfoModal from "../components/CustomModal/UserInfoModal";
+import { useAccount } from "wagmi";
+import { message } from "antd";
 
 
 
 
 
 export default function ApplyList(params) {
+
+    const { address } = useAccount();
     
     let [data, setData] = useState([]);     //  报名列表
     let [detail, setDetail] = useState({});     //  需求详情
@@ -20,6 +24,21 @@ export default function ApplyList(params) {
     let [userInfo, setUserInfo] = useState({});     //  用户详情
     let [isUserInfo, setIsUserInfo] = useState(false);      //  用户详情弹窗
 
+    // 更改排序
+    const updateData = (task_id) => {
+        console.log(task_id);
+        updatedApplySort({
+            apply_addr: address, task_id: task_id
+        })
+        .then(res => {
+            if (res.code === 0) {
+                message.success('更新成功!');
+                init();
+            }else{
+                message.error(res.msg);
+            }
+        })
+    }
 
     // 用户详情弹窗
     const showUserInfo = (info) => {
@@ -138,7 +157,7 @@ export default function ApplyList(params) {
                         <div>
                             <div className="product-collaborate">
                                 <p onClick={() => {worker = e.apply_addr, setWorker(worker) ,showModal()}}>Invite</p>
-                                <p onClick={() => sort(e.apply_addr, i)} className="product-collaborate-no">Improper</p>
+                                <p onClick={() => updateData(e.task_id)} className="product-collaborate-no">Improper</p>
                             </div>
                         </div>
                     </li> )

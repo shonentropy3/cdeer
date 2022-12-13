@@ -36,3 +36,12 @@ export const getApplyList = (data) => {
     });
 }
 
+// 报名列表排序
+export const updatedApplySort = (data) => {
+    return serviceAxios({
+        url: `/apply/updatedApplySort`,
+        method: "post",
+        data,
+    });
+}
+
