@@ -1,10 +1,7 @@
 import { Button, Empty, Input, message, Modal, Pagination, Select } from "antd";
 import { useEffect, useState } from "react";
-import Link from 'next/link'
 import { useAccount } from 'wagmi'
 import { useRouter } from 'next/router'
-import { useRead, useReads } from "../controller";
-import { getApplyData, getOrdersData, getTasksData } from "../http/api/user";
 import { deform_Count, deform_Skills } from "../utils/Deform";
 import { useContracts } from "../controller";
 import { ethers } from "ethers";

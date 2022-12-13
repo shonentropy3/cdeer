@@ -54,7 +54,55 @@ export default function ConnectModal(params) {
         }
     }
 
+    const getToken = async() => {
+            // 1、获取nonce
+            await getLoginMessage({address: address})
+            .then(res => {
+                if (res.code === 0) {
+                    message = res.data.loginMessage;
+                    setMessage(message);
+                }
+            })
+
+            // 2、获取签名
+            await signer.signMessage(message)
+            .then(res => {
+
+                // 3、获取token
+                authLoginSign({
+                    address: address,
+                    message: message,
+                    signature: res
+                })
+                .then(res => {
+                    if (res.code === 0) {
+                        localStorage.setItem(`session.${address.toLowerCase()}`,res.data.token)
+                    }
+                })
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }
+
+    const init = async() => {
+        const token = localStorage.getItem(`session.${address.toLowerCase()}`);
+
+        if (!token) {
+            await getToken()
+        }else{
+            // 判断token有效期
+            let userinfo = getJwt(token);
+            const now = parseInt(new Date().getTime() / 1000) + (2 * 60 * 60) ;
+            if (now > userinfo.exp) {
+                await getToken();
+            }
+        }
+    }
+
+
     useEffect(() => {
+        init()
         connectors.map((e,i) => {
             if(e.name == "MetaMask" || e.name == "WalletConnect") {
                     needConnector.push(e)

@@ -25,10 +25,9 @@ export default function ApplyList(params) {
     let [isUserInfo, setIsUserInfo] = useState(false);      //  用户详情弹窗
 
     // 更改排序
-    const updateData = (task_id) => {
-        console.log(task_id);
+    const updateData = (e) => {
         updatedApplySort({
-            apply_addr: address, task_id: task_id
+            apply_addr: e.apply_addr, task_id: e.task_id
         })
         .then(res => {
             if (res.code === 0) {
@@ -157,7 +156,7 @@ export default function ApplyList(params) {
                         <div>
                             <div className="product-collaborate">
                                 <p onClick={() => {worker = e.apply_addr, setWorker(worker) ,showModal()}}>Invite</p>
-                                <p onClick={() => updateData(e.task_id)} className="product-collaborate-no">Improper</p>
+                                <p onClick={() => updateData(e)} className="product-collaborate-no">Improper</p>
                             </div>
                         </div>
                     </li> )

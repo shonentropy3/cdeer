@@ -6,53 +6,40 @@ const {TextArea} = Input
 const { Option } = Select;
 export default function ApplyTaskModal (props) {
    
-    const { setParams, params, submit, project, applyInfo, userContact } = props;
+    const { setParams, params, submit, project, userContact } = props;
+
+    let [icons, setIcons] = useState([
+        { title: 'telegram', value: '' },
+        { title: 'wechat', value: '' },
+        { title: 'skype', value: '' },
+        { title: 'discord', value: '' },
+        { title: 'phone', value: '' }
+    ])
 
     let [inner,setInner] = useState({
         desc: '', valuation: ''
     });
-
-    let [disabled,setDisabled] = useState({
-        telegram: true,
-        wechat: true,
-        skype: true,
-        discord: true,
-        phone: true
-    })
-    let [infoValue,setInfoValue] = useState({
-        telegramValue: '',
-        wechatValue: '',
-        skypeValue: '',
-        discordValue: '',
-        phoneValue: ''
-    })
 
     const onchange = (e,type) => {
         inner[type] = e;
         setInner({...inner});
     }
 
-    const changeDisabled = (e,title) => {
-        disabled[e] = !disabled[e]
-        setDisabled({...disabled})
-    }
+    const changeContact = (i,value) => {
+        icons[i].value = value;
+        setIcons([...icons]);
 
-    const valueChange = (e,type) => {
-        infoValue[type] = e
-        setInfoValue({...infoValue})
-    }
-
-    useEffect(()=>{
-        params.contact = infoValue;
+        // 赋值 返回params
+        let obj = {};
+        icons.map(e => {
+            obj[e.title] = e.value;
+        })
+        params = obj;
         setParams({...params});
-    },[infoValue])
+    }
+
 
     useEffect(()=>{
-        if(applyInfo.price){
-            params.valuation = applyInfo.price / Math.pow(10,18)
-            params.desc = applyInfo.desc
-            setParams({...params})
-        }
         if(userContact){
             params.contact.telegramValue = userContact.telegram;
             params.contact.wechatValue = userContact.wechat;
@@ -106,72 +93,22 @@ export default function ApplyTaskModal (props) {
                     </Select>
                 </div>
             </div>
-            {/* <div className="apply-task-applyInfo-contact">
+            <div className="apply-task-applyInfo-contact">
                 <p>Contact information</p>
-                <Checkbox.Group>
-                    <Row 
-                        justify="cetenr"
-                        align="middle"
-                        className="clearfix"
-                    >
-                        <Col className="row">
-                            <Checkbox 
-                                value="telegram" 
-                                onChange={(e)=>changeDisabled(e.target.value, 'telegram')}
-                            ><span className="iconfont telegram">&#xec25;</span></Checkbox>
-                            <Input 
-                                disabled={disabled.telegram} 
-                                value={infoValue.telegramValue} 
-                                onChange={(e)=>valueChange(e.target.value,"telegramValue")}
-                            />
-                        </Col>
-                        <Col className="row">
-                            <Checkbox
-                                value="wechat" 
-                                onChange={(e)=>changeDisabled(e.target.value, 'wechat')}
-                            ><span className="iconfont wechat">&#xec26;</span></Checkbox>
-                            <Input 
-                                disabled={disabled.wechat} 
-                                value={infoValue.wechatValue} 
-                                onChange={(e)=>valueChange(e.target.value,"wechatValue")} 
-                            />
-                        </Col>
-                        <Col className="row">
-                            <Checkbox 
-                                value="skype" 
-                                onChange={(e)=>changeDisabled(e.target.value, 'skype')}
-                            ><span className="iconfont skype">&#xe882;</span></Checkbox>
-                            <Input 
-                                disabled={disabled.skype} 
-                                value={infoValue.skypeValue}
-                                onChange={(e)=>valueChange(e.target.value,"skypeValue")}
-                            />
-                        </Col>
-                        <Col className="row">
-                            <Checkbox 
-                                value="discord" 
-                                onChange={(e)=>changeDisabled(e.target.value, 'discord')}
-                            ><span className="iconfont discord">&#xe60b;</span></Checkbox>
-                            <Input 
-                                disabled={disabled.discord} 
-                                value={infoValue.discordValue}
-                                onChange={(e)=>valueChange(e.target.value,"discordValue")}
-                            />
-                        </Col>
-                        <Col className="row">
-                            <Checkbox 
-                                value="phone" 
-                                onChange={(e)=>changeDisabled(e.target.value, 'phone')}
-                            ><span className="iconfont phone">&#xe8be;</span></Checkbox>
-                            <Input 
-                                disabled={disabled.phone} 
-                                value={infoValue.phoneValue}
-                                onChange={(e)=>valueChange(e.target.value,"phoneValue")}
-                            />
-                        </Col>
-                    </Row>
-                </Checkbox.Group>
-            </div> */}
+                <div className="icons">
+                    {
+                        icons.map((e,i) => 
+                            <div className="item" key={i}>
+                                <div className="icon"></div>
+                                <Input
+                                    value={e.value}
+                                    onChange={e => changeContact(i,e.target.value)}
+                                />
+                            </div>
+                        )
+                    }
+                </div>
+            </div>
             <div className="apply-task-applyInfo-self">
                 <p>Self recommendation</p>
                 <TextArea className="apply-task-applyInfo-text" rows={4} onChange={e => onchange(e.target.value, 'desc')} value={inner.desc} />

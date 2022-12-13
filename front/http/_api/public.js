@@ -17,3 +17,30 @@ export const searchTaskDetail = (data) => {
         data,
     });
 }
+
+// 获取个人信息
+export const getUserInfo = (data) => {
+    return serviceAxios({
+        url: `/user/getUserInfo?address=${data.address}`,
+        method: "get",
+        data,
+    });
+}
+
+// 修改个人信息
+export const updateUserInfo = (data) => {
+    return serviceAxios({
+        url: `/user/updateUserInfo`,
+        method: "post",
+        data,
+    });
+}
+
+// 创建个人信息
+export const createUserInfo = (data) => {
+    return serviceAxios({
+        url: `/user/createUserInfo`,
+        method: "post",
+        data,
+    });
+}
