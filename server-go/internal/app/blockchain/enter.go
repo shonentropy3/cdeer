@@ -14,10 +14,10 @@ func HandleTraverseFailed(transHash model.TransHash) {
 }
 
 // HandleTraverseSuccess 任务交易成功处理
-func HandleTraverseSuccess(transHash model.TransHash, Logs []*types.Log) (err error) {
+func HandleTraverseSuccess(transHash model.TransHash, Logs []*types.Log) error {
 	if haveBool, err := DeTask(transHash, Logs); haveBool {
 		return err
-	} else if haveBool, err := DeTask(transHash, Logs); haveBool {
+	} else if haveBool, err = DeTask(transHash, Logs); haveBool {
 		return err
 	}
 
