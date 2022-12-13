@@ -30,10 +30,10 @@ func CreateUserInfo(createuserInfo request.CreateUserInfoRequest) (err error) {
 		return errors.New("新建失败")
 	}
 
-	if err = tx.Model(&model.User{}).Create(&createuserInfo.User).Error; err != nil {
+	if err = tx.Model(&model.User{}).Save(&createuserInfo.User).Error; err != nil {
 		return err
 	}
-	return err
+	return tx.Commit().Error
 }
 
 // GetUserAvatar
@@ -56,8 +56,7 @@ func GetUserAvatar(userAvatar request.GetUserInfoRequest) (err error, user model
 // @return:
 func GetUserInfo(userInfo request.GetUserInfoRequest) (err error, user model.User) {
 	// 开始事务
-	tx := global.DB.Begin()
-	if err = tx.Where("address = ?", userInfo.Address).Find(&user).Error; err != nil {
+	if err = global.DB.Model(&model.User{}).Where("address = ?", userInfo.Address).Find(&user).Error; err != nil {
 		return err, user
 	}
 	return err, user
@@ -89,5 +88,5 @@ func UpdateUserInfo(updateuserInfo request.UpdateUserInfoRequest) (err error) {
 	if err = tx.Model(&model.User{}).Where("address = ?", updateuserInfo.Address).Updates(&updateuserInfo.User).Error; err != nil {
 		return err
 	}
-	return err
+	return tx.Commit().Error
 }

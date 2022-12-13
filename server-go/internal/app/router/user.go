@@ -11,10 +11,10 @@ func InitUserRouter(Router *gin.RouterGroup) {
 	userRouterWithAuth := Router.Group("user").Use(middleware.JWTAuth())
 	{
 		userRouter.GET("getUserAvatar", api.GetUserAvatar) // 获取个人信息(用户名和头像)
+		userRouter.GET("getUserInfo", api.GetUserInfo)     // 获取个人信息
 	}
 	{
 		userRouterWithAuth.POST("createUserInfo", api.CreateUserInfo) //创建个人信息
-		userRouterWithAuth.GET("getUserInfo", api.GetUserInfo)        // 获取个人信息
 		userRouterWithAuth.POST("updateUserInfo", api.UpdateUserInfo) // 修改个人信息
 	}
 }

@@ -45,7 +45,7 @@ func AuthLoginSignRequest(req request.AuthLoginSignRequest) (token string, err e
 	}
 	// 获取用户名--不存在则新增
 	var userName string
-	if errUser := global.DB.Model(&model.User{}).Select("username").Where("address = ?", req.Address).First(&userName).Error; err != nil {
+	if errUser := global.DB.Model(&model.User{}).Select("username").Where("address = ?", req.Address).First(&userName).Error; errUser != nil {
 		if errUser == gorm.ErrRecordNotFound {
 			if err = global.DB.Model(&model.User{}).Save(&model.User{Address: req.Address}).Error; err != nil {
 				return token, err
