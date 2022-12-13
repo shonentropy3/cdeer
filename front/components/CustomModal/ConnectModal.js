@@ -11,7 +11,6 @@ export default function ConnectModal(params) {
     
     const { setStatus, status } = params;
     const { connect, connectors } = useConnect();
-    const {disconnect} = useDisconnect()
     const { address, isConnecting } = useAccount();
     // 签名
     const { data: signer } = useSigner();

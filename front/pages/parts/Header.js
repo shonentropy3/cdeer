@@ -38,13 +38,18 @@ export default function Header(props) {
           items={[{
                 key: '5',
                 label: (
-                  <Button type="default" onClick={() => disconnect()}>
+                  <Button type="default" onClick={() => signOut()}>
                       退出登陆
                   </Button>
                 )
           }]}
         />
     );
+
+    const signOut = () => {
+        disconnect();
+        localStorage.clear();
+    }
 
 
     const onchange = (value) => {
