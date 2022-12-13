@@ -9,8 +9,8 @@ import (
 
 func JWTAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// jwt鉴权取头部信息： authorization
-		token := c.Request.Header.Get("authorization")
+		// jwt鉴权取头部信息： x-token
+		token := c.Request.Header.Get("x-token")
 		if token == "" {
 			response.FailWithDetailed(gin.H{"reload": true}, "未登录或非法访问", c)
 			c.Abort()

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"code-market-admin/internal/app/blockchain"
 	"code-market-admin/internal/app/core"
 	"code-market-admin/internal/app/global"
 	"code-market-admin/internal/app/initialize"
@@ -29,6 +30,6 @@ func main() {
 	initialize.InitContract()
 
 	// 启动扫块任务
-	//go blockchain.HandleTransaction()
+	go blockchain.HandleTransaction()
 	core.RunWindowsServer()
 }

@@ -19,8 +19,8 @@ func CreateUserInfo(createuserInfo request.CreateUserInfoRequest) (err error) {
 	return err
 }
 
-// GetUserInfo
-// @function: GetUserInfo
+// GetUserAvatar
+// @function: GetUserAvatar
 // @description: 获取个⼈资料(用户名和头像)
 // @param:
 // @return:

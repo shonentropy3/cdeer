@@ -8,9 +8,10 @@ struct TaskInfo {
     string desc;
     string attachment;
     uint8 currency;
-    uint112 budget;
+    uint80 budget;
     uint32 period;
     uint48 skills;    // uint8[6]
+    uint32 timestamp;
     bool disabled;
 }
 

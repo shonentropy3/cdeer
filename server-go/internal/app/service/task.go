@@ -37,13 +37,13 @@ func GetTaskList(searchInfo request.GetTaskListRequest) (err error, list interfa
 	if searchInfo.Issuer != "" {
 		db = db.Where("issuer = ?", searchInfo.Issuer)
 	} else {
-		//报名开关: 0.关  1.开
-		db = db.Where("apply_switch = 1")
+		//报名开关: 0.关  1.开  这里前端显示
+		db = db.Where("apply_switch = 1").Where("show = true")
 	}
-	// 根据技能要求过滤
-	if searchInfo.Status != 0 {
-		db = db.Where("status = ?", searchInfo.Status)
-	}
+	//// 根据技能要求过滤
+	//if searchInfo.Status != 0 {
+	//	db = db.Where("status = ?", searchInfo.Status)
+	//}
 	// 根据技能要求过滤
 	if searchInfo.Role != nil {
 		db = db.Where("role && ?", searchInfo.Role)
@@ -90,23 +90,12 @@ func CreateTask(taskReq request.CreateTaskRequest) (err error) {
 		tx.Rollback()
 		return errors.New("新建失败")
 	}
-	// 查找数据是否存在
-	var countTask int64
-	if err = tx.Model(&model.Task{}).Where("hash = ?", task.Hash).Count(&countTask).Error; err != nil {
+	// 插入数据
+	task.Status = 101 // 新建中
+	result := tx.Model(&model.Task{}).Create(&task)
+	if result.RowsAffected == 0 {
 		tx.Rollback()
-		return err
-	}
-	if countTask > 0 { // 数据已存在
-		if err = tx.Model(&model.Task{}).Update("suffix = ?", task.Attachment).Error; err != nil {
-			tx.Rollback()
-			return err
-		}
-	} else { // 数据不存在
-		result := tx.Model(&model.Task{}).Create(&task)
-		if result.RowsAffected == 0 {
-			tx.Rollback()
-			return errors.New("新建失败")
-		}
+		return errors.New("新建失败")
 	}
 	// 保存交易hash
 	transHash := model.TransHash{SendAddr: task.Issuer, EventName: "TaskCreated", Hash: task.Hash}
@@ -124,11 +113,21 @@ func CreateTask(taskReq request.CreateTaskRequest) (err error) {
 // @param: task model.Tasks, info Req.PageInfo
 // @return: err error, list interface{}, total int64
 func UpdatedTask(taskReq request.UpdatedTaskRequest) (err error) {
-	result := global.DB.Model(&model.Task{}).Where("id = ?", taskReq.ID).Updates(&taskReq.Task)
+	// 开始事务
+	tx := global.DB.Begin()
+	taskReq.Task.Status = 201 // 修改中
+	result := tx.Model(&model.Task{}).Where("task_id", taskReq.TaskID).Updates(&taskReq.Task)
 	if result.RowsAffected == 0 {
 		return errors.New("修改失败")
 	}
-	return result.Error
+	// 保存交易hash
+	transHash := model.TransHash{SendAddr: taskReq.Issuer, EventName: "TaskModified", Hash: taskReq.Hash}
+	transHashRes := tx.Model(&model.TransHash{}).Create(&transHash)
+	if transHashRes.RowsAffected == 0 {
+		tx.Rollback()
+		return errors.New("修改失败")
+	}
+	return tx.Commit().Error
 }
 
 // DeleteTask
@@ -137,8 +136,17 @@ func UpdatedTask(taskReq request.UpdatedTaskRequest) (err error) {
 // @param: task model.Tasks, info Req.PageInfo
 // @return: err error, list interface{}, total int64
 func DeleteTask(taskReq request.DeleteTaskRequest) (err error) {
-	result := global.DB.Delete(&model.Task{}, taskReq.ID)
+	// 开始事务
+	tx := global.DB.Begin()
+	result := tx.Model(&model.Task{}).Where("task_id", taskReq.TaskID).Update("status", 301) // 删除中
 	if result.RowsAffected == 0 {
+		return errors.New("删除失败")
+	}
+	// 保存交易hash
+	transHash := model.TransHash{SendAddr: taskReq.Issuer, EventName: "TaskDisabled", Hash: taskReq.Hash}
+	transHashRes := tx.Model(&model.TransHash{}).Create(&transHash)
+	if transHashRes.RowsAffected == 0 {
+		tx.Rollback()
 		return errors.New("删除失败")
 	}
 	return result.Error

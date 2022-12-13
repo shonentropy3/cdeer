@@ -19,5 +19,6 @@ type Task struct {
 	Currency    string        `gorm:"column:currency;size:30" json:"currency" form:"currency"`               // 币种
 	ApplySwitch uint8         `gorm:"column:apply_switch;default:1" json:"apply_switch" form:"apply_switch"` //报名开关: 0.关  1.开
 	Suffix      string        `gorm:"column:suffix" json:"suffix" form:"suffix"`                             // 附件后缀名
-	Status      uint8         `gorm:"column:status" json:"status" form:"status"`                             // 上链状态,0.未上链 1.上链成功 2.上链失败
+	Show        bool          `gorm:"column:show" json:"show" form:"show"`                                   // 是否显示
+	Status      uint8         `gorm:"column:status" json:"status" form:"status"`                             // 上链状态
 }

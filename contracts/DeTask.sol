@@ -57,6 +57,7 @@ contract DeTask is SBTBase, Ownable {
             budget: task.budget,
             period: task.period,
             skills: task.skills,
+            timestamp: uint32(block.timestamp),
             disabled: false
         });
         _mint(who, taskId);

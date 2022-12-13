@@ -6,23 +6,19 @@ import (
 	"code-market-admin/internal/app/model/request"
 	"code-market-admin/internal/app/model/response"
 	"errors"
+	"time"
 )
 
 // GetApplyList
 // @function: GetApplyList
-// @description: 分页获取个⼈报名中的项⽬
+// @description: 获取需求里报名详情
 // @param:
 // @return:
 func GetApplyList(searchInfo request.GetApplyListRequest) (err error, list interface{}, total int64) {
-	var responses []response.GetApplyListRespond
-	var applyList []model.Apply
+	var applyList []response.GetApplyListRespond
 	limit := searchInfo.PageSize
 	offset := searchInfo.PageSize * (searchInfo.Page - 1)
 	db := global.DB.Model(&model.Apply{})
-	// 根据ApplyAddr过滤
-	if searchInfo.ApplyAddr != "" {
-		db = db.Where("apply_addr = ?", searchInfo.ApplyAddr)
-	}
 	// 根据TaskId过滤
 	if searchInfo.TaskID != 0 {
 		db = db.Where("task_id = ?", searchInfo.TaskID).Order("sort_time desc")
@@ -32,23 +28,33 @@ func GetApplyList(searchInfo request.GetApplyListRequest) (err error, list inter
 		return err, list, total
 	} else {
 		db = db.Limit(limit).Offset(offset)
-		err = db.Order("created_at desc").Find(&applyList).Error
+		err = db.Order("created_at desc").Preload("User").Find(&applyList).Error
 	}
-	// 根据如果有TaskId则直接返回
-	if searchInfo.TaskID != 0 {
-		return err, applyList, total
-	}
-	// 获取任务详情
-	for _, apply := range applyList {
-		var task model.Task
+	return err, applyList, total
+}
 
-		if err = global.DB.Model(&model.Task{}).Where("task_id = ?", apply.TaskID).First(&task).Error; err != nil {
-			return err, list, total
-		}
-		res := response.GetApplyListRespond{Apply: apply, Task: task}
-		responses = append(responses, res)
+// GetApply
+// @function: GetApply
+// @description: 分页获取个⼈报名中的项⽬
+// @param:
+// @return:
+func GetApply(searchInfo request.GetApplyRequest) (err error, list interface{}, total int64) {
+	var applyList []response.GetApplyRespond
+	limit := searchInfo.PageSize
+	offset := searchInfo.PageSize * (searchInfo.Page - 1)
+	db := global.DB.Model(&model.Apply{})
+	// 根据报名人地址过滤
+	if searchInfo.TaskID != 0 {
+		db = db.Where("task_id = ?", searchInfo.TaskID)
 	}
-	return err, responses, total
+	err = db.Count(&total).Error
+	if err != nil {
+		return err, list, total
+	} else {
+		db = db.Limit(limit).Offset(offset)
+		err = db.Order("created_at desc").Preload("Task").Find(&applyList).Error
+	}
+	return err, applyList, total
 }
 
 // CreateApply
@@ -80,7 +86,7 @@ func CreateApply(applyReq request.CreateApplyRequest) (err error) {
 // @param: applyReq request.UpdatedApplyRequest
 // @return: err error
 func UpdatedApply(applyReq request.UpdatedApplyRequest) (err error) {
-	result := global.DB.Model(&model.Apply{}).Where("id = ?", applyReq.ID).Updates(&applyReq.Apply)
+	result := global.DB.Model(&model.Apply{}).Where("apply_addr = ?", applyReq.ApplyAddr).Where("task_id = ?", applyReq.TaskID).Updates(&applyReq.Apply)
 	if result.RowsAffected == 0 {
 		return errors.New("修改失败")
 	}
@@ -98,4 +104,15 @@ func DeleteApply(applyReq request.DeleteApplyRequest) (err error) {
 		return errors.New("删除失败")
 	}
 	return result.Error
+}
+
+// UpdatedApplySort
+// @function: UpdatedApplySort
+// @description: 更新报名列表排序
+// @param: taskReq request.CreateTaskRequest
+// @return: err error
+func UpdatedApplySort(sortReq request.UpdatedApplySortRequest) (err error) {
+	db := global.DB.Model(&model.Apply{})
+	err = db.Where("task_id = ?", sortReq.TaskID).Where("apply_addr = ?", sortReq.ApplyAddr).Update("sort_time", time.Now()).Error
+	return err
 }
