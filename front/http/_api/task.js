@@ -12,7 +12,7 @@ export const createTask = (data) => {
 // 获取发布的项目 报名列表
 export const getApply = (data) => {
     return serviceAxios({
-        url: `/apply/getApplyList?apply_addr=${data.apply_addr}`,
+        url: `/apply/getApplyList?task_id=${data.task_id}`,
         method: "get",
         data,
     });

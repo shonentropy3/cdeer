@@ -13,6 +13,8 @@ export const getDate = (params, type) => {
             return Y+M+D+h+m;
         case 's':
             return Y+M+D+h+m+s;
+        case 'y':
+            return Y;
         default:
             break;
     }

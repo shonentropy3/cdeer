@@ -152,7 +152,6 @@ function Task() {
             apply_addr: address
         })
         .then(res => {
-            console.log(res);
             const data = res.data.list;
             let arr = [];
             data.map(e => {
