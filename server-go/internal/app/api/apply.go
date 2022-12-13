@@ -149,18 +149,18 @@ func DeleteApply(c *gin.Context) {
 // @Produce application/json
 // @Param
 // @Success
-// @Router /apply/updateApply [post]
+// @Router /apply/updatedApplySort [post]
 func UpdatedApplySort(c *gin.Context) {
 	var apply request.UpdatedApplySortRequest
-	_ = c.ShouldBindQuery(&apply)
+	_ = c.ShouldBindJSON(&apply)
 	if err := utils.Verify(apply.Apply, utils.UpdatedApplySortVerify); err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
 	if err := service.UpdatedApplySort(apply); err != nil {
-		global.LOG.Error("更新失败!", zap.Error(err))
+		global.LOG.Error("设置失败!", zap.Error(err))
 		response.FailWithMessage(err.Error(), c)
 	} else {
-		response.OkWithMessage("更新成功", c)
+		response.OkWithMessage("设置成功", c)
 	}
 }

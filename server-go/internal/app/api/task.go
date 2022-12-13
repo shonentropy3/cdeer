@@ -100,11 +100,33 @@ func DeleteTask(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-
 	if err := service.DeleteTask(task); err != nil {
 		global.LOG.Error("删除失败!", zap.Error(err))
 		response.FailWithMessage("删除失败", c)
 	} else {
 		response.OkWithMessage("删除成功", c)
+	}
+}
+
+// ModifyApplySwitch
+// @Tags TaskApi
+// @Summary 修改报名开关
+// @accept application/json
+// @Produce application/json
+// @Param
+// @Success
+// @Router /task/modifyApplySwitch [post]
+func ModifyApplySwitch(c *gin.Context) {
+	var task request.ModifyApplySwitchRequest
+	_ = c.ShouldBindJSON(&task)
+	if err := utils.Verify(task, utils.ModifyApplySwitchVerify); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	if err := service.ModifyApplySwitch(task); err != nil {
+		global.LOG.Error("修改失败!", zap.Error(err))
+		response.FailWithMessage(err.Error(), c)
+	} else {
+		response.OkWithMessage("修改成功", c)
 	}
 }

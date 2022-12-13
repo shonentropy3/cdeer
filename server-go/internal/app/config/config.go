@@ -9,4 +9,6 @@ type Server struct {
 	Contract Contract `mapstructure:"contract" json:"contract" yaml:"contract"`
 	// JWT
 	JWT JWT `mapstructure:"jwt" json:"jwt" yaml:"jwt"`
+	// OSS
+	Local Local `mapstructure:"local" json:"local" yaml:"local"`
 }

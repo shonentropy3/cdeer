@@ -13,6 +13,10 @@ func DeTaskFail(transHash model.TransHash) (match bool) {
 		DeTaskFailTask(transHash, 203)
 	case "TaskDisabled":
 		DeTaskFailTask(transHash, 303)
+	case "ApplyFor":
+		DeTaskFailApply(transHash, 103)
+	case "CancelApply":
+		DeTaskFailApply(transHash, 303)
 	default:
 		return false
 	}
@@ -23,6 +27,21 @@ func DeTaskFailTask(transHash model.TransHash, status int64) {
 	// 开始事务
 	tx := global.DB.Begin()
 	if err := tx.Model(&model.Task{}).Where("hash = ?", transHash.Hash).Update("status", status).Error; err != nil {
+		tx.Rollback()
+		return
+	}
+	if err := tx.Model(&model.TransHash{}).Where("hash = ?", transHash.Hash).Delete(&transHash).Error; err != nil {
+		tx.Rollback()
+		return
+	}
+	// 提交事务
+	tx.Commit()
+}
+
+func DeTaskFailApply(transHash model.TransHash, status int64) {
+	// 开始事务
+	tx := global.DB.Begin()
+	if err := tx.Model(&model.Apply{}).Where("hash = ?", transHash.Hash).Update("status", status).Error; err != nil {
 		tx.Rollback()
 		return
 	}

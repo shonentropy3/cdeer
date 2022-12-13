@@ -16,8 +16,12 @@ var (
 	UpdatedApplySortVerify = Rules{"ApplyAddr": {NotEmpty()}, "TaskID": {NotEmpty()}}
 	DeleteApplyVerify      = Rules{"ApplyAddr": {NotEmpty()}, "TaskID": {NotEmpty()}, "Hash": {NotEmpty()}}
 	// 需求
-	CreateTaskVerify  = Rules{"Issuer": {NotEmpty()}, "Hash": {NotEmpty()}, "Title": {NotEmpty()}, "Desc": {NotEmpty()}, "Budget": {NotEmpty()}, "Period": {NotEmpty()}, "Currency": {NotEmpty()}}
-	UpdatedTaskVerify = Rules{"TaskID": {NotEmpty()}}
-	DeleteTaskVerify  = Rules{"TaskID": {NotEmpty()}}
+	CreateTaskVerify        = Rules{"Issuer": {NotEmpty()}, "Hash": {NotEmpty()}, "Title": {NotEmpty()}, "Desc": {NotEmpty()}, "Budget": {NotEmpty()}, "Period": {NotEmpty()}, "Currency": {NotEmpty()}}
+	UpdatedTaskVerify       = Rules{"TaskID": {NotEmpty()}}
+	DeleteTaskVerify        = Rules{"TaskID": {NotEmpty()}}
+	ModifyApplySwitchVerify = Rules{"TaskID": {NotEmpty()}}
 	// 任务
+	CreateOrderVerify = Rules{"TaskID": {NotEmpty()}}
+	// 阶段划分
+	CreatedStageVerify = Rules{"OrderId": {NotEmpty()}, "Signature": {NotEmpty()}, "SignAddress": {NotEmpty()}, "Stages": {NotEmpty()}}
 )

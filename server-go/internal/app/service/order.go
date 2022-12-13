@@ -4,6 +4,8 @@ import (
 	"code-market-admin/internal/app/global"
 	"code-market-admin/internal/app/model"
 	"code-market-admin/internal/app/model/request"
+	"code-market-admin/internal/app/model/response"
+	"errors"
 )
 
 // GetOrderList
@@ -12,7 +14,7 @@ import (
 // @param:
 // @return:
 func GetOrderList(searchInfo request.GetOrderListRequest) (err error, list interface{}, total int64) {
-	var orderList []model.Order
+	var orderList []response.GetOrderListResponse
 	limit := searchInfo.PageSize
 	offset := searchInfo.PageSize * (searchInfo.Page - 1)
 	db := global.DB.Model(&model.Order{})
@@ -28,13 +30,38 @@ func GetOrderList(searchInfo request.GetOrderListRequest) (err error, list inter
 	if searchInfo.OrderId != 0 {
 		db = db.Where("order_id = ?", searchInfo.OrderId)
 	}
+	// 根据状态过滤
+	db = db.Where("state = ?", searchInfo.State)
 	err = db.Count(&total).Error
 	if err != nil {
 		return err, list, total
 	} else {
 		db = db.Limit(limit).Offset(offset)
-		err = db.Order("create_time desc").Find(&orderList).Error
+		err = db.Order("create_time desc").Preload("Task").Find(&orderList).Error
 	}
 
 	return err, orderList, total
+}
+
+// CreateOrder
+// @function: CreateOrder
+// @description: 添加任务
+// @param: taskReq request.CreateTaskRequest
+// @return: err error
+func CreateOrder(orderReq request.CreateOrderRequest) (err error) {
+	// 开始事务
+	tx := global.DB.Begin()
+	result := tx.Model(&model.Order{}).Create(&orderReq.Order)
+	if result.RowsAffected == 0 {
+		tx.Rollback()
+		return errors.New("添加失败")
+	}
+	// 保存交易hash
+	transHash := model.TransHash{SendAddr: orderReq.Issuer, EventName: "OrderCreated", Hash: orderReq.Hash}
+	transHashRes := tx.Model(&model.TransHash{}).Create(&transHash)
+	if transHashRes.RowsAffected == 0 {
+		tx.Rollback()
+		return errors.New("新建失败")
+	}
+	return tx.Commit().Error
 }

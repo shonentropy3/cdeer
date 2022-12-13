@@ -9,5 +9,6 @@ func InitOrderRouter(Router *gin.RouterGroup) {
 	orderRouter := Router.Group("order")
 	{
 		orderRouter.GET("getOrderList", api.GetOrderList) // 获取任务列表
+		orderRouter.GET("createOrder", api.CreateOrder)   // 获取任务列表
 	}
 }

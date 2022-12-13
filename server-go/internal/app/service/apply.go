@@ -47,6 +47,9 @@ func GetApply(searchInfo request.GetApplyRequest) (err error, list interface{}, 
 	if searchInfo.TaskID != 0 {
 		db = db.Where("task_id = ?", searchInfo.TaskID)
 	}
+	if searchInfo.ApplyAddr != "" {
+		db = db.Where("apply_addr = ?", searchInfo.ApplyAddr)
+	}
 	err = db.Count(&total).Error
 	if err != nil {
 		return err, list, total
@@ -65,6 +68,7 @@ func GetApply(searchInfo request.GetApplyRequest) (err error, list interface{}, 
 func CreateApply(applyReq request.CreateApplyRequest) (err error) {
 	// 开始事务
 	tx := global.DB.Begin()
+	applyReq.Apply.Status = 101 // 创建中
 	result := tx.Model(&model.Apply{}).Create(&applyReq.Apply)
 	if result.RowsAffected == 0 {
 		tx.Rollback()
@@ -86,11 +90,22 @@ func CreateApply(applyReq request.CreateApplyRequest) (err error) {
 // @param: applyReq request.UpdatedApplyRequest
 // @return: err error
 func UpdatedApply(applyReq request.UpdatedApplyRequest) (err error) {
-	result := global.DB.Model(&model.Apply{}).Where("apply_addr = ?", applyReq.ApplyAddr).Where("task_id = ?", applyReq.TaskID).Updates(&applyReq.Apply)
+	// 开始事务
+	tx := global.DB.Begin()
+	applyReq.Status = 201
+	result := tx.Model(&model.Apply{}).Where("apply_addr = ?", applyReq.ApplyAddr).Where("task_id = ?", applyReq.TaskID).Updates(&applyReq.Apply)
 	if result.RowsAffected == 0 {
+		tx.Rollback()
 		return errors.New("修改失败")
 	}
-	return result.Error
+	// 保存交易hash
+	transHash := model.TransHash{SendAddr: applyReq.ApplyAddr, EventName: "ApplyFor", Hash: applyReq.Hash}
+	transHashRes := tx.Model(&model.TransHash{}).Create(&transHash)
+	if transHashRes.RowsAffected == 0 {
+		tx.Rollback()
+		return errors.New("新建失败")
+	}
+	return tx.Commit().Error
 }
 
 // DeleteApply
@@ -99,9 +114,20 @@ func UpdatedApply(applyReq request.UpdatedApplyRequest) (err error) {
 // @param: applyReq request.DeleteApplyRequest
 // @return: err error
 func DeleteApply(applyReq request.DeleteApplyRequest) (err error) {
-	result := global.DB.Delete(&model.Apply{}, applyReq.ID)
+	// 开始事务
+	tx := global.DB.Begin()
+	applyReq.Status = 301
+	result := tx.Delete(&model.Apply{}, applyReq.ID)
 	if result.RowsAffected == 0 {
+		tx.Rollback()
 		return errors.New("删除失败")
+	}
+	// 保存交易hash
+	transHash := model.TransHash{SendAddr: applyReq.ApplyAddr, EventName: "CancelApply", Hash: applyReq.Hash}
+	transHashRes := tx.Model(&model.TransHash{}).Create(&transHash)
+	if transHashRes.RowsAffected == 0 {
+		tx.Rollback()
+		return errors.New("新建失败")
 	}
 	return result.Error
 }
@@ -112,7 +138,11 @@ func DeleteApply(applyReq request.DeleteApplyRequest) (err error) {
 // @param: taskReq request.CreateTaskRequest
 // @return: err error
 func UpdatedApplySort(sortReq request.UpdatedApplySortRequest) (err error) {
+	// TODO:校验是否本人操作
 	db := global.DB.Model(&model.Apply{})
-	err = db.Where("task_id = ?", sortReq.TaskID).Where("apply_addr = ?", sortReq.ApplyAddr).Update("sort_time", time.Now()).Error
-	return err
+	raw := db.Where("task_id = ?", sortReq.TaskID).Where("apply_addr = ?", sortReq.ApplyAddr).Update("sort_time", time.Now())
+	if raw.RowsAffected == 0 {
+		return errors.New("设置失败")
+	}
+	return raw.Error
 }

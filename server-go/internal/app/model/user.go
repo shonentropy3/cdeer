@@ -15,5 +15,5 @@ type User struct {
 	Skype    string        `gorm:"column:skype" json:"skype" form:"skype"`
 	Discord  string        `gorm:"column:discord" json:"discord" form:"discord"`
 	Phone    string        `gorm:"column:phone" json:"phone" form:"phone"`
-	Role     pq.Int64Array `gorm:"column:role;type:integer[]" json:"role" form:"role"` // 所需技能
+	Role     pq.Int64Array `gorm:"column:role;type:integer[];default:'{}'" json:"role" form:"role"` // 所需技能
 }
