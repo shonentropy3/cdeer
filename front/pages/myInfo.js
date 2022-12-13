@@ -15,23 +15,16 @@ import {
 import Identicon, { IdenticonOptions } from "identicon.js";
 
 // import { setMyInfo,getMyInfo,modifyMyInfo } from '../http/api/user';
-import { getUserInfo } from '../http/_api/user'
+import { getUserInfo, createUserInfo, updateUserInfo } from '../http/_api/user'
 
 export default function MyInfo() {
+
+    const _data = require("../data/data.json")
 
     let [hasInfo,setHasInfo] = useState(false)
     let [info,setInfo] = useState({})
 
-    let [skills,setSkills] = useState([
-        {title:'solidity', status: false},
-        {title:'javascript', status: false},
-        {title:'python', status: false},
-        {title:'GO', status: false},
-        {title:'C/C++', status: false},
-        {title:'Android', status: false},
-        {title:'HTML/CSS', status: false},
-        {title:'IOS', status: false},
-    ])
+    let [skills,setSkills] = useState([])
     let [wagmi,setWagmi] = useState({});
 
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -54,18 +47,18 @@ export default function MyInfo() {
                 if(index === i){
                     ele = e
                     if(e.status){
-                        info.role.push(e.title)
+                        info.role.push(Number(e.value))
                     }else{
-                        info.role = info.role.filter(item => item !== e.title)
+                        info.role = info.role.filter(item => item !== e.value)
                     }
                 }
             }else{
                 if(index === i){
                     ele = e
                     if(e.status){
-                        info.role.push(e.title)
+                        info.role.push(Number(e.value))
                     }else{
-                        info.role = info.role.filter(item => item !== e.title)
+                        info.role = info.role.filter(item => item !== e.value)
                     }
                 }
             }
@@ -86,18 +79,20 @@ export default function MyInfo() {
             role:info.role ? info.role : [],
             avatar: ""
         }
+        console.log(userinfo);
         if(hasInfo){
-            modifyMyInfo(userinfo)
+            updateUserInfo(userinfo)
             .then(res => {
-                message.success('修改成功')
+                message.success(res.msg)
+
                 setTimeout(() => {
                     history.go(0)
                 }, 500);
             })
         }else{
-            setMyInfo(userinfo)
+            createUserInfo(userinfo)
             .then(res=>{
-                message.success('编辑成功')
+                message.success(res.msg)
                 setTimeout(() => {
                     history.go(0)
                 },500)
@@ -111,14 +106,15 @@ export default function MyInfo() {
     }
 
     const getInfo = async () => {
+        console.log({address: address});
         await getUserInfo({address: address})
         .then((res)=>{
             console.log(res);
-            if (res.data[0]) {
-                let obj = res.data[0]
+            if (res.data) {
+                let obj = res.data
                 info = obj;
                 setInfo({...info});
-                if(res){
+                if(res.code === 0){
                     setHasInfo(true)
                 }
                 
@@ -137,7 +133,21 @@ export default function MyInfo() {
         return data
     }
 
+    // 初始化技能列表
+    const initSkills = () => {
+        let arr = []
+        _data.skills.map((e,i)=>{
+            if (i > 0) {
+                arr.push({title: e.name, status: false, value: e.value})
+            }
+        })
+        skills = arr
+        setSkills([...skills])
+    }
+
+
     useEffect(()=>{
+        initSkills()
         getInfo()
     },[])
 
@@ -145,16 +155,16 @@ export default function MyInfo() {
         if(info.role){
             info.role.map((e,i)=>{
                 skills.map((ele,index)=>{
-                    if(e === ele.title){
+                    if(e == ele.value){
                         ele.status = true
                     }
                 })
             })
         }
+        setSkills([...skills])
     },[info.role])
 
     useEffect(()=>{
-        console.log(isConnected);
         if(isConnected){
             wagmi = {
                 isActive: isConnected
@@ -165,12 +175,13 @@ export default function MyInfo() {
             }
         }
         setWagmi({...wagmi})
+
     },[isConnected])
 
     
     return <>
     <div style={{height: '100px'}} ></div>
-<div className="MyInfo">
+    <div className="MyInfo">
         <div className="myInfo-top">
             <div className="top">
                 <div className="img">
@@ -191,9 +202,9 @@ export default function MyInfo() {
         <div className="myInfo-bottom">
             <p className="bg">擅长技能</p>
             {
-                info.role ? info.role.map((e,i)=>
-                    <span key={i} className="role-list">{e}</span>
-                ):<Button className="btn">添加擅长的技能</Button>
+                skills.map((e,i)=>(
+                    e.status ? <span className='role-list' key={i}>{e.title}</span> : ''
+                ))
             }
             
         </div>
