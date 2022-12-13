@@ -100,9 +100,14 @@ export default function ConnectModal(params) {
         }
     }
 
+    useEffect(() => {
+        signer && signer.signMessage && init();
+        // 本地是否存储token ? 
+        // 是否是新用户
+        // 签名
+    },[signer])
 
     useEffect(() => {
-        init()
         connectors.map((e,i) => {
             if(e.name == "MetaMask" || e.name == "WalletConnect") {
                     needConnector.push(e)
@@ -127,7 +132,6 @@ export default function ConnectModal(params) {
             onCancel={() => setStatus(false)}
             className="connect"
         >
-            <h1>{message}</h1>
         {needConnector.map((connector) => (
             <Button
                 key={connector.id}
