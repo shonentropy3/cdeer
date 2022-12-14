@@ -2,12 +2,13 @@ import { Button, Empty, Modal, message } from "antd";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { Modal_ModifyTask } from "../Modal_modifyTask";
-import { modifyApplySwitch } from '../../http/_api/task'
+import { modifyApplySwitch, deleteTask } from '../../http/_api/task'
 export default function TaskItem(params) {
     
     const { taskList, select } = params;
     const router = useRouter();
 
+    // 修改报名开关
     const applySwitch = (id,sw) => {
         if ( sw == 1 ) {
             sw = 0
@@ -19,7 +20,33 @@ export default function TaskItem(params) {
             apply_switch: sw
         })
         .then((res)=>{
-            message.success(res.msg)
+            if ( res.code == 0 ) {
+                message.success(res.msg)
+                setTimeout(() => {
+                    history.go(0)
+                }, 500);
+            }else{
+                message.error(res.msg)
+            }
+        })
+    }
+
+    // 删除任务需求
+    const delTask = (id) => {
+        console.log(id);
+        deleteTask({
+            task_id: id
+        })
+        .then((res)=> {
+            console.log(res);
+            if (res.code == 0) {
+                message.success(res.msg)
+                setTimeout(() => {
+                    history.go(0)
+                }, 500);
+            }else{
+                message.error(res.msg)
+            }
         })
     }
 
@@ -46,7 +73,7 @@ export default function TaskItem(params) {
                         </div>
                         <Button>Edit this item</Button>
                         <Button onClick={() => applySwitch(e.task_id,e.apply_switch)}>报名开关</Button>
-                        <Button>删除需求</Button>
+                        <Button onClick={() => delTask(e.task_id) }>删除需求</Button>
                     </div>
                 )
             case 'apply':

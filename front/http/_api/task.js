@@ -18,6 +18,15 @@ export const modifyApplySwitch = (data) => {
     })
 }
 
+// 删除任务
+export const deleteTask = (data) => {
+    return serviceAxios({
+        url: "/task/deleteTask",
+        method: 'post',
+        data
+    })
+}
+
 // 获取task报名列表
 export const getApply = (data) => {
     return serviceAxios({
