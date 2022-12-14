@@ -7,22 +7,31 @@ import { getDate } from "../utils/GetDate";
 import Image from "next/image";
 import Computing_time from "../components/Computing_time";
 import UserInfoModal from "../components/CustomModal/UserInfoModal";
-import { useAccount } from "wagmi";
+import { useAccount, useProvider } from "wagmi";
 import { message } from "antd";
-
-
-
-
+import InviteModal from "../components/CustomModal/InviteModal";
+import { useContracts } from "../controller";
+import { ethers } from "ethers";
+import { createOrder } from "../http/_api/order";
+import { useRouter } from "next/router";
 
 export default function ApplyList(params) {
 
+    const router = useRouter();
     const { address } = useAccount();
+    const provider = useProvider();
+    const { useOrderContractWrite } = useContracts('createOrder');
     
     let [data, setData] = useState([]);     //  报名列表
     let [detail, setDetail] = useState({});     //  需求详情
 
     let [userInfo, setUserInfo] = useState({});     //  用户详情
     let [isUserInfo, setIsUserInfo] = useState(false);      //  用户详情弹窗
+
+    const [isModalOpen, setIsModalOpen] = useState(false);      //  邀请弹窗
+    let [contractParams, setContractParams] = useState({});
+    const [loading, setLoading] = useState(false);
+
 
     // 更改排序
     const updateData = (e) => {
@@ -46,8 +55,57 @@ export default function ApplyList(params) {
         setIsUserInfo(true);
     }
 
+    // 甲方邀请乙方弹窗
+    const invite = (add) => {
+        contractParams.worker = add;
+        setContractParams({...contractParams});
+        setIsModalOpen(true);
+    }
+
+    const invitation = (amount) => {
+        contractParams.amount = ethers.utils.parseEther(`${amount}`);
+        useOrderContractWrite.write({
+            recklesslySetUnpreparedArgs: [
+                contractParams.task_id,
+                address,
+                contractParams.worker,
+                contractParams.token,
+                contractParams.amount
+            ]
+        })
+    }
+
+    const writeSuccess = async() => {
+        const hash = useOrderContractWrite.data.hash;
+        await createOrder({hash: hash})
+        .then(res => {
+            if (res.code !== 0) {
+                message.error(res.msg)
+            }
+        })
+
+        // 判断交易是否成功上链
+        await provider.getTransaction(hash)
+        .then(res => {
+          message.success('操作成功');
+          setTimeout(() => {
+              router.push(`/task?w=issuer&bar=developping`)    //  跳转链接
+          }, 500);
+        })
+        .catch(err => {
+          message.error('操作失败')
+        })
+    }
+
     const init = async() => {
         const { task_id } = qs.parse(location.search.slice(1));
+        contractParams = {
+            task_id: task_id,
+            address: address,
+            token: ethers.constants.AddressZero
+        }
+        setContractParams({...contractParams});
+
         await getApply({task_id: task_id})
         .then(res => {
             if (res.code === 0) {
@@ -71,9 +129,28 @@ export default function ApplyList(params) {
         init();
     },[])
 
+    useEffect(() => {
+        switch (useOrderContractWrite.status) {
+            case 'success':
+                writeSuccess();
+                setLoading(false);
+                break;
+            case 'loading':
+                setLoading(true);
+                break;
+            default:
+                setLoading(false);
+                break;
+        }
+    },[useOrderContractWrite.status])
+
     return <div className="Applylist">
         {/* 用户详情弹窗 */}
         <UserInfoModal show={isUserInfo} setShow={setIsUserInfo} userInfo={userInfo} />
+        {/* 邀请乙方弹窗 */}
+        {
+            isModalOpen && <InviteModal close={setIsModalOpen} invitation={invitation} loading={loading} />
+        }
         {
             detail &&
                 <div className="task-info">
@@ -155,7 +232,7 @@ export default function ApplyList(params) {
                         </div>
                         <div>
                             <div className="product-collaborate">
-                                <p onClick={() => {worker = e.apply_addr, setWorker(worker) ,showModal()}}>Invite</p>
+                                <p onClick={() => invite(e.apply_addr)}>Invite</p>
                                 <p onClick={() => updateData(e)} className="product-collaborate-no">Improper</p>
                             </div>
                         </div>

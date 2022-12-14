@@ -8,3 +8,12 @@ export const getOrderStatus = (data) => {
         data,
     });
 }
+
+// 新建任务
+export const createOrder = (data) => {
+    return serviceAxios({
+        url: `/order/createOrder`,
+        method: "post",
+        data,
+    });
+}
