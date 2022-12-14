@@ -396,20 +396,24 @@
                                 // margin-left: 480px;
                                 text-align: right;
                                 // margin-left: 172px;
-                                .product-apply-price{
-                                    width: 98px;
-                                    height: 40px;
-                                    font-size: 28px;
-                                    font-family: PingFangSC-Medium, PingFang SC;
-                                    font-weight: 500;
-                                    color: #1F1E2E;
-                                    line-height: 40px;
-                                    letter-spacing: 2px;
-                                }
-                                .product-apply-he{
-                                    padding-right: 10px;
+                                .amount{
+                                    display: flex;
+                                    justify-content: flex-end;
+                                    align-items: center;
                                     font-size: 12px;
+                                    font-family: PingFangSC-Regular, PingFang SC;
                                     color: #6C6C6C;
+                                    letter-spacing: 1px;
+                                    span{
+                                        margin-left: 10px;
+                                        padding-bottom: 6px;
+                                        display: inline-block;
+                                        font-size: 28px;
+                                        font-family: PingFangSC-Medium, PingFang SC;
+                                        font-weight: 500;
+                                        color: #1F1E2E;
+                                        letter-spacing: 2.66px;
+                                    }
                                 }
                                 .product-apply-time{
                                     font-size: 16px;

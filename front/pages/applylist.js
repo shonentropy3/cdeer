@@ -215,8 +215,10 @@ export default function ApplyList(params) {
                                     </div>
                                 </div>
                                 <div className="product-apply">
-                                    <span className="product-apply-he">His offer:</span>
-                                    <span className="product-apply-price">{e.price}ETH</span>
+                                    <p className="amount">
+                                        His offer:
+                                        <span>{ Math.floor(e.price / Math.pow(10, 18)) / 100 }</span>
+                                    </p>
                                     <div className="product-apply-time">
                                         <span className="product-apply-time-icon"><img src="/clock.jpg" /></span>
                                         <Computing_time create_time={e.created_at} />
