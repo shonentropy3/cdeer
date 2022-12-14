@@ -9,6 +9,15 @@ export const createTask = (data) => {
     });
 }
 
+// 报名开关
+export const modifyApplySwitch = (data) => {
+    return serviceAxios({
+        url: `/task/modifyApplySwitch`,
+        method: 'post',
+        data
+    })
+}
+
 // 获取task报名列表
 export const getApply = (data) => {
     return serviceAxios({

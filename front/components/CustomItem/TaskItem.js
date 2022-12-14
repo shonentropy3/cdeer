@@ -1,10 +1,27 @@
-import { Button, Empty } from "antd";
+import { Button, Empty, Modal, message } from "antd";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import { Modal_ModifyTask } from "../Modal_modifyTask";
+import { modifyApplySwitch } from '../../http/_api/task'
 export default function TaskItem(params) {
     
     const { taskList, select } = params;
     const router = useRouter();
+
+    const applySwitch = (id,sw) => {
+        if ( sw == 1 ) {
+            sw = 0
+        }else{
+            sw = 1
+        }
+        modifyApplySwitch({
+            task_id: id,
+            apply_switch: sw
+        })
+        .then((res)=>{
+            message.success(res.msg)
+        })
+    }
 
     const print = () => {
         switch (select) {
@@ -28,7 +45,7 @@ export default function TaskItem(params) {
                             </div>
                         </div>
                         <Button>Edit this item</Button>
-                        <Button>报名开关</Button>
+                        <Button onClick={() => applySwitch(e.task_id,e.apply_switch)}>报名开关</Button>
                         <Button>删除需求</Button>
                     </div>
                 )
@@ -53,6 +70,7 @@ export default function TaskItem(params) {
                 break;
         }
     }
+
 
     useEffect(() => {
         console.log(select);
