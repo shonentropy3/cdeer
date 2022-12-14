@@ -22,9 +22,9 @@ export default function Publish() {
     const { useTaskContractWrite: Task } = useContracts('createTask');
 
     // getTransaction
-    const waitForTransaction = useWaitForTransaction({
-        hash: Task.data?.hash,
-    })
+    // const waitForTransaction = useWaitForTransaction({
+    //     hash: Task.data?.hash,
+    // })
     const provider = useProvider();
     let [isLoading, setIsLoading] = useState()
     
@@ -177,12 +177,15 @@ export default function Publish() {
         })
     }
 
+    const writeError = () => {
+        setIsLoading(false)
+        message.error('交易失败')
+    }
+
     useEffect(() => {
-        Task.isSuccess ? 
-          writeSuccess()
-          :
-          ''
-      },[Task.isSuccess])
+        Task.isSuccess && writeSuccess()
+        Task.error && writeError()
+      },[Task])
 
     useEffect(() => {
         let arr = [];
@@ -267,13 +270,13 @@ export default function Publish() {
           // You can await here
           await provider.getTransaction(Task.data.hash)
           .then(res => {
-            message.success('操作成功');
+            message.success('交易成功');
             setTimeout(() => {
                 router.push(`/task?w=issuer&bar=tasks`)    //  跳转链接
             }, 500);
           })
           .catch(err => {
-            message.error('操作失败')
+            message.error('交易失败')
           })
           setIsLoading(false)
 
