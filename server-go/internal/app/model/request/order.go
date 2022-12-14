@@ -9,3 +9,8 @@ type GetOrderListRequest struct {
 type CreateOrderRequest struct {
 	model.Order
 }
+
+type UpdatedStageRequest struct {
+	model.Order
+	Obj string `json:"obj" form:"obj"`
+}

@@ -69,3 +69,22 @@ func CreateOrder(orderReq request.CreateOrderRequest) (err error) {
 	}
 	return tx.Commit().Error
 }
+
+// UpdatedStage
+// @function: CreatedStage
+// @description: 创建阶段划分
+// @param:
+// @return:
+func UpdatedStage(stage request.UpdatedStageRequest) (err error) {
+	err, hashJSON := UploadJSON(stage.Obj)
+	if err != nil {
+		return err
+	}
+	stage.Attachment = hashJSON
+	// 更新数据
+	raw := global.DB.Model(&model.Order{}).Where("order_id = ?", stage.OrderId).Updates(&stage.Order)
+	if raw.RowsAffected == 0 {
+		return errors.New("创建失败")
+	}
+	return raw.Error
+}
