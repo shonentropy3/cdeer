@@ -1,11 +1,17 @@
 package main
 
 import (
+	DeTaskABI "code-market-admin/abi"
 	"code-market-admin/internal/app/blockchain"
 	"code-market-admin/internal/app/core"
 	"code-market-admin/internal/app/global"
 	"code-market-admin/internal/app/initialize"
+	"fmt"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/ethclient"
 	"go.uber.org/zap"
+	"log"
+	"math/big"
 )
 
 func main() {
@@ -26,28 +32,27 @@ func main() {
 	}
 	// 初始化缓存
 	global.Cache = initialize.Cache()
-	// 初始化合约ABI
-	initialize.InitContract()
-
 	// 启动扫块任务
 	go blockchain.HandleTransaction()
 	core.RunWindowsServer()
-	/*
-		client, err := ethclient.Dial("https://backend.buildbear.io/node/charming-bohr-99d0de")
-		if err != nil {
-			log.Fatal(err)
-		}
 
-		address := common.HexToAddress("0x7cfe69b6aDEf6C6D17E9C3A29BCCC66246ffF505")
-		instance, err := DeTaskABI.NewDeTask(address, client)
-		if err != nil {
-			log.Fatal(err)
-		}
-		version, err := instance.Tasks(nil, big.NewInt(10))
-		if err != nil {
-			log.Fatal(err)
-		}
+	client, err := ethclient.Dial("https://backend.buildbear.io/node/charming-bohr-99d0de")
+	if err != nil {
+		log.Fatal(err)
+	}
 
-		fmt.Println(version) // "1.0"
-	*/
+	address := common.HexToAddress("0x68Eee406113429D3443a70BE736c3fBb4f3F0A1C")
+	instance, err := DeTaskABI.NewDeStage(address, client)
+	if err != nil {
+		fmt.Println("1")
+		fmt.Println(err)
+	}
+	version, err := instance.GetStages(nil, big.NewInt(10))
+	if err != nil {
+		fmt.Println("2")
+		fmt.Println(err)
+	}
+
+	fmt.Println(version) // "1.0"
+
 }
