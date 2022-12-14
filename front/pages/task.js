@@ -113,7 +113,6 @@ function Task() {
             console.log(err);
         })
     }
-// getApplyList 
 
     const init = () => {
         const { w, bar } = qs.parse(location.search.slice(1));
@@ -141,7 +140,6 @@ function Task() {
                 selectData.map(e => {
                     e.role = deform_Skills(e?.role || []);
                     e.budget = deform_Count(e.budget, e.currency)
-                    console.log(e.role);
                 })
                 setSelectData([...selectData]);
             }
@@ -181,7 +179,6 @@ function Task() {
 
 
     useEffect(() => {
-        // 根据选择的侧边栏显示右侧数据
         switch (selectBar) {
             case 'tasks':
                 getTasks();

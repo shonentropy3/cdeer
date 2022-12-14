@@ -6,13 +6,14 @@ import ConnectModal from "../components/CustomModal/connectModal";
 export default function withAuth (Component)  {
     const Auth = props => {
         const { user } = useContext(AuthContext);
+        let [token, setToken] = useState()
         const { address } = useAccount();
         let [isModalVisible,setIsModalVisible] = useState(false);
 
 
 
         useEffect(() => {
-            const token = localStorage.getItem(`session.${address?.toLowerCase()}`);
+            setToken(localStorage.getItem(`session.${address?.toLowerCase()}`))
             if (!token && !address) {
                 setIsModalVisible(true)
             }
@@ -22,9 +23,10 @@ export default function withAuth (Component)  {
            {
             isModalVisible &&  <ConnectModal setStatus={setIsModalVisible} status={isModalVisible} />
            }
-            {
-                address && localStorage.getItem(`session.${address.toLowerCase()}`) && <Component {...props} />
-            }
+           {
+            token ? <Component {...props} /> : <h1>请登陆</h1>
+           }
+            {/* <Component {...props} /> */}
         </>
     }
     return Auth
