@@ -15,6 +15,7 @@ import Computing_time from '../components/Computing_time';
 import { createUserInfo, getUserInfo, searchTaskDetail, updateUserInfo } from '../http/_api/public';
 import qs from 'querystring';
 import { createApply, getApplyStatus } from '../http/_api/task';
+import { getOrderStatus } from '../http/_api/order';
 
 export default function Project() {
     
@@ -139,9 +140,12 @@ export default function Project() {
                 setDetail(detail);
             }
         })
+        if (!address) {
+            return
+        }
 
         // 获取用户个人信息
-        getUserInfo({address:address})
+        await getUserInfo({address:address})
         .then((res) => {
             if (res.code === 0) {
                 userContact = res.data
@@ -153,22 +157,24 @@ export default function Project() {
         })
 
         // 获取该用户task状态
-        getApplyStatus({
+        var applyList;
+        var orderList;
+        await getApplyStatus({
             address: address, task_id: task_id
         })
         .then(res => {
             if (res.code === 0) {
-                console.log(res.data);
-                if (res.data.list.length === 0) {
-                    // 未报名
-                    progress = 0;
-                    return
-                }
-                const data = res.data.list[0];
-                // 判断order表中是否有 当前 task_id 、 worker 、 且未完成的
-                
+                applyList = res.data?.list || [];
             }
         })
+        await getOrderStatus({
+            worker: address, task_id: task_id
+        })
+        .then(res => {
+            console.log(res);
+        })
+
+
     }
 
     useEffect(() => {
@@ -269,14 +275,11 @@ export default function Project() {
             </div>
         }
         {/* <Button type="primary" className="project-btn" onClick={showModal}>报名参加</Button> */}
-        <Modal
-            footer={null}
-            open={isModalOpen}
-            onCancel={handleCancel}
-            className="modal-apply-task"
-        >
+        
             {/* <Modal_applyTask setParams={setParams} params={params} project={project} submit={apply} applyInfo={userApplyInfo} userContact={userContact} /> */}
-            <ApplyTaskModal project={detail} submit={apply} userContact={userContact} setUserContact={setUserContact} />
-        </Modal>
+            {
+                isModalOpen &&
+                <ApplyTaskModal open={isModalOpen} onCancel={handleCancel} project={detail} submit={apply} userContact={userContact} setUserContact={setUserContact} />
+            }
     </div>
 }

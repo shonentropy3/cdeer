@@ -1,12 +1,14 @@
-import { Input, Select, Button, Checkbox, Col, Row, InputNumber } from "antd"
+import { Input, Select, Button, Checkbox, Col, Row, InputNumber, Modal } from "antd"
 import { useEffect, useState } from "react";
+import withAuth from "../../pages/middleware";
 import Computing_time from "../Computing_time";
+// import withAuth from "../middleware";
 
 const {TextArea} = Input
 const { Option } = Select;
-export default function ApplyTaskModal (props) {
+function ApplyTaskModal (props) {
    
-    const { submit, project, userContact, setUserContact } = props;
+    const { open, onCancel, submit, project, userContact, setUserContact } = props;
 
     let [icons, setIcons] = useState([
         { title: 'telegram', value: '' },
@@ -38,9 +40,13 @@ export default function ApplyTaskModal (props) {
         setUserContact({...userContact});
     }
 
-
-
-    return <div className="apply-task">
+    return <Modal
+            footer={null}
+            open={open}
+            onCancel={onCancel}
+            className="modal-apply-task"
+        >
+            <div className="apply-task">
         <p className="apply-task-top">
             <span className="apply-task-top-text">Sign up for this Task</span>
         </p>
@@ -106,5 +112,7 @@ export default function ApplyTaskModal (props) {
             <Button className="apply-task-btn" onClick={() => submit(inner)}>Sign up</Button>
         </div>
     </div>
+    
+    </Modal>
 }
-
+export default withAuth(ApplyTaskModal);

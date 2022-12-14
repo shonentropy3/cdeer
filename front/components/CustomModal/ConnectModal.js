@@ -1,4 +1,5 @@
 import { CloseOutlined } from "@ant-design/icons"
+import { useRequest } from "ahooks";
 import { Button, Modal } from "antd"
 import { useEffect, useState } from "react";
 import { useAccount, useConnect, useDisconnect, useNetwork, useSigner, useSignMessage, useSwitchNetwork } from "wagmi";
@@ -12,6 +13,7 @@ export default function ConnectModal(params) {
     const { setStatus, status } = params;
     const { connect, connectors } = useConnect();
     const { address, isConnecting } = useAccount();
+    
     // 签名
     const { data: signer } = useSigner();
     const [message, setMessage] = useState();
@@ -54,53 +56,67 @@ export default function ConnectModal(params) {
         }
     }
 
+
+
+ 
+  
+
     const getToken = async() => {
-            // 1、获取nonce
-            await getLoginMessage({address: address})
+        // 1、获取nonce
+        await getLoginMessage({address: address})
+        .then(res => {
+            if (res.code === 0) {
+                message = res.data.loginMessage;
+            }
+        })
+        // 2、获取签名
+        await signer.signMessage(message)
+        .then(res => {
+            // 3、获取token
+            authLoginSign({
+                address: address,
+                message: message,
+                signature: res
+            })
             .then(res => {
                 if (res.code === 0) {
-                    message = res.data.loginMessage;
-                    setMessage(message);
+                    localStorage.setItem(`session.${address.toLowerCase()}`,res.data.token)
                 }
             })
-
-            // 2、获取签名
-            await signer.signMessage(message)
-            .then(res => {
-
-                // 3、获取token
-                authLoginSign({
-                    address: address,
-                    message: message,
-                    signature: res
-                })
-                .then(res => {
-                    if (res.code === 0) {
-                        localStorage.setItem(`session.${address.toLowerCase()}`,res.data.token)
-                    }
-                })
-            })
-            .catch(err => {
-                console.log(err);
-            })
+        })
+        .catch(err => {
+            console.log(err);
+        })
+        console.log('完成');
     }
 
-    const init = async() => {
+    const init = () => {
         const token = localStorage.getItem(`session.${address.toLowerCase()}`);
-
         if (!token) {
-            await getToken()
+            getToken()
         }else{
             // 判断token有效期
             let status = getJwt(token);
             if (!status) {
-                await getToken();
+                getToken();
             }
         }
     }
+    async function isRun() {
+        if (signer && signer.signMessage) {
+            console.log('写入');
+            init()
+        }
+    }
+
+    const { data, runAsync } = useRequest(isRun, {
+        debounceWait: 1000,
+        manual: true
+    });
 
     useEffect(() => {
-        signer && signer.signMessage && init();
+
+        runAsync()
         // 本地是否存储token ? 
         // 是否是新用户
         // 签名
@@ -118,10 +134,6 @@ export default function ConnectModal(params) {
     useEffect(() => {
         chain && network()
     },[chain])
-
-    useEffect(() => {
-
-    },[address,])
 
     return <Modal
             title={<p>Link Wallet <CloseOutlined onClick={() => setStatus(false)} /></p>} 

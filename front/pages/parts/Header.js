@@ -123,6 +123,10 @@ export default function Header(props) {
         setIsScroll(isScroll);
     }
 
+    useEffect(() => {
+        isModalVisible && console.log('头部执行了 ==>');
+    },[isModalVisible])
+
     return <div className="Header">
         <div className={`content ${isScroll ? 'scroll':''}`}>
             <div className="header-logo">
