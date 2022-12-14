@@ -37,15 +37,15 @@ func AuthLoginSignRequest(req request.AuthLoginSignRequest) (token string, err e
 		return token, errors.New("nonce获取失败")
 	}
 	// 校验Nonce
-	fmt.Println(req.Message[index+7:])
-	fmt.Println(global.Cache.Len())
 	_, cacheErr := global.Cache.Get(req.Message[index+7:])
 	if cacheErr == bigcache.ErrEntryNotFound {
 		return token, errors.New("签名已失效")
 	}
+	// 删除Nonce
+	_ = global.Cache.Delete(req.Message[index+7:])
 	// 获取用户名--不存在则新增
 	var userName string
-	if errUser := global.DB.Model(&model.User{}).Select("username").Where("address = ?", req.Address).First(&userName).Error; err != nil {
+	if errUser := global.DB.Model(&model.User{}).Select("username").Where("address = ?", req.Address).First(&userName).Error; errUser != nil {
 		if errUser == gorm.ErrRecordNotFound {
 			if err = global.DB.Model(&model.User{}).Save(&model.User{Address: req.Address}).Error; err != nil {
 				return token, err

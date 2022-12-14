@@ -32,4 +32,22 @@ func main() {
 	// 启动扫块任务
 	go blockchain.HandleTransaction()
 	core.RunWindowsServer()
+	/*
+		client, err := ethclient.Dial("https://backend.buildbear.io/node/charming-bohr-99d0de")
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		address := common.HexToAddress("0x7cfe69b6aDEf6C6D17E9C3A29BCCC66246ffF505")
+		instance, err := DeTaskABI.NewDeTask(address, client)
+		if err != nil {
+			log.Fatal(err)
+		}
+		version, err := instance.Tasks(nil, big.NewInt(10))
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Println(version) // "1.0"
+	*/
 }

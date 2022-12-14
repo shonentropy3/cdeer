@@ -97,7 +97,7 @@ func UploadImage(header *multipart.FileHeader) (file response.UploadImageRespons
 	UUID := uuid.NewV4().String()
 	filename := UUID + ext
 	now := time.Now()
-	director := global.CONFIG.Local.Path + "/" + now.Format("2006/01")
+	director := global.CONFIG.Local.Path + "/" + now.Format("2006/01/")
 	// 尝试创建此路径
 	mkdirErr := os.MkdirAll(director, os.ModePerm)
 	if mkdirErr != nil {
@@ -130,6 +130,7 @@ func UploadImage(header *multipart.FileHeader) (file response.UploadImageRespons
 	if err = global.DB.Model(&model.Upload{}).Create(&upload).Error; err != nil {
 		return file, err
 	}
-
+	file.Name = filename
+	file.Url = p
 	return file, err
 }

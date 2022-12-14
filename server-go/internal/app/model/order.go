@@ -6,6 +6,7 @@ import (
 
 type Order struct {
 	global.MODEL
+	Hash        string `gorm:"column:hash" json:"hash" form:"hash"`
 	OrderId     int64  `gorm:"column:order_id" json:"order_id" form:"order_id"`
 	TaskID      int64  `gorm:"column:task_id" json:"task_id" form:"task_id"`
 	Issuer      string `gorm:"column:issuer" json:"issuer" form:"issuer"`

@@ -12,5 +12,4 @@ type Apply struct {
 	Price     string    `gorm:"column:price" json:"price" form:"price"`                // 报价
 	Desc      string    `gorm:"column:desc" json:"desc" form:"desc"`                   // 自我介绍
 	SortTime  time.Time `gorm:"column:sort_time" json:"sort_time" form:"sort_time"`    // 不感兴趣
-	Status    uint16    `gorm:"column:status" json:"status" form:"status"`             // 状态
 }

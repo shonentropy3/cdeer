@@ -14,14 +14,17 @@ type GetTaskDetailRequest struct {
 }
 
 type CreateTaskRequest struct {
+	Hash string `gorm:"hash" json:"hash" form:"hash"` // 交易hash
 	model.Task
 }
 
 type UpdatedTaskRequest struct {
+	Hash string `gorm:"hash" json:"hash" form:"hash"` // 交易hash
 	model.Task
 }
 
 type DeleteTaskRequest struct {
+	Hash string `gorm:"hash" json:"hash" form:"hash"` // 交易hash
 	model.Task
 }
 type ModifyApplySwitchRequest struct {
