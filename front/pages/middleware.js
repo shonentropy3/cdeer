@@ -1,3 +1,4 @@
+import { Skeleton } from "antd";
 import { useContext, useEffect, useState } from "react"
 import { AuthContext } from "react-admin";
 import { useAccount } from "wagmi";
@@ -9,8 +10,6 @@ export default function withAuth (Component)  {
         let [token, setToken] = useState()
         const { address } = useAccount();
         let [isModalVisible,setIsModalVisible] = useState(false);
-
-
 
         useEffect(() => {
             setToken(localStorage.getItem(`session.${address?.toLowerCase()}`))
@@ -24,7 +23,10 @@ export default function withAuth (Component)  {
             isModalVisible &&  <ConnectModal setStatus={setIsModalVisible} status={isModalVisible} />
            }
            {
-            token ? <Component {...props} /> : <h1>请登陆</h1>
+            token ? <Component {...props} /> : 
+            <div className="Skeleton-task">
+                <Skeleton active paragraph={{ rows: 4, width: '50%'}} > <Component {...props} /> </Skeleton>
+            </div>
            }
             {/* <Component {...props} /> */}
         </>

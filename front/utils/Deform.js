@@ -1,7 +1,10 @@
 const _data = require('../data/data.json')
 
 export const deform_Skills = (arr) => {
-    let newArr = []
+    let newArr = [];
+    if (!arr) {
+        arr = []
+    }
     arr.forEach(e => {
         _data.skills.forEach(ele => {
             if (e == ele.value) {

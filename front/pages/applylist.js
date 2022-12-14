@@ -59,7 +59,7 @@ export default function ApplyList(params) {
         .then(res => {
             if (res.code === 0) {
                 detail = res.data.list[0];
-                detail.role = deform_Skills(detail.role);
+                detail.role = deform_Skills(detail?.role || []);
                 detail.budget = deform_Count(detail.budget,detail.currency);
                 setDetail(detail);
 

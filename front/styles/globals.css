@@ -19,6 +19,10 @@ p{
   box-sizing: border-box;
 }
 
+.Skeleton-task{
+  min-height: 800px;
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
