@@ -1,11 +1,15 @@
 package blockchain
 
 import (
-	DeTaskABI "code-market-admin/abi"
+	ABI "code-market-admin/abi"
 	"code-market-admin/internal/app/global"
 	"code-market-admin/internal/app/model"
 	"errors"
+	"fmt"
+	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/core/types"
+	"gorm.io/gorm/clause"
+	"strings"
 )
 
 func DeOrder(transHash model.TransHash, Logs []*types.Log) (haveBool bool, err error) {
@@ -20,9 +24,12 @@ func DeOrder(transHash model.TransHash, Logs []*types.Log) (haveBool bool, err e
 
 // ParseOrderCreated 解析OrderCreated事件
 func ParseOrderCreated(Logs []*types.Log) (err error) {
-	contractAbi := global.ContractABI["DeOrder"]
+	contractAbi, err := abi.JSON(strings.NewReader(ABI.DeOrderMetaData.ABI))
+	if err != nil {
+		fmt.Println(err)
+	}
 	for _, vLog := range Logs {
-		var orderCreated DeTaskABI.DeOrderOrderCreated
+		var orderCreated ABI.DeOrderOrderCreated
 		ParseErr := contractAbi.UnpackIntoInterface(&orderCreated, "OrderCreated", vLog.Data)
 		// parse success
 		if ParseErr == nil {
@@ -32,8 +39,12 @@ func ParseOrderCreated(Logs []*types.Log) (err error) {
 			order := model.Order{TaskID: orderCreated.TaskId.Int64(), OrderId: orderCreated.OrderId.Int64()}
 			order.Issuer = orderCreated.Issuer.String() // 甲方
 			order.Worker = orderCreated.Worker.String() // 乙方
-			// 更新数据
-			if err = tx.Model(&model.Order{}).Where("hash = ?", vLog.TxHash.String()).Updates(&order).Error; err != nil {
+			// 更新||插入数据
+			err = tx.Model(&model.Order{}).Clauses(clause.OnConflict{
+				Columns:   []clause.Column{{Name: "order_id"}},
+				UpdateAll: true,
+			}).Create(&order).Error
+			if err != nil {
 				tx.Rollback()
 				return err
 			}

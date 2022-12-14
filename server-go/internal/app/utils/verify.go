@@ -11,14 +11,14 @@ var (
 	// 报名
 	GetApplyListVerify     = Rules{"TaskID": {NotEmpty()}}
 	GetApplyVerify         = Rules{"ApplyAddr": {NotEmpty()}}
-	CreateApplyVerify      = Rules{"ApplyAddr": {NotEmpty()}}
+	CreateApplyVerify      = Rules{"Hash": {NotEmpty()}}
 	UpdatedApplyVerify     = Rules{"TaskID": {NotEmpty()}, "ApplyAddr": {NotEmpty()}}
 	UpdatedApplySortVerify = Rules{"ApplyAddr": {NotEmpty()}, "TaskID": {NotEmpty()}}
 	DeleteApplyVerify      = Rules{"ApplyAddr": {NotEmpty()}, "TaskID": {NotEmpty()}, "Hash": {NotEmpty()}}
 	// 需求
-	CreateTaskVerify        = Rules{"Issuer": {NotEmpty()}, "Hash": {NotEmpty()}, "Title": {NotEmpty()}, "Desc": {NotEmpty()}, "Budget": {NotEmpty()}, "Period": {NotEmpty()}, "Currency": {NotEmpty()}}
-	UpdatedTaskVerify       = Rules{"TaskID": {NotEmpty()}}
-	DeleteTaskVerify        = Rules{"TaskID": {NotEmpty()}}
+	CreateTaskVerify        = Rules{"Hash": {NotEmpty()}}
+	UpdatedTaskVerify       = Rules{"Hash": {NotEmpty()}}
+	DeleteTaskVerify        = Rules{"Hash": {NotEmpty()}}
 	ModifyApplySwitchVerify = Rules{"TaskID": {NotEmpty()}}
 	// 任务
 	CreateOrderVerify = Rules{"TaskID": {NotEmpty()}}

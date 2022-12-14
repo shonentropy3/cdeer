@@ -1,11 +1,14 @@
 package blockchain
 
 import (
-	DeTaskABI "code-market-admin/abi"
+	ABI "code-market-admin/abi"
 	"code-market-admin/internal/app/global"
 	"code-market-admin/internal/app/model"
 	"errors"
+	"fmt"
+	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/core/types"
+	"strings"
 )
 
 func DeStage(transHash model.TransHash, Logs []*types.Log) (haveBool bool, err error) {
@@ -19,10 +22,13 @@ func DeStage(transHash model.TransHash, Logs []*types.Log) (haveBool bool, err e
 
 // ParseConfirmOrderStage 解析ConfirmOrderStage事件
 func ParseConfirmOrderStage(Logs []*types.Log) (err error) {
-	contractAbi := global.ContractABI["DeStage"]
+	contractAbi, err := abi.JSON(strings.NewReader(ABI.DeStageMetaData.ABI))
+	if err != nil {
+		fmt.Println(err)
+	}
 	for _, vLog := range Logs {
-		var taskCreated DeTaskABI.DeTaskTaskCreated
-		ParseErr := contractAbi.UnpackIntoInterface(&taskCreated, "ConfirmOrderStage", vLog.Data)
+		var confirmOrderStage ABI.DeStageConfirmOrderStage
+		ParseErr := contractAbi.UnpackIntoInterface(&confirmOrderStage, "ConfirmOrderStage", vLog.Data)
 		// parse success
 		if ParseErr == nil {
 			// 开始事务
