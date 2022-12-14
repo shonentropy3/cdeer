@@ -125,6 +125,9 @@ function Task() {
 
         selectData = [];
         setSelectData([...selectData]);
+
+        pageConfig.page = 1;
+        setPageConfig({...pageConfig});
     }
 
     // 获取发布的需求

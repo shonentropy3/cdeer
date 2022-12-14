@@ -51,7 +51,7 @@ export default function Projects() {
                 let data = res.data.list
                 if(data){
                     data.map(e => {
-                        e.role = deform_Skills(e.role);
+                        e.role = deform_Skills(e?.role || []);
                     })
                     projects = data;
                     setProjects([...projects]);
