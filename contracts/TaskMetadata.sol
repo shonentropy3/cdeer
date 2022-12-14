@@ -99,15 +99,15 @@ contract TaskMetadata is IMetadata {
             "+0800"));
     }
 
-    function skillSVG(TaskInfo memory task, uint i)  internal view returns (string memory svgString) {
-        uint skill = task.skills.get(i);
+    function skillSVG(uint48 taskskills, uint i)  internal view returns (string memory svgString) {
+        uint skill = taskskills.get(i);
         if (skill > 0) {
             uint xPos = 16 + i * 24;
             return string(
                     abi.encodePacked(
-                        '<path data-name="g" class="c26" d="M',
+                        '<path class="c26" d="M',
                         Strings.toString(xPos),
-                        ' 86.42h16.94a.9.9 0 0 1 1 .8V91a.91.91 0 0 1-1 .8H',
+                        ' 86.42h19a.9.9 0 0 1 1 .8V91a.91.91 0 0 1-1 .8H',
                         Strings.toString(xPos),
                         'a.91.91 0 0 1-1-.8v-3.78a.9.9 0 0 1 1-.8Z"/>',
 
@@ -122,45 +122,61 @@ contract TaskMetadata is IMetadata {
     }
 
 
-    function getValueStr(TaskInfo memory task) internal view returns (string memory budget) {
-        if(task.budget == 0) {
+    function getValueStr(uint128 taskbudget, uint8 currency) internal view returns (string memory budget) {
+        if(taskbudget == 0) {
             return "Negotiable";
         } else {
+            if (taskbudget / 1e18 > 0) {
+                
+                if(taskbudget / 1e18 < 10) {
+                    uint digit = taskbudget / 1e18;
+                    uint b = (taskbudget - (digit * 1e18)) / 1e17;
+                    budget = string(abi.encodePacked("~", Strings.toString(digit),
+                    ".",
+                        Strings.toString(b)));
+                } else {
+                    budget = string(abi.encodePacked("~", Strings.toString(taskbudget / 1e18))); 
+                }
 
-            if (task.budget / 1e18 > 0) {
-                budget = Strings.toString(task.budget / 1e18);
-            } else if (task.budget / 1e17 > 0) {
-                uint b = task.budget / 1e17;
-                budget = string(abi.encodePacked("0.", Strings.toString(b)));
-            } else if (task.budget / 1e16 > 0) {
-                uint b = task.budget / 1e16;
-                budget = string(abi.encodePacked("0.0", Strings.toString(b)));
-            } else if (task.budget / 1e15 > 0) {
-                uint b = task.budget / 1e15;
-                budget = string(abi.encodePacked("0.00", Strings.toString(b)));
+            } else if (taskbudget / 1e17 > 0) {
+                uint b = taskbudget / 1e17;
+                budget = string(abi.encodePacked("~0.", Strings.toString(b)));
+            } else if (taskbudget / 1e16 > 0) {
+                uint b = taskbudget / 1e16;
+                budget = string(abi.encodePacked("~0.0", Strings.toString(b)));
+            } else if (taskbudget / 1e15 > 0) {
+                uint b = taskbudget / 1e15;
+                budget = string(abi.encodePacked("~0.00", Strings.toString(b)));
             } else {
-                budget = "<0.001";
+                budget = "&lt;0.001";
             }
         }
 
 
         return string(
                     abi.encodePacked(budget, " ",
-            currencyNames[task.currency]));
+            currencyNames[currency]));
     }
 
-    function generateSVG(uint taskId) internal view returns (string memory svg) {
-        TaskInfo memory task = taskAddr.tasks(taskId);
+    function testGettask(uint taskId) external view returns (TaskInfo memory) {
+        // TaskInfo memory task = 
+        return taskAddr.tasks(taskId);
+    }
+        
 
-        string memory title = task.title;
+    function generateSVG(uint taskId) public view returns (string memory svg) {
+        (string memory title, , string memory attachment, 
+            uint8 currency, uint128 budget, ,uint48 taskskills, uint32 timestamp, 
+            )= taskAddr.getTaskInfo(taskId);
 
-        bytes memory hashb = bytes(task.attachment);
+
+        bytes memory hashb = bytes(attachment);
 
         string memory hashpart1 = string(hashb.slice(0, 30));
         string memory hashpart2 = string(hashb.slice(30, 16));
 
-        string memory nowDate = nowDateTime(task.timestamp);
-        string memory valueStr = getValueStr(task);
+        string memory nowDate = nowDateTime(timestamp);
+        string memory valueStr = getValueStr(budget, currency);
 
 
         return
@@ -181,10 +197,10 @@ contract TaskMetadata is IMetadata {
                     '</tspan><tspan x="0" y="16">',
                     hashpart2,
                     '</tspan></text>',
-                    skillSVG(task,0),
-                    skillSVG(task,1),
-                    skillSVG(task,2),
-                    skillSVG(task,3),
+                    skillSVG(taskskills,0),
+                    skillSVG(taskskills,1),
+                    skillSVG(taskskills,2),
+                    skillSVG(taskskills,3),
                     '<text class="c25" transform="translate(15 126.77)">Task budget:</text>',
                     '<path style="stroke:#979797;stroke-width:.09px;fill:#fff" d="M14.67 128.37h86v22.99H14.67z"/>',
                     '<g style="mask:url(#mask)"><path d="M27.52 134.79v1.5c1.47.19 2.51 1 2.56 2.1v.09h-1.27c0-.49-.72-.95-1.95-.95s-1.95.39-1.95.95.61.93 1.83 1h.12c1.92 0 3.23.86 3.23 2.23s-1.05 2-2.57 2.19v1.52h-1.27v-1.52c-1.5-.17-2.56-1-2.62-2.11v-.08h1.28c0 .49.72 1 1.95 1s1.95-.39 1.95-1-.61-.93-1.83-1h-.24c-1.86 0-3.11-.9-3.11-2.23s1.08-2 2.62-2.2v-1.49Zm-.63-1.93a7 7 0 1 0 7 7 7 7 0 0 0-7-7Zm0-1.28a8.28 8.28 0 1 1-8.28 8.28 8.28 8.28 0 0 1 8.28-8.28Z" style="fill:#2c2c2c;fill-rule:evenodd"/></g>',
