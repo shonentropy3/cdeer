@@ -77,6 +77,7 @@ func HandleTransactionReceipt(client *ethclient.Client, txMap sync.Map, hash str
 		fmt.Println("待交易")
 		fmt.Println(err)
 		txMap.Delete(hash)
+		// TODO: 控制尝试次数
 		return
 	}
 	// 交易失败

@@ -1,13 +1,17 @@
 package blockchain
 
 import (
-	DeTaskABI "code-market-admin/abi"
+	ABI "code-market-admin/abi"
 	"code-market-admin/internal/app/global"
 	"code-market-admin/internal/app/model"
 	"errors"
+	"fmt"
+	"github.com/ethereum/go-ethereum/accounts/abi"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/tidwall/gjson"
 	"gorm.io/gorm/clause"
+	"strings"
 	"time"
 )
 
@@ -35,9 +39,12 @@ func DeTask(transHash model.TransHash, Logs []*types.Log) (haveBool bool, err er
 
 // ParseTaskCreated 解析TaskCreated事件
 func ParseTaskCreated(transHash model.TransHash, Logs []*types.Log) (err error) {
-	contractAbi := global.ContractABI["DeTask"]
+	contractAbi, err := abi.JSON(strings.NewReader(ABI.DeTaskMetaData.ABI))
+	if err != nil {
+		return err
+	}
 	for _, vLog := range Logs {
-		var taskCreated DeTaskABI.DeTaskTaskCreated
+		var taskCreated ABI.DeTaskTaskCreated
 		ParseErr := contractAbi.UnpackIntoInterface(&taskCreated, "TaskCreated", vLog.Data)
 		// 解析成功
 		if ParseErr == nil {
@@ -74,9 +81,12 @@ func ParseTaskCreated(transHash model.TransHash, Logs []*types.Log) (err error) 
 
 // ParseTaskModified 解析TaskModified事件
 func ParseTaskModified(transHash model.TransHash, Logs []*types.Log) (err error) {
-	contractAbi := global.ContractABI["DeTask"]
+	contractAbi, err := abi.JSON(strings.NewReader(ABI.DeTaskMetaData.ABI))
+	if err != nil {
+		fmt.Println(err)
+	}
 	for _, vLog := range Logs {
-		var taskModified DeTaskABI.DeTaskTaskModified
+		var taskModified ABI.DeTaskTaskModified
 		ParseErr := contractAbi.UnpackIntoInterface(&taskModified, "TaskModified", vLog.Data)
 		// 解析成功
 		if ParseErr == nil {
@@ -105,7 +115,7 @@ func ParseTaskModified(transHash model.TransHash, Logs []*types.Log) (err error)
 				tx.Rollback()
 				return err
 			}
-			tx.Commit()
+			return tx.Commit().Error
 		}
 	}
 	return errors.New("事件解析失败")
@@ -113,9 +123,12 @@ func ParseTaskModified(transHash model.TransHash, Logs []*types.Log) (err error)
 
 // ParseTaskDisabled 解析TaskDisabled事件
 func ParseTaskDisabled(transHash model.TransHash, Logs []*types.Log) (err error) {
-	contractAbi := global.ContractABI["DeTask"]
+	contractAbi, err := abi.JSON(strings.NewReader(ABI.DeTaskMetaData.ABI))
+	if err != nil {
+		fmt.Println(err)
+	}
 	for _, vLog := range Logs {
-		var taskDisabled DeTaskABI.DeTaskTaskDisabled
+		var taskDisabled ABI.DeTaskTaskDisabled
 		ParseErr := contractAbi.UnpackIntoInterface(&taskDisabled, "TaskDisabled", vLog.Data)
 		// 解析成功
 		if ParseErr == nil {
@@ -136,7 +149,7 @@ func ParseTaskDisabled(transHash model.TransHash, Logs []*types.Log) (err error)
 				tx.Rollback()
 				return err
 			}
-			tx.Commit()
+			return tx.Commit().Error
 		}
 	}
 	return errors.New("事件解析失败")
@@ -144,31 +157,37 @@ func ParseTaskDisabled(transHash model.TransHash, Logs []*types.Log) (err error)
 
 // ParseApplyFor 解析ApplyFor事件
 func ParseApplyFor(transHash model.TransHash, Logs []*types.Log) (err error) {
-	contractAbi := global.ContractABI["DeTask"]
+	contractAbi, err := abi.JSON(strings.NewReader(ABI.DeTaskMetaData.ABI))
+	if err != nil {
+		fmt.Println(err)
+	}
 	for _, vLog := range Logs {
-		var applyFor DeTaskABI.DeTaskApplyFor
+		var applyFor ABI.DeTaskApplyFor
 		ParseErr := contractAbi.UnpackIntoInterface(&applyFor, "ApplyFor", vLog.Data)
 		// 解析成功
 		if ParseErr == nil {
 			// 开始事务
 			tx := global.DB.Begin()
 			// 更新数据
-			taskID := vLog.Topics[1].Big().Uint64() // 任务ID
-			price := applyFor.Cost.String()         // 报价
-			applyAddr := vLog.Topics[2].String()    // 申请人
+			taskID := vLog.Topics[1].Big().Uint64()                         // 任务ID
+			price := applyFor.Cost.String()                                 // 报价
+			applyAddr := common.HexToAddress(vLog.Topics[2].Hex()).String() // 申请人
 			apply := model.Apply{TaskID: taskID, Price: price, ApplyAddr: applyAddr}
-			// 更新数据
-			raw := tx.Model(&model.Apply{}).Where("task_id = ?", taskID).Where("apply_addr = ?", applyAddr).Updates(&apply)
-			if raw.Error != nil {
+			// 更新||插入数据
+			err = tx.Model(&model.Apply{}).Clauses(clause.OnConflict{
+				Columns:   []clause.Column{{Name: "apply_addr"}, {Name: "task_id"}},
+				UpdateAll: true,
+			}).Create(&apply).Error
+			if err != nil {
 				tx.Rollback()
-				return
+				return err
 			}
 			// 删除任务
 			if err = tx.Model(&model.TransHash{}).Where("hash = ?", vLog.TxHash.String()).Delete(&model.TransHash{}).Error; err != nil {
 				tx.Rollback()
 				return err
 			}
-			tx.Commit()
+			return tx.Commit().Error
 		}
 	}
 	return errors.New("事件解析失败")
@@ -176,9 +195,12 @@ func ParseApplyFor(transHash model.TransHash, Logs []*types.Log) (err error) {
 
 // ParseCancelApply 解析CancelApply事件
 func ParseCancelApply(transHash model.TransHash, Logs []*types.Log) (err error) {
-	contractAbi := global.ContractABI["DeTask"]
+	contractAbi, err := abi.JSON(strings.NewReader(ABI.DeTaskMetaData.ABI))
+	if err != nil {
+		fmt.Println(err)
+	}
 	for _, vLog := range Logs {
-		var cancelApply DeTaskABI.DeTaskCancelApply
+		var cancelApply ABI.DeTaskCancelApply
 		ParseErr := contractAbi.UnpackIntoInterface(&cancelApply, "CancelApply", vLog.Data)
 		// 解析成功
 		if ParseErr == nil {
@@ -197,7 +219,7 @@ func ParseCancelApply(transHash model.TransHash, Logs []*types.Log) (err error) 
 				tx.Rollback()
 				return err
 			}
-			tx.Commit()
+			return tx.Commit().Error
 		}
 	}
 	return errors.New("事件解析失败")
