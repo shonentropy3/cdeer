@@ -165,16 +165,25 @@ export default function Project() {
         .then(res => {
             if (res.code === 0) {
                 applyList = res.data?.list || [];
+                
             }
         })
         await getOrderStatus({
             worker: address, task_id: task_id
         })
         .then(res => {
-            console.log(res);
+            if (res.code === 0) {
+                orderList = res.data?.list || [];
+            }
         })
-
-
+        if (applyList.length === 0) {
+            progress = 0;   //  未报名
+        }else if(orderList.length === 0) {
+            progress = 1;   //  已报名
+        }else{
+            progress = 2;   //  甲方已选乙方
+        }
+        setProgress(progress);
     }
 
     useEffect(() => {

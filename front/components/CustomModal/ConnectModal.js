@@ -81,13 +81,15 @@ export default function ConnectModal(params) {
             .then(res => {
                 if (res.code === 0) {
                     localStorage.setItem(`session.${address.toLowerCase()}`,res.data.token)
+                    setTimeout(() => {
+                        history.go(0)
+                    }, 40);
                 }
             })
         })
         .catch(err => {
             console.log(err);
         })
-        console.log('完成');
     }
 
     const init = () => {
@@ -104,7 +106,6 @@ export default function ConnectModal(params) {
     }
     async function isRun() {
         if (signer && signer.signMessage) {
-            console.log('写入');
             init()
         }
     }

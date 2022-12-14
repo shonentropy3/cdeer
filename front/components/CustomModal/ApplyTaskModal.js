@@ -40,6 +40,20 @@ function ApplyTaskModal (props) {
         setUserContact({...userContact});
     }
 
+    useEffect(() => {
+        for (const i in userContact) {
+            icons.map(e => {
+                if (i === e.title) {
+                    e.value = userContact[i]
+                }
+            })
+        }
+        setIcons([...icons]);
+        // icons.map(e => {
+
+        // })
+    },[])
+
     return <Modal
             footer={null}
             open={open}
