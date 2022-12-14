@@ -14,7 +14,7 @@ import ApplyTaskModal from '../components/CustomModal/ApplyTaskModal';
 import Computing_time from '../components/Computing_time';
 import { createUserInfo, getUserInfo, searchTaskDetail, updateUserInfo } from '../http/_api/public';
 import qs from 'querystring';
-import { createApply } from '../http/_api/task';
+import { createApply, getApplyStatus } from '../http/_api/task';
 
 export default function Project() {
     
@@ -22,14 +22,15 @@ export default function Project() {
     const { address } = useAccount();
     let { useTaskContractWrite: Task } = useContracts("applyFor");
     let { useTaskContractWrite: celTask } = useContracts("cancelApply");
-    let [params,setParams] = useState({});
     let [isModalOpen,setIsModalOpen] = useState(false);
     let [detail,setDetail] = useState();
 
     // 记录用户的联系方式
     let [userContact,setUserContact] = useState({})
-    // 用于判断该用户是否报名此任务
-    let [isApply,setIsApply] = useState(false)
+    // 自我推荐
+    let [desc, setDesc] = useState('');
+    // task报名状态
+    let [progress, setProgress] = useState(0);
     
     const showModal = ()=>{
         setIsModalOpen(true)
@@ -39,7 +40,19 @@ export default function Project() {
         setIsModalOpen(false)
     }
 
-    const apply = (obj) => {
+    const apply = async(obj) => {
+        desc = obj.desc;
+        setDesc(desc);
+
+
+        // 更新
+        await updateUserInfo({
+            ...userContact,
+            address: address
+        })
+        .then(res => {
+            console.log(res);
+        })
 
         let flag = false;
         for (const i in obj) {
@@ -59,34 +72,11 @@ export default function Project() {
     }
 
     const writeSuccess = async() => {
-
-        if (!userContact) {
-            // 更新
-            // userContact
-            await updateUserInfo({
-                ...userContact,
-                address: address
-            })
-            .then(res => {
-                console.log(res);
-            })
-        }else{
-            // 新增
-            await createUserInfo({
-                ...userContact,
-                address: address
-            })
-            .then(res => {
-                console.log(res);
-            })
-        }
-
-
         await createApply({
             apply_addr: address,
             hash: Task.data.hash,
             task_id: detail.task_id,
-            // desc:
+            desc: desc
         })
         .then(res => {
             if (res.code === 0) {
@@ -161,6 +151,24 @@ export default function Project() {
                 setUserContact(userContact);
             }
         })
+
+        // 获取该用户task状态
+        getApplyStatus({
+            address: address, task_id: task_id
+        })
+        .then(res => {
+            if (res.code === 0) {
+                console.log(res.data);
+                if (res.data.list.length === 0) {
+                    // 未报名
+                    progress = 0;
+                    return
+                }
+                const data = res.data.list[0];
+                // 判断order表中是否有 当前 task_id 、 worker 、 且未完成的
+                
+            }
+        })
     }
 
     useEffect(() => {
@@ -190,18 +198,25 @@ export default function Project() {
                     </div>
                 </div>
                 {
-                    isApply ? 
+                    progress === 0 ?
+                    <Button className="btn" onClick={showModal}>Go to register</Button>
+                    :
+                    progress === 1 ? 
                     <div className='applyed-btns'>
                         <Button className='applyed-inspect' onClick={()=>setIsModalOpen(true)}>Registration information</Button>
                         <Button className='applyed-cancel' onClick={celApply}>Cancel registration</Button>
                     </div> 
                     :
-                    <Button className="btn" onClick={showModal}>Go to register</Button>
+                    // 跳转Order页面
+                    <Button className="btn">Phase division</Button>
                 }
             </div>
             {
-                isApply ? 
+                progress === 1 ? 
                 <p className='applyed-tip'>The Task party is reviewing, and will contact your reserved social account after the review. Please check</p>
+                :
+                progress === 2 ?
+                <p className='applyed-tip2'>The Task party invites to cooperate with you</p>
                 :
                 ""
             }
@@ -261,7 +276,7 @@ export default function Project() {
             className="modal-apply-task"
         >
             {/* <Modal_applyTask setParams={setParams} params={params} project={project} submit={apply} applyInfo={userApplyInfo} userContact={userContact} /> */}
-            <ApplyTaskModal setParams={setParams} params={params} project={detail} submit={apply} userContact={userContact} />
+            <ApplyTaskModal project={detail} submit={apply} userContact={userContact} setUserContact={setUserContact} />
         </Modal>
     </div>
 }

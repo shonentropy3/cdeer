@@ -9,7 +9,7 @@ export const createTask = (data) => {
     });
 }
 
-// 获取发布的项目 报名列表
+// 获取task报名列表
 export const getApply = (data) => {
     return serviceAxios({
         url: `/apply/getApplyList?task_id=${data.task_id}`,
@@ -27,7 +27,7 @@ export const createApply = (data) => {
     });
 }
 
-// 获取报名中的项目列表获取发布的项目 报名列表
+// 获取个人正在报名列表
 export const getApplyList = (data) => {
     return serviceAxios({
         url: `/apply/getApply?page=${data.page}&pageSize=${data.pageSize}&apply_addr=${data.apply_addr}`,
@@ -36,11 +36,20 @@ export const getApplyList = (data) => {
     });
 }
 
-// 报名列表排序
+// 修改列表排序
 export const updatedApplySort = (data) => {
     return serviceAxios({
         url: `/apply/updatedApplySort`,
         method: "post",
+        data,
+    });
+}
+
+// 获取当前报名状态
+export const getApplyStatus = (data) => {
+    return serviceAxios({
+        url: `/apply/getApply?page=1&pageSize=10&apply_addr=${data.address}&task_id=${data.task_id}`,
+        method: "get",
         data,
     });
 }

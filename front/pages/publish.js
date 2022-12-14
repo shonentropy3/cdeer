@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Input, Select, InputNumber, Button, Modal, Upload, message, Form } from 'antd';
-import { useAccount, useNetwork } from 'wagmi';
+import { useAccount, useNetwork, useProvider, useTransaction, useWaitForTransaction } from 'wagmi';
 import { useRouter } from 'next/router'
 import { ethers } from "ethers";
 const { TextArea } = Input;
@@ -20,6 +20,15 @@ export default function Publish() {
     const router = useRouter();
     const { address } = useAccount();
     const { useTaskContractWrite: Task } = useContracts('createTask');
+
+    // getTransaction
+    const waitForTransaction = useWaitForTransaction({
+        hash: Task.data?.hash,
+    })
+    const provider = useProvider();
+    let [isLoading, setIsLoading] = useState()
+    
+
     const [inner,setInner] = useState([
         {title: 'Entry Name', type: 'input', desc: '项目名称', name: 'title'},
         {title: 'Task Description', type: 'textarea', desc: '项目描述', name: 'desc'},
@@ -135,6 +144,8 @@ export default function Publish() {
             period: task.period,
          *  skills: task.skills,
          */
+        setIsModalVisibleC(false); 
+        setIsLoading(true)
         Task.write({
             recklesslySetUnpreparedArgs: [address, obj, fee]
         })
@@ -156,10 +167,10 @@ export default function Publish() {
         createTask(obj)
         .then(res => {
             if (res.code === 0) {
-                message.success(res.msg);
-                setTimeout(() => {
-                    router.push({pathname: '/task', search: 'issuer'})    //  跳转链接
-                }, 500);
+                // message.success(res.msg);
+                // setTimeout(() => {
+                //     router.push({pathname: '/task', search: 'issuer'})    //  跳转链接
+                // }, 500);
             } else {
                 message.error(res.msg);
             }
@@ -241,6 +252,36 @@ export default function Publish() {
         setIsModalVisibleC(true)
     };
 
+    // useEffect(() => {
+    //     console.log(transaction.status);
+    //     if (transaction.status === 'success') {
+    //         console.log('success ==>', transaction.data);
+    //     }else{
+    //         console.log('loading ==>', transaction.isLoading);
+    //         console.log('error ==>', transaction.error);
+    //     }
+    // },[transaction.status])
+
+    useEffect(() => {
+        async function fetchData() {
+          // You can await here
+          await provider.getTransaction(Task.data.hash)
+          .then(res => {
+            message.success('操作成功');
+            setTimeout(() => {
+                router.push(`/task?w=issuer&bar=tasks`)    //  跳转链接
+            }, 500);
+          })
+          .catch(err => {
+            message.error('操作失败')
+          })
+          setIsLoading(false)
+
+          // ...
+        }
+        Task.data?.hash && fetchData();
+    }, [Task.data]);
+    
     return <div className="Publish">
         <div className="banner">
             <div className="banner-content">
@@ -282,7 +323,7 @@ export default function Publish() {
                     )
                 }
                 <Form.Item className="item-poa">
-                    <Button type="primary" htmlType="submit" className="panel-btn">
+                    <Button type="primary" htmlType="submit" className="panel-btn" loading={isLoading} >
                         Release
                     </Button>
                 </Form.Item>

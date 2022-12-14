@@ -6,7 +6,7 @@ const {TextArea} = Input
 const { Option } = Select;
 export default function ApplyTaskModal (props) {
    
-    const { setParams, params, submit, project, userContact } = props;
+    const { submit, project, userContact, setUserContact } = props;
 
     let [icons, setIcons] = useState([
         { title: 'telegram', value: '' },
@@ -34,21 +34,11 @@ export default function ApplyTaskModal (props) {
         icons.map(e => {
             obj[e.title] = e.value;
         })
-        params = obj;
-        setParams({...params});
+        userContact = obj;
+        setUserContact({...userContact});
     }
 
 
-    useEffect(()=>{
-        if(userContact){
-            params.contact.telegramValue = userContact.telegram;
-            params.contact.wechatValue = userContact.wechat;
-            params.contact.skypeValue = userContact.skype;
-            params.contact.discordValue = userContact.discord;
-            params.contact.phoneValue = userContact.phone
-            setParams({...params})
-        }
-    },[])
 
     return <div className="apply-task">
         <p className="apply-task-top">

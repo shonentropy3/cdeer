@@ -1,4 +1,4 @@
-import { useContractWrite, useSignTypedData, useContractReads, useContractRead, useNetwork } from 'wagmi';
+import { useContractWrite, useSignTypedData, useContractReads, useContractRead, useNetwork, useContract } from 'wagmi';
 import task from '../../deployments/abi/DeTask.json'
 import taskAddr from '../../deployments/dev/DeTask.json'
 import order from '../../deployments/abi/DeOrder.json'
@@ -20,7 +20,6 @@ export function ConfigTask(functionName) {
   }
   return taskConfig
 }
-
 
 export function ConfigOrder(functionName) { 
 
