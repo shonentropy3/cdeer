@@ -132,10 +132,13 @@ function Task() {
         searchTask({...pageConfig, issuer: address})
         .then(res => {
             if (res.code === 0) {
+                pageConfig.total = res.data.total;
+                setPageConfig({...pageConfig});
                 selectData = res.data.list ? res.data.list : [];
                 selectData.map(e => {
-                    e.role = deform_Skills(e.role);
+                    e.role = deform_Skills(e?.role || []);
                     e.budget = deform_Count(e.budget, e.currency)
+                    console.log(e.role);
                 })
                 setSelectData([...selectData]);
             }
@@ -178,7 +181,7 @@ function Task() {
         // 根据选择的侧边栏显示右侧数据
         switch (selectBar) {
             case 'tasks':
-                getTasks()
+                getTasks();
                 break;
             case 'developping':
                 console.log('查询进行中的');
@@ -186,11 +189,13 @@ function Task() {
             case 'developend':
                 console.log('查询结束的');
                 break;
+            case 'apply':
+                getApplys();
+                break;
             default:
-                getApplys()
                 break;
         }
-    },[selectBar])
+    },[selectBar, pageConfig.page])
 
     useEffect(() => {
         init()

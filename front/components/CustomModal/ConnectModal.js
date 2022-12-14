@@ -92,9 +92,8 @@ export default function ConnectModal(params) {
             await getToken()
         }else{
             // 判断token有效期
-            let userinfo = getJwt(token);
-            const now = parseInt(new Date().getTime() / 1000) + (2 * 60 * 60) ;
-            if (now > userinfo.exp) {
+            let status = getJwt(token);
+            if (!status) {
                 await getToken();
             }
         }

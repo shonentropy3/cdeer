@@ -13,6 +13,7 @@ import ConnectModal from "../components/CustomModal/connectModal";
 import ComfirmTaskModal from "../components/CustomModal/ComfirmTaskModal";
 import { omit } from 'lodash';
 import { createTask } from "../http/_api/task";
+import { getJwt } from "../utils/GetJwt";
 
 export default function Publish() {
     
@@ -144,6 +145,12 @@ export default function Publish() {
             period: task.period,
          *  skills: task.skills,
          */
+        // 判断token有效期
+        const token = localStorage.getItem(`session.${address.toLowerCase()}`);
+        let status = getJwt(token);
+        if (!status) {
+            await getToken();
+        }
         setIsModalVisibleC(false); 
         setIsLoading(true)
         Task.write({
@@ -151,29 +158,34 @@ export default function Publish() {
         })
     }
 
-    const writeSuccess = () => {
-        var obj = _.omit(params,'skills');
-        obj.period = obj.period * 24 * 60 * 60;
-        obj.attachment = obj.attachment ? obj.attachment : '';
-        obj.budget = String(JSON.parse(ethers.utils.parseEther(obj.budget)));
-        obj.issuer = address;
+    const writeSuccess = async() => {
+        var obj = {};
         obj.hash = Task.data.hash;
-        obj.suffix = obj.suffix ? obj.suffix : '';
-        var arr = [];
-        obj.role.map(e => {
-            arr.push(Number(e))
-        })
-        obj.role = arr;
-        createTask(obj)
+        obj.suffix = params.suffix ? params.suffix : '';
+        await createTask(obj)
         .then(res => {
             if (res.code === 0) {
                 // message.success(res.msg);
                 // setTimeout(() => {
                 //     router.push({pathname: '/task', search: 'issuer'})    //  跳转链接
                 // }, 500);
+
+                setIsLoading(false)
             } else {
                 message.error(res.msg);
             }
+        })
+
+        // 判断交易是否成功上链
+        await provider.getTransaction(Task.data.hash)
+        .then(res => {
+          message.success('交易成功');
+          setTimeout(() => {
+              router.push(`/task?w=issuer&bar=tasks`)    //  跳转链接
+          }, 500);
+        })
+        .catch(err => {
+          message.error('交易失败')
         })
     }
 
@@ -183,9 +195,12 @@ export default function Publish() {
     }
 
     useEffect(() => {
-        Task.isSuccess && writeSuccess()
+        Task.data?.hash && writeSuccess()
+    },[Task.data?.hash])
+
+    useEffect(() => {
         Task.error && writeError()
-      },[Task])
+    },[Task.error])
 
     useEffect(() => {
         let arr = [];
@@ -255,36 +270,6 @@ export default function Publish() {
         setIsModalVisibleC(true)
     };
 
-    // useEffect(() => {
-    //     console.log(transaction.status);
-    //     if (transaction.status === 'success') {
-    //         console.log('success ==>', transaction.data);
-    //     }else{
-    //         console.log('loading ==>', transaction.isLoading);
-    //         console.log('error ==>', transaction.error);
-    //     }
-    // },[transaction.status])
-
-    useEffect(() => {
-        async function fetchData() {
-          // You can await here
-          await provider.getTransaction(Task.data.hash)
-          .then(res => {
-            message.success('交易成功');
-            setTimeout(() => {
-                router.push(`/task?w=issuer&bar=tasks`)    //  跳转链接
-            }, 500);
-          })
-          .catch(err => {
-            message.error('交易失败')
-          })
-          setIsLoading(false)
-
-          // ...
-        }
-        Task.data?.hash && fetchData();
-    }, [Task.data]);
-    
     return <div className="Publish">
         <div className="banner">
             <div className="banner-content">
