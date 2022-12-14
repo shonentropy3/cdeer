@@ -38,6 +38,22 @@
                 height: 40px;
                 line-height: 50px;
             }
+            .ant-upload-picture-card-wrapper{
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 128px;
+                height: 128px;
+                .ant-upload-list-picture-card{
+
+                    .ant-upload-select-picture-card{
+                        width: 128px;
+                        height: 128px;
+                        border-radius: 50%;
+                    }
+                }
+            }
+            
         }
         .box{
             display: flex;

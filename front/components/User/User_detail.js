@@ -1,10 +1,12 @@
 import { useAccount } from 'wagmi';
+import axios from "axios";
 import { useEffect, useState } from 'react';
 import { 
     Button,
     Modal,
     Input,
-    message
+    message,
+    Upload
  } from 'antd';
 import {
     WechatOutlined,
@@ -14,7 +16,6 @@ import {
   } from '@ant-design/icons';
 import Identicon, { IdenticonOptions } from "identicon.js";
 
-// import { setMyInfo,getMyInfo,modifyMyInfo } from '../http/api/user';
 import { getUserInfo, createUserInfo, updateUserInfo } from '../../http/_api/user.js'
 
 export default function User_detail () {
@@ -25,6 +26,7 @@ export default function User_detail () {
 
     let [skills,setSkills] = useState([])
     let [wagmi,setWagmi] = useState({});
+    let [avatar,setAvatar] = useState()
 
     const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -76,7 +78,7 @@ export default function User_detail () {
             phone: info.phone,
             address,
             role:info.role ? info.role : [],
-            avatar: ""
+            avatar: info.avatar
         }
         console.log(userinfo);
         if(hasInfo){
@@ -105,10 +107,8 @@ export default function User_detail () {
     }
 
     const getInfo = async () => {
-        console.log({address: address});
         await getUserInfo({address: address})
         .then((res)=>{
-            console.log(res);
             if (res.data) {
                 let obj = res.data
                 info = obj;
@@ -116,7 +116,7 @@ export default function User_detail () {
                 if(res.code === 0){
                     setHasInfo(true)
                 }
-                
+                console.log(info);
             }
         })
     }
@@ -142,6 +142,16 @@ export default function User_detail () {
         })
         skills = arr
         setSkills([...skills])
+    }
+
+    // 上传头像
+    const avatarChange = (files) => {
+        let res = files.file.response
+        console.log(res);
+        if (res?.code == 0) {
+            info.avatar = res.data.url
+            setInfo({...info})
+        }
     }
 
 
@@ -177,13 +187,22 @@ export default function User_detail () {
 
     },[isConnected])
 
+    //用户设置了头像时更新头像路径
+    useEffect(()=>{
+        if (info.avatar) {
+            avatar = `http://192.168.1.10:8086/${info.avatar}`
+            setAvatar(avatar)
+            console.log(avatar);
+        }
+    },[info])
+
     return <div className="MyInfo">
     <div className="myInfo-top">
         <div className="top">
             <div className="img">
                 {
                     wagmi.isActive ? 
-                    <img src={hashAvt()} alt="" />
+                    <img src={avatar?avatar:hashAvt()} alt="" />
                     :
                     ""
                 }
@@ -206,8 +225,17 @@ export default function User_detail () {
     </div>
     <Modal title="修改资料" className="Modify_personal_information" footer={null} open={isModalVisible} onCancel={handleCancel}>
         <div className="avatar" onClick={changeAvatar}>
-            <span>更换头像</span>
-            <CameraOutlined className='camera' />
+            <Upload
+                name='file'
+                listType='picture-card'
+                showUploadList='false'
+                onChange={avatarChange}
+                action='http://192.168.1.10:8086/common/uploadImage'
+                >
+                <span>更换头像</span>
+
+                <CameraOutlined className='camera' />
+            </Upload>
         </div>
         <div className="box">
             <p className="title">姓名*</p>
