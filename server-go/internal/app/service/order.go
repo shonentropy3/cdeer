@@ -30,6 +30,10 @@ func GetOrderList(searchInfo request.GetOrderListRequest) (err error, list inter
 	if searchInfo.OrderId != 0 {
 		db = db.Where("order_id = ?", searchInfo.OrderId)
 	}
+	// 根据需求ID过滤
+	if searchInfo.TaskID != 0 {
+		db = db.Where("task_id = ?", searchInfo.TaskID)
+	}
 	// 根据状态过滤
 	db = db.Where("state = ?", searchInfo.State)
 	err = db.Count(&total).Error

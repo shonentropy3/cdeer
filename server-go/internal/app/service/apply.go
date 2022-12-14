@@ -68,12 +68,6 @@ func GetApply(searchInfo request.GetApplyRequest) (err error, list interface{}, 
 func CreateApply(applyReq request.CreateApplyRequest) (err error) {
 	// 开始事务
 	tx := global.DB.Begin()
-	applyReq.Apply.Status = 101 // 创建中
-	result := tx.Model(&model.Apply{}).Create(&applyReq.Apply)
-	if result.RowsAffected == 0 {
-		tx.Rollback()
-		return errors.New("添加失败")
-	}
 	// 保存交易hash
 	transHash := model.TransHash{SendAddr: applyReq.ApplyAddr, EventName: "ApplyFor", Hash: applyReq.Hash}
 	transHashRes := tx.Model(&model.TransHash{}).Create(&transHash)
@@ -92,12 +86,6 @@ func CreateApply(applyReq request.CreateApplyRequest) (err error) {
 func UpdatedApply(applyReq request.UpdatedApplyRequest) (err error) {
 	// 开始事务
 	tx := global.DB.Begin()
-	applyReq.Status = 201
-	result := tx.Model(&model.Apply{}).Where("apply_addr = ?", applyReq.ApplyAddr).Where("task_id = ?", applyReq.TaskID).Updates(&applyReq.Apply)
-	if result.RowsAffected == 0 {
-		tx.Rollback()
-		return errors.New("修改失败")
-	}
 	// 保存交易hash
 	transHash := model.TransHash{SendAddr: applyReq.ApplyAddr, EventName: "ApplyFor", Hash: applyReq.Hash}
 	transHashRes := tx.Model(&model.TransHash{}).Create(&transHash)
@@ -116,12 +104,6 @@ func UpdatedApply(applyReq request.UpdatedApplyRequest) (err error) {
 func DeleteApply(applyReq request.DeleteApplyRequest) (err error) {
 	// 开始事务
 	tx := global.DB.Begin()
-	applyReq.Status = 301
-	result := tx.Delete(&model.Apply{}, applyReq.ID)
-	if result.RowsAffected == 0 {
-		tx.Rollback()
-		return errors.New("删除失败")
-	}
 	// 保存交易hash
 	transHash := model.TransHash{SendAddr: applyReq.ApplyAddr, EventName: "CancelApply", Hash: applyReq.Hash}
 	transHashRes := tx.Model(&model.TransHash{}).Create(&transHash)
@@ -129,7 +111,7 @@ func DeleteApply(applyReq request.DeleteApplyRequest) (err error) {
 		tx.Rollback()
 		return errors.New("新建失败")
 	}
-	return result.Error
+	return nil
 }
 
 // UpdatedApplySort
@@ -138,7 +120,6 @@ func DeleteApply(applyReq request.DeleteApplyRequest) (err error) {
 // @param: taskReq request.CreateTaskRequest
 // @return: err error
 func UpdatedApplySort(sortReq request.UpdatedApplySortRequest) (err error) {
-	// TODO:校验是否本人操作
 	db := global.DB.Model(&model.Apply{})
 	raw := db.Where("task_id = ?", sortReq.TaskID).Where("apply_addr = ?", sortReq.ApplyAddr).Update("sort_time", time.Now())
 	if raw.RowsAffected == 0 {

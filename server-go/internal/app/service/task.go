@@ -6,6 +6,7 @@ import (
 	"code-market-admin/internal/app/model/request"
 	"code-market-admin/internal/app/model/response"
 	_ "code-market-admin/internal/app/model/response"
+	"encoding/json"
 	"errors"
 	"go.uber.org/zap"
 )
@@ -38,7 +39,7 @@ func GetTaskList(searchInfo request.GetTaskListRequest) (err error, list interfa
 		db = db.Where("issuer = ?", searchInfo.Issuer)
 	} else {
 		//报名开关: 0.关  1.开  这里前端显示
-		db = db.Where("apply_switch = 1").Where("show = true")
+		db = db.Where("apply_switch = 1")
 	}
 	//// 根据技能要求过滤
 	//if searchInfo.Status != 0 {
@@ -75,10 +76,9 @@ func GetTaskList(searchInfo request.GetTaskListRequest) (err error, list interfa
 func CreateTask(taskReq request.CreateTaskRequest) (err error) {
 	// 开始事务
 	tx := global.DB.Begin()
-	task := taskReq.Task
 	// 查找技能要求是否在列表中
 	var roleList []int64
-	for _, v := range task.Role {
+	for _, v := range taskReq.Role {
 		roleList = append(roleList, v)
 	}
 	var count int64
@@ -86,19 +86,18 @@ func CreateTask(taskReq request.CreateTaskRequest) (err error) {
 		tx.Rollback()
 		return errors.New("新建失败")
 	}
-	if int(count) != len(task.Role) {
+	if int(count) != len(taskReq.Role) {
 		tx.Rollback()
 		return errors.New("新建失败")
 	}
-	// 插入数据
-	task.Status = 101 // 新建中
-	result := tx.Model(&model.Task{}).Create(&task)
-	if result.RowsAffected == 0 {
+	// 保存请求数据
+	raw, err := json.Marshal(taskReq)
+	if err != nil {
 		tx.Rollback()
 		return errors.New("新建失败")
 	}
 	// 保存交易hash
-	transHash := model.TransHash{SendAddr: task.Issuer, EventName: "TaskCreated", Hash: task.Hash}
+	transHash := model.TransHash{SendAddr: taskReq.Issuer, EventName: "TaskCreated", Hash: taskReq.Hash, Raw: string(raw)}
 	transHashRes := tx.Model(&model.TransHash{}).Create(&transHash)
 	if transHashRes.RowsAffected == 0 {
 		tx.Rollback()
@@ -115,13 +114,14 @@ func CreateTask(taskReq request.CreateTaskRequest) (err error) {
 func UpdatedTask(taskReq request.UpdatedTaskRequest) (err error) {
 	// 开始事务
 	tx := global.DB.Begin()
-	taskReq.Task.Status = 201 // 修改中
-	result := tx.Model(&model.Task{}).Where("task_id", taskReq.TaskID).Updates(&taskReq.Task)
-	if result.RowsAffected == 0 {
-		return errors.New("修改失败")
+	// 保存请求数据
+	raw, err := json.Marshal(taskReq)
+	if err != nil {
+		tx.Rollback()
+		return errors.New("新建失败")
 	}
 	// 保存交易hash
-	transHash := model.TransHash{SendAddr: taskReq.Issuer, EventName: "TaskModified", Hash: taskReq.Hash}
+	transHash := model.TransHash{SendAddr: taskReq.Issuer, EventName: "TaskModified", Hash: taskReq.Hash, Raw: string(raw)}
 	transHashRes := tx.Model(&model.TransHash{}).Create(&transHash)
 	if transHashRes.RowsAffected == 0 {
 		tx.Rollback()
@@ -138,10 +138,6 @@ func UpdatedTask(taskReq request.UpdatedTaskRequest) (err error) {
 func DeleteTask(taskReq request.DeleteTaskRequest) (err error) {
 	// 开始事务
 	tx := global.DB.Begin()
-	result := tx.Model(&model.Task{}).Where("task_id", taskReq.TaskID).Update("status", 301) // 删除中
-	if result.RowsAffected == 0 {
-		return errors.New("删除失败")
-	}
 	// 保存交易hash
 	transHash := model.TransHash{SendAddr: taskReq.Issuer, EventName: "TaskDisabled", Hash: taskReq.Hash}
 	transHashRes := tx.Model(&model.TransHash{}).Create(&transHash)
@@ -149,7 +145,7 @@ func DeleteTask(taskReq request.DeleteTaskRequest) (err error) {
 		tx.Rollback()
 		return errors.New("删除失败")
 	}
-	return result.Error
+	return nil
 }
 
 // TODO:modifyApplySwitch 修改报名开关
