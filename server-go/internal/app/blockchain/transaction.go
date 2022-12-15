@@ -13,9 +13,14 @@ import (
 )
 
 func HandleTransaction() {
+	if global.Traversed.Load() {
+		return
+	}
+	global.Traversed.Store(true)
 	// 错误处理
 	defer func() {
 		if err := recover(); err != nil {
+			global.Traversed.Store(false)
 			global.LOG.Error("HandleTransaction致命错误")
 			time.Sleep(time.Second * 3)
 			go HandleTransaction()
@@ -35,6 +40,7 @@ func HandleTransaction() {
 		var transHashList []model.TransHash
 		db := global.DB.Model(&model.TransHash{})
 		if err := db.Find(&transHashList).Error; err != nil {
+			time.Sleep(time.Second * 3)
 			continue
 		}
 		var haveBool bool // 是否空map
@@ -44,7 +50,8 @@ func HandleTransaction() {
 		})
 		// 无任务
 		if len(transHashList) == 0 && haveBool {
-			continue
+			global.Traversed.Store(false)
+			return
 		}
 		// 任务列表
 		for _, trans := range transHashList {
@@ -59,6 +66,12 @@ func HandleTransaction() {
 }
 
 func HandleTransactionReceipt(client *ethclient.Client, txMap sync.Map, hash string) {
+	// 错误处理
+	defer func() {
+		if err := recover(); err != nil {
+			global.LOG.Error("HandleTransactionReceipt致命错误")
+		}
+	}()
 	// 是否在处理列表
 	transHashAny, ok := txMap.Load(hash)
 	if !ok {

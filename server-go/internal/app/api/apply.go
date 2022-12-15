@@ -1,6 +1,7 @@
 package api
 
 import (
+	_ "code-market-admin/docs"
 	"code-market-admin/internal/app/global"
 	"code-market-admin/internal/app/model/request"
 	"code-market-admin/internal/app/model/response"
@@ -101,8 +102,6 @@ func CreateApply(c *gin.Context) {
 // @Summary 更新报名信息
 // @accept application/json
 // @Produce application/json
-// @Param
-// @Success
 // @Router /apply/updateApply [post]
 func UpdatedApply(c *gin.Context) {
 	var apply request.UpdatedApplyRequest
@@ -124,8 +123,6 @@ func UpdatedApply(c *gin.Context) {
 // @Summary 删除报名信息
 // @accept application/json
 // @Produce application/json
-// @Param
-// @Success
 // @Router /apply/deleteApply [post]
 func DeleteApply(c *gin.Context) {
 	var apply request.DeleteApplyRequest
@@ -147,8 +144,6 @@ func DeleteApply(c *gin.Context) {
 // @Summary 更新报名列表排序
 // @accept application/json
 // @Produce application/json
-// @Param
-// @Success
 // @Router /apply/updatedApplySort [post]
 func UpdatedApplySort(c *gin.Context) {
 	var apply request.UpdatedApplySortRequest

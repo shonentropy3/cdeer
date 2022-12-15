@@ -24,7 +24,6 @@ type UpdatedTaskRequest struct {
 }
 
 type DeleteTaskRequest struct {
-	Hash string `gorm:"hash" json:"hash" form:"hash"` // 交易hash
 	model.Task
 }
 type ModifyApplySwitchRequest struct {

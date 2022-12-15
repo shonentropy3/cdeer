@@ -17,7 +17,7 @@ func HandleTraverseFailed(transHash model.TransHash) {
 func HandleTraverseSuccess(transHash model.TransHash, Logs []*types.Log) error {
 	if haveBool, err := DeTask(transHash, Logs); haveBool {
 		return err
-	} else if haveBool, err = DeTask(transHash, Logs); haveBool {
+	} else if haveBool, err = DeOrder(transHash, Logs); haveBool {
 		return err
 	}
 

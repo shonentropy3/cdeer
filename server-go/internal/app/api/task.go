@@ -64,8 +64,6 @@ func CreateTask(c *gin.Context) {
 // @Summary 更新需求信息
 // @accept application/json
 // @Produce application/json
-// @Param
-// @Success
 // @Router /task/UpdatedTask [post]
 func UpdatedTask(c *gin.Context) {
 	var task request.UpdatedTaskRequest
@@ -89,8 +87,6 @@ func UpdatedTask(c *gin.Context) {
 // @Summary 删除需求
 // @accept application/json
 // @Produce application/json
-// @Param
-// @Success
 // @Router /task/deleteTask [post]
 func DeleteTask(c *gin.Context) {
 	var task request.DeleteTaskRequest
@@ -100,7 +96,8 @@ func DeleteTask(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if err := service.DeleteTask(task); err != nil {
+	address := c.GetString("address") // 操作人
+	if err := service.DeleteTask(task, address); err != nil {
 		global.LOG.Error("删除失败!", zap.Error(err))
 		response.FailWithMessage("删除失败", c)
 	} else {
@@ -113,8 +110,6 @@ func DeleteTask(c *gin.Context) {
 // @Summary 修改报名开关
 // @accept application/json
 // @Produce application/json
-// @Param
-// @Success
 // @Router /task/modifyApplySwitch [post]
 func ModifyApplySwitch(c *gin.Context) {
 	var task request.ModifyApplySwitchRequest
@@ -123,7 +118,8 @@ func ModifyApplySwitch(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if err := service.ModifyApplySwitch(task); err != nil {
+	address := c.GetString("address") // 操作人
+	if err := service.ModifyApplySwitch(task, address); err != nil {
 		global.LOG.Error("修改失败!", zap.Error(err))
 		response.FailWithMessage(err.Error(), c)
 	} else {

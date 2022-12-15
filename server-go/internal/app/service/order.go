@@ -55,15 +55,9 @@ func GetOrderList(searchInfo request.GetOrderListRequest) (err error, list inter
 func CreateOrder(orderReq request.CreateOrderRequest) (err error) {
 	// 开始事务
 	tx := global.DB.Begin()
-	result := tx.Model(&model.Order{}).Create(&orderReq.Order)
-	if result.RowsAffected == 0 {
-		tx.Rollback()
-		return errors.New("添加失败")
-	}
 	// 保存交易hash
 	transHash := model.TransHash{SendAddr: orderReq.Issuer, EventName: "OrderCreated", Hash: orderReq.Hash}
-	transHashRes := tx.Model(&model.TransHash{}).Create(&transHash)
-	if transHashRes.RowsAffected == 0 {
+	if err = SaveHash(transHash); err != nil {
 		tx.Rollback()
 		return errors.New("新建失败")
 	}

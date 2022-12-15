@@ -98,8 +98,7 @@ func CreateTask(taskReq request.CreateTaskRequest) (err error) {
 	}
 	// 保存交易hash
 	transHash := model.TransHash{SendAddr: taskReq.Issuer, EventName: "TaskCreated", Hash: taskReq.Hash, Raw: string(raw)}
-	transHashRes := tx.Model(&model.TransHash{}).Create(&transHash)
-	if transHashRes.RowsAffected == 0 {
+	if err = SaveHash(transHash); err != nil {
 		tx.Rollback()
 		return errors.New("新建失败")
 	}
@@ -122,10 +121,9 @@ func UpdatedTask(taskReq request.UpdatedTaskRequest) (err error) {
 	}
 	// 保存交易hash
 	transHash := model.TransHash{SendAddr: taskReq.Issuer, EventName: "TaskModified", Hash: taskReq.Hash, Raw: string(raw)}
-	transHashRes := tx.Model(&model.TransHash{}).Create(&transHash)
-	if transHashRes.RowsAffected == 0 {
+	if err = SaveHash(transHash); err != nil {
 		tx.Rollback()
-		return errors.New("修改失败")
+		return errors.New("新建失败")
 	}
 	return tx.Commit().Error
 }
@@ -135,23 +133,17 @@ func UpdatedTask(taskReq request.UpdatedTaskRequest) (err error) {
 // @description: 删除需求
 // @param: task model.Tasks, info Req.PageInfo
 // @return: err error, list interface{}, total int64
-func DeleteTask(taskReq request.DeleteTaskRequest) (err error) {
-	// 开始事务
-	tx := global.DB.Begin()
-	// 保存交易hash
-	transHash := model.TransHash{SendAddr: taskReq.Issuer, EventName: "TaskDisabled", Hash: taskReq.Hash}
-	transHashRes := tx.Model(&model.TransHash{}).Create(&transHash)
-	if transHashRes.RowsAffected == 0 {
-		tx.Rollback()
+func DeleteTask(taskReq request.DeleteTaskRequest, address string) (err error) {
+	result := global.DB.Where("task_id = ? AND issuer = ?", taskReq.TaskID, address).Delete(&model.Task{})
+	if result.RowsAffected == 0 {
 		return errors.New("删除失败")
 	}
-	return nil
+	return result.Error
 }
 
-// TODO:modifyApplySwitch 修改报名开关
-func ModifyApplySwitch(req request.ModifyApplySwitchRequest) (err error) {
-	// TODO:校验是否本人操作
-	res := global.DB.Model(&model.Task{}).Where("task_id", req.TaskID).Update("apply_switch", req.ApplySwitch)
+// ModifyApplySwitch 修改报名开关
+func ModifyApplySwitch(req request.ModifyApplySwitchRequest, address string) (err error) {
+	res := global.DB.Model(&model.Task{}).Where("task_id = ? AND issuer = ?", req.TaskID, address).Update("apply_switch", req.ApplySwitch)
 	if res.RowsAffected == 0 {
 		return errors.New("操作失败")
 	}

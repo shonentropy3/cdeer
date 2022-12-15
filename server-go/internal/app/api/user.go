@@ -11,19 +11,20 @@ import (
 )
 
 // CreateUserInfo
+// @Tags UserApi
 // @Summary 创建个人资料
 // @accept application/json
 // @Produce application/json
 // @Router /task/CreateUserInfo [get]
 func CreateUserInfo(c *gin.Context) {
-	var createuserInfo request.CreateUserInfoRequest
-	_ = c.ShouldBindJSON(&createuserInfo)
+	var userInfo request.CreateUserInfoRequest
+	_ = c.ShouldBindJSON(&userInfo)
 	// 检验字段
-	if err := utils.Verify(createuserInfo.User, utils.CreateUserInfoVerify); err != nil {
+	if err := utils.Verify(userInfo.User, utils.CreateUserInfoVerify); err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if err := service.CreateUserInfo(createuserInfo); err != nil {
+	if err := service.CreateUserInfo(userInfo); err != nil {
 		global.LOG.Error("创建失败!", zap.Error(err))
 		response.FailWithMessage("创建失败", c)
 	} else {
@@ -31,11 +32,12 @@ func CreateUserInfo(c *gin.Context) {
 	}
 }
 
-// GetUserInfo
+// GetUserAvatar
+// @Tags UserApi
 // @Summary 获取个人资料(用户名和头像)
 // @accept application/json
 // @Produce application/json
-// @Router /task/getUserInfo [get]
+// @Router /task/getUserAvatar [get]
 func GetUserAvatar(c *gin.Context) {
 	var userAvatar request.GetUserInfoRequest
 	_ = c.ShouldBindQuery(&userAvatar)
@@ -58,6 +60,7 @@ func GetUserAvatar(c *gin.Context) {
 }
 
 // GetUserInfo
+// @Tags UserApi
 // @Summary 获取个人资料
 // @accept application/json
 // @Produce application/json
@@ -81,6 +84,7 @@ func GetUserInfo(c *gin.Context) {
 }
 
 // UpdateUserInfo
+// @Tags UserApi
 // @Summary 修改个人资料
 // @accept application/json
 // @Produce application/json
@@ -91,6 +95,12 @@ func UpdateUserInfo(c *gin.Context) {
 	// 校验字段
 	if err := utils.Verify(updateuserInfo.User, utils.UpdateUserInfoVerify); err != nil {
 		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	// 校验是否本人操作
+	address := c.GetString("address") // 操作人
+	if address != updateuserInfo.Address {
+		response.FailWithMessage("授权已过期或非法访问", c)
 		return
 	}
 	if err := service.UpdateUserInfo(updateuserInfo); err != nil {

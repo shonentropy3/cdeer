@@ -70,8 +70,7 @@ func CreateApply(applyReq request.CreateApplyRequest) (err error) {
 	tx := global.DB.Begin()
 	// 保存交易hash
 	transHash := model.TransHash{SendAddr: applyReq.ApplyAddr, EventName: "ApplyFor", Hash: applyReq.Hash}
-	transHashRes := tx.Model(&model.TransHash{}).Create(&transHash)
-	if transHashRes.RowsAffected == 0 {
+	if err = SaveHash(transHash); err != nil {
 		tx.Rollback()
 		return errors.New("新建失败")
 	}
@@ -88,8 +87,7 @@ func UpdatedApply(applyReq request.UpdatedApplyRequest) (err error) {
 	tx := global.DB.Begin()
 	// 保存交易hash
 	transHash := model.TransHash{SendAddr: applyReq.ApplyAddr, EventName: "ApplyFor", Hash: applyReq.Hash}
-	transHashRes := tx.Model(&model.TransHash{}).Create(&transHash)
-	if transHashRes.RowsAffected == 0 {
+	if err = SaveHash(transHash); err != nil {
 		tx.Rollback()
 		return errors.New("新建失败")
 	}
@@ -106,8 +104,7 @@ func DeleteApply(applyReq request.DeleteApplyRequest) (err error) {
 	tx := global.DB.Begin()
 	// 保存交易hash
 	transHash := model.TransHash{SendAddr: applyReq.ApplyAddr, EventName: "CancelApply", Hash: applyReq.Hash}
-	transHashRes := tx.Model(&model.TransHash{}).Create(&transHash)
-	if transHashRes.RowsAffected == 0 {
+	if err = SaveHash(transHash); err != nil {
 		tx.Rollback()
 		return errors.New("新建失败")
 	}
