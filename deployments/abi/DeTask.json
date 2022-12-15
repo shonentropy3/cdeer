@@ -195,9 +195,9 @@
               "type": "uint8"
             },
             {
-              "internalType": "uint112",
+              "internalType": "uint128",
               "name": "budget",
-              "type": "uint112"
+              "type": "uint128"
             },
             {
               "internalType": "uint32",
@@ -208,6 +208,11 @@
               "internalType": "uint48",
               "name": "skills",
               "type": "uint48"
+            },
+            {
+              "internalType": "uint32",
+              "name": "timestamp",
+              "type": "uint32"
             },
             {
               "internalType": "bool",
@@ -281,9 +286,9 @@
               "type": "uint8"
             },
             {
-              "internalType": "uint112",
+              "internalType": "uint128",
               "name": "budget",
-              "type": "uint112"
+              "type": "uint128"
             },
             {
               "internalType": "uint32",
@@ -294,6 +299,11 @@
               "internalType": "uint48",
               "name": "skills",
               "type": "uint48"
+            },
+            {
+              "internalType": "uint32",
+              "name": "timestamp",
+              "type": "uint32"
             },
             {
               "internalType": "bool",
@@ -479,9 +489,9 @@
               "type": "uint8"
             },
             {
-              "internalType": "uint112",
+              "internalType": "uint128",
               "name": "budget",
-              "type": "uint112"
+              "type": "uint128"
             },
             {
               "internalType": "uint32",
@@ -492,6 +502,11 @@
               "internalType": "uint48",
               "name": "skills",
               "type": "uint48"
+            },
+            {
+              "internalType": "uint32",
+              "name": "timestamp",
+              "type": "uint32"
             },
             {
               "internalType": "bool",
@@ -541,6 +556,65 @@
           "internalType": "address",
           "name": "",
           "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "taskId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getTaskInfo",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "desc",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "attachment",
+          "type": "string"
+        },
+        {
+          "internalType": "uint8",
+          "name": "currency",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint128",
+          "name": "budget",
+          "type": "uint128"
+        },
+        {
+          "internalType": "uint32",
+          "name": "period",
+          "type": "uint32"
+        },
+        {
+          "internalType": "uint48",
+          "name": "skills",
+          "type": "uint48"
+        },
+        {
+          "internalType": "uint32",
+          "name": "timestamp",
+          "type": "uint32"
+        },
+        {
+          "internalType": "bool",
+          "name": "disabled",
+          "type": "bool"
         }
       ],
       "stateMutability": "view",
@@ -632,9 +706,9 @@
               "type": "uint8"
             },
             {
-              "internalType": "uint112",
+              "internalType": "uint128",
               "name": "budget",
-              "type": "uint112"
+              "type": "uint128"
             },
             {
               "internalType": "uint32",
@@ -645,6 +719,11 @@
               "internalType": "uint48",
               "name": "skills",
               "type": "uint48"
+            },
+            {
+              "internalType": "uint32",
+              "name": "timestamp",
+              "type": "uint32"
             },
             {
               "internalType": "bool",
@@ -885,9 +964,9 @@
           "type": "uint8"
         },
         {
-          "internalType": "uint112",
+          "internalType": "uint128",
           "name": "budget",
-          "type": "uint112"
+          "type": "uint128"
         },
         {
           "internalType": "uint32",
@@ -898,6 +977,11 @@
           "internalType": "uint48",
           "name": "skills",
           "type": "uint48"
+        },
+        {
+          "internalType": "uint32",
+          "name": "timestamp",
+          "type": "uint32"
         },
         {
           "internalType": "bool",

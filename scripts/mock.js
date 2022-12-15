@@ -1,6 +1,6 @@
 const { ethers } = require("hardhat");
 const hre = require("hardhat");
-const taskJson = require('../deployments/localdev/DeTask.json');
+const taskJson = require('../deployments/mumbai/DeTask.json');
 const orderJson = require('../deployments/mumbai/DeOrder.json');
 const { abi } = require('../deployments/abi/DeTask.json');
 const orderAbi = require('../deployments/abi/Order.json');
@@ -25,20 +25,22 @@ async function main() {
     // console.log('log ==> ', log);
     // console.log(owner.address,'============>');
     // //创建需求
-    await task.connect(accounts[3]).createTask(
-      '0x5f2CC90663c2599c306984c43E7C93F7FD8E773e',
+    await task.createTask(
+      '0xada57585A768830a4c06D9A6e2314DF716426BB5',
       {
-        title: "test",
-        desc: "desc",
+        title: "Test Task",
+        desc: "Task Desc",
         attachment: "QmSsw6EcnwEiTT9c4rnAGeSENvsJMepNHmbrgi2S9bXNJr",
         currency: 1,  //  
-        budget: 222,
+        budget: ethers.utils.parseEther("1"),
         period: 123213,
-        skills: 1,  //  原role,职业为1,2,3...整数型
+        skills: 197121,  //  Skill 为1,2,3...整数型
+        timestamp: 0,
+        disabled: false
       }
       ,
       {
-        value: ethers.utils.parseEther("1"),
+        value: ethers.utils.parseEther("0"),
       }
       ).then(res => {
         console.log(res);
