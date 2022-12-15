@@ -74,6 +74,7 @@ export default function Order(props) {
                         </div>      
                         {/* 发单者 == 接单者 */}
                         <UserDetail address={search.who === 'issuer' ? order.worker : order.issuer} who={search.who} />
+                        
                     </>
                 }
                 
