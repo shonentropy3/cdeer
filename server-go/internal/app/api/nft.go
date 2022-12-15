@@ -74,11 +74,11 @@ func GetNftCache(c *gin.Context) {
 	}
 }
 
-// UpdateUserInfo
+// UpdateNftCache
 // @Summary 修改NFT缓存
 // @accept application/json
 // @Produce application/json
-// @Router /task/UpdateUserInfo [post]
+// @Router /task/updateNftCache [post]
 func UpdateNftCache(c *gin.Context) {
 	var updatenftcache request.UpdateNftCacheRequest
 	_ = c.ShouldBindJSON(&updatenftcache)

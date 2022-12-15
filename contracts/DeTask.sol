@@ -60,6 +60,7 @@ contract DeTask is SBTBase, Ownable {
             timestamp: uint32(block.timestamp),
             disabled: false
         });
+
         _mint(who, taskId);
 
         emit TaskCreated(taskId, who, tasks[taskId]);
@@ -81,6 +82,27 @@ contract DeTask is SBTBase, Ownable {
 
         emit TaskModified(taskId, msg.sender, taskInfo);
     }
+
+    function getTaskInfo(uint256 taskId)  external view returns (string memory title,
+        string memory desc,
+        string memory attachment,
+        uint8 currency,
+        uint128 budget,
+        uint32 period,
+        uint48 skills,    // uint8[6]
+        uint32 timestamp,
+        bool disabled) {
+            TaskInfo memory task = tasks[taskId];
+            title = task.title;
+            desc = task.desc;
+            attachment = task.attachment;
+            currency = task.currency;
+            budget = task.budget; 
+            period = task.period;
+            skills = task.skills;
+            timestamp = task.timestamp;
+            disabled = task.disabled;
+        }
 
     function applyFor(address who, uint taskId, uint _cost) public payable {
         require(msg.value >= applyFee, "low fee");

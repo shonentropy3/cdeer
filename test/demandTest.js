@@ -8,7 +8,7 @@
     2) 修改手续费 modifyFee
     2.1 非管理员不能修改
 
-2. 发布需求 createDemand
+2. 发布需求 createTask
     2.1 手续费不低于设置值 
 
 3. 修改需求 modifyDemand

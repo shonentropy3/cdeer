@@ -24,7 +24,7 @@
       <stop offset="1" stop-color="#999"/>
     </linearGradient>
     <style>
-      .c19{fill:#fff}.c19,.c26{fill-rule:evenodd}.c19{opacity:.5}.c20,.c21{isolation:isolate}.c21{font-size:2.71px;letter-spacing:.09em}.c21,.c28{font-family:PingFangSC-Regular-GBpc-EUC-H,PingFang SC}.c25{fill:gray;font-family:PingFangSC-Light-GBpc-EUC-H,PingFang SC;font-size:3.4px;letter-spacing:.07em}.c26{fill:#ff0;opacity:.8}.c28{font-size:5px;letter-spacing:.07em}
+      .c26{fill-rule:evenodd}.c20,.c21{isolation:isolate}.c21{font-size:2.71px;letter-spacing:.09em}.c21,.c28{font-family:PingFangSC-Regular-GBpc-EUC-H,PingFang SC}.c25{fill:gray;font-family:PingFangSC-Light-GBpc-EUC-H,PingFang SC;font-size:3.4px;letter-spacing:.07em}.c26{fill:#ff0;opacity:.8}.c28{font-size:5px;letter-spacing:.07em}
     </style>
     <mask id="mask" x="18.61" y="131.58" width="16.56" height="16.56" maskUnits="userSpaceOnUse">
       <path id="path-1" style="fill-rule:evenodd;fill:#fff" d="M18.61 131.58h16.56v16.56H18.61v-16.56z"/>
@@ -46,32 +46,27 @@
     <circle cx="85.13" cy="100.25" r="17.06" style="stroke-width:.23px;stroke:url(#a-12);fill:none;stroke-miterlimit:10"/>
   </g>
   <text class="c28" transform="translate(15.13 20.86)">Detask.xyz</text>
-  <text class="c28" transform="translate(48.13 20.86)">#001</text>
-
+  <text class="c28" transform="translate(48.13 20.86)">#1</text>
   <path d="m17.34 43.35-1.56-2.23-.53.76 2.09 3 2.09-3-.53-.76Zm0-3.29-1.56-2.23-.53.76 2.09 3 2.09-3-.53-.76Zm0 6.59-1.56-2.24-.53.76 2.09 3 2.09-2.94-.53-.82Z" style="fill:url(#a_44)"/>
-  <text transform="translate(14.49 74.47)" style="font-size:12px;font-family:PingFangSC-Semibold-GBpc-EUC-H,PingFang SC;letter-spacing:.07em">Project title</text>
-  <text transform="translate(14.95 99.51)" style="fill:gray;font-family:PingFangSC-Light-GBpc-EUC-H,PingFang SC;font-size:6px;letter-spacing:.08em">Task Descript IPFS:  <tspan x="0" y="8">QmZStS3CuSA7SRvSpJgdiWVyj </tspan><tspan x="0" y="16">Ta9yD5bxTNerTL2HUcdck</tspan></text>
-
-  <path class="c26" d="M16 86.42h18.94a.9.9 0 0 1 1 .8V91a.91.91 0 0 1-1 .8H16a.91.91 0 0 1-1-.8v-3.78a.9.9 0 0 1 1-.8Z"/>
-  <g data-name="" class="c20">
-    <text class="c21" transform="translate(16 90.08)">Marketing</text>
+  <text transform="translate(14.49 74.47)" style="font-size:12px;font-family:PingFangSC-Semibold-GBpc-EUC-H,PingFang SC;letter-spacing:.07em">New Task</text>
+  <text transform="translate(14.95 99.51)" style="fill:gray;font-family:PingFangSC-Light-GBpc-EUC-H,PingFang SC;font-size:6px;letter-spacing:.08em">Task Description IPFS:<tspan x="0" y="8">QmSsw6EcnwEiTT9c4rnAGeSENvsJMe</tspan><tspan x="0" y="16">pNHmbrgi2S9bXNJr</tspan></text>
+  <path class="c26" d="M16 86.42h19a.9.9 0 0 1 1 .8V91a.91.91 0 0 1-1 .8H16a.91.91 0 0 1-1-.8v-3.78a.9.9 0 0 1 1-.8Z"/>
+  <g class="c20">
+    <text class="c21" transform="translate(16 90.08)">Development</text>
   </g>
   <path class="c26" d="M40 86.42h18.94a.9.9 0 0 1 1 .8V91a.91.91 0 0 1-1 .8H40a.91.91 0 0 1-1-.8v-3.78a.9.9 0 0 1 1-.8Z"/>
-  <g data-name="" class="c20">
-    <text class="c21" transform="translate(40 90.08)">Development</text>
+  <g class="c20">
+    <text class="c21" transform="translate(40 90.08)">Product</text>
   </g>
-  <path class="c26" d="M64 86.42h18.99a.9.9 0 0 1 1 .8V91a.91.91 0 0 1-1 .8H64a.91.91 0 0 1-1-.8v-3.78a.9.9 0 0 1 1-.8Z"/>
-    <g data-name="" class="c20">
-    <text class="c21" transform="translate(64 90.08)">Development</text>
+  <path class="c26" d="M64 86.42h18.94a.9.9 0 0 1 1 .8V91a.91.91 0 0 1-1 .8H64a.91.91 0 0 1-1-.8v-3.78a.9.9 0 0 1 1-.8Z"/>
+  <g class="c20">
+    <text class="c21" transform="translate(64 90.08)">Design</text>
   </g>
-  
-    <text class="c25" transform="translate(15 126.77)">Task budget：</text>
-    <path style="stroke:#979797;stroke-width:.09px;fill:#fff" d="M14.67 128.37h86v22.99H14.67z"/>
+  <text class="c25" transform="translate(15 126.77)">Task budget:</text>
+  <path style="stroke:#979797;stroke-width:.09px;fill:#fff" d="M14.67 128.37h86v22.99H14.67z"/>
   <g style="mask:url(#mask)">
     <path d="M27.52 134.79v1.5c1.47.19 2.51 1 2.56 2.1v.09h-1.27c0-.49-.72-.95-1.95-.95s-1.95.39-1.95.95.61.93 1.83 1h.12c1.92 0 3.23.86 3.23 2.23s-1.05 2-2.57 2.19v1.52h-1.27v-1.52c-1.5-.17-2.56-1-2.62-2.11v-.08h1.28c0 .49.72 1 1.95 1s1.95-.39 1.95-1-.61-.93-1.83-1h-.24c-1.86 0-3.11-.9-3.11-2.23s1.08-2 2.62-2.2v-1.49Zm-.63-1.93a7 7 0 1 0 7 7 7 7 0 0 0-7-7Zm0-1.28a8.28 8.28 0 1 1-8.28 8.28 8.28 8.28 0 0 1 8.28-8.28Z" style="fill:#2c2c2c;fill-rule:evenodd"/>
   </g>
-  <text transform="translate(41 143.66)" style="font-size:8.63px;font-family:PingFangSC-Medium-GBpc-EUC-H,PingFang SC;letter-spacing:.08em">2000 MATIC</text>
-
-
-  <text class="c25" transform="translate(15 169.77)">UTC 2022-12-01 </text>
+  <text transform="translate(41 143.66)" style="font-size:8.63px;font-family:PingFangSC-Medium-GBpc-EUC-H,PingFang SC;letter-spacing:.08em"> &lt;0.001 USD</text>
+  <text class="c25" transform="translate(15 169.77)">2022-12-14T17:54:00+0800</text>
 </svg>

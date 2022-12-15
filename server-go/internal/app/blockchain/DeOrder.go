@@ -36,7 +36,8 @@ func ParseOrderCreated(Logs []*types.Log) (err error) {
 			// 开始事务
 			tx := global.DB.Begin()
 			// 更新数据
-			order := model.Order{TaskID: orderCreated.TaskId.Int64(), OrderId: orderCreated.OrderId.Int64()}
+			fmt.Println("Transaction")
+			order := model.Order{TaskID: vLog.Topics[2].Big().Int64(), OrderId: vLog.Topics[1].Big().Int64()}
 			order.Issuer = orderCreated.Issuer.String() // 甲方
 			order.Worker = orderCreated.Worker.String() // 乙方
 			// 更新||插入数据

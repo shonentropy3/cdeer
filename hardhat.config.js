@@ -41,7 +41,7 @@ module.exports = {
     localdev: {
       url: "http://127.0.0.1:8545",
       chainId: 31337,
-      gas: 12000000,
+      // gas: 12000000,
     },
     dev: {
       url: "https://backend.buildbear.io/node/charming-bohr-99d0de",

@@ -15,8 +15,18 @@ struct TaskInfo {
     bool disabled;
 }
 
+
 interface ITask {
     function ownerOf(uint256 tokenId) external view returns (address);
     function tasks(uint256 tokenId)  external view returns (TaskInfo memory);
+    function getTaskInfo(uint256 tokenId)  external view returns (string memory title,
+        string memory desc,
+        string memory attachment,
+        uint8 currency,
+        uint128 budget,
+        uint32 period,
+        uint48 skills,    // uint8[6]
+        uint32 timestamp,
+        bool disabled);
 }
 
