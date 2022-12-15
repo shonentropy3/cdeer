@@ -14,6 +14,7 @@ import {
     GithubOutlined,
     CameraOutlined
   } from '@ant-design/icons';
+// import { useSetState } from 'ahooks';
 import Identicon, { IdenticonOptions } from "identicon.js";
 
 import { getUserInfo, createUserInfo, updateUserInfo } from '../../http/_api/user.js'
@@ -50,7 +51,7 @@ export default function User_detail () {
                     if(e.status){
                         info.role.push(Number(e.value))
                     }else{
-                        info.role = info.role.filter(item => item !== e.value)
+                        info.role = info.role.filter(item => item != e.value)
                     }
                 }
             }else{
@@ -59,7 +60,7 @@ export default function User_detail () {
                     if(e.status){
                         info.role.push(Number(e.value))
                     }else{
-                        info.role = info.role.filter(item => item !== e.value)
+                        info.role = info.role.filter(item => item != e.value)
                     }
                 }
             }
