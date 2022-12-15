@@ -12,6 +12,7 @@ import qs from 'querystring';
 import withAuth from "./middleware";
 import { searchTask } from "../http/_api/public";
 import { getApplyList } from "../http/_api/task";
+import { getOrderList } from "../http/_api/order";
 
 function Task() {
 
@@ -119,11 +120,15 @@ function Task() {
         who = w;
         setWho(who);
 
+            
+        if (selectBar !== bar){
+            selectData = [];
+            setSelectData([...selectData]);
+        }
         selectBar = bar ? bar : sidbar[who][0].value;
         setSelectBar(selectBar)
 
-        selectData = [];
-        setSelectData([...selectData]);
+
 
         pageConfig.page = 1;
         setPageConfig({...pageConfig});
@@ -165,6 +170,25 @@ function Task() {
         })
     }
 
+    // 获取甲方正在进行中的任务
+    const getDevelopping = (who) => {
+        let obj = {...pageConfig};
+        obj[who] = address;
+        getOrderList(obj)
+        .then(res => {
+            if (res.code === 0) {
+                pageConfig.total = res.data.total;
+                setPageConfig({...pageConfig});
+                selectData = res.data.list ? res.data.list : [];
+                selectData.map(e => {
+                    e.task.role = deform_Skills(e.task?.role || []);
+                    e.task.budget = deform_Count(e.task.budget, e.task.currency)
+                })
+                setSelectData([...selectData]);
+            }
+        })
+    }
+
     useEffect(()=>{
         Task.isSuccess ?
         writeSuccess()
@@ -177,20 +201,22 @@ function Task() {
         celSuccess() : ""
     },[celTask.isSuccess])
 
-
     useEffect(() => {
+        const { w } = qs.parse(location.search.slice(1));
+        console.log('获取 ==>', selectBar);
         switch (selectBar) {
             case 'tasks':
                 getTasks();
                 break;
             case 'developping':
-                console.log('查询进行中的');
+                getDevelopping(w);
                 break;       
             case 'developend':
                 console.log('查询结束的');
                 break;
             case 'apply':
                 getApplys();
+                console.log('执行了 ==>');
                 break;
             default:
                 break;
@@ -220,7 +246,7 @@ function Task() {
                 }
             </div>
             <div className="content">
-                <TaskItem taskList={selectData} select={selectBar} />
+                <TaskItem taskList={selectData} select={selectBar} who={who} />
                 {
                     selectData.length > 0 &&
                     <Pagination

@@ -5,7 +5,7 @@ import { Modal_ModifyTask } from "../Modal_modifyTask";
 import { modifyApplySwitch, deleteTask } from '../../http/_api/task'
 export default function TaskItem(params) {
     
-    const { taskList, select } = params;
+    const { taskList, select, who } = params;
     const router = useRouter();
 
     // 修改报名开关
@@ -78,7 +78,7 @@ export default function TaskItem(params) {
                 )
             case 'apply':
                 return taskList.map((e,i) => 
-                    <div className="item" key={i}>
+                    <div className="item" key={i} onClick={() => router.push(`/project?task_id=${e.task_id}`)}>
                         <div className="li">
                             <div className="li-info">
                                 <p className="title">{e.title}</p>
@@ -89,19 +89,34 @@ export default function TaskItem(params) {
                                 </div>
                             </div>
                         </div>
-                        <Button>修改报名</Button>
-                        <Button>取消报名</Button>
+                        {
+                            e.status === 0 &&
+                            <>
+                                <Button>修改报名</Button>
+                                <Button>取消报名</Button>
+                            </>
+                        }
+                    </div>
+                )
+            case 'developping':
+                return taskList.map((e,i) => 
+                    <div className="item" key={i} onClick={() => router.push(`/order?w=${who}&order_id=${e.order_id}`)}>
+                        <div className="li">
+                            <div className="li-info">
+                                <p className="title">{e.task.title}</p>
+                                <p className="role">Recruitment type: {e.task.role.map((ele,index) => <span key={index}>{ele}</span> )}</p>
+                                <div className="detail">
+                                    <p>Cycle: {e.task.period / 60 / 60 / 24}天 <span>&nbsp;</span></p>
+                                    <p>Cost: <span>{e.task.budget}{e.task.currency}</span></p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 )
             default:
                 break;
         }
     }
-
-
-    useEffect(() => {
-        console.log(select);
-    },[select])
 
     return (
         taskList.length > 0 ?

@@ -15,7 +15,6 @@ import Computing_time from '../components/Computing_time';
 import { createUserInfo, getUserInfo, searchTaskDetail, updateUserInfo } from '../http/_api/public';
 import qs from 'querystring';
 import { createApply, getApplyStatus } from '../http/_api/task';
-import { getOrderStatus } from '../http/_api/order';
 
 export default function Project() {
     
@@ -168,17 +167,17 @@ export default function Project() {
                 
             }
         })
-        await getOrderStatus({
-            worker: address, task_id: task_id
-        })
-        .then(res => {
-            if (res.code === 0) {
-                orderList = res.data?.list || [];
-            }
-        })
+        // await getOrderStatus({
+        //     worker: address, task_id: task_id
+        // })
+        // .then(res => {
+        //     if (res.code === 0) {
+        //         orderList = res.data?.list || [];
+        //     }
+        // })
         if (applyList.length === 0) {
             progress = 0;   //  未报名
-        }else if(orderList.length === 0) {
+        }else if(applyList.status === 0) {
             progress = 1;   //  已报名
         }else{
             progress = 2;   //  甲方已选乙方
