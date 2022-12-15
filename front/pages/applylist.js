@@ -198,19 +198,19 @@ export default function ApplyList(params) {
                                     </p>
                                     <div className="applicant-mess">
                                         <div className="applicant-mess-item">
-                                            <Image src="/telegram.png" alt="" quality={100} width={29} height={29} />
+                                            <Image src="/icon/telegram.png" alt="" quality={100} width={29} height={29} />
                                         </div>
                                         <div className="applicant-mess-item">
-                                            <Image src="/skype.png" alt="" quality={100} width={29} height={29} />
+                                            <Image src="/icon/skype.png" alt="" quality={100} width={29} height={29} />
                                         </div>
                                         <div className="applicant-mess-item">
-                                            <Image src="/wechat.png" alt="" quality={100} width={29} height={29} />
+                                            <Image src="/icon/wechat.png" alt="" quality={100} width={29} height={29} />
                                         </div>
                                         <div className="applicant-mess-item">
-                                            <Image src="/discord.png" alt="" quality={100} width={29} height={29} />
+                                            <Image src="/icon/discord.png" alt="" quality={100} width={29} height={29} />
                                         </div>
                                         <div className="applicant-mess-item">
-                                            <Image src="/whatsapp.png" alt="" quality={100} width={29} height={29} />
+                                            <Image src="/icon/whatsapp.png" alt="" quality={100} width={29} height={29} />
                                         </div>
                                     </div>
                                 </div>

@@ -25,19 +25,19 @@ export default function UserInfoModal(params) {
                     <p className="personal-info-name">{userInfo.username}</p>
                     <div className="personal-info-contact">
                         <div className="personal-info-contact-item">
-                            <Image src="/telegram.png" alt="" quality={100} width={29} height={29} />
+                            <Image src="/icon/telegram.png" alt="" quality={100} width={29} height={29} />
                         </div>
                         <div className="personal-info-contact-item">
-                            <Image src="/skype.png" alt="" quality={100} width={29} height={29} />
+                            <Image src="/icon/skype.png" alt="" quality={100} width={29} height={29} />
                         </div>
                         <div className="personal-info-contact-item">
-                            <Image src="/wechat.png" alt="" quality={100} width={29} height={29} />
+                            <Image src="/icon/wechat.png" alt="" quality={100} width={29} height={29} />
                         </div>
                         <div className="personal-info-contact-item">
-                            <Image src="/discord.png" alt="" quality={100} width={29} height={29} />
+                            <Image src="/icon/discord.png" alt="" quality={100} width={29} height={29} />
                         </div>
                         <div className="personal-info-contact-item">
-                            <Image src="/whatsapp.png" alt="" quality={100} width={29} height={29} />
+                            <Image src="/icon/whatsapp.png" alt="" quality={100} width={29} height={29} />
                         </div>
                     </div>
                     <div className="personal-info-goodSkill">

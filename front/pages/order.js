@@ -9,15 +9,17 @@ import { useAccount, useNetwork } from 'wagmi'
 import { getOrdersInfo, getStagesHash, getStagesJson } from "../http/api/order";
 import { getDate } from "../utils/getDate";
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-
+const { Step } = Steps;
 import { deform_Skills } from '../utils/Deform';
 import qs from 'querystring';
 import { getOrderDetail } from "../http/_api/order";
 import TaskDetail from "../components/CustomItem/TaskDetail";
 import TaskNav from "../components/nav/TaskNav";
+import UserDetail from "../components/CustomItem/UserDetail";
 
 export default function Order(props) {
     
+    const { address } = useAccount();
     let [search, setSearch] = useState({        // 地址栏参数
         who: '', order_id: ''
     });
@@ -32,9 +34,17 @@ export default function Order(props) {
         setSearch({...search});
 
         // 获取任务详情
-        getOrderDetail({order_id: order_id})
+
+        let obj = {};
+        if (w === 'issuer') {
+            obj.issuer = address;
+        }else{
+            obj.worker = address;
+        }
+
+        getOrderDetail({order_id: order_id, ...obj})
         .then(res => {
-            if (res.code === 0) {
+            if (res.data?.list.length !== 0) {
                 task = res.data.list[0].task;
                 task.role = deform_Skills(task.role);
                 setTask({...task});
@@ -56,13 +66,14 @@ export default function Order(props) {
                     order &&
                     <>
                         <div className="worker-steps">
-                            <Steps 
-                                // size="small" 
-                                // current={order.progress} 
-                                items={[{ title: 'Start' }, { title: 'Stage plan' }, { title: 'Finish' }]}
-                            />
+                            <Steps current={order.progress} size="small">
+                                <Step title="Start" />
+                                <Step title="Stage plan" />
+                                <Step title="Finish" />
+                            </Steps>
                         </div>      
-                    
+                        {/* 发单者 == 接单者 */}
+                        <UserDetail address={search.who === 'issuer' ? order.worker : order.issuer} who={search.who} />
                     </>
                 }
                 
