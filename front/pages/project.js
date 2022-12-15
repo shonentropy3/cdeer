@@ -177,7 +177,7 @@ export default function Project() {
         // })
         if (applyList.length === 0) {
             progress = 0;   //  未报名
-        }else if(applyList.status === 0) {
+        }else if(applyList[0].status === 0) {
             progress = 1;   //  已报名
         }else{
             progress = 2;   //  甲方已选乙方
