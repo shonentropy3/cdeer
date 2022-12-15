@@ -16,7 +16,7 @@ export  function Modal_ModifyTask (params) {
     const {Option} = Select;
     const router = useRouter()
 
-    const {allInfo,taskId} = params
+    // const {allInfo,taskId} = params
     const {address,isConnected } = useAccount()
 
     const { useTaskContractWrite } = useContracts("modifyTask")
@@ -184,25 +184,25 @@ export  function Modal_ModifyTask (params) {
     }
 
 
-    useEffect(()=>{
-        setDemandId(taskId)
-        setProjectTitle(allInfo.title)
-        setProjectDesc(allInfo.desc)
-        setProjectAttrchment(allInfo.attrchment)
-        let task_type = allInfo.task_type
-        let role = allInfo.role
-        setProjectSkills([...role])
-        setPeriod(allInfo.period)
-        setBudget(allInfo.budget)
-        setCurrency(allInfo.apply_switch)
-        allInfo.role.map(e => {
-            skillss.map(ele => {
-                if (e === ele.value){
-                    ele.status = true
-                }
-            })
-        })
-    },[])
+    // useEffect(()=>{
+    //     setDemandId(taskId)
+    //     setProjectTitle(allInfo.title)
+    //     setProjectDesc(allInfo.desc)
+    //     setProjectAttrchment(allInfo.attrchment)
+    //     let task_type = allInfo.task_type
+    //     let role = allInfo.role
+    //     setProjectSkills([...role])
+    //     setPeriod(allInfo.period)
+    //     setBudget(allInfo.budget)
+    //     setCurrency(allInfo.apply_switch)
+    //     allInfo.role.map(e => {
+    //         skillss.map(ele => {
+    //             if (e === ele.value){
+    //                 ele.status = true
+    //             }
+    //         })
+    //     })
+    // },[])
 
     useEffect(() => {
         let arr = []

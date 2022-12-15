@@ -11,6 +11,7 @@ import TaskItem from "../components/CustomItem/taskItem";
 import qs from 'querystring';
 import withAuth from "./middleware";
 import { searchTask } from "../http/_api/public";
+import { Modal_ModifyTask } from "../components/Modal_modifyTask.js";
 import { getApplyList } from "../http/_api/task";
 import { getOrderList } from "../http/_api/order";
 
@@ -25,6 +26,7 @@ function Task() {
     let [selectData,setSelectData] = useState([])
     let [selectBar,setSelectBar] = useState('')
     let [isModal,setIsModal] = useState(false)
+    let [showModifyTaskModal,setShowModifyTaskModal] = useState(false)
     let [pageConfig,setPageConfig] = useState({
         page: 1, pageSize: 5, total: 1
     })
@@ -246,7 +248,7 @@ function Task() {
                 }
             </div>
             <div className="content">
-                <TaskItem taskList={selectData} select={selectBar} who={who} />
+                <TaskItem taskList={selectData} select={selectBar} who={who} taskModal={setShowModifyTaskModal} />
                 {
                     selectData.length > 0 &&
                     <Pagination
@@ -279,6 +281,13 @@ function Task() {
                 </Select>
                 <Input className="applyPrice" onChange={e => onchange(e.target.value,'contactValue')} />
                 <Button onClick={()=>modifyApply()}>确认修改</Button>
+            </Modal>
+            <Modal
+                open={showModifyTaskModal}
+                onCancel={() => {setShowModifyTaskModal(false)}}
+                footer={null}
+            >
+                <Modal_ModifyTask />
             </Modal>   
         </div>
     )

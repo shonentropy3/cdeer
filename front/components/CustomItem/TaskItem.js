@@ -1,11 +1,10 @@
 import { Button, Empty, Modal, message } from "antd";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { Modal_ModifyTask } from "../Modal_modifyTask";
 import { modifyApplySwitch, deleteTask } from '../../http/_api/task'
 export default function TaskItem(params) {
     
-    const { taskList, select, who } = params;
+    const { taskList, select, who, taskModal } = params;
     const router = useRouter();
 
     // 修改报名开关
@@ -71,7 +70,7 @@ export default function TaskItem(params) {
                                 <p>Number of applicants</p>
                             </div>
                         </div>
-                        <Button>Edit this item</Button>
+                        <Button onClick={() => taskModal(true)}>Edit this item</Button>
                         <Button onClick={() => applySwitch(e.task_id,e.apply_switch)}>报名开关</Button>
                         <Button onClick={() => delTask(e.task_id) }>删除需求</Button>
                     </div>
