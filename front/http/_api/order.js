@@ -17,3 +17,12 @@ export const getOrderList = (data) => {
         data,
     });
 }
+
+// 获取任务详情
+export const getOrderDetail = (data) => {
+    return serviceAxios({
+        url: `/order/getOrderList?order_id=${data.order_id}`,
+        method: "get",
+        data,
+    });
+}
