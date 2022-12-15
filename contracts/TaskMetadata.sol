@@ -5,10 +5,11 @@ import "./interface/IMetadata.sol";
 import "./libs/MyStrings.sol";
 import "base64-sol/base64.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "./libs/uint8a6.sol";
 import "./libs/DateTimeLibrary.sol";
 
-contract TaskMetadata is IMetadata {
+contract TaskMetadata is IMetadata, Ownable {
     using MyStrings for string;
     using BytesLib for bytes;
     using uint8a6 for uint48;
@@ -37,6 +38,8 @@ contract TaskMetadata is IMetadata {
         skills[7] = "Research";
         skills[8] = "Operation";
         skills[9] = "Translation";
+        skills[10] = "Training";
+        skills[11] = "Services";
 
 
         // l2 category: Langs
@@ -49,24 +52,39 @@ contract TaskMetadata is IMetadata {
         skills[25] = "Rust";
         skills[26] = "C/C++";
         skills[27] = "PHP";
+        skills[28] = ".Net";
+        skills[29] = "SQL";
 
 
         // l2 category:  skills
         skills[30] = "Web Frontend";
         skills[31] = "Mobile Apps";
         skills[32] = "Desktop Apps";
-        skills[33] = "Full Stack";
-        skills[34] = "DevOps";
-        skills[35] = "Data Analysts";
+        skills[33] = "iOS Apps";
+        skills[34] = "Android Apps";
+        skills[35] = "Mini Program";
+        skills[36] = "Full Stack";
+        skills[37] = "DevOps";
+        skills[38] = "Data Analysts";
+        skills[39] = "Games";
+        skills[40] = "Blockchain";
+
         
-        
-        skills[36] = "Games";
-        skills[37] = "Blockchain";
-        skills[38] = "React";
-        skills[39] = "Vue.js";
+        skills[41] = "Hardhat";
+        skills[42] = "React";
+        skills[43] = "Vue.js";
+        skills[44] = "Spring";
+        skills[45] = "Laravel";
 
     }
 
+    function setSkillLabel(uint8 skillIndex,  string memory label) external onlyOwner {
+        skills[skillIndex] = label;
+    }
+
+    function setCurrencyNames(uint8 currencyIndex,  string memory label) external onlyOwner {
+        currencyNames[currencyIndex] = label;
+    }
 
     function tokenURI(uint256 tokenId) external view override returns (string memory) {
         string memory svgFormat = generateSVG(tokenId);
