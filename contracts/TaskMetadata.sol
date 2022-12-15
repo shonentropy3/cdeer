@@ -43,7 +43,6 @@ contract TaskMetadata is IMetadata, Ownable {
 
 
         // l2 category: Langs
-
         skills[20] = "JavaScript";
         skills[21] = "Python";
         skills[22] = "Java";
@@ -54,27 +53,32 @@ contract TaskMetadata is IMetadata, Ownable {
         skills[27] = "PHP";
         skills[28] = ".Net";
         skills[29] = "SQL";
+        skills[30] = "Move";
 
 
         // l2 category:  skills
-        skills[30] = "Web Frontend";
-        skills[31] = "Mobile Apps";
-        skills[32] = "Desktop Apps";
-        skills[33] = "iOS Apps";
-        skills[34] = "Android Apps";
-        skills[35] = "Mini Program";
-        skills[36] = "Full Stack";
-        skills[37] = "DevOps";
-        skills[38] = "Data Analysts";
-        skills[39] = "Games";
-        skills[40] = "Blockchain";
+        skills[40] = "Web Frontend";
+        skills[41] = "Backend";
+        skills[42] = "Desktop Apps";
+        skills[43] = "Android/iOS";
+        skills[44] = "Auto/Bots";
+        skills[45] = "Mini Program";
+        skills[46] = "Full Stack";
+        skills[47] = "DevOps";
+        skills[48] = "Data Analysts";
+        skills[49] = "Blockchain"; 
+        skills[50] = "AI/ML";  
 
+
+        skills[61] = "Hardhat";
+        skills[62] = "Defi";
+        skills[63] = "NFT";
         
-        skills[41] = "Hardhat";
-        skills[42] = "React";
-        skills[43] = "Vue.js";
-        skills[44] = "Spring";
-        skills[45] = "Laravel";
+        skills[64] = "Spring";
+        skills[65] = "Laravel";
+        skills[66] = "React";
+        skills[67] = "Vue.js";
+
 
     }
 
