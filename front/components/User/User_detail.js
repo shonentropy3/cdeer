@@ -48,19 +48,21 @@ export default function User_detail () {
                 info.role = []
                 if(index === i){
                     ele = e
-                    if(e.status){
+                    if(e.status && info.role.length < 4){
                         info.role.push(Number(e.value))
                     }else{
                         info.role = info.role.filter(item => item != e.value)
+                        e.status = false
                     }
                 }
             }else{
                 if(index === i){
                     ele = e
-                    if(e.status){
+                    if(e.status && info.role.length < 4){
                         info.role.push(Number(e.value))
                     }else{
                         info.role = info.role.filter(item => item != e.value)
+                        e.status = false
                     }
                 }
             }
