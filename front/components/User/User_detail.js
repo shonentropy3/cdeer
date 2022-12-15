@@ -109,6 +109,7 @@ export default function User_detail () {
     const getInfo = async () => {
         await getUserInfo({address: address})
         .then((res)=>{
+            console.log('个人信息====>',res);
             if (res.data) {
                 let obj = res.data
                 info = obj;
@@ -116,7 +117,6 @@ export default function User_detail () {
                 if(res.code === 0){
                     setHasInfo(true)
                 }
-                console.log(info);
             }
         })
     }
@@ -147,7 +147,6 @@ export default function User_detail () {
     // 上传头像
     const avatarChange = (files) => {
         let res = files.file.response
-        console.log(res);
         if (res?.code == 0) {
             info.avatar = res.data.url
             setInfo({...info})
@@ -192,7 +191,6 @@ export default function User_detail () {
         if (info.avatar) {
             avatar = `http://192.168.1.10:8086/${info.avatar}`
             setAvatar(avatar)
-            console.log(avatar);
         }
     },[info])
 
@@ -209,7 +207,10 @@ export default function User_detail () {
             </div>
             <div className="info">
                 <p>{info.username?info.username:"未设置用户昵称"}</p>
-                <div className="li"><SkypeOutlined /><WechatOutlined /><GithubOutlined /></div>
+                <div className="li">
+                    {info.skype ? <SkypeOutlined /> : ''}
+                    {info.wechat ? <WechatOutlined /> : ''}
+                </div>
             </div>
         </div>
         <Button className="btn" onClick={showModal}>编辑个人资料</Button>
