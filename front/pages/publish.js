@@ -129,12 +129,13 @@ export default function Publish() {
     }
     
     const comfirm = async() => {
-        
         var obj = _.omit(params,'role');
         obj.currency = obj.currency === 'ETH' ? 1 : 1;
         obj.period = obj.period * 24 * 60 * 60;
         obj.budget = ethers.utils.parseEther(obj.budget);
         obj.attachment = obj.attachment ? obj.attachment : '';
+        obj.timestamp = 0;
+        obj.disabled = false;
         let fee = { value: ethers.utils.parseEther("0") };
         /**
          *  title: task.title,
