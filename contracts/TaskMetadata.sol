@@ -201,22 +201,22 @@ contract TaskMetadata is IMetadata, Ownable {
                 if(taskbudget / 1e18 < 10) {
                     uint digit = taskbudget / 1e18;
                     uint b = (taskbudget - (digit * 1e18)) / 1e17;
-                    budget = string(abi.encodePacked("~", Strings.toString(digit),
+                    budget = string(abi.encodePacked(unicode"≈", Strings.toString(digit),
                     ".",
                         Strings.toString(b)));
                 } else {
-                    budget = string(abi.encodePacked("~", Strings.toString(taskbudget / 1e18))); 
+                    budget = string(abi.encodePacked(unicode"≈", Strings.toString(taskbudget / 1e18))); 
                 }
 
             } else if (taskbudget / 1e17 > 0) {
                 uint b = taskbudget / 1e17;
-                budget = string(abi.encodePacked("~0.", Strings.toString(b)));
+                budget = string(abi.encodePacked(unicode"≈", "0.", Strings.toString(b)));
             } else if (taskbudget / 1e16 > 0) {
                 uint b = taskbudget / 1e16;
-                budget = string(abi.encodePacked("~0.0", Strings.toString(b)));
+                budget = string(abi.encodePacked(unicode"≈", "0.0", Strings.toString(b)));
             } else if (taskbudget / 1e15 > 0) {
                 uint b = taskbudget / 1e15;
-                budget = string(abi.encodePacked("~0.00", Strings.toString(b)));
+                budget = string(abi.encodePacked(unicode"≈", "0.00", Strings.toString(b)));
             } else {
                 budget = "&lt;0.001";
             }

@@ -1,0 +1,40 @@
+<svg id="l1" data-name="l 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 319 399">
+  <defs>
+    <style>
+      .c-2{fill:#fff;opacity:0.85;}.c-3{opacity:0.4;}.c-4{fill:url(#a9);}.c-5{font-size:28.52px;fill:#1f1e2e;font-family:Arial-BoldMT, Arial;font-weight:700;}.c-6{opacity:0.5;}.c-7{fill-rule:evenodd;fill:url(#a_4);}.c-8{isolation:isolate;font-size:4.68px;font-family:PingFangSC-Regular, PingFang SC;letter-spacing:0.09em;}.c-10,.c-9{font-size:9.04px;}.c-9{font-family:PingFangSC-Light, PingFang SC;}.c-10{font-family:PingFangSC-Medium, PingFang SC;}.c-11{opacity:0.08;font-size:47.13px;font-family:PingFangSC-Semibold, PingFang SC;}
+    </style>
+    <linearGradient id="a7" x1="159.5" y1="3.99" x2="159.5" y2="398.06" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fee7b9"/>
+      <stop offset="1" stop-color="#c91d3b"/>
+    </linearGradient>
+    <linearGradient id="a9" x1="11.34" y1="199.66" x2="307.66" y2="199.66" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#dcff65"/>
+      <stop offset="1" stop-color="#fff"/>
+    </linearGradient>
+    <linearGradient id="a_4" x1="210.14" y1="127.21" x2="241" y2="127.21" xlink:href="#a7"/>
+  </defs>
+  <rect fill="url(#a7" width="319" height="399" rx="7"/>
+  <path class="c-2" d="M35,.33H194a125,125,0,0,1,125,125V274A125,125,0,0,1,194,399H35A35,35,0,0,1,0,364V35.33A35,35,0,0,1,35,.33Z"/>
+  <g class="c-3">
+    <path class="c-4" d="M182.66,384.83H46.34a35,35,0,0,1-35-35V49.5a35,35,0,0,1,35-35H182.66a125,125,0,0,1,125,125V259.83A125,125,0,0,1,182.66,384.83Z"/>
+  </g>
+  <text class="c-5" transform="translate(23 105.47)">Dao operation and <tspan x="0" y="28.52">maintenance</tspan></text>
+  <g id="a-3" class="c-6">
+    <path class="c-7" d="M211.75,122.56h27.64a1.5,1.5,0,0,1,1.61,1.38v6.53a1.52,1.52,0,0,1-1.61,1.38H211.75a1.52,1.52,0,0,1-1.61-1.38v-6.53A1.5,1.5,0,0,1,211.75,122.56Z"/>
+  </g>
+  <g id="back-end-2">
+    <text class="c-8" transform="translate(217.53 128.88)">Builder</text>
+  </g>
+  <text class="c-9" transform="translate(23.41 226.71)">Skill:</text>
+  <text class="c-10" transform="translate(22.5 240.27)">Solidity</text>
+  <text class="c-10" transform="translate(69.12 240.27)">Javascript</text>
+  <text class="c-10" transform="translate(128.46 240.27)">IOS</text>
+  <text class="c-9" transform="translate(23.41 262.26)">Token ID:</text>
+  <text class="c-10" transform="translate(22.5 274.91)">1234</text>
+  <text class="c-9" transform="translate(24.05 355.44)">GMT+8 2022-02-02 11:40:23</text>
+  <text class="c-9" transform="translate(23.41 191.07)">Hash:</text>
+  <text class="c-10" transform="translate(23.03 204.72)">QmZStS3CuSA7SRvSpJgdiWVyjTa9yD5bxTNerTL2HUcdck</text>
+  <text class="c-9" transform="translate(23.41 297.36)">Amount:</text>
+  <text class="c-10" transform="translate(23.03 310.01)">≈0.22 ETH</text>
+  <text class="c-11" transform="translate(21.17 84.53)">BUILDER</text>
+</svg>
