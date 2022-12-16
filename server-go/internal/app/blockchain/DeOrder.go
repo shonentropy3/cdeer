@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/tidwall/gjson"
 	"gorm.io/gorm/clause"
 	"strings"
 )
@@ -15,7 +16,7 @@ import (
 func DeOrder(transHash model.TransHash, Logs []*types.Log) (haveBool bool, err error) {
 	switch transHash.EventName {
 	case "OrderCreated":
-		err = ParseOrderCreated(Logs)
+		err = ParseOrderCreated(transHash, Logs)
 		return true, err
 	}
 
@@ -23,7 +24,7 @@ func DeOrder(transHash model.TransHash, Logs []*types.Log) (haveBool bool, err e
 }
 
 // ParseOrderCreated 解析OrderCreated事件
-func ParseOrderCreated(Logs []*types.Log) (err error) {
+func ParseOrderCreated(transHash model.TransHash, Logs []*types.Log) (err error) {
 	contractAbi, err := abi.JSON(strings.NewReader(ABI.DeOrderMetaData.ABI))
 	if err != nil {
 		fmt.Println(err)
@@ -37,9 +38,12 @@ func ParseOrderCreated(Logs []*types.Log) (err error) {
 			tx := global.DB.Begin()
 			// 更新数据
 			fmt.Println("Transaction")
-			order := model.Order{TaskID: vLog.Topics[2].Big().Int64(), OrderId: vLog.Topics[1].Big().Int64()}
+			order := model.Order{TaskID: vLog.Topics[1].Big().Int64(), OrderId: vLog.Topics[2].Big().Int64()}
 			order.Issuer = orderCreated.Issuer.String() // 甲方
 			order.Worker = orderCreated.Worker.String() // 乙方
+			// 解析 币种
+			// 解析raw数据
+			order.Currency = gjson.Get(transHash.Raw, "currency").String()
 			// 更新||插入数据
 			err = tx.Model(&model.Order{}).Clauses(clause.OnConflict{
 				Columns:   []clause.Column{{Name: "order_id"}},
@@ -49,6 +53,8 @@ func ParseOrderCreated(Logs []*types.Log) (err error) {
 				tx.Rollback()
 				return err
 			}
+			// 更新apply表状态
+			_ = tx.Model(&model.Apply{}).Where("apply_addr = ? AND task_id = ?", order.Worker, order.TaskID).Update("status", 1).Error
 			// 删除任务
 			if err = tx.Model(&model.TransHash{}).Where("hash = ?", vLog.TxHash.String()).Delete(&model.TransHash{}).Error; err != nil {
 				tx.Rollback()

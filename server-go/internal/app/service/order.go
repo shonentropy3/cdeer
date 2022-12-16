@@ -41,7 +41,7 @@ func GetOrderList(searchInfo request.GetOrderListRequest) (err error, list inter
 		return err, list, total
 	} else {
 		db = db.Limit(limit).Offset(offset)
-		err = db.Order("create_time desc").Preload("Task").Find(&orderList).Error
+		err = db.Order("created_at desc").Preload("Task").Find(&orderList).Error
 	}
 
 	return err, orderList, total

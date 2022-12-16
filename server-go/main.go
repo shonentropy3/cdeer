@@ -12,9 +12,11 @@ import (
 	"go.uber.org/zap"
 	"log"
 	"math/big"
+	"time"
 )
 
 func main() {
+	global.StartTime = time.Now()
 	// 初始化Viper
 	global.VIP = core.Viper()
 	// 初始化zap日志库
@@ -35,24 +37,22 @@ func main() {
 	// 启动扫块任务
 	go blockchain.HandleTransaction()
 	core.RunWindowsServer()
-
 	client, err := ethclient.Dial("https://backend.buildbear.io/node/charming-bohr-99d0de")
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	address := common.HexToAddress("0x68Eee406113429D3443a70BE736c3fBb4f3F0A1C")
-	instance, err := DeTaskABI.NewDeStage(address, client)
+	address := common.HexToAddress("0x0F6332bA28917FcEeB3e8184b2cfF242958Da0e6")
+	instance, err := DeTaskABI.NewDeOrder(address, client)
 	if err != nil {
 		fmt.Println("1")
 		fmt.Println(err)
 	}
-	version, err := instance.GetStages(nil, big.NewInt(10))
+	version, err := instance.GetOrder(nil, big.NewInt(5))
 	if err != nil {
 		fmt.Println("2")
 		fmt.Println(err)
 	}
 
-	fmt.Println(version) // "1.0"
+	fmt.Printf("%+v", version) // "1.0"
 
 }

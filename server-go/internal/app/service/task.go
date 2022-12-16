@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"errors"
 	"go.uber.org/zap"
+	"reflect"
 )
 
 // GetTaskList
@@ -148,4 +149,37 @@ func ModifyApplySwitch(req request.ModifyApplySwitchRequest, address string) (er
 		return errors.New("操作失败")
 	}
 	return res.Error
+}
+
+// GetSillTreeMap
+// @description: 获取技能树
+// @param: sillId uint
+// @return: res []*model.Skill, err error
+func GetSillTreeMap(sillId uint) (res []*model.Skill, err error) {
+	var allMenus []*model.Skill
+	err = global.DB.Order("sort desc").Find(&allMenus).Error
+	if err != nil {
+		return
+	}
+	return tree(allMenus, sillId), err
+}
+
+// tree
+// @description: 生成技能树结构
+// @param: sills []*model.Skill, pid uint
+// @return: []*model.Skill
+func tree(sills []*model.Skill, pid uint) []*model.Skill {
+	// 节点
+	var nodes []*model.Skill
+	if reflect.ValueOf(sills).IsValid() {
+		// 循环所有 一级技能
+		for _, v := range sills {
+			if v.ParentId == pid {
+				// 递归方式循环子树
+				v.Children = append(v.Children, tree(sills, v.ID)...)
+				nodes = append(nodes, v)
+			}
+		}
+	}
+	return nodes
 }

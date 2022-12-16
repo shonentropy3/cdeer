@@ -2,6 +2,7 @@ package api
 
 import (
 	"code-market-admin/internal/app/global"
+	"code-market-admin/internal/app/model"
 	"code-market-admin/internal/app/model/request"
 	response "code-market-admin/internal/app/model/response"
 	"code-market-admin/internal/app/service"
@@ -124,5 +125,23 @@ func ModifyApplySwitch(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 	} else {
 		response.OkWithMessage("修改成功", c)
+	}
+}
+
+// GetSillTreeMap
+// @Tags TaskApi
+// @Summary 分页获取需求数据
+// @accept application/json
+// @Produce application/json
+// @Router /task/getSillTreeMap [get]
+func GetSillTreeMap(c *gin.Context) {
+	var searchInfo model.Skill
+	_ = c.ShouldBindQuery(&searchInfo)
+
+	if list, err := service.GetSillTreeMap(searchInfo.ID); err != nil {
+		global.LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage("获取失败", c)
+	} else {
+		response.OkWithDetailed(list, "获取成功", c)
 	}
 }
