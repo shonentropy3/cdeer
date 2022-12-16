@@ -37,7 +37,7 @@ func ParseOrderCreated(Logs []*types.Log) (err error) {
 			tx := global.DB.Begin()
 			// 更新数据
 			fmt.Println("Transaction")
-			order := model.Order{TaskID: vLog.Topics[2].Big().Int64(), OrderId: vLog.Topics[1].Big().Int64()}
+			order := model.Order{TaskID: vLog.Topics[1].Big().Int64(), OrderId: vLog.Topics[2].Big().Int64()}
 			order.Issuer = orderCreated.Issuer.String() // 甲方
 			order.Worker = orderCreated.Worker.String() // 乙方
 			// 更新||插入数据
@@ -49,6 +49,8 @@ func ParseOrderCreated(Logs []*types.Log) (err error) {
 				tx.Rollback()
 				return err
 			}
+			// 更新apply表状态
+			_ = tx.Model(&model.Apply{}).Where("apply_addr = ? AND task_id = ?", order.Worker, order.TaskID).Update("status", 1).Error
 			// 删除任务
 			if err = tx.Model(&model.TransHash{}).Where("hash = ?", vLog.TxHash.String()).Delete(&model.TransHash{}).Error; err != nil {
 				tx.Rollback()
