@@ -49,7 +49,7 @@
   <text class="c28" transform="translate(48.13 20.86)">#1</text>
   <path d="m17.34 43.35-1.56-2.23-.53.76 2.09 3 2.09-3-.53-.76Zm0-3.29-1.56-2.23-.53.76 2.09 3 2.09-3-.53-.76Zm0 6.59-1.56-2.24-.53.76 2.09 3 2.09-2.94-.53-.82Z" style="fill:url(#a_44)"/>
   <text transform="translate(14.49 74.47)" style="font-size:12px;font-family:PingFangSC-Semibold-GBpc-EUC-H,PingFang SC;letter-spacing:.07em">New Task</text>
-  <text transform="translate(14.95 99.51)" style="fill:gray;font-family:PingFangSC-Light-GBpc-EUC-H,PingFang SC;font-size:6px;letter-spacing:.08em">Task Description IPFS:<tspan x="0" y="8">QmSsw6EcnwEiTT9c4rnAGeSENvsJMe</tspan><tspan x="0" y="16">pNHmbrgi2S9bXNJr</tspan></text>
+  <text transform="translate(14.95 99.51)" style="fill:gray;font-family:PingFangSC-Light-GBpc-EUC-H,PingFang SC;font-size:6px;letter-spacing:.08em">Details on ipfs:<tspan x="0" y="8">QmSsw6EcnwEiTT9c4rnAGeSENvsJMe</tspan><tspan x="0" y="16">pNHmbrgi2S9bXNJr</tspan></text>
   <path class="c26" d="M16 86.42h19a.9.9 0 0 1 1 .8V91a.91.91 0 0 1-1 .8H16a.91.91 0 0 1-1-.8v-3.78a.9.9 0 0 1 1-.8Z"/>
   <g class="c20">
     <text class="c21" transform="translate(16 90.08)">Development</text>
