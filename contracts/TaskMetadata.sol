@@ -42,33 +42,33 @@ contract TaskMetadata is IMetadata, Ownable {
         skills[11] = "Services";
 
 
-        // l2 category: Langs
-        skills[20] = "JavaScript";
-        skills[21] = "Python";
-        skills[22] = "Java";
-        skills[23] = "Golang";
-        skills[24] = "Solidity";
-        skills[25] = "Rust";
-        skills[26] = "C/C++";
-        skills[27] = "PHP";
-        skills[28] = ".Net";
-        skills[29] = "SQL";
-        skills[30] = "Move";
-
-
         // l2 category:  skills
-        skills[40] = "Web Frontend";
-        skills[41] = "Backend";
-        skills[42] = "Desktop Apps";
-        skills[43] = "Android/iOS";
-        skills[44] = "Auto/Bots";
-        skills[45] = "Mini Program";
-        skills[46] = "Full Stack";
-        skills[47] = "DevOps";
-        skills[48] = "Data Analysts";
-        skills[49] = "Blockchain"; 
-        skills[50] = "AI/ML";  
+        skills[20] = "Web Frontend";
+        skills[21] = "Backend";
+        skills[22] = "Desktop Apps";
+        skills[23] = "Android/iOS";
+        skills[24] = "Auto/Bots";
+        skills[25] = "Mini Program";
+        skills[26] = "Full Stack";
+        skills[27] = "DevOps";
+        skills[28] = "Data Analysts";
+        skills[29] = "Blockchain"; 
+        skills[30] = "AI/ML";  
 
+
+        // l2 category: Langs
+        skills[40] = "JavaScript";
+        skills[41] = "Python";
+        skills[42] = "Java";
+        skills[43] = "Golang";
+        skills[44] = "Solidity";
+        skills[45] = "Rust";
+        skills[46] = "C/C++";
+        skills[47] = "PHP";
+        skills[48] = ".Net";
+        skills[49] = "SQL";
+        skills[50] = "Move";
+        skills[51] = "HTML/CSS";
 
         skills[61] = "Hardhat";
         skills[62] = "Defi";
@@ -78,8 +78,6 @@ contract TaskMetadata is IMetadata, Ownable {
         skills[65] = "Laravel";
         skills[66] = "React";
         skills[67] = "Vue.js";
-
-
     }
 
     function setSkillLabel(uint8 skillIndex,  string memory label) external onlyOwner {
@@ -91,9 +89,44 @@ contract TaskMetadata is IMetadata, Ownable {
     }
 
     function tokenURI(uint256 tokenId) external view override returns (string memory) {
-        string memory svgFormat = generateSVG(tokenId);
-        return generateTokenUri(svgFormat);
+        return generateTokenUri(tokenId);
     }
+
+    // refer: https://docs.opensea.io/docs/metadata-standards
+    function generateTokenUri(uint taskId) internal view returns (string memory) {
+        string memory svg = generateSVGBase64(generateSVG(taskId));
+
+        (string memory title, string memory desc, string memory attachment, 
+            , , ,uint48 taskskills, uint32 timestamp, )= taskAddr.getTaskInfo(taskId);
+        
+        bytes memory dataURI = abi.encodePacked(
+        '{',
+            '"name": "DeTask #', Strings.toString(taskId), '",',
+            '"title": "', title, '",',
+            '"description": "', desc, ' More details on: https://detask.xyz/task/' ,  Strings.toString(taskId) , '",'   // on ...
+            '"image": "', svg, '",',
+            '"attachment": "', attachment, '",',
+            '"attributes": [',
+                    skillAttributes(taskskills, 0),
+                    skillAttributes(taskskills, 1),
+                    skillAttributes(taskskills, 2),
+                    '{',
+                    '"display_type": "date",', 
+                    '"trait_type": "Created",', 
+                    '"value": ', Strings.toString(timestamp),
+                    '}',
+            ']',
+        '}'
+        );
+
+        return string(
+            abi.encodePacked(
+                "data:application/json;base64,",
+                Base64.encode(dataURI)
+            )
+        );
+    }
+
 
     function nowDateTime(uint ts) internal view returns (string memory datatime) {
         // block.timestamp
@@ -121,7 +154,22 @@ contract TaskMetadata is IMetadata, Ownable {
             "+0800"));
     }
 
-    function skillSVG(uint48 taskskills, uint i)  internal view returns (string memory svgString) {
+    function skillAttributes(uint48 taskskills, uint i) internal view returns (string memory) {
+        uint skill = taskskills.get(i);
+        if (skill > 0) {
+            return string(
+                    abi.encodePacked(
+                    '{',
+                    '"trait_type": "Skill",', 
+                    '"value": "', skills[skill], '"'
+                    '},'));
+
+        } else {
+            return "";
+        }
+    }
+
+    function skillSVG(uint48 taskskills, uint i) internal view returns (string memory svgString) {
         uint skill = taskskills.get(i);
         if (skill > 0) {
             uint xPos = 16 + i * 24;
@@ -153,22 +201,22 @@ contract TaskMetadata is IMetadata, Ownable {
                 if(taskbudget / 1e18 < 10) {
                     uint digit = taskbudget / 1e18;
                     uint b = (taskbudget - (digit * 1e18)) / 1e17;
-                    budget = string(abi.encodePacked("~", Strings.toString(digit),
+                    budget = string(abi.encodePacked(unicode"≈", Strings.toString(digit),
                     ".",
                         Strings.toString(b)));
                 } else {
-                    budget = string(abi.encodePacked("~", Strings.toString(taskbudget / 1e18))); 
+                    budget = string(abi.encodePacked(unicode"≈", Strings.toString(taskbudget / 1e18))); 
                 }
 
             } else if (taskbudget / 1e17 > 0) {
                 uint b = taskbudget / 1e17;
-                budget = string(abi.encodePacked("~0.", Strings.toString(b)));
+                budget = string(abi.encodePacked(unicode"≈", "0.", Strings.toString(b)));
             } else if (taskbudget / 1e16 > 0) {
                 uint b = taskbudget / 1e16;
-                budget = string(abi.encodePacked("~0.0", Strings.toString(b)));
+                budget = string(abi.encodePacked(unicode"≈", "0.0", Strings.toString(b)));
             } else if (taskbudget / 1e15 > 0) {
                 uint b = taskbudget / 1e15;
-                budget = string(abi.encodePacked("~0.00", Strings.toString(b)));
+                budget = string(abi.encodePacked(unicode"≈", "0.00", Strings.toString(b)));
             } else {
                 budget = "&lt;0.001";
             }
@@ -186,7 +234,7 @@ contract TaskMetadata is IMetadata, Ownable {
     }
         
 
-    function generateSVG(uint taskId) public view returns (string memory svg) {
+    function generateSVG(uint taskId) public view returns (bytes memory svg) {
         (string memory title, , string memory attachment, 
             uint8 currency, uint128 budget, ,uint48 taskskills, uint32 timestamp, 
             )= taskAddr.getTaskInfo(taskId);
@@ -201,9 +249,7 @@ contract TaskMetadata is IMetadata, Ownable {
         string memory valueStr = getValueStr(budget, currency);
 
 
-        return
-            string(
-                abi.encodePacked(
+        return abi.encodePacked(
                     '<svg id="l_1" data-name="l 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 170 192"><defs><linearGradient id="a_17" x1="85.12" y1="17.17" x2="85.13" y2="180.08" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#d3d9f7"/><stop offset="1" stop-color="#dff8fd"/></linearGradient><linearGradient id="a" x1="-.19" y1="100.25" x2="170.44" y2="100.25" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#00d600"/></linearGradient><linearGradient id="a-2" x1="6" y1="100.25" x2="164.25" y2="100.25" xlink:href="#a"/><linearGradient id="a-3" x1="12.2" y1="100.25" x2="158.05" y2="100.25" xlink:href="#a"/><linearGradient id="a-4" x1="18.39" y1="100.25" x2="151.86" y2="100.25" xlink:href="#a"/><linearGradient id="a-5" x1="24.58" y1="100.25" x2="145.67" y2="100.25" xlink:href="#a"/><linearGradient id="a-6" x1="30.78" y1="100.25" x2="139.47" y2="100.25" xlink:href="#a"/><linearGradient id="a-7" x1="36.97" y1="100.25" x2="133.28" y2="100.25" xlink:href="#a"/><linearGradient id="a-8" x1="43.17" y1="100.25" x2="127.08" y2="100.25" xlink:href="#a"/><linearGradient id="a-9" x1="49.36" y1="100.25" x2="120.89" y2="100.25" xlink:href="#a"/><linearGradient id="a-10" x1="55.56" y1="100.25" x2="114.69" y2="100.25" xlink:href="#a"/><linearGradient id="a-11" x1="61.75" y1="100.25" x2="108.5" y2="100.25" xlink:href="#a"/><linearGradient id="a-12" x1="67.95" y1="100.25" x2="102.3" y2="100.25" xlink:href="#a"/><linearGradient id="a_44" x1="-399.35" y1="-508.52" x2="-389" y2="-508.52" gradientTransform="rotate(90 -464.18 -27)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#d4dcf8"/><stop offset="1" stop-color="#999"/></linearGradient><style>.c26{fill-rule:evenodd}.c20,.c21{isolation:isolate}.c21{font-size:2.71px;letter-spacing:.09em}.c21,.c28{font-family:PingFangSC-Regular-GBpc-EUC-H,PingFang SC}.c25{fill:gray;font-family:PingFangSC-Light-GBpc-EUC-H,PingFang SC;font-size:3.4px;letter-spacing:.07em}.c26{fill:#ff0;opacity:.8}.c28{font-size:5px;letter-spacing:.07em}</style><mask id="mask" x="18.61" y="131.58" width="16.56" height="16.56" maskUnits="userSpaceOnUse"><path id="path-1" style="fill-rule:evenodd;fill:#fff" d="M18.61 131.58h16.56v16.56H18.61v-16.56z"/></mask></defs><path style="fill:url(#a_17)" d="M.13 0h170v192H.13z"/><g style="opacity:.2"><circle cx="85.13" cy="100.25" r="84.75" style="stroke-width:1.14px;stroke:url(#a);fill:none;stroke-miterlimit:10"/><circle cx="85.13" cy="100.25" r="78.6" style="stroke-width:1.05px;stroke:url(#a-2);fill:none;stroke-miterlimit:10"/><circle cx="85.13" cy="100.25" r="72.44" style="stroke-width:.97px;stroke:url(#a-3);fill:none;stroke-miterlimit:10"/><circle cx="85.13" cy="100.25" r="66.29" style="stroke-width:.89px;stroke:url(#a-4);fill:none;stroke-miterlimit:10"/><circle cx="85.13" cy="100.25" r="60.14" style="stroke-width:.81px;stroke:url(#a-5);fill:none;stroke-miterlimit:10"/><circle cx="85.13" cy="100.25" r="53.98" style="stroke-width:.72px;stroke:url(#a-6);fill:none;stroke-miterlimit:10"/><circle cx="85.13" cy="100.25" r="47.83" style="stroke-width:.64px;stroke:url(#a-7);fill:none;stroke-miterlimit:10"/><circle cx="85.13" cy="100.25" r="41.68" style="stroke-width:.56px;stroke:url(#a-8);fill:none;stroke-miterlimit:10"/><circle cx="85.13" cy="100.25" r="35.52" style="stroke-width:.48px;stroke:url(#a-9);fill:none;stroke-miterlimit:10"/><circle cx="85.13" cy="100.25" r="29.37" style="stroke-width:.39px;stroke:url(#a-10);fill:none;stroke-miterlimit:10"/><circle cx="85.13" cy="100.25" r="23.22" style="stroke-width:.31px;stroke:url(#a-11);fill:none;stroke-miterlimit:10"/><circle cx="85.13" cy="100.25" r="17.06" style="stroke-width:.23px;stroke:url(#a-12);fill:none;stroke-miterlimit:10"/></g>',
                     '<text class="c28" transform="translate(15.13 20.86)">Detask.xyz</text><text class="c28" transform="translate(48.13 20.86)">#',
                     Strings.toString(taskId),
@@ -235,11 +281,10 @@ contract TaskMetadata is IMetadata, Ownable {
                     '</text>',
                     '</svg>'
 
-                )
-            );
+                );
     }
 
-        function generateTokenUri(string memory svgFormat)
+    function generateSVGBase64(bytes memory svgFormat)
         internal
         pure
         returns (string memory)
@@ -253,7 +298,7 @@ contract TaskMetadata is IMetadata, Ownable {
                             abi.encodePacked(
                                 '{"image": "',
                                 "data:image/svg+xml;base64,",
-                                Base64.encode(bytes(svgFormat)),
+                                Base64.encode(svgFormat),
                                 '"}'
                             )
                         )
@@ -261,5 +306,8 @@ contract TaskMetadata is IMetadata, Ownable {
                 )
             );
     }
+
+
+
 
 }

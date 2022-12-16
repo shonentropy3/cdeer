@@ -1,0 +1,26 @@
+{
+  "name": "DeTask #1",
+  "title": "新任务",
+  "description": "... More details on: https://detask.xyz/task/1",
+  "image": "data:application/json;base64,.....",
+  "attachment": ".....",
+  "attributes": [
+    {
+      "trait_type": "Skill",
+      "value": "Development"
+    },
+    {
+      "trait_type": "Skill",
+      "value": "Product"
+    },
+    {
+      "trait_type": "Skill",
+      "value": "Design"
+    },
+    {
+      "display_type": "date",
+      "trait_type": "Created",
+      "value": 1671096525
+    }
+  ]
+}

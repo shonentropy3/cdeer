@@ -11,7 +11,8 @@ async function main() {
 
     // Deploy contract with the correct constructor arguments
     console.log("Order task:", TaskAddr.address);
-    const metaData = await TaskMetadata.deploy( TaskAddr.address );
+
+    const metaData = await TaskMetadata.deploy( TaskAddr.address);
     await metaData.deployed();
 
     console.log("TaskMetadata deployed to:", metaData.address);

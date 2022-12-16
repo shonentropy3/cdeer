@@ -63,9 +63,8 @@ describe("detask", function() {
         const taskInfo = await detask.tasks(1);
         console.log(taskInfo)
 
-  
-        const svg = await metaData.generateSVG(1);
-        console.log(svg);
+        // const svg = await metaData.generateTokenUri(1);
+        // console.log(svg);
 
     });
 

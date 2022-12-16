@@ -92,8 +92,6 @@ contract DeStage is Ownable {
         }
     }
 
-
-
     function startOrder(uint _orderId) external onlyDeorder {
         Stage[] storage stages = orderStages[_orderId];
         if (stages[0].period == 0) {
@@ -105,13 +103,14 @@ contract DeStage is Ownable {
         Order memory order = IOrder(deOrder).getOrder(_orderId);
         if(order.progress != OrderProgess.Ongoing) revert StatusError();
         uint lastStageEnd = order.startDate;
+        bool payByDue = order.payType == PaymentType.Due;
 
         Stage[] memory stages = orderStages[_orderId];
         uint nowTs = block.timestamp;
         for ( uint i = 0; i < stages.length; i++) {
             Stage memory stage = stages[i];
-            if(stage.status == StageStatus.Accepted ||
-                (nowTs >= lastStageEnd + stage.period && stage.status == StageStatus.Init)) {
+            if( (stage.status == StageStatus.Accepted) || 
+                (payByDue && stage.status == StageStatus.Init &&  nowTs >= lastStageEnd + stage.period)) {
                 pending += stage.amount;
                 nextStage = i+1;
             }
@@ -133,18 +132,26 @@ contract DeStage is Ownable {
     function abortOrder(uint _orderId, bool issuerAbort) external onlyDeorder returns(uint currStageIndex, uint issuerAmount, uint workerAmount) {
         uint stageStartDate;
         ( currStageIndex, stageStartDate) = ongoingStage(_orderId);
-
+        
+        Order memory order = IOrder(deOrder).getOrder(_orderId);
+        bool payByDue = order.payType == PaymentType.Due;
         Stage[] storage stages = orderStages[_orderId];
 
         for (uint i = 0; i < currStageIndex; i++) {
             if(stages[i].status != StageStatus.Withdrawed) {
-                workerAmount += stages[i].amount;
-                stages[i].status == StageStatus.Withdrawed;
+                // passed or accepted , pay to worker.
+                if (stages[i].status == StageStatus.Accepted || payByDue) {
+                    workerAmount += stages[i].amount;
+                    stages[i].status == StageStatus.Withdrawed;
+                } else {
+                    issuerAmount += stages[i].amount;
+                }
             }
         }
 
         Stage storage stage = stages[currStageIndex];
-        if (issuerAbort) {
+
+        if (issuerAbort && payByDue) {
             workerAmount += stage.amount * (block.timestamp - stageStartDate) / stage.period;
             issuerAmount += stage.amount * (stageStartDate + stage.period - block.timestamp) / stage.period;
         } else {
