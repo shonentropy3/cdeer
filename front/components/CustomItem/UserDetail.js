@@ -40,6 +40,7 @@ export default function UserDetail(params) {
                             ))
                         }
                     </p>
+                    {/* 社交媒体 */}
                     <UserSocialMedia userInfo={user} />
                 </div>
             </div>

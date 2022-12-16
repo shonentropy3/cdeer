@@ -16,6 +16,8 @@ import { getOrderDetail } from "../http/_api/order";
 import TaskDetail from "../components/CustomItem/TaskDetail";
 import TaskNav from "../components/nav/TaskNav";
 import UserDetail from "../components/CustomItem/UserDetail";
+import OrderSetStage from "../components/CustomItem/OrderSetStage";
+import OrderStageList from "../components/CustomItem/OrderStageList";
 
 export default function Order(props) {
     
@@ -26,6 +28,15 @@ export default function Order(props) {
     let [task, setTask] = useState();           // task详情
     let [order, setOrder] = useState();         // order详情
     
+    const switchStages = () => {
+        order.progress = 1;
+        switch (order.progress) {
+            case 0:
+                return <OrderSetStage />     //   设置阶段
+            default:
+                return <OrderStageList />     //   阶段开始
+        }
+    }
 
     const init = () => {
         const { w, order_id } = qs.parse(location.search.slice(1));
@@ -72,9 +83,12 @@ export default function Order(props) {
                                 <Step title="Finish" />
                             </Steps>
                         </div>      
-                        {/* 发单者 == 接单者 */}
+                        {/* 对方详情 */}
                         <UserDetail address={search.who === 'issuer' ? order.worker : order.issuer} who={search.who} />
-                        
+                        {/* 事务状态 */}
+                        {/* <OrderProgressNav /> */}
+                        {/* 根据阶段打印 */}
+                        {switchStages()}
                     </>
                 }
                 

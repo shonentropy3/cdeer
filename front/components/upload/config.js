@@ -1,8 +1,8 @@
 import { message } from "antd";
 import axios from "axios";
+import { upload } from "../../http/_api/public";
 
 export const uploadProps = {
-    action: process.env.NEXT_PUBLIC_DEVELOPMENT_UPLOAD ? process.env.NEXT_PUBLIC_DEVELOPMENT_UPLOAD : process.env.NEXT_PUBLIC_PRODUCTION_UPLOAD,
     multiple: false,
     maxCount: 1,
     onStart(file) {
@@ -12,13 +12,11 @@ export const uploadProps = {
       console.log("onError", err);
     },
     customRequest({
-      action,
       data,
       file,
       filename,
       onError,
-      onSuccess,
-      withCredentials
+      onSuccess
     }) {
       const formData = new FormData();
       if (data) {
@@ -27,14 +25,13 @@ export const uploadProps = {
         });
       }
       formData.append(filename, file);
-      axios
-        .post(action, formData, {
-          withCredentials,
-        })
-        .then(({ data: response }) => {
-          onSuccess(response, file);
-        })
-        .catch(onError);
+      upload(formData)
+      .then(res => {
+        onSuccess(res, file);
+      })
+      .catch(err => {
+        console.log(err);
+      });
 
       return {
         abort() {

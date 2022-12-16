@@ -1,0 +1,23 @@
+.stageCard{
+    width: 1200px;
+    padding: 50px 60px 60px;
+    background: #FFFFFF;
+    box-shadow: 0px 0px 44px -24px #7C7879;
+    border-radius: 30px;
+
+    .btn-add{
+        width: 240px;
+        height: 80px;
+        margin-bottom: 60px;
+        position: relative;
+        left: calc((100% - 240px) / 2);
+        background: #1F1E2E;
+        border-radius: 5px;
+
+        font-size: 28px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        color: #FFFFFF;
+        line-height: 40px;
+        letter-spacing: 0.58px;
+    }
+}

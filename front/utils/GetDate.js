@@ -16,6 +16,6 @@ export const getDate = (params, type) => {
         case 'y':
             return Y;
         default:
-            break;
+            return '';
     }
 }

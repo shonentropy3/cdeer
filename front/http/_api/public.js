@@ -1,5 +1,16 @@
 import serviceAxios from "../index";
 
+
+// 上传图片
+export const upload = (data) => {
+    return serviceAxios({
+        url: process.env.NEXT_PUBLIC_DEVELOPMENT_UPLOAD ? process.env.NEXT_PUBLIC_DEVELOPMENT_UPLOAD : process.env.NEXT_PUBLIC_PRODUCTION_UPLOAD,
+        method: "post",
+        data,
+    });
+}
+
+
 // 获取Task列表
 export const searchTask = (data) => {
     return serviceAxios({
