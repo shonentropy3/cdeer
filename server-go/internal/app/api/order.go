@@ -20,11 +20,6 @@ import (
 func GetOrderList(c *gin.Context) {
 	var searchInfo request.GetOrderListRequest
 	_ = c.ShouldBindQuery(&searchInfo)
-	// 校验字段
-	if searchInfo.Issuer == "" && searchInfo.Worker == "" {
-		response.FailWithMessage("参数不能为空!", c)
-		return
-	}
 	if err, list, total := service.GetOrderList(searchInfo); err != nil {
 		global.LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败", c)

@@ -15,7 +15,9 @@ type Order struct {
 	Signature   string `gorm:"column:signature" json:"signature" form:"signature"`
 	SignAddress string `gorm:"column:sign_address" json:"sign_address" form:"sign_address"`
 	SignNonce   int64  `gorm:"column:sign_nonce" json:"sign_nonce" form:"sign_nonce"`
-	Stages      string `gorm:"column:stages" json:"stages" form:"stages"`        // 阶段JSON
-	State       uint8  `gorm:"column:state;default:0" json:"state" form:"state"` // 任务状态
-	Progress    uint   `gorm:"column:progress" json:"progress" form:"progress"`  // 阶段
+	Currency    string `gorm:"column:currency;size:30" json:"currency" form:"currency"` // 币种
+	Stages      string `gorm:"column:stages" json:"stages" form:"stages"`               // 阶段JSON
+	State       uint8  `gorm:"column:state;default:0" json:"state" form:"state"`        // 任务状态 0:进行中 1: 已完成
+	Progress    uint   `gorm:"column:progress" json:"progress" form:"progress"`         // 阶段
+	Status      string `gorm:"column:status" json:"status" form:"status"`               // 事件状态 10：
 }
