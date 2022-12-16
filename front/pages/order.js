@@ -29,10 +29,10 @@ export default function Order(props) {
     let [order, setOrder] = useState();         // order详情
     
     const switchStages = () => {
-        order.progress = 1;
+        // order.progress = 1;
         switch (order.progress) {
             case 0:
-                return <OrderSetStage />     //   设置阶段
+                return <OrderSetStage search={search} order={order} />     //   设置阶段
             default:
                 return <OrderStageList />     //   阶段开始
         }
