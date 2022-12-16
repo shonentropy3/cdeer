@@ -1,0 +1,64 @@
+{
+  "name": "Build Your Brand w/ CharmVerse",
+  "description": "The holder of this badge has successfully completed \"How to build your brand with CharmVerse\" by CharmVerse.",
+  "image": "ipfs://QmTSJWFNBHjE6jdW3Q8tmMH7TFXGgVdQ27wNRihjtSiPcv",
+  "tags": [
+    "101",
+    "badge",
+    "credential"
+  ],
+  "external_url": "https://101.xyz/badges/clb52urw2195008jpjpann6dh",
+  "external_id": "clb52urw2195008jpjpann6dh",
+  "properties": {
+    "course_name": {
+      "name": "Course Name",
+      "value": "How to build your brand with CharmVerse"
+    },
+    "course_id": {
+      "name": "Course ID",
+      "value": "clar3u26u028908l6zlww20ku"
+    },
+    "creator_name": {
+      "name": "Creator Name",
+      "value": "CharmVerse"
+    },
+    "creator_id": {
+      "name": "Creator ID",
+      "value": "clabd5u0l761908mhd6l54ejr"
+    },
+    "difficulty": {
+      "name": "Difficulty",
+      "value": 1,
+      "display_value": "Easy"
+    },
+    "version": {
+      "name": "Version",
+      "value": 1
+    },
+    "tags": {
+      "name": "Tags",
+      "value": []
+    },
+    "category": {
+      "name": "Category",
+      "value": "General"
+    },
+    "course_url": {
+      "name": "Course URL",
+      "value": "https://101.xyz/course/clar3u26u028908l6zlww20ku"
+    },
+    "verified_human": {
+      "name": "Verified Humanity",
+      "value": false
+    },
+    "visibility": {
+      "name": "Visibility",
+      "value": "public"
+    },
+    "completed": {
+      "name": "Date Completed",
+      "value": "2022-12-01T12:57:23.783Z",
+      "display_value": "Thu Dec 01 2022"
+    }
+  }
+}
