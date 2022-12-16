@@ -1,6 +1,6 @@
 require("@nomiclabs/hardhat-waffle");
 // npx hardhat size-contracts
-// require('hardhat-contract-sizer');
+require('hardhat-contract-sizer');
 require("@nomiclabs/hardhat-etherscan");
 
 let dotenv = require('dotenv')
@@ -27,16 +27,15 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
-  solidity: "0.8.4",
-  // {
-  //   version: "0.8.15",
-  //   settings: {
-  //     optimizer: {
-  //       enabled: true,
-  //       // runs: 1000,
-  //     },
-  //   },
-  // },
+  solidity: {
+    version: "0.8.17",
+    // settings: {
+    //   optimizer: {
+    //     // enabled: true,
+    //     runs: 1000,
+    //   },
+    // },
+  },
   networks: {
     localdev: {
       url: "http://127.0.0.1:8545",

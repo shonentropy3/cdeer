@@ -13,6 +13,12 @@ enum OrderProgess {
     Done
 }
 
+enum PaymentType {
+    Unknown,
+    Due,   // by Due
+    Confirm // by Confirm , if has pre pay
+}
+
 struct Order {
     address issuer;
     address worker;
@@ -20,6 +26,7 @@ struct Order {
     uint amount;
     uint payed;
     OrderProgess progress;   // PROG_*
+    PaymentType payType;
     uint startDate;
 }
 

@@ -80,6 +80,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
             token: _token,
             amount: _amount,
             progress: OrderProgess.Init,
+            payType: PaymentType.Unknown,
             startDate: 0,
             payed: 0
         });
@@ -118,6 +119,11 @@ contract DeOrder is IOrder, Multicall, Ownable {
         }
         
         IStage(deStage).setStage(_orderId, _amounts, _periods);
+        if(_periods[0] == 0) { //  
+            order.payType = PaymentType.Confirm;
+        } else {
+            order.payType = PaymentType.Due;
+        }
     }
 
     function permitStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods,
@@ -137,6 +143,13 @@ contract DeOrder is IOrder, Multicall, Ownable {
         if(order.worker == signAddr && msg.sender == order.issuer || 
             order.issuer == signAddr && msg.sender == order.worker) {
             order.progress = OrderProgess.Staged;
+
+            if(_periods[0] == 0) { //  
+                order.payType = PaymentType.Confirm;
+            } else {
+                order.payType = PaymentType.Due;
+            }
+
         } else {
             revert PermissionsError(); 
         }
