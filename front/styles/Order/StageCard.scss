@@ -10,7 +10,7 @@
     }
     .title{
         padding-bottom: 30px;
-        border-bottom: 2px solid #E2E2E2;
+        border-bottom: 1px solid #E2E2E2;
         font-size: 38px;
         font-family: PingFangSC-Semibold, PingFang SC;
         font-weight: 600;
@@ -18,9 +18,134 @@
         line-height: 53px;
         letter-spacing: 0.8px;
     }
+    // 预付款
+    .payModel{
+        padding: 30px 0;
+        border-bottom: 1px solid #E2E2E2;
+
+        font-size: 18px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        color: #1F1E2E;
+        line-height: 25px;
+        letter-spacing: 1px;
+        .ant-checkbox-checked{
+            .ant-checkbox-inner{
+                background-color: #1F1E2E;
+                &:focus, &, &:hover{
+                    border: none;
+                }
+            }
+        }
+        .prepay{
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            .ant-input-number{
+                width: 222px;
+                margin-right: 20px;
+                border-radius: 10px;
+                border: 1px solid #979797;
+                overflow: hidden;
+                input{
+                    height: 42px;
+                    text-align: center;
+                }
+            }
+        }
+    }
+    // tabs
+    .tabs{
+        margin-top: 30px;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0px 0px 44px -24px #7C7879;
+        // tabs body
+        .ant-tabs-content-holder{
+            border-radius: 10px;
+            border-top: none;
+        }
+        .stageInner{
+            padding: 30px 50px;
+            .inner{
+                margin-bottom: 50px;
+                font-size: 18px;
+                font-family: PingFangSC-Medium, PingFang SC;
+                font-weight: 500;
+                color: #1F1E2E;
+                .flex{
+                    display: flex;
+                    align-items: center;
+                    p{
+                        margin-left: 20px;
+                    }
+                }
+                .inner-title{
+                    margin-bottom: 10px;
+                    font-size: 24px;
+                    line-height: 33px;
+                    letter-spacing: 0.86px;
+                }
+                .name{
+                    height: 65px;
+                    border-radius: 10px;
+                    border: 1px solid #979797;
+                }
+                .period{
+                    width: 280px;
+                    overflow: hidden;
+                    border-radius: 10px;
+                    border: 1px solid #979797;
+                    line-height: 25px;
+                    letter-spacing: 1px;
+                    input{
+                        height: 53px;
+                    }
+                }
+                .percent{
+                    display: flex;
+                    .percent-list{
+                        display: flex;
+                        margin-right: 60px;
+                        .percent-item{
+                            width: 95px;
+                            height: 42px;
+                            padding: 8px 26px;
+                            margin-right: 20px;
+                            border-radius: 10px;
+                            border: 1px solid #1F1E2E;
+                            letter-spacing: 1.71px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            cursor: pointer;
+                            &:last-child{
+                                margin-right: 0;
+                            }
+                        }
+                        .percent-item-active{
+                            background-color: #1F1E2E;
+                            color: white;
+                        }
+                    }
+                }
+                .amount{
+                    width: 125px;
+                    overflow: hidden;
+                    border-radius: 10px;
+                    border: 1px solid #979797;
+                    line-height: 25px;
+                    letter-spacing: 1.71px;
+                    input{
+                        height: 42px;
+                    }
+                }
+            }
+        }
+    }
     .btn-add{
         width: 240px;
         height: 80px;
+        margin-top: 100px;
         position: relative;
         left: calc((100% - 240px) / 2);
         background: #1F1E2E;
@@ -39,4 +164,6 @@
         position: relative;
         left: calc((100% - 230px) / 2);
     }
+
+
 }
