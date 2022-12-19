@@ -26,3 +26,12 @@ export const getOrderDetail = (data) => {
         data,
     });
 }
+
+// 更新阶段划分
+export const updatedStage = (data) => {
+    return serviceAxios({
+        url: `/order/updatedStage`,
+        method: "post",
+        data,
+    });
+}

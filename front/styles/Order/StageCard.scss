@@ -56,6 +56,7 @@
     // tabs
     .tabs{
         margin-top: 30px;
+        margin-bottom: 33px;
         border-radius: 10px;
         overflow: hidden;
         box-shadow: 0px 0px 44px -24px #7C7879;
@@ -72,6 +73,9 @@
                 font-family: PingFangSC-Medium, PingFang SC;
                 font-weight: 500;
                 color: #1F1E2E;
+                &:last-child{
+                    margin-bottom: 33px;
+                }
                 .flex{
                     display: flex;
                     align-items: center;
@@ -139,9 +143,32 @@
                         height: 42px;
                     }
                 }
+                textarea{
+                    min-height: 200px;
+                    border-radius: 10px;
+                    border: 1px solid #979797;
+                }
+            }
+            // 确认按钮
+            .confirm{
+                width: 134px;
+                height: 40px;
+                margin-bottom: 20px;
+                background-color: #1F1E2E;
+                border-radius: 31px;
+                border: none;
+                position: relative;
+                left: 810px;
+
+                font-size: 14px;
+                font-family: PingFangSC-Regular, PingFang SC;
+                color: #FFFFFF;
+                line-height: 20px;
+                letter-spacing: 1.33px;
             }
         }
     }
+
     .btn-add{
         width: 240px;
         height: 80px;
@@ -164,6 +191,165 @@
         position: relative;
         left: calc((100% - 230px) / 2);
     }
+    //  总计
+    .total{
+
+        padding: 65px 0;
+        border-bottom: 1px solid #E2E2E2;
+        border-top: 1px solid #E2E2E2;
+        position: relative;
+        text-align: right;
+        p{
+            margin-bottom: 13px;
+            font-size: 28px;
+            font-family: PingFangSC-Regular, PingFang SC;
+            color: #828282;
+            letter-spacing: 1px;
+            &:last-child{margin: 0;}
+
+            span{
+                font-size: 40px;
+                color: #1F1E2E;
+                font-family: PingFangSC-Medium, PingFang SC;
+            }
+        }
+        .totalText{
+            margin: 0;
+            color: #1F1E2E;
+        }
+        .poa{
+            position: absolute;
+            left: 0;
+            bottom: 65px;
+            text-align: left;
+            p{
+                font-size: 18px;
+                font-family: PingFangSC-Regular, PingFang SC;
+                color: #828282;
+                line-height: 25px;
+                letter-spacing: 0.64px;
+            }
+        }
+    }
+    // 提交按钮
+    .submit{
+        width: 582px;
+        height: 90px;
+        // margin: 0 auto;
+        margin-top: 45px;
+        margin-left: calc((100% - 582px) / 2);
+        border-radius: 5px;
+        border: none;
+
+        color: #FFFFFF;
+        font-size: 28px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        line-height: 40px;
+        letter-spacing: 1px;
+    }
+    .show{
+        background-color: #1F1E2E;
+    }
+    .hidden{
+        background-color: #E4E4E4;
+    }
 
 
+    // 展示列表
+    .stageList{
+        padding: 40px 0 50px;
+
+        .stageItem{
+            .itemCard{
+                border-radius: 10px;
+                box-shadow: 0px 0px 44px -24px #7C7879;
+                overflow: hidden;
+                .itemCard-nav{
+                    width: 100%;
+                    height: 85px;
+                    padding: 20px 30px;
+                    background-color: #1F1E2E;
+                    color: white;
+                    letter-spacing: 0.67px;
+
+                    display: flex;
+                    align-items: center;
+                    position: relative;
+                    .nav-index{
+                        width: 55px;
+                        height: 45px;
+                        font-size: 32px;
+                        font-family: PingFangSC-Semibold, PingFang SC;
+                        font-weight: 600;
+                        line-height: 45px;
+                    }
+                    .nav-title{
+                        width: 750px;
+                        font-size: 32px;
+                        font-family: PingFangSC-Medium, PingFang SC;
+                        font-weight: 500;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                    }
+                    .operate{
+                        width: 110px;
+                        height: 32px;
+
+                        display: flex;
+                        justify-content: space-between;
+                        position: absolute;
+                        right: 57px;
+                        div{
+                            width: 32px;
+                            height: 32px;
+                            background-color: yellowgreen;
+                            
+                            position: relative;
+                        }
+                    }
+                }
+                .itemCard-content{
+                    max-height: 67px;
+                    padding: 20px 30px 30px;
+
+                    position: relative;
+                    display: flex;
+                    flex-wrap: wrap;
+                    .container{
+                        margin-right: 60px;
+                        margin-bottom: 20px;
+                        font-size: 18px;
+                        font-family: PingFangSC-Medium, PingFang SC;
+                        font-weight: 500;
+                        color: #1F1E2E;
+                        letter-spacing: 0.64px;
+
+                        span{
+                            margin-right: 10px;
+                            font-family: PingFangSC-Regular, PingFang SC;
+                            font-weight: 400;
+                            color: #828282;
+                            display: inline-block;
+                        }
+                    }
+                    .arrow{
+                        width: 27px;
+                        height: 27px;
+                        background-color: yellowgreen;
+                        border-radius: 50%;
+
+                        position: absolute;
+                        top: 18px;
+                        right: 60px;
+
+                        cursor: pointer;
+                    }
+                }
+                .open{
+                    max-height: max-content;
+                }
+            }
+        }
+    }
 }

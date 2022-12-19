@@ -1,11 +1,11 @@
-import { Input, InputNumber } from "antd";
-import { useState } from "react";
+import { Button, Input, InputNumber } from "antd";
+import { useEffect, useState } from "react";
 const { TextArea } = Input;
 
 
 export default function StageInner(params) {
     
-    const { defaultAmount, index, inner, setInner } = params;
+    const { defaultAmount, index, inner, setInner, setViewModel } = params;
     const [percent, setPercent] = useState([
         {title: '10%', value: 0.1, active: false},
         {title: '25%', value: 0.25, active: false},
@@ -27,16 +27,15 @@ export default function StageInner(params) {
         setInner(inner);
     }
 
-
     return <div className="stageInner">
         <div className="inner">
             <p className="inner-title">Stage Name</p>
-            <Input className="name" onChange={(e) => onChange('name', e.target.value)} />
+            <Input className="name" value={inner[index].name} onChange={(e) => onChange('name', e.target.value)} />
         </div>
         <div className="inner">
             <p className="inner-title">Delivery duration</p>
             <div className="flex">
-                <InputNumber className="period" onChange={(e) => onChange('period', e)} /> 
+                <InputNumber className="period" value={inner[index].period} onChange={(e) => onChange('period', e)} /> 
                 <p>Day</p>
             </div>
         </div>
@@ -57,13 +56,14 @@ export default function StageInner(params) {
                     }
                 </div>
                 <div className="flex">
-                    <InputNumber className="amount" onChange={(e) => onChange('amount', e)} /> <p>currency</p>
+                    <InputNumber className="amount" value={inner[index].amount} onChange={(e) => onChange('amount', e)} /> <p>currency</p>
                 </div>
             </div>
         </div>
         <div className="inner">
             <p className="inner-title">Delivery duration</p>
-            <TextArea onChange={(e) => onChange('desc', e.target.value)} />
+            <TextArea value={inner[index].desc} onChange={(e) => onChange('desc', e.target.value)} />
         </div>
+        <Button className="confirm" onClick={() => setViewModel(true)}>Confirm</Button>
     </div>
 }

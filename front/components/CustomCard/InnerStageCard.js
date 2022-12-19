@@ -2,6 +2,7 @@ import { useRequest, useSetState } from "ahooks";
 import { Button, Input, InputNumber, Tabs } from "antd";
 import { useEffect, useState } from "react";
 import StageInner from "../CustomItem/StageInner";
+import OutputStageCard from "./outputStageCard";
 
 
 
@@ -12,9 +13,10 @@ export default function InnerStageCard(params) {
 
     let [items,setItems] = useState([]);    //  tabs
     let [inner,setInner] = useState({});    //  参数
+    let [viewModel,setViewModel] = useState(false);    //  展示模式
 
     const { run } = useRequest(getInner, {
-        debounceWait: 1000,
+        debounceWait: 100,
         manual: true,
     });
 
@@ -41,6 +43,7 @@ export default function InnerStageCard(params) {
                         index={`item-${index}`}
                         inner={inner}
                         setInner={changeInner} 
+                        setViewModel={setViewModel}     //  修改展示模式
                       />,
             key: `item-${index}`,
           },
@@ -79,19 +82,38 @@ export default function InnerStageCard(params) {
         }
     };
 
+    // 切换模式
+    const toggleModel = () => {
+        add();
+        setViewModel(false);
+    }
+
     // 监听inner改变 ==> 返回给上一级
     useEffect(() => {
         run(inner)
     },[inner])
 
+    useEffect(() => {
+        !viewModel && console.log(inner);
+    },[viewModel])
     return <>
         {
-            items.length === 0 ?
+            items.length === 0 &&
             <div>
                 <Button className="btn-add mb60" onClick={add}>Establish</Button>
             </div>
-            : 
+            // :
+        }
+        {
+            items.length > 0 && !viewModel &&
             <Tabs type="editable-card" className="tabs" items={items} onEdit={onEdit} /> 
+        }
+        {
+            viewModel && 
+            <div className="stageList">
+            <OutputStageCard add={add} cache={inner} />
+            <Button className="btn-add mb60" onClick={() => toggleModel()}>Establish</Button>
+            </div>
         }
     </>
 }

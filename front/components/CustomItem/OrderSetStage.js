@@ -5,11 +5,14 @@ import Image from "next/image";
 import { useEffect, useState } from "react"
 import { useAccount, useNetwork } from "wagmi";
 import { useRead, useSignData } from "../../controller";
+import { updatedStage } from "../../http/_api/order";
+import { getDate } from "../../utils/getDate";
 import InnerStageCard from "../CustomCard/innerStageCard";
+import OrderStageList from "./OrderStageList";
 
 export default function OrderSetStage(params) {
     
-    const { search, order, amount } = params;
+    const { search, order, amount, task } = params;
     let [progressSet, setProgressSet] = useState();
     let [stage, setStage] = useSetState({
         orderModel: false,      //  预付款模式
@@ -17,7 +20,7 @@ export default function OrderSetStage(params) {
     let [stages, setStages] = useState({
         amount: [], period: [], deadline: ''
     })
-    let [inner, setInner] = useState();
+    let [inner, setInner] = useState();     //  阶段划分
     const { chain } = useNetwork();
     const { address } = useAccount();
 
@@ -29,6 +32,8 @@ export default function OrderSetStage(params) {
     const { useSign, obj } = useSignData(signObj);
     let [isSigner,setIsSigner] = useState(false);
 
+    // 设置阶段按钮
+    let [btnDisabled,setBtnDisabled] = useState(true);
 
     //  切换order模式 ==> 预付款
     const toggleModel = (e) => {
@@ -39,6 +44,21 @@ export default function OrderSetStage(params) {
     const getInner = (obj) => {
         inner = obj;
         setInner({...inner});
+
+        // 参数空指针判断
+        let flag = true;
+        for (const i in inner) {
+            for (const j in inner[i]) {
+                if (!inner[i][j]) {
+                    flag = false
+                }
+            }
+        }
+        if (flag) {
+            setBtnDisabled(false);
+        }else{
+            setBtnDisabled(true);
+        }
     }
 
     //  设置阶段 ==> 处理签名信息
@@ -74,42 +94,133 @@ export default function OrderSetStage(params) {
 
     // 签名成功 ==>
     const signSuccess = () => {
-        setIsSigner(false)
-        
+        setIsSigner(false);
+        let stageDetail = {
+            orderId: search.order_id,
+            stages: [],
+            task: {
+                id: task.task_id,
+                title: task.title,
+                desc: task.desc,
+                attachment: task.attachment,
+            },
+            // last: stagejson, //  jsonhash
+            last: '', //  jsonhash
+            version: '1.0'
+        };
+        let arr = [];
+        let _amount = [];
+        let _period = [];
+        for (const i in inner) {
+            arr.push(inner[i]);
+        }
+        arr.map(e => {
+            _amount.push(e.amount);
+            _period.push(e.period);
+            stageDetail.stages.push({
+                milestone: {
+                    type: 'raw',
+                    content: e.desc,
+                    title: e.name
+                },
+                delivery: {
+                    attachment: '',
+                    fileType: '',
+                    content: ''
+                }
+            })
+        })
+        stages.amount = _amount;
+        stages.period = _period;
+        updatedStage({
+            signature: useSign.data,
+            sign_address: address,
+            obj: JSON.stringify(stageDetail),
+            order_id: order.order_id,
+            stages: JSON.stringify(stages),
+            status: 10
+        })
+        .then(res => {
+            console.log(res);
+        })
+    }
+
+    // 总计各阶段
+    const printStageTotal = () => {
+        let num = 0;
+        for (const i in inner) {
+            if (inner[i].amount) {
+                num++;
+                return <p key={i}>P{num} stage cost: <span>{inner[i].amount}</span></p>
+            }
+        }
+    }
+
+    // 总计金额
+    const printTotal = () => {
+        let sum = 0;
+        for (const i in inner) {
+            sum+=inner[i].amount;
+        }
+        return <p className="totalText">Total expenses: <span>{sum}</span></p>
+    }
+
+    // 总计周期
+    const printTotalPeriod = () => {
+        let sum = 0;
+        for (const i in inner) {
+            sum+=inner[i].period;
+        }
+        let now = new Date().getTime();
+        let end = new Date().getTime() + (sum * 24 * 60 * 60 * 1000);
+        let nowTime = getDate(now,'d');
+        let endTime = getDate(end,'d');
+        return <div className="poa">
+            <p>Estimated time: {sum}Day</p>
+            <p>Development cycle: {nowTime}~{endTime}</p>
+        </div>
     }
 
     const switchSetStageCard = () => {
-        progressSet = 1;
-        switch (progressSet) {
-            case 0:
-                return <>
+
+        if (progressSet === 0) {
+            return <>
                     <p className="title">Waiting phase division</p>
                     <div className="img_p0 mb60">
                         <Image src='/img/img-order-p0.png' layout="fill" />
                     </div>
                 </>
-            case 1:
-                return <>
-                    <p className="title">Task stage division</p>
-                    <div className="payModel">
-                        <Checkbox checked={stage.orderModel} onChange={toggleModel}>
-                            Increase advance payment
-                        </Checkbox>
-                        { 
-                            stage.orderModel && 
-                            <div className="prepay">
-                                <InputNumber /><span>{order.currency}</span>
-                            </div> 
-                        }
-                    </div>
-                    <InnerStageCard defaultAmount={amount} getInner={getInner} />
+        }else{
+            return <>
+            <p className="title">Task stage division</p>
+            <div className="payModel">
+                <Checkbox checked={stage.orderModel} onChange={toggleModel}>
+                    Increase advance payment
+                </Checkbox>
+                { 
+                    stage.orderModel && 
+                    <div className="prepay">
+                        <InputNumber /><span>{order.currency}</span>
+                    </div> 
+                }
+            </div>
+            <InnerStageCard defaultAmount={amount} getInner={getInner} />
+            
+            {
+                JSON.stringify(inner) !== '{}' && <>
                     {/* 总计 */}
-
-                    {/* 按钮 */}
-                    <Button onClick={sendSignature}>Complete and submit phasing</Button>
+                    <div className="total">
+                        {
+                            stage.orderModel && <p>Advance charge: <span>{}</span></p>
+                        }
+                        {printStageTotal()}
+                        {printTotal()}
+                        {printTotalPeriod()}
+                    </div>
                 </>
-            default:
-                break;
+            }
+            <Button className={`submit ${btnDisabled ? 'hidden' : 'show'}`} onClick={() => sendSignature()} disabled={btnDisabled}>Complete and submit phasing</Button>
+        </>
         }
     }
 
