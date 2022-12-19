@@ -1,14 +1,6 @@
 import { useEffect, useState } from "react";
-import { useRouter } from 'next/router'
 import { Steps, Button, message, Modal, Image } from "antd";
-import { getDemandInfo } from "../http/api/task";
-import { multicallWrite, muticallEncode, useRead, useSignData } from "../controller";
-import Stage_info from "../components/Stage_info";
-import { ethers } from "ethers";
 import { useAccount, useNetwork } from 'wagmi'
-import { getOrdersInfo, getStagesHash, getStagesJson } from "../http/api/order";
-import { getDate } from "../utils/getDate";
-import { ExclamationCircleOutlined } from '@ant-design/icons';
 const { Step } = Steps;
 import { deform_Skills } from '../utils/Deform';
 import qs from 'querystring';
@@ -27,12 +19,19 @@ export default function Order(props) {
     });
     let [task, setTask] = useState();           // task详情
     let [order, setOrder] = useState();         // order详情
+    let [stages, setStages] = useState();       // 阶段详情
     
     const switchStages = () => {
         // order.progress = 1;
         switch (order.progress) {
             case 0:
-                return <OrderSetStage search={search} order={order} task={task} amount={task.budget} />     //   设置阶段
+                return <OrderSetStage 
+                    search={search} 
+                    order={order} 
+                    task={task} 
+                    amount={task.budget}
+                    dataStages={stages}
+                 />     //   设置阶段
             default:
                 return <OrderStageList />     //   阶段开始
         }
@@ -61,6 +60,22 @@ export default function Order(props) {
                 setTask({...task});
                 delete res.data.list[0].task;
                 order = res.data.list[0];
+                if (order.stage_json) {
+                    order.stage_json = JSON.parse(order.stage_json);
+                    order.stages = JSON.parse(order.stages);
+
+                    let arr = []
+                    order.stages.amount.map((e,i) => {
+                        arr.push({
+                            amount: e,
+                            period: order.stages.period[i],
+                            name: order.stage_json.stages[i].milestone.title,
+                            desc: order.stage_json.stages[i].milestone.content
+                        })
+                    })
+                    stages = arr;
+                }
+                setStages([...stages]);
                 setOrder({...order});
             }
         })

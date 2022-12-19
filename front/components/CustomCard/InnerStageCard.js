@@ -9,7 +9,7 @@ import OutputStageCard from "./outputStageCard";
 export default function InnerStageCard(params) {
     
 
-    const { defaultAmount, getInner } = params;
+    const { defaultAmount, getInner, dataStages } = params;
 
     const [activeKey, setActiveKey] = useState();    //  当前选中标签
     let [items,setItems] = useState([]);    //  tabs
@@ -102,6 +102,29 @@ export default function InnerStageCard(params) {
         run(inner)
     },[inner])
 
+    useEffect(() => {
+        if (dataStages) {
+            let arr = [];
+            dataStages.map((e,i) => {
+                inner[`item-${i+1}`] = { ...e };
+                setInner({...inner});
+                arr.push({
+                    label: `P ${i+1}`,
+                    children: <StageInner 
+                                defaultAmount={defaultAmount} 
+                                index={`item-${i+1}`}
+                                inner={inner}
+                                setInner={changeInner} 
+                                setViewModel={setViewModel}     //  修改展示模式
+                              />,
+                    key: `item-${i+1}`,
+                })
+            })
+            items = arr;
+            setItems([...items]);
+        }
+    },[dataStages])
+
     return <>
         {
             items.length === 0 &&
@@ -110,7 +133,7 @@ export default function InnerStageCard(params) {
             </div>
         }
         {
-            items.length > 0 && !viewModel &&
+            items.length > 0 && !viewModel && !dataStages &&
             <Tabs 
                 type="editable-card" 
                 className="tabs" 
@@ -125,6 +148,12 @@ export default function InnerStageCard(params) {
             <div className="stageList">
             <OutputStageCard edit={onChange} remove={remove} cache={inner} />
             <Button className="btn-add mb60" onClick={() => toggleModel()}>Establish</Button>
+            </div>
+        }
+        {
+            items.length > 0 && dataStages && 
+            <div className="stageList">
+            <OutputStageCard edit={onChange} remove={remove} cache={inner} />
             </div>
         }
     </>

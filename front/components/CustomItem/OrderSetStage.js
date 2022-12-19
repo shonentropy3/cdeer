@@ -11,7 +11,7 @@ import InnerStageCard from "../CustomCard/innerStageCard";
 
 export default function OrderSetStage(params) {
     
-    const { search, order, amount, task } = params;
+    const { search, order, amount, task, dataStages } = params;
     let [progressSet, setProgressSet] = useState();
     let [stage, setStage] = useSetState({
         orderModel: false,      //  预付款模式
@@ -182,48 +182,97 @@ export default function OrderSetStage(params) {
 
     const switchSetStageCard = () => {
 
-        if (progressSet === 0) {
-            return <>
+        switch (progressSet) {
+            case 0:
+                return <>
                     <p className="title">Waiting phase division</p>
                     <div className="img_p0 mb60">
                         <Image src='/img/img-order-p0.png' layout="fill" />
                     </div>
                 </>
-        }else{
-            return <>
-            <p className="title">Task stage division</p>
-            <div className="payModel">
-                <Checkbox checked={stage.orderModel} onChange={toggleModel}>
-                    Increase advance payment
-                </Checkbox>
-                { 
-                    stage.orderModel && 
-                    <div className="prepay">
-                        <InputNumber /><span>{order.currency}</span>
-                    </div> 
+            case 1:
+                return <>
+                <p className="title">Task stage division</p>
+                <div className="payModel">
+                    <Checkbox checked={stage.orderModel} onChange={toggleModel}>
+                        Increase advance payment
+                    </Checkbox>
+                    { 
+                        stage.orderModel && 
+                        <div className="prepay">
+                            <InputNumber /><span>{order.currency}</span>
+                        </div> 
+                    }
+                </div>
+                <InnerStageCard defaultAmount={amount} getInner={getInner} />
+                
+                {
+                    JSON.stringify(inner) !== '{}' && <>
+                        {/* 总计 */}
+                        <div className="total">
+                            {
+                                stage.orderModel && <p>Advance charge: <span>{}</span></p>
+                            }
+                            {printStageTotal()}
+                            {printTotal()}
+                            {printTotalPeriod()}
+                        </div>
+                        <Button className={`submit ${btnDisabled ? 'hidden' : 'show'}`} onClick={() => sendSignature()} disabled={btnDisabled}>Complete and submit phasing</Button>
+                    </>
                 }
-            </div>
-            <InnerStageCard defaultAmount={amount} getInner={getInner} />
-            
-            {
-                JSON.stringify(inner) !== '{}' && <>
-                    {/* 总计 */}
-                    <div className="total">
-                        {
-                            stage.orderModel && <p>Advance charge: <span>{}</span></p>
-                        }
-                        {printStageTotal()}
-                        {printTotal()}
-                        {printTotalPeriod()}
-                    </div>
-                    <Button className={`submit ${btnDisabled ? 'hidden' : 'show'}`} onClick={() => sendSignature()} disabled={btnDisabled}>Complete and submit phasing</Button>
-                </>
-            }
-        </>
+            </>
+            case 2:
+                // 判断是自己设置的还是对方设置的
+                if (order.issuer === address || order.worker === address) {
+                    if (order.sign_address === address) {
+                        // 是你的
+                        return <>
+                            <p className="title">Task stage division</p>
+                            <div className="payModel">
+                                <Checkbox checked={dataStages[0].period === 0 ? true : false} disabled>
+                                    Increase advance payment
+                                </Checkbox>
+                                { 
+                                    dataStages[0].period === 0 && 
+                                    <div className="prepay">
+                                        {dataStages[0].amount}
+                                    </div> 
+                                }
+                            </div>
+                            <InnerStageCard defaultAmount={amount} getInner={getInner} dataStages={dataStages} />
+                            <>
+                                {/* 总计 */}
+                                <div className="total">
+                                    {
+                                        dataStages[0].period === 0 && 
+                                        <p>Advance charge: <span>{}</span></p>
+                                    }
+                                    {printStageTotal()}
+                                    {printTotal()}
+                                    {printTotalPeriod()}
+                                </div>
+                            </>
+                        </>
+                    }else{
+                        // 不是 你的
+                        return <>
+
+                        </>
+                    }
+                }else{
+                    return <h1>非该项目参与者</h1>
+                }
+            default:
+                break;
         }
     }
 
     useEffect(() => {
+        if (dataStages) {
+            console.log(inner);
+        }
+
+
         // 判断是否设置过
         if (!order.signature) {
             progressSet = search.who === 'issuer' ? 0 : 1;  //  设置阶段初始化: 0:甲方的初始化 1:乙方的初始化
