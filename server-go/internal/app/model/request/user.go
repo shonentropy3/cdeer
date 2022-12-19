@@ -11,3 +11,8 @@ type UpdateUserInfoRequest struct {
 type CreateUserInfoRequest struct {
 	model.User
 }
+
+type MsgListRequest struct {
+	model.Message
+	PageInfo
+}

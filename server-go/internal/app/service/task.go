@@ -75,35 +75,29 @@ func GetTaskList(searchInfo request.GetTaskListRequest) (err error, list interfa
 // @param: taskReq request.CreateTaskRequest
 // @return: err error
 func CreateTask(taskReq request.CreateTaskRequest) (err error) {
-	// 开始事务
-	tx := global.DB.Begin()
 	// 查找技能要求是否在列表中
 	var roleList []int64
 	for _, v := range taskReq.Role {
 		roleList = append(roleList, v)
 	}
 	var count int64
-	if err = tx.Model(&model.TaskRole{}).Where("role_num in ?", roleList).Count(&count).Error; err != nil {
-		tx.Rollback()
+	if err = global.DB.Model(&model.TaskRole{}).Where("role_num in ?", roleList).Count(&count).Error; err != nil {
 		return errors.New("新建失败")
 	}
 	if int(count) != len(taskReq.Role) {
-		tx.Rollback()
 		return errors.New("新建失败")
 	}
 	// 保存请求数据
 	raw, err := json.Marshal(taskReq)
 	if err != nil {
-		tx.Rollback()
 		return errors.New("新建失败")
 	}
 	// 保存交易hash
 	transHash := model.TransHash{SendAddr: taskReq.Issuer, EventName: "TaskCreated", Hash: taskReq.Hash, Raw: string(raw)}
 	if err = SaveHash(transHash); err != nil {
-		tx.Rollback()
 		return errors.New("新建失败")
 	}
-	return tx.Commit().Error
+	return nil
 }
 
 // UpdatedTask
@@ -112,21 +106,17 @@ func CreateTask(taskReq request.CreateTaskRequest) (err error) {
 // @param: task model.Tasks, info Req.PageInfo
 // @return: err error, list interface{}, total int64
 func UpdatedTask(taskReq request.UpdatedTaskRequest) (err error) {
-	// 开始事务
-	tx := global.DB.Begin()
 	// 保存请求数据
 	raw, err := json.Marshal(taskReq)
 	if err != nil {
-		tx.Rollback()
 		return errors.New("新建失败")
 	}
 	// 保存交易hash
 	transHash := model.TransHash{SendAddr: taskReq.Issuer, EventName: "TaskModified", Hash: taskReq.Hash, Raw: string(raw)}
 	if err = SaveHash(transHash); err != nil {
-		tx.Rollback()
 		return errors.New("新建失败")
 	}
-	return tx.Commit().Error
+	return nil
 }
 
 // DeleteTask
@@ -157,7 +147,7 @@ func ModifyApplySwitch(req request.ModifyApplySwitchRequest, address string) (er
 // @return: res []*model.Skill, err error
 func GetSillTreeMap(sillId uint) (res []*model.Skill, err error) {
 	var allMenus []*model.Skill
-	err = global.DB.Order("sort desc").Find(&allMenus).Error
+	err = global.DB.Order("sort").Find(&allMenus).Error
 	if err != nil {
 		return
 	}

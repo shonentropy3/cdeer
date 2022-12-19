@@ -1,7 +1,6 @@
 package api
 
 import (
-	_ "code-market-admin/docs"
 	"code-market-admin/internal/app/global"
 	"code-market-admin/internal/app/model/request"
 	"code-market-admin/internal/app/model/response"
@@ -132,10 +131,10 @@ func DeleteApply(c *gin.Context) {
 		return
 	}
 	if err := service.DeleteApply(apply); err != nil {
-		global.LOG.Error("删除失败!", zap.Error(err))
-		response.FailWithMessage("删除失败", c)
+		global.LOG.Error("操作失败!", zap.Error(err))
+		response.FailWithMessage("操作失败", c)
 	} else {
-		response.OkWithMessage("删除成功", c)
+		response.OkWithMessage("操作成功", c)
 	}
 }
 

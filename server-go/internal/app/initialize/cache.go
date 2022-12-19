@@ -7,7 +7,18 @@ import (
 )
 
 func Cache() *bigcache.BigCache {
-	cache, err := bigcache.New(context.Background(), bigcache.DefaultConfig(time.Hour*24))
+	config := bigcache.Config{
+		Shards:             1024,
+		LifeWindow:         time.Hour * 24,
+		CleanWindow:        5 * time.Minute,
+		MaxEntriesInWindow: 10000,
+		MaxEntrySize:       500,
+		StatsEnabled:       false,
+		Verbose:            true,
+		HardMaxCacheSize:   0,
+		Logger:             bigcache.DefaultLogger(),
+	}
+	cache, err := bigcache.New(context.Background(), config)
 	if err != nil {
 		panic(err)
 	}

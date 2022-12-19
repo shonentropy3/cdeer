@@ -1,10 +1,10 @@
 import { Button, Empty, Modal, message } from "antd";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { modifyApplySwitch, deleteTask } from '../../http/_api/task'
 export default function TaskItem(params) {
     
-    const { taskList, select, who, taskModal } = params;
+    const { taskList, select, who, taskModal, setTaskInfo, taskInfo, isLoading } = params;
     const router = useRouter();
 
     // 修改报名开关
@@ -30,14 +30,23 @@ export default function TaskItem(params) {
         })
     }
 
+    // 选择修改的任务
+    const checkItem = (e) =>{
+        taskList.map((ele)=>{
+            if ( e == ele.task_id ) {
+                taskInfo = ele
+                setTaskInfo({...taskInfo})
+                taskModal(true)
+            }
+        })
+    }
+
     // 删除任务需求
     const delTask = (id) => {
-        console.log(id);
         deleteTask({
             task_id: id
         })
         .then((res)=> {
-            console.log(res);
             if (res.code == 0) {
                 message.success(res.msg)
                 setTimeout(() => {
@@ -70,7 +79,7 @@ export default function TaskItem(params) {
                                 <p>Number of applicants</p>
                             </div>
                         </div>
-                        <Button onClick={() => taskModal(true)}>Edit this item</Button>
+                        <Button loading={isLoading} onClick={() => checkItem(e.task_id)}>Edit this item</Button>
                         <Button onClick={() => applySwitch(e.task_id,e.apply_switch)}>报名开关</Button>
                         <Button onClick={() => delTask(e.task_id) }>删除需求</Button>
                     </div>

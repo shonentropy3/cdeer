@@ -27,3 +27,18 @@ zap:
   stacktrace-key: stacktrace
   log-in-console: true
 
+# contract configuration
+contract:
+  net: "mumbai"
+  provider: "https://mainnet.infura.io/v3/8501edc23e624999adbce6d37693f37f"
+  signature: "Welcome to OpenSea!\n\nClick to sign in and accept the OpenSea Terms of Service: https://opensea.io/tos\n\nThis request will not trigger a blockchain transaction or cost any gas fees.\n\nYour authentication status will reset after 24 hours.\n\n"
+
+# jwt configuration
+jwt:
+  signing-key: "qmPlus"
+  expires-time: 86400
+  issuer: "Detask"
+
+# local configuration
+local:
+  path: 'uploads/file'

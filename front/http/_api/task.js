@@ -27,6 +27,15 @@ export const deleteTask = (data) => {
     })
 }
 
+// 修改需求
+export const updateTask = (data) => {
+    return serviceAxios({
+        url: '/task/updatedTask',
+        method: 'post',
+        data
+    })
+} 
+
 // 获取task报名列表
 export const getApply = (data) => {
     return serviceAxios({

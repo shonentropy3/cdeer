@@ -66,15 +66,12 @@ func GetApply(searchInfo request.GetApplyRequest) (err error, list interface{}, 
 // @param: taskReq request.CreateTaskRequest
 // @return: err error
 func CreateApply(applyReq request.CreateApplyRequest) (err error) {
-	// 开始事务
-	tx := global.DB.Begin()
 	// 保存交易hash
 	transHash := model.TransHash{SendAddr: applyReq.ApplyAddr, EventName: "ApplyFor", Hash: applyReq.Hash}
 	if err = SaveHash(transHash); err != nil {
-		tx.Rollback()
 		return errors.New("新建失败")
 	}
-	return tx.Commit().Error
+	return nil
 }
 
 // UpdatedApply
@@ -83,15 +80,12 @@ func CreateApply(applyReq request.CreateApplyRequest) (err error) {
 // @param: applyReq request.UpdatedApplyRequest
 // @return: err error
 func UpdatedApply(applyReq request.UpdatedApplyRequest) (err error) {
-	// 开始事务
-	tx := global.DB.Begin()
 	// 保存交易hash
 	transHash := model.TransHash{SendAddr: applyReq.ApplyAddr, EventName: "ApplyFor", Hash: applyReq.Hash}
 	if err = SaveHash(transHash); err != nil {
-		tx.Rollback()
 		return errors.New("新建失败")
 	}
-	return tx.Commit().Error
+	return nil
 }
 
 // DeleteApply
@@ -100,12 +94,9 @@ func UpdatedApply(applyReq request.UpdatedApplyRequest) (err error) {
 // @param: applyReq request.DeleteApplyRequest
 // @return: err error
 func DeleteApply(applyReq request.DeleteApplyRequest) (err error) {
-	// 开始事务
-	tx := global.DB.Begin()
 	// 保存交易hash
 	transHash := model.TransHash{SendAddr: applyReq.ApplyAddr, EventName: "CancelApply", Hash: applyReq.Hash}
 	if err = SaveHash(transHash); err != nil {
-		tx.Rollback()
 		return errors.New("新建失败")
 	}
 	return nil

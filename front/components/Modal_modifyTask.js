@@ -1,56 +1,42 @@
 import { useState,useEffect } from "react"
-import { Button, Input,Select,Upload, Checkbox,message } from "antd"
+import { Button, Input,Select,Upload, Checkbox,message, Modal } from "antd"
 import {FolderAddOutlined} from "@ant-design/icons"
 import { useContracts } from "../controller";
-import { useAccount } from "wagmi";
+import { useAccount, useProvider } from "wagmi";
 import { getHash } from "../http/api/task";
-import { modifyDemand } from "../http/api/user";
 import { ethers } from "ethers";
 import { useRouter } from "next/router";
+import { useUpdateEffect } from "ahooks";
 import { BitOperation } from "../utils/BitOperation";
+import { updateTask } from "../http/_api/task";
+import { getJwt } from "../utils/GetJwt";
 
 
 export  function Modal_ModifyTask (params) {
+    const { showModifyTaskModal, setShowModal, taskInfo, setTaskInfo, setIsLoading } = params
+    const _data = require("../data/data.json")
+
     const { TextArea }  = Input
     const { Dragger } = Upload;
     const {Option} = Select;
     const router = useRouter()
+    const provider = useProvider();
+
 
     // const {allInfo,taskId} = params
     const {address,isConnected } = useAccount()
 
-    const { useTaskContractWrite } = useContracts("modifyTask")
+    const { useTaskContractWrite: Task } = useContracts("modifyTask")
 
     let [account,setAccount] = useState()
-    
-    let [budget,setBudget] = useState("")
-    let [projectTitle,setProjectTitle] = useState()
-    let [projectDesc,setProjectDesc] = useState()
-    let [projectAttrchment,setProjectAttrchment] = useState("")
-    let [types,setTypes] = useState([])
-    let [projectSkills,setProjectSkills] = useState([])
-    let [period,setPeriod] = useState()
-    let [currency,setCurrency] = useState()
-    let [buttonType,setButtonType] = useState("text")
-    let [demandId,setDemandId] = useState()
+    let [skillIndex,setSkillIndex] = useState([])
 
     let [formData,setFormData] = useState()
     let [suffix,setSuffix] = useState()
 
     let [modifyInfo,setModifInfo] = useState({})
     
-    let [skillss,setSkillss] = useState(
-        [
-            {title: 'solidity', status: false, buttonType:"text", value: '101'},
-            {title: 'javascript', status: false, buttonType:"text", value: '102'},
-            {title: 'python', status: false, buttonType:"text", value: '103'},
-            {title: 'Go', status: false, buttonType:"text", value: '104'},
-            {title: 'C/C++', status: false, buttonType:"text", value: '105'},
-            {title: 'Android', status: false, buttonType:"text", value: '106'},
-            {title: 'HTML/CSS', status: false, buttonType:"text", value: '107'},
-            {title: 'IOS', status: false, buttonType:"text", value: '108'},
-        ]
-    )
+    let [skillss,setSkillss] = useState([])
 
     const beforeUpload = (info) => {
         const isLt2M = info.file.size / 1024 / 1024 < 20
@@ -85,7 +71,17 @@ export  function Modal_ModifyTask (params) {
         }
     }
 
-
+    // 初始化技能列表
+    const initSkills = () => {
+        let arr = []
+        _data.skills.map((e,i)=>{
+            if (i > 0) {
+                arr.push({title: e.name, status: false, value: e.value})
+            }
+        })
+        skillss = arr
+        setSkillss([...skillss])
+    }
 
     const checkSkill = (e,i)=>{
 
@@ -104,22 +100,38 @@ export  function Modal_ModifyTask (params) {
         }
     }
 
+    // 修改任务信息
+    const changeInfo = (type,value) => {
+        if ( type == 'period' ) {
+            value = value * (24*3600)
+        }
+        taskInfo[type] = value
+        setTaskInfo({...taskInfo})
+    }
+
     const modifyHandler = async ()=>{
-        
-        let modifyInfo = {
-            demand_id: demandId,
-            currency: currency,
-            attachment: "",
-            budget: budget,
-            pro_content: projectDesc,
-            period: period,
-            recruiting_role: `{${[...projectSkills]}}`,
-            demand_type: `{${[...types]}}`,
-            title: projectTitle,
-            suffix: suffix,
-            issuer: account,
-            disabled:false,
-            payhash:""
+        let arr = [];
+        let newArr = []
+        skillss.map((e,i)=>{
+            if (e.status) {
+                arr.push(e.value)
+                newArr.push(i + 1)
+            }
+        })
+        skillIndex = newArr
+        setSkillIndex([...skillIndex])
+        modifyInfo = {
+            task_id: taskInfo.task_id,
+            currency: taskInfo.currency === 'ETH' ? 1 : 1,
+            attachment: taskInfo.attachment,
+            budget: taskInfo.budget,
+            desc: taskInfo.desc,
+            period: taskInfo.period,
+            role: [...arr],
+            title: taskInfo.title,
+            suffix: taskInfo.suffix,
+            hash: '',
+            issuer: taskInfo.issuer
         }
         if(formData){
             await getHash(formData)
@@ -132,55 +144,63 @@ export  function Modal_ModifyTask (params) {
             })
         }
         setModifInfo({...modifyInfo})
-        // console.log(modifyInfo);
         let params = {
             title: modifyInfo.title,
-            desc: modifyInfo.pro_content,
-            attachment: "",
+            desc: modifyInfo.desc,
+            attachment: modifyInfo.attachment,
             currency:modifyInfo.currency,
-            budget: modifyInfo.budget,
+            budget: ethers.utils.parseEther((modifyInfo.budget).toString()),
             period: modifyInfo.period,
-            categories: BitOperation([...modifyInfo.demand_type]),
-            skills: BitOperation([...modifyInfo.recruiting_role]),
+            skills: BitOperation([...skillIndex]),
             disabled: false,
-            payhash: ""
+            timestamp: 0
         }
-        console.log(modifyInfo);
-        console.log("address===>",account);
-        useTaskContractWrite.write({
+        const token = localStorage.getItem(`session.${address.toLowerCase()}`);
+        let status = getJwt(token);
+        if (!status) {
+            await getToken();
+        }
+        setIsLoading(true)
+        setShowModal(false)
+        let taskId = taskInfo.task_id
+        Task.write({
             recklesslySetUnpreparedArgs: [
-                account,
+                taskId,
                 params,
                 {
-                    value: ethers.utils.parseEther("1")
+                    value: ethers.utils.parseEther("0")
                 }
             ]
         })
-        console.log(useTaskContractWrite);
     }
 
-    const writeSuccess = () => {
-        modifyInfo.payhash = useTaskContractWrite.data.hash
-        let para = {"proLabel":JSON.stringify(modifyInfo)}
-        console.log(para);
-        console.log(2);
-        modifyDemand(para)
+    const writeSuccess = async () => {
+        modifyInfo.hash = Task.data.hash
+        setModifInfo({...modifyInfo})
+        await updateTask(modifyInfo)
         .then(res => {
-            console.log(res.code);
-            if(res.code == '200') {
-                message.success('修改成功')
-                setTimeout(() => {
-                    router.push('/issuer/Projects')
-                })
+            if(res.code == 0) {
+                setIsLoading(false)
             }else{
-                message.error('连接超时')
-                console.log(res);
+                message.error(res.msg);
             }
         })
-        .catch(err => {
-            console.log(err);
-            message.error('创建失败')
+        await provider.getTransaction(Task.data.hash)
+        .then(res => {
+            setIsLoading(true)
+            message.success('交易成功');
+            setTimeout(() => {
+                history.go(0)    
+            }, 500);
         })
+        .catch(err => {
+            message.error('交易失败')
+        })
+    }
+
+    const writeError = () => {
+        setIsLoading(false)
+        message.error('交易失败')
     }
 
 
@@ -204,17 +224,6 @@ export  function Modal_ModifyTask (params) {
     //     })
     // },[])
 
-    useEffect(() => {
-        let arr = []
-        skillss.map(e => {
-            if(e.status && arr.length < 6) {
-                arr.push(e.value)
-            }
-        })
-        projectSkills = arr
-        console.log("ski ===>",projectSkills);
-        setProjectSkills([...projectSkills])
-    },[skillss])
 
     useEffect(()=>{
         if (isConnected) {
@@ -223,91 +232,112 @@ export  function Modal_ModifyTask (params) {
         }
     },[isConnected])
 
-    useEffect(()=>{
-        console.log(useTaskContractWrite.isSuccess);
-    },[useTaskContractWrite.isSuccess])
 
     useEffect(()=>{
-        console.log(useTaskContractWrite.isSuccess);
-        useTaskContractWrite.isSuccess ? writeSuccess() : ""
-    },[useTaskContractWrite.isSuccess])
+        Task.data?.hash ? writeSuccess() : ""
+    },[Task.data?.hash])
 
-    return <div className="Modal_modifyTask">
-        <p className="project-title">项目名称</p>
-        <Input value={projectTitle} onChange={(e)=>setProjectTitle(e.target.value)} />
-        <p style={{marginTop:20}}>项目描述</p>
-        <TextArea
-            value={projectDesc}
-            onChange={(e)=>setProjectDesc(e.target.value)}
-        ></TextArea>
+    useEffect(()=>{
+        Task.error ? writeError() : ""
+    },[Task.error])
+
+    useUpdateEffect(()=>{
+        initSkills()
+        taskInfo?.role.map((ele)=>{
+            skillss.map((e)=>{
+                if ( e.title == ele ) {
+                    e.status = true
+                }
+            })
+        })
+        setSkillss([...skillss])
+    },[taskInfo])
 
 
-        <Upload
-            listType="picture"
-            maxCount={1}
-            name="file"
-            onChange={uploadChange}
-            customRequest={upload}
-            
-        >
-            <Button style={{width: 472,height:50,marginTop:20}} icon={<FolderAddOutlined />}>上传项目需求文档（Word、Excel、PPT、PDF，20MB以内）</Button>
-        </Upload>
+    return <Modal
+                footer={null}
+                open={showModifyTaskModal}
+                onCancel={()=>setShowModal(false)}
+            >
+        <div className="Modal_modifyTask">
+            <p className="project-title">项目名称</p>
+            <Input value={taskInfo?.title} onChange={(e)=>changeInfo('title',e.target.value)} />
+            <p style={{marginTop:20}}>项目描述</p>
+            <TextArea
+                value={taskInfo?.desc}
+                onChange={(e)=>changeInfo('desc',e.target.value)}
+            ></TextArea>
 
-        <p style={{marginTop:20}}>技能要求(最多六个)</p>
-        {
-            skillss.map((e,i)=>
-                <Button 
-                    style={{marginBottom:10,marginRight:10}}
-                    type={e.status ? 'primary':'text'} 
-                    key={i}
-                    onClick={()=>checkSkill(e,i)}
-                >
-                    {e.title}
-                </Button>
 
-            )
-        }
-        <p style={{marginTop:20}}>项目预算</p>
-        <input 
-            value={budget} 
-            onChange={(e)=>(setBudget(e.target.value))}
-            style={{width:350}} />
-        <Select 
-            style={{width:100}}
-            value={currency}
-            onChange={(e)=>{setCurrency(e)}}
-            defaultValue={currency}>
-            <Option value={1}>ETH</Option>
-            <Option value={2}>BTC</Option>
-        </Select>
-        <p style={{marginTop:20}}>项目周期</p>
-        <Select 
-            style={{width:450}}
-            value={(period/24/60/60).toString()}
-            onChange={(e)=>{setPeriod((e*24*60*60).toString())}}
-            // defaultValue={(period/24/60/60).toString()}
-            defaultValue={3}
-        >
-            <Option value="0">预计周期</Option>
-            <Option value="3">3天</Option>
-            <Option value="7">1周</Option>
-            <Option value="21">3周</Option>
-            <Option value="30">1个月</Option>
-            <Option value="60">2个月</Option>
-        </Select>
-        <Button 
-        type="primary" 
-        style={{
-            width:450,
-            height:50,
-            marginTop:20,
-            fontSize:18
-        }}
-        onClick={modifyHandler}
-        >
-            确认修改
-        </Button>
-    </div>
+            <Upload
+                listType="picture"
+                maxCount={1}
+                name="file"
+                onChange={uploadChange}
+                customRequest={upload}
+                
+            >
+                <Button style={{width: 472,height:50,marginTop:20}} icon={<FolderAddOutlined />}>上传项目需求文档（Word、Excel、PPT、PDF，20MB以内）</Button>
+                <span>{taskInfo?.suffix}</span>
+            </Upload>
+
+            <p style={{marginTop:20}}>技能要求(最多六个)</p>
+            {
+                skillss.map((e,i)=>
+                    <Button 
+                        style={{marginBottom:10,marginRight:10}}
+                        type={e.status ? 'primary':'text'} 
+                        key={i}
+                        onClick={()=>checkSkill(e,i)}
+                    >
+                        {e.title}
+                    </Button>
+
+                )
+            }
+            <p style={{marginTop:20}}>项目预算</p>
+            <input 
+                value={taskInfo?.budget} 
+                onChange={(e)=>changeInfo('budget',e.target.value)}
+                style={{width:350}} />
+            <Select 
+                style={{width:100}}
+                value={taskInfo?.currency}
+                onChange={(e)=>changeInfo('currency',e.target.value)}
+                defaultValue={taskInfo?.currency}>
+                <Option value={1}>ETH</Option>
+                <Option value={2}>BTC</Option>
+                <Option value={3}>USD</Option>
+            </Select>
+            <p style={{marginTop:20}}>项目周期</p>
+            <Select 
+                style={{width:450}}
+                value={(taskInfo?.period/24/60/60).toString()}
+                onChange={(e)=>changeInfo('period',e)}
+                // defaultValue={(period/24/60/60).toString()}
+                defaultValue={3}
+            >
+                <Option value="0">预计周期</Option>
+                <Option value="3">3天</Option>
+                <Option value="7">1周</Option>
+                <Option value="21">3周</Option>
+                <Option value="30">1个月</Option>
+                <Option value="60">2个月</Option>
+            </Select>
+            <Button 
+            type="primary" 
+            style={{
+                width:450,
+                height:50,
+                marginTop:20,
+                fontSize:18
+            }}
+            onClick={modifyHandler}
+            >
+                确认修改
+            </Button>
+        </div>
+    </Modal>
 }
 
 

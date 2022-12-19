@@ -27,13 +27,13 @@ func NewJWT() *JWT {
 
 type CustomClaims struct {
 	BaseClaims
-	BufferTime int64
 	jwt.RegisteredClaims
 }
 
 type BaseClaims struct {
-	UserName string
-	Address  string
+	UserID   uint   `json:"user_id,omitempty"`
+	UserName string `json:"username,omitempty"`
+	Address  string `json:"address,omitempty"`
 }
 
 func (j *JWT) CreateClaims(baseClaims BaseClaims) CustomClaims {

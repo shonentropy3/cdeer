@@ -148,7 +148,7 @@ func InitRAM() (r Ram, err error) {
 	// Golang占用内存
 	var gomem runtime.MemStats
 	runtime.ReadMemStats(&gomem)
-	r.GoUsed = float64(gomem.Sys) / 1024 / 1024
+	r.GoUsed, _ = strconv.ParseFloat(fmt.Sprintf("%.2f", float64(gomem.Sys)/1024/1024), 64)
 
 	return r, nil
 }
