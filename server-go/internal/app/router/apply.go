@@ -17,5 +17,6 @@ func InitApplyRouter(Router *gin.RouterGroup) {
 		applyRouterWithAuth.POST("createApply", api.CreateApply)           // 添加报名信息
 		applyRouterWithAuth.POST("updatedApply", api.UpdatedApply)         // 更新报名信息
 		applyRouterWithAuth.POST("updatedApplySort", api.UpdatedApplySort) // 更新报名列表排序
+		applyRouterWithAuth.POST("deleteApply", api.DeleteApply)           // 取消报名
 	}
 }

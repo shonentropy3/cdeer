@@ -7,6 +7,7 @@ import (
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 	"sync/atomic"
+	"time"
 )
 
 var (
@@ -15,5 +16,6 @@ var (
 	LOG       *zap.Logger
 	VIP       *viper.Viper
 	Cache     *bigcache.BigCache
+	StartTime time.Time
 	Traversed atomic.Bool // 任务运行状态
 )

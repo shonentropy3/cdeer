@@ -49,7 +49,7 @@ func HandleTransaction() {
 			return false
 		})
 		// 无任务
-		if len(transHashList) == 0 && haveBool {
+		if len(transHashList) == 0 && !haveBool {
 			global.Traversed.Store(false)
 			return
 		}
@@ -61,7 +61,7 @@ func HandleTransaction() {
 				go HandleTransactionReceipt(client, txMap, trans.Hash)
 			}
 		}
-		time.Sleep(time.Second * 10)
+		time.Sleep(time.Second * 3)
 	}
 }
 

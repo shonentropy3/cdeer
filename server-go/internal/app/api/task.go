@@ -130,14 +130,13 @@ func ModifyApplySwitch(c *gin.Context) {
 
 // GetSillTreeMap
 // @Tags TaskApi
-// @Summary 分页获取需求数据
+// @Summary 获取技能树
 // @accept application/json
 // @Produce application/json
 // @Router /task/getSillTreeMap [get]
 func GetSillTreeMap(c *gin.Context) {
 	var searchInfo model.Skill
 	_ = c.ShouldBindQuery(&searchInfo)
-
 	if list, err := service.GetSillTreeMap(searchInfo.ID); err != nil {
 		global.LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败", c)
