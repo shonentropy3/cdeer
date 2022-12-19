@@ -14,7 +14,7 @@ import ApplyTaskModal from '../components/CustomModal/ApplyTaskModal';
 import Computing_time from '../components/Computing_time';
 import { createUserInfo, getUserInfo, searchTaskDetail, updateUserInfo } from '../http/_api/public';
 import qs from 'querystring';
-import { createApply, getApplyStatus } from '../http/_api/task';
+import { createApply, getApplyStatus, deleteApply, updateApplyInfo } from '../http/_api/task';
 
 export default function Project() {
     
@@ -31,6 +31,8 @@ export default function Project() {
     let [desc, setDesc] = useState('');
     // task报名状态
     let [progress, setProgress] = useState(0);
+    // task用户报名信息
+    let [applyInfo,setApplyInfo] = useState({})
     
     const showModal = ()=>{
         setIsModalOpen(true)
@@ -72,6 +74,24 @@ export default function Project() {
     }
 
     const writeSuccess = async() => {
+        applyInfo ? 
+        await updateApplyInfo({
+            task_id: detail.task_id,
+            apply_addr: address,
+            hash: Task.data.hash,
+            desc: desc
+        })
+        .then((res)=>{
+            if ( res.code === 0 ) {
+                message.success(res.msg);
+                setTimeout(()=>{
+                    router.push(`/task?w=worker&bar=apply`)
+                },500)
+            }else{
+                message.error(res.msg);
+            }
+        })
+        :
         await createApply({
             apply_addr: address,
             hash: Task.data.hash,
@@ -92,6 +112,7 @@ export default function Project() {
 
     // 用户取消报名
     const celApply = () => {
+        let taskID = detail.task_id
         celTask.write({
             recklesslySetUnpreparedArgs:[
                 Number(taskID)
@@ -101,13 +122,15 @@ export default function Project() {
 
     const celSuccess = () => {
         let data = {
-            applyAddr: address,
-            demandId: taskID,
             hash: celTask.data.hash
         }
-        cancelApply(data)
+        deleteApply(data)
         .then((res) => {
-            message.success("取消报名成功")
+            if ( res.code == 0 ) {
+                message.success(res.msg)
+            }else{
+                message.error(res.msg)
+            }
         })
         .catch(err => {
             console.log(err);
@@ -164,7 +187,12 @@ export default function Project() {
         .then(res => {
             if (res.code === 0) {
                 applyList = res.data?.list || [];
-                
+            }
+        })
+        applyList.map((e)=>{
+            if ( e.apply_addr == address ) {
+                applyInfo = e;
+                setApplyInfo({...applyInfo})
             }
         })
         // await getOrderStatus({
@@ -287,7 +315,7 @@ export default function Project() {
             {/* <Modal_applyTask setParams={setParams} params={params} project={project} submit={apply} applyInfo={userApplyInfo} userContact={userContact} /> */}
             {
                 isModalOpen &&
-                <ApplyTaskModal open={isModalOpen} onCancel={handleCancel} project={detail} submit={apply} userContact={userContact} setUserContact={setUserContact} />
+                <ApplyTaskModal open={isModalOpen} onCancel={handleCancel} project={detail} submit={apply} userContact={userContact} setUserContact={setUserContact} applyInfo={applyInfo} />
             }
     </div>
 }
