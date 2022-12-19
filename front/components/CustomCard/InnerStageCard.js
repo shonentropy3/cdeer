@@ -153,7 +153,7 @@ export default function InnerStageCard(params) {
         {
             items.length > 0 && dataStages && 
             <div className="stageList">
-            <OutputStageCard edit={onChange} remove={remove} cache={inner} />
+            <OutputStageCard edit={onChange} remove={remove} cache={inner} isEdit="none" />
             </div>
         }
     </>

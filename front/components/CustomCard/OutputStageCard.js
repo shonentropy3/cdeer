@@ -5,7 +5,7 @@ import StageOutput from "../CustomItem/StageOutput";
 
 export default function OutputStageCard(params) {
     
-    const { edit, remove, cache } = params;
+    const { edit, remove, cache, isEdit } = params;
 
     let [list, setList] = useState([]);
 
@@ -33,7 +33,7 @@ export default function OutputStageCard(params) {
         {
             list.map((e,i) => 
                 <div className="stageItem" key={i}>
-                    <StageOutput data={e} index={i} edit={edit} remove={remove} />
+                    <StageOutput data={e} index={i} edit={edit} remove={remove} isEdit={isEdit} />
                 </div>
             )
         }

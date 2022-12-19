@@ -4,7 +4,7 @@ import { getDate } from "../../utils/getDate";
 
 export default function StageOutput(params) {
     
-    const { data, index, edit, remove } = params;
+    const { data, index, edit, remove, isEdit } = params;
 
     let [isOpen, setIsOpen] = useState(false);
 
@@ -12,10 +12,13 @@ export default function StageOutput(params) {
         <div className="itemCard-nav">
             <p className="nav-index">P{index+1}</p>
             <p className="nav-title">{data.name}</p>
-            <div className="operate">
-                <div className="edit" onClick={() => edit(`item-${index+1}`)}></div>
-                <div className="remove" onClick={() => remove(`item-${index+1}`)}></div>
-            </div>
+            {
+                !isEdit &&
+                    <div className="operate">
+                        <div className="edit" onClick={() => edit(`item-${index+1}`)}></div>
+                        <div className="remove" onClick={() => remove(`item-${index+1}`)}></div>
+                    </div>
+            }
         </div>
         <div className={`itemCard-content ${isOpen ? 'open' : ''}`}>
             <p className="container">
