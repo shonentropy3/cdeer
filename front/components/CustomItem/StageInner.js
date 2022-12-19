@@ -1,4 +1,4 @@
-import { Button, Input, InputNumber } from "antd";
+import { Button, Input, InputNumber, message } from "antd";
 import { useEffect, useState } from "react";
 const { TextArea } = Input;
 
@@ -25,6 +25,21 @@ export default function StageInner(params) {
     const onChange = (key, value) => {
         inner[index][key] = value;
         setInner(inner);
+    }
+
+    const confirm = () => {
+        // 判断是否有空指针
+        let flag = true;
+        for (const i in inner[index]) {
+            if (!inner[index][i]) {
+                flag = false;
+            }
+        }
+        if (!flag) {
+            message.error('请填写完成')
+            return
+        }
+        setViewModel(true);
     }
 
     return <div className="stageInner">
@@ -64,6 +79,6 @@ export default function StageInner(params) {
             <p className="inner-title">Delivery duration</p>
             <TextArea defaultValue={inner[index].desc} onChange={(e) => onChange('desc', e.target.value)} />
         </div>
-        <Button className="confirm" onClick={() => setViewModel(true)}>Confirm</Button>
+        <Button className="confirm" onClick={() => confirm()}>Confirm</Button>
     </div>
 }
