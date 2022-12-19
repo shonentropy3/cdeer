@@ -172,7 +172,6 @@
     .btn-add{
         width: 240px;
         height: 80px;
-        margin-top: 100px;
         position: relative;
         left: calc((100% - 240px) / 2);
         background: #1F1E2E;
@@ -258,8 +257,11 @@
     // 展示列表
     .stageList{
         padding: 40px 0 50px;
-
+        .items{
+            margin-bottom: 54px;
+        }
         .stageItem{
+            margin-bottom: 27px;
             .itemCard{
                 border-radius: 10px;
                 box-shadow: 0px 0px 44px -24px #7C7879;

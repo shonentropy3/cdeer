@@ -8,7 +8,6 @@ import { useRead, useSignData } from "../../controller";
 import { updatedStage } from "../../http/_api/order";
 import { getDate } from "../../utils/getDate";
 import InnerStageCard from "../CustomCard/innerStageCard";
-import OrderStageList from "./OrderStageList";
 
 export default function OrderSetStage(params) {
     
@@ -217,9 +216,9 @@ export default function OrderSetStage(params) {
                         {printTotal()}
                         {printTotalPeriod()}
                     </div>
+                    <Button className={`submit ${btnDisabled ? 'hidden' : 'show'}`} onClick={() => sendSignature()} disabled={btnDisabled}>Complete and submit phasing</Button>
                 </>
             }
-            <Button className={`submit ${btnDisabled ? 'hidden' : 'show'}`} onClick={() => sendSignature()} disabled={btnDisabled}>Complete and submit phasing</Button>
         </>
         }
     }

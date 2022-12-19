@@ -104,7 +104,7 @@ export default function InnerStageCard(params) {
     return <>
         {
             items.length === 0 &&
-            <div>
+            <div style={{marginTop: "100px"}}>
                 <Button className="btn-add mb60" onClick={add}>Establish</Button>
             </div>
         }

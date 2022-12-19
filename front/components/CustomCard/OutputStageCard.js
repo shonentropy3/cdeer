@@ -29,6 +29,7 @@ export default function OutputStageCard(params) {
     },[cache])
 
     return <>
+    <div className="items">
         {
             list.map((e,i) => 
                 <div className="stageItem" key={i}>
@@ -36,5 +37,6 @@ export default function OutputStageCard(params) {
                 </div>
             )
         }
+    </div>
     </>
 }
