@@ -538,6 +538,11 @@
               "type": "uint8"
             },
             {
+              "internalType": "enum PaymentType",
+              "name": "payType",
+              "type": "uint8"
+            },
+            {
               "internalType": "uint256",
               "name": "startDate",
               "type": "uint256"
