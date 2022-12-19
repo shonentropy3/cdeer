@@ -87,6 +87,7 @@ export default function InnerStageCard(params) {
 
     // 切换tab
     const onChange = (key) => {
+        setViewModel(false);
         setActiveKey(key);
     }
 
@@ -120,9 +121,9 @@ export default function InnerStageCard(params) {
             /> 
         }
         {
-            viewModel && 
+            items.length > 0 && viewModel && 
             <div className="stageList">
-            <OutputStageCard add={add} cache={inner} />
+            <OutputStageCard edit={onChange} remove={remove} cache={inner} />
             <Button className="btn-add mb60" onClick={() => toggleModel()}>Establish</Button>
             </div>
         }
