@@ -30,6 +30,8 @@ function Task() {
     let [pageConfig,setPageConfig] = useState({
         page: 1, pageSize: 5, total: 1
     })
+    let [isLoading,setIsLoading] = useState(false)
+
     const sidbar = {
         issuer: [
             {title: 'Published items', value: 'tasks'},
@@ -46,6 +48,7 @@ function Task() {
 
     let [modalInfo,setModaInfo] = useState({ contactName: 'telegram' })
     let [cancelInfo,setCancelInfo] = useState({})
+    let [changeTaskInfo,setChangeTaskInfo] = useState()
     
     const router = useRouter()
     const { address } = useAccount();
@@ -64,7 +67,6 @@ function Task() {
     const onchange = (e,type) => {
         modalInfo[type] = e
         setModaInfo({...modalInfo})
-        console.log(modalInfo);
     }
 
     const cancelApplys = (type,e) => {
@@ -146,7 +148,8 @@ function Task() {
                 selectData = res.data.list ? res.data.list : [];
                 selectData.map(e => {
                     e.role = deform_Skills(e?.role || []);
-                    e.budget = deform_Count(e.budget, e.currency)
+                    // e.budget = deform_Count(e.budget, e.currency)
+                    e.budget = e.budget / Math.pow(10,18)
                 })
                 setSelectData([...selectData]);
             }
@@ -205,7 +208,6 @@ function Task() {
 
     useEffect(() => {
         const { w } = qs.parse(location.search.slice(1));
-        console.log('获取 ==>', selectBar);
         switch (selectBar) {
             case 'tasks':
                 getTasks();
@@ -248,7 +250,7 @@ function Task() {
                 }
             </div>
             <div className="content">
-                <TaskItem taskList={selectData} select={selectBar} who={who} taskModal={setShowModifyTaskModal} />
+                <TaskItem taskList={selectData} select={selectBar} who={who} taskModal={setShowModifyTaskModal} taskInfo={changeTaskInfo} setTaskInfo={setChangeTaskInfo} isLoading={isLoading} />
                 {
                     selectData.length > 0 &&
                     <Pagination
@@ -282,13 +284,14 @@ function Task() {
                 <Input className="applyPrice" onChange={e => onchange(e.target.value,'contactValue')} />
                 <Button onClick={()=>modifyApply()}>确认修改</Button>
             </Modal>
-            <Modal
-                open={showModifyTaskModal}
-                onCancel={() => {setShowModifyTaskModal(false)}}
-                footer={null}
-            >
-                <Modal_ModifyTask />
-            </Modal>   
+            <Modal_ModifyTask 
+                taskData={selectData} 
+                showModifyTaskModal={showModifyTaskModal} 
+                setShowModal={setShowModifyTaskModal}
+                taskInfo={changeTaskInfo}
+                setTaskInfo={setChangeTaskInfo}
+                setIsLoading={setIsLoading}
+            />
         </div>
     )
 }
