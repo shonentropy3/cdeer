@@ -30,12 +30,12 @@ export default function StageInner(params) {
     return <div className="stageInner">
         <div className="inner">
             <p className="inner-title">Stage Name</p>
-            <Input className="name" value={inner[index].name} onChange={(e) => onChange('name', e.target.value)} />
+            <Input className="name" defaultValue={inner[index].name} onChange={(e) => onChange('name', e.target.value)} />
         </div>
         <div className="inner">
             <p className="inner-title">Delivery duration</p>
             <div className="flex">
-                <InputNumber className="period" value={inner[index].period} onChange={(e) => onChange('period', e)} /> 
+                <InputNumber className="period" defaultValue={inner[index].period} onChange={(e) => onChange('period', e)} /> 
                 <p>Day</p>
             </div>
         </div>
@@ -56,13 +56,13 @@ export default function StageInner(params) {
                     }
                 </div>
                 <div className="flex">
-                    <InputNumber className="amount" value={inner[index].amount} onChange={(e) => onChange('amount', e)} /> <p>currency</p>
+                    <InputNumber className="amount" defaultValue={inner[index].amount} onChange={(e) => onChange('amount', e)} /> <p>currency</p>
                 </div>
             </div>
         </div>
         <div className="inner">
             <p className="inner-title">Delivery duration</p>
-            <TextArea value={inner[index].desc} onChange={(e) => onChange('desc', e.target.value)} />
+            <TextArea defaultValue={inner[index].desc} onChange={(e) => onChange('desc', e.target.value)} />
         </div>
         <Button className="confirm" onClick={() => setViewModel(true)}>Confirm</Button>
     </div>

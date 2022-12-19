@@ -11,6 +11,7 @@ export default function InnerStageCard(params) {
 
     const { defaultAmount, getInner } = params;
 
+    const [activeKey, setActiveKey] = useState();    //  当前选中标签
     let [items,setItems] = useState([]);    //  tabs
     let [inner,setInner] = useState({});    //  参数
     let [viewModel,setViewModel] = useState(false);    //  展示模式
@@ -48,6 +49,7 @@ export default function InnerStageCard(params) {
             key: `item-${index}`,
           },
         ]);
+        setActiveKey(`item-${index}`)
     };
 
     // 移除tabs
@@ -71,6 +73,7 @@ export default function InnerStageCard(params) {
         }
         setItems([...items]);
         setInner({...obj});
+        setActiveKey(`item-${items.length}`)
     };
 
     // tabs事件处理
@@ -81,6 +84,11 @@ export default function InnerStageCard(params) {
           remove(targetKey);
         }
     };
+
+    // 切换tab
+    const onChange = (key) => {
+        setActiveKey(key);
+    }
 
     // 切换模式
     const toggleModel = () => {
@@ -93,20 +101,23 @@ export default function InnerStageCard(params) {
         run(inner)
     },[inner])
 
-    useEffect(() => {
-        !viewModel && console.log(inner);
-    },[viewModel])
     return <>
         {
             items.length === 0 &&
             <div>
                 <Button className="btn-add mb60" onClick={add}>Establish</Button>
             </div>
-            // :
         }
         {
             items.length > 0 && !viewModel &&
-            <Tabs type="editable-card" className="tabs" items={items} onEdit={onEdit} /> 
+            <Tabs 
+                type="editable-card" 
+                className="tabs" 
+                items={items} 
+                onEdit={onEdit} 
+                activeKey={activeKey}
+                onChange={onChange}
+            /> 
         }
         {
             viewModel && 
