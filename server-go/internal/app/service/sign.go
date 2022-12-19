@@ -44,10 +44,11 @@ func AuthLoginSignRequest(req request.AuthLoginSignRequest) (token string, err e
 	// 删除Nonce
 	_ = global.Cache.Delete(req.Message[index+7:])
 	// 获取用户名--不存在则新增
-	var userName string
-	if errUser := global.DB.Model(&model.User{}).Select("username").Where("address = ?", req.Address).First(&userName).Error; errUser != nil {
+	var user model.User
+	if errUser := global.DB.Model(&model.User{}).Where("address = ?", req.Address).First(&user).Error; errUser != nil {
 		if errUser == gorm.ErrRecordNotFound {
-			if err = global.DB.Model(&model.User{}).Save(&model.User{Address: req.Address}).Error; err != nil {
+			user.Address = req.Address
+			if err = global.DB.Model(&model.User{}).Save(&user).Error; err != nil {
 				return token, err
 			}
 		} else {
@@ -57,7 +58,8 @@ func AuthLoginSignRequest(req request.AuthLoginSignRequest) (token string, err e
 	// 验证成功返回JWT
 	j := utils.NewJWT()
 	claims := j.CreateClaims(utils.BaseClaims{
-		UserName: userName,
+		UserID:   user.ID,
+		UserName: *user.Username,
 		Address:  req.Address,
 	})
 	token, err = j.CreateToken(claims)

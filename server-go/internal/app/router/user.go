@@ -16,5 +16,10 @@ func InitUserRouter(Router *gin.RouterGroup) {
 	{
 		userRouterWithAuth.POST("createUserInfo", api.CreateUserInfo) //创建个人信息
 		userRouterWithAuth.POST("updateUserInfo", api.UpdateUserInfo) // 修改个人信息
+		userRouterWithAuth.GET("unReadMsgCount", api.UnReadMsgCount)  // 获取未读消息数量
+		userRouterWithAuth.GET("unReadMsg", api.UnReadMsg)            // 获取未读消息
+		userRouterWithAuth.POST("readMsg", api.ReadMsg)               // 阅读信息
+		userRouterWithAuth.GET("msgList", api.MsgList)                // 分页获取消息
+		userRouterWithAuth.GET("msg", api.Msg)                        // WebSocket
 	}
 }

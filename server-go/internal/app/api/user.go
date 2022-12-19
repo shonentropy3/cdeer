@@ -6,8 +6,12 @@ import (
 	"code-market-admin/internal/app/model/response"
 	"code-market-admin/internal/app/service"
 	"code-market-admin/internal/app/utils"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 	"go.uber.org/zap"
+	"net/http"
+	"time"
 )
 
 // CreateUserInfo
@@ -15,7 +19,7 @@ import (
 // @Summary 创建个人资料
 // @accept application/json
 // @Produce application/json
-// @Router /task/CreateUserInfo [get]
+// @Router /user/createUserInfo [get]
 func CreateUserInfo(c *gin.Context) {
 	var userInfo request.CreateUserInfoRequest
 	_ = c.ShouldBindJSON(&userInfo)
@@ -37,7 +41,7 @@ func CreateUserInfo(c *gin.Context) {
 // @Summary 获取个人资料(用户名和头像)
 // @accept application/json
 // @Produce application/json
-// @Router /task/getUserAvatar [get]
+// @Router /user/getUserAvatar [get]
 func GetUserAvatar(c *gin.Context) {
 	var userAvatar request.GetUserInfoRequest
 	_ = c.ShouldBindQuery(&userAvatar)
@@ -52,7 +56,7 @@ func GetUserAvatar(c *gin.Context) {
 	} else if userRes.Address == "" {
 		response.FailWithMessage("查无此人", c)
 	} else {
-		response.OkWithDetailed(response.UserAvatar{
+		response.OkWithDetailed(response.UserAvatarRespond{
 			Username: *userRes.Username,
 			Avatar:   *userRes.Avatar,
 		}, "获取成功", c)
@@ -64,7 +68,7 @@ func GetUserAvatar(c *gin.Context) {
 // @Summary 获取个人资料
 // @accept application/json
 // @Produce application/json
-// @Router /task/getUserInfo [get]
+// @Router /user/getUserInfo [get]
 func GetUserInfo(c *gin.Context) {
 	var userInfo request.GetUserInfoRequest
 	_ = c.ShouldBindQuery(&userInfo)
@@ -88,7 +92,7 @@ func GetUserInfo(c *gin.Context) {
 // @Summary 修改个人资料
 // @accept application/json
 // @Produce application/json
-// @Router /task/UpdateUserInfo [get]
+// @Router /user/updateUserInfo [get]
 func UpdateUserInfo(c *gin.Context) {
 	var updateuserInfo request.UpdateUserInfoRequest
 	_ = c.ShouldBindJSON(&updateuserInfo)
@@ -109,4 +113,113 @@ func UpdateUserInfo(c *gin.Context) {
 	} else {
 		response.OkWithMessage("修改成功", c)
 	}
+}
+
+// UnReadMsgCount
+// @Tags UserApi
+// @Summary 获取未读消息数量
+// @Router /user/unReadMsgCount [get]
+func UnReadMsgCount(c *gin.Context) {
+	userID := c.GetUint("userID") // 操作人ID
+	if count, err := service.UnReadMsgCount(userID); err != nil {
+		global.LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage("获取失败", c)
+	} else {
+		response.OkWithDetailed(count, "获取成功", c)
+	}
+}
+
+// UnReadMsg
+// @Tags UserApi
+// @Summary 获取未读消息数量
+// @Router /user/unReadMsg [get]
+func UnReadMsg(c *gin.Context) {
+	userID := c.GetUint("userID") // 操作人ID
+	if list, total, err := service.UnReadMsg(userID); err != nil {
+		global.LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage("获取失败", c)
+	} else {
+		response.OkWithDetailed(response.PageResult{
+			List:  list,
+			Total: total,
+		}, "获取成功", c)
+	}
+}
+
+// ReadMsg
+// @Tags UserApi
+// @Summary 阅读信息
+// @Router /user/readMsg [post]
+func ReadMsg(c *gin.Context) {
+	var IDReq request.IDRequest
+	_ = c.ShouldBindJSON(&IDReq)
+	userID := c.GetUint("userID") // 操作人ID
+	if err := service.ReadMsg(userID, IDReq.ID); err != nil {
+		global.LOG.Error("操作失败!", zap.Error(err))
+		response.FailWithMessage("操作失败", c)
+	} else {
+		response.OkWithMessage("操作成功", c)
+	}
+}
+
+// MsgList
+// @Tags UserApi
+// @Summary 获取未读消息数量
+// @Router /user/msgList [get]
+func MsgList(c *gin.Context) {
+	var searchInfo request.MsgListRequest
+	_ = c.ShouldBindJSON(&searchInfo)
+	userID := c.GetUint("userID") // 操作人ID
+	if list, total, err := service.MsgList(searchInfo, userID); err != nil {
+		global.LOG.Error("获取失败!", zap.Error(err))
+		response.FailWithMessage("获取失败", c)
+	} else {
+		response.OkWithDetailed(response.PageResult{
+			List:     list,
+			Total:    total,
+			Page:     searchInfo.Page,
+			PageSize: searchInfo.PageSize,
+		}, "获取成功", c)
+	}
+}
+
+var (
+	upGrader = websocket.Upgrader{
+		ReadBufferSize:  0,
+		WriteBufferSize: 0,
+		CheckOrigin: func(r *http.Request) bool {
+			return true
+		},
+	}
+)
+
+func Msg(c *gin.Context) {
+	ws, err := upGrader.Upgrade(c.Writer, c.Request, nil)
+	if err != nil {
+		global.LOG.Error(fmt.Sprintf("websocket connection failed "), zap.Error(err))
+		return
+	}
+	defer ws.Close()
+
+	for {
+		// write
+		err = ws.WriteMessage(websocket.TextMessage, getDashboardData())
+		if err != nil {
+			global.LOG.Error("websocket write failed")
+			return
+		}
+		/*
+			// read
+			_, msg, err := ws.ReadMessage()
+			if err != nil {
+				global.LOG.Error("websocket read failed")
+				return
+			}
+
+		*/
+	}
+}
+func getDashboardData() (text []byte) {
+	time.Sleep(30 * time.Second)
+	return []byte(time.Now().String())
 }
