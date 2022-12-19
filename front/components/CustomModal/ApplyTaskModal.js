@@ -8,7 +8,7 @@ const {TextArea} = Input
 const { Option } = Select;
 function ApplyTaskModal (props) {
    
-    const { open, onCancel, submit, project, userContact, setUserContact } = props;
+    const { open, onCancel, submit, project, userContact, setUserContact, applyInfo } = props;
 
     let [icons, setIcons] = useState([
         { title: 'telegram', value: '' },
@@ -53,6 +53,14 @@ function ApplyTaskModal (props) {
 
         // })
     },[])
+
+    useEffect(()=>{
+        if (applyInfo?.ID) {
+            inner.desc = applyInfo.desc;
+            inner.valuation = applyInfo.price / Math.pow(10,18)
+            setInner({...inner})
+        }
+    },[applyInfo])
 
     return <Modal
             footer={null}

@@ -54,6 +54,24 @@ export const createApply = (data) => {
     });
 }
 
+// 取消报名
+export const deleteApply = (data) => {
+    return serviceAxios({
+        url: `/apply/deleteApply`,
+        method: 'post',
+        data
+    })
+}
+
+// 更新报名信息
+export const updateApplyInfo = (data) => {
+    return serviceAxios({
+        url: `/apply/updatedApply`,
+        method: 'post',
+        data
+    })
+}
+
 // 获取个人正在报名列表
 export const getApplyList = (data) => {
     return serviceAxios({
