@@ -5,7 +5,7 @@ const { TextArea } = Input;
 
 export default function StageInner(params) {
     
-    const { defaultAmount, index, inner, setInner, setViewModel } = params;
+    const { defaultAmount, index, inner, setInner, setViewModel, setDataViewModel } = params;
     const [percent, setPercent] = useState([
         {title: '10%', value: 0.1, active: false},
         {title: '25%', value: 0.25, active: false},
@@ -40,6 +40,7 @@ export default function StageInner(params) {
             return
         }
         setViewModel(true);
+        setDataViewModel(false);
     }
 
     return <div className="stageInner">

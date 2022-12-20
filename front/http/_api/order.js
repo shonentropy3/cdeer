@@ -35,3 +35,12 @@ export const updatedStage = (data) => {
         data,
     });
 }
+
+// 更新阶段划分
+export const startOrder = (data) => {
+    return serviceAxios({
+        url: `/order/updatedProgress`,
+        method: "post",
+        data,
+    });
+}

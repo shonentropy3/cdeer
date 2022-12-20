@@ -13,7 +13,7 @@ export default function StageOutput(params) {
             <p className="nav-index">P{index+1}</p>
             <p className="nav-title">{data.name}</p>
             {
-                !isEdit &&
+                (!isEdit || isEdit === "block") &&
                     <div className="operate">
                         <div className="edit" onClick={() => edit(`item-${index+1}`)}></div>
                         <div className="remove" onClick={() => remove(`item-${index+1}`)}></div>
