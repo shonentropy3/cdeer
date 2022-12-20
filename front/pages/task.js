@@ -6,7 +6,7 @@ import { deform_Count, deform_Skills } from "../utils/Deform";
 import { useContracts } from "../controller";
 import { ethers } from "ethers";
 import { applyFor,cancelApply } from "../http/api/apply";
-import TaskItem from "../components/CustomItem/taskItem";
+import TaskItem from "../components/CustomItem/TaskItem";
 
 import qs from 'querystring';
 import { searchTask } from "../http/_api/public";
