@@ -8,14 +8,25 @@ import OutputStageCard from "../CustomCard/outputStageCard";
 
 export default function OrderStageList(params) {
     
-    const { chache, data, order } = params;
+    const { order, dataStages } = params;
     const { address } = useAccount();
+    let [data, setData] = useState([]);
 
-    // chache: 暂存的阶段划分  ==>  data: 数据库内已存的阶段划分
 
+
+    // 添加阶段
+    const appendStage = () => {
+        
+    }
 
     useEffect(() => {
-        console.log('order ==> ',order);
+        let deliveryDate = 0;
+        dataStages.map((e,i) => {
+            deliveryDate += e.period;
+            e.deliveryDate = deliveryDate;
+        })
+        data = dataStages;
+        setData([...data]);
     },[])
 
     return (
@@ -35,8 +46,8 @@ export default function OrderStageList(params) {
                 </div>
             }
             <div className="stageList">
-                <OutputStageCard isEdit="none" />
-                <Button className="btn-add mb60" onClick={() => toggleModel()}>Establish</Button>
+                <OutputStageCard isEdit="none" data={data} />
+                <Button className="btn-add mb60" onClick={() => appendStage()}>Establish</Button>
             </div>
         </div>
     )

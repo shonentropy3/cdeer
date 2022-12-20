@@ -5,7 +5,7 @@ import StageOutput from "../CustomItem/StageOutput";
 
 export default function OutputStageCard(params) {
     
-    const { edit, remove, cache, isEdit } = params;
+    const { edit, remove, cache, isEdit, data } = params;
 
     let [list, setList] = useState([]);
 
@@ -28,12 +28,19 @@ export default function OutputStageCard(params) {
         setList([...list]);
     },[cache])
 
+    useEffect(() => {
+        if (data) {
+            list = data;
+            setList([...list]); 
+        }
+    },[data])
+
     return <>
     <div className="items">
         {
             list.map((e,i) => 
                 <div className="stageItem" key={i}>
-                    <StageOutput data={e} index={i} edit={edit} remove={remove} isEdit={isEdit} />
+                    <StageOutput data={e} index={i} edit={edit} remove={remove} isEdit={isEdit} ongoing={data ? true : false} />
                 </div>
             )
         }

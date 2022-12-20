@@ -1,12 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getDate } from "../../utils/getDate";
 
 
 export default function StageOutput(params) {
     
-    const { data, index, edit, remove, isEdit } = params;
+    const { data, index, edit, remove, isEdit, ongoing } = params;
 
     let [isOpen, setIsOpen] = useState(false);
+
+    useEffect(() => {
+        if (ongoing) {
+            // 正在进行中
+        }
+    },[ongoing])
 
     return <div className="itemCard">
         <div className="itemCard-nav">

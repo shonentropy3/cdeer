@@ -34,7 +34,7 @@ export default function Order(props) {
                     dataStages={stages}
                  />     //   设置阶段
             default:
-                return <OrderStageList order={order} />     //   阶段开始
+                return <OrderStageList order={order} dataStages={stages} />     //   阶段开始
         }
     }
 
