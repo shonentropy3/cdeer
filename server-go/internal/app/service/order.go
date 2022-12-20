@@ -5,7 +5,10 @@ import (
 	"code-market-admin/internal/app/model"
 	"code-market-admin/internal/app/model/request"
 	"code-market-admin/internal/app/model/response"
+	"code-market-admin/internal/app/utils"
 	"errors"
+	"fmt"
+	"github.com/tidwall/sjson"
 )
 
 // GetOrderList
@@ -43,7 +46,14 @@ func GetOrderList(searchInfo request.GetOrderListRequest) (err error, list inter
 		db = db.Limit(limit).Offset(offset)
 		err = db.Order("created_at desc").Preload("Task").Find(&orderList).Error
 	}
-
+	// 根据订单ID过滤 需要获取IPFS 具体内容
+	if searchInfo.OrderId != 0 && len(orderList) == 1 {
+		url := fmt.Sprintf("http://ipfs.learnblockchain.cn/%s", orderList[0].Attachment)
+		orderList[0].StageJson, err = utils.GetRequest(url)
+		if err != nil {
+			return err, orderList, total
+		}
+	}
 	return err, orderList, total
 }
 
@@ -52,9 +62,9 @@ func GetOrderList(searchInfo request.GetOrderListRequest) (err error, list inter
 // @description: 添加任务
 // @param: taskReq request.CreateTaskRequest
 // @return: err error
-func CreateOrder(orderReq request.CreateOrderRequest) (err error) {
+func CreateOrder(orderReq request.CreateOrderRequest, address string) (err error) {
 	// 保存交易hash
-	transHash := model.TransHash{SendAddr: orderReq.Issuer, EventName: "OrderCreated", Hash: orderReq.Hash}
+	transHash := model.TransHash{SendAddr: address, EventName: "OrderCreated", Hash: orderReq.Hash}
 	if err = SaveHash(transHash); err != nil {
 		return errors.New("新建失败")
 	}
@@ -67,12 +77,21 @@ func CreateOrder(orderReq request.CreateOrderRequest) (err error) {
 // @param:
 // @return:
 func UpdatedStage(stage request.UpdatedStageRequest) (err error) {
+	// 查询当前attachment
+	var attachment string
+	err = global.DB.Model(&model.Order{}).Select("attachment").Where("order_id = ?", stage.OrderId).First(&attachment).Error
+	if err != nil {
+		return err
+	}
+	// 写入last字段
+	stage.Obj, _ = sjson.Set(stage.Obj, "last", attachment)
+	// 上传JSON获取IPFS CID
 	err, hashJSON := UploadJSON(stage.Obj)
 	if err != nil {
 		return err
 	}
-	stage.Attachment = hashJSON
 	// 更新数据
+	stage.Attachment = hashJSON
 	raw := global.DB.Model(&model.Order{}).Where("order_id = ?", stage.OrderId).Updates(&stage.Order)
 	if raw.RowsAffected == 0 {
 		return errors.New("创建失败")
