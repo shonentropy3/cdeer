@@ -5,6 +5,7 @@ import (
 	"code-market-admin/internal/app/model"
 	"code-market-admin/internal/app/model/request"
 	"code-market-admin/internal/app/model/response"
+	"encoding/json"
 	"errors"
 	"time"
 )
@@ -65,9 +66,14 @@ func GetApply(searchInfo request.GetApplyRequest) (err error, list interface{}, 
 // @description: 添加报名信息
 // @param: taskReq request.CreateTaskRequest
 // @return: err error
-func CreateApply(applyReq request.CreateApplyRequest) (err error) {
+func CreateApply(applyReq request.CreateApplyRequest, address string) (err error) {
+	// 保存请求数据
+	raw, err := json.Marshal(applyReq)
+	if err != nil {
+		return errors.New("新建失败")
+	}
 	// 保存交易hash
-	transHash := model.TransHash{SendAddr: applyReq.ApplyAddr, EventName: "ApplyFor", Hash: applyReq.Hash}
+	transHash := model.TransHash{SendAddr: address, EventName: "ApplyFor", Hash: applyReq.Hash, Raw: string(raw)}
 	if err = SaveHash(transHash); err != nil {
 		return errors.New("新建失败")
 	}
@@ -79,9 +85,14 @@ func CreateApply(applyReq request.CreateApplyRequest) (err error) {
 // @description: 修改报名信息
 // @param: applyReq request.UpdatedApplyRequest
 // @return: err error
-func UpdatedApply(applyReq request.UpdatedApplyRequest) (err error) {
+func UpdatedApply(applyReq request.UpdatedApplyRequest, address string) (err error) {
+	// 保存请求数据
+	raw, err := json.Marshal(applyReq)
+	if err != nil {
+		return errors.New("新建失败")
+	}
 	// 保存交易hash
-	transHash := model.TransHash{SendAddr: applyReq.ApplyAddr, EventName: "ApplyFor", Hash: applyReq.Hash}
+	transHash := model.TransHash{SendAddr: address, EventName: "ApplyFor", Hash: applyReq.Hash, Raw: string(raw)}
 	if err = SaveHash(transHash); err != nil {
 		return errors.New("新建失败")
 	}
@@ -93,9 +104,9 @@ func UpdatedApply(applyReq request.UpdatedApplyRequest) (err error) {
 // @description: 删除报名信息
 // @param: applyReq request.DeleteApplyRequest
 // @return: err error
-func DeleteApply(applyReq request.DeleteApplyRequest) (err error) {
+func DeleteApply(hash string, address string) (err error) {
 	// 保存交易hash
-	transHash := model.TransHash{SendAddr: applyReq.ApplyAddr, EventName: "CancelApply", Hash: applyReq.Hash}
+	transHash := model.TransHash{SendAddr: address, EventName: "CancelApply", Hash: hash}
 	if err = SaveHash(transHash); err != nil {
 		return errors.New("新建失败")
 	}

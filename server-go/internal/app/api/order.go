@@ -46,7 +46,8 @@ func CreateOrder(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if err := service.CreateOrder(task); err != nil {
+	address := c.GetString("address") // 操作人
+	if err := service.CreateOrder(task, address); err != nil {
 		global.LOG.Error("创建失败!", zap.Error(err))
 		response.FailWithMessage("创建失败", c)
 	} else {
@@ -70,9 +71,9 @@ func UpdatedStage(c *gin.Context) {
 		return
 	}
 	if err := service.UpdatedStage(stage); err != nil {
-		global.LOG.Error("创建失败!", zap.Error(err))
-		response.FailWithMessage("创建失败", c)
+		global.LOG.Error("操作失败!", zap.Error(err))
+		response.FailWithMessage("操作失败", c)
 	} else {
-		response.OkWithMessage("创建成功", c)
+		response.OkWithMessage("操作成功", c)
 	}
 }

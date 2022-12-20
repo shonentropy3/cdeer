@@ -6,6 +6,7 @@ import (
 	"code-market-admin/internal/app/model/response"
 	"code-market-admin/internal/app/service"
 	"code-market-admin/internal/app/utils"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -88,7 +89,8 @@ func CreateApply(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if err := service.CreateApply(apply); err != nil {
+	address := c.GetString("address") // 操作人
+	if err := service.CreateApply(apply, address); err != nil {
 		global.LOG.Error("添加失败!", zap.Error(err))
 		response.FailWithMessage("添加失败", c)
 	} else {
@@ -109,7 +111,8 @@ func UpdatedApply(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if err := service.UpdatedApply(apply); err != nil {
+	address := c.GetString("address") // 操作人
+	if err := service.UpdatedApply(apply, address); err != nil {
 		global.LOG.Error("更新失败!", zap.Error(err))
 		response.FailWithMessage(err.Error(), c)
 	} else {
@@ -125,12 +128,14 @@ func UpdatedApply(c *gin.Context) {
 // @Router /apply/deleteApply [post]
 func DeleteApply(c *gin.Context) {
 	var apply request.DeleteApplyRequest
-	_ = c.ShouldBindQuery(&apply)
-	if err := utils.Verify(apply.Apply, utils.DeleteApplyVerify); err != nil {
+	_ = c.ShouldBindJSON(&apply)
+	fmt.Println("apply")
+	if err := utils.Verify(apply, utils.HashVerify); err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if err := service.DeleteApply(apply); err != nil {
+	address := c.GetString("address") // 操作人
+	if err := service.DeleteApply(apply.Hash, address); err != nil {
 		global.LOG.Error("操作失败!", zap.Error(err))
 		response.FailWithMessage("操作失败", c)
 	} else {

@@ -25,6 +25,5 @@ type UpdatedApplySortRequest struct {
 }
 
 type DeleteApplyRequest struct {
-	model.Apply
 	Hash string `gorm:"hash" json:"hash" form:"hash"` // 交易hash
 }

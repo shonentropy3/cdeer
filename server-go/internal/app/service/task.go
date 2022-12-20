@@ -74,7 +74,7 @@ func GetTaskList(searchInfo request.GetTaskListRequest) (err error, list interfa
 // @description: 发布需求
 // @param: taskReq request.CreateTaskRequest
 // @return: err error
-func CreateTask(taskReq request.CreateTaskRequest) (err error) {
+func CreateTask(taskReq request.CreateTaskRequest, address string) (err error) {
 	// 查找技能要求是否在列表中
 	var roleList []int64
 	for _, v := range taskReq.Role {
@@ -93,7 +93,7 @@ func CreateTask(taskReq request.CreateTaskRequest) (err error) {
 		return errors.New("新建失败")
 	}
 	// 保存交易hash
-	transHash := model.TransHash{SendAddr: taskReq.Issuer, EventName: "TaskCreated", Hash: taskReq.Hash, Raw: string(raw)}
+	transHash := model.TransHash{SendAddr: address, EventName: "TaskCreated", Hash: taskReq.Hash, Raw: string(raw)}
 	if err = SaveHash(transHash); err != nil {
 		return errors.New("新建失败")
 	}
@@ -105,14 +105,14 @@ func CreateTask(taskReq request.CreateTaskRequest) (err error) {
 // @description: 修改需求
 // @param: task model.Tasks, info Req.PageInfo
 // @return: err error, list interface{}, total int64
-func UpdatedTask(taskReq request.UpdatedTaskRequest) (err error) {
+func UpdatedTask(taskReq request.UpdatedTaskRequest, address string) (err error) {
 	// 保存请求数据
 	raw, err := json.Marshal(taskReq)
 	if err != nil {
 		return errors.New("新建失败")
 	}
 	// 保存交易hash
-	transHash := model.TransHash{SendAddr: taskReq.Issuer, EventName: "TaskModified", Hash: taskReq.Hash, Raw: string(raw)}
+	transHash := model.TransHash{SendAddr: address, EventName: "TaskModified", Hash: taskReq.Hash, Raw: string(raw)}
 	if err = SaveHash(transHash); err != nil {
 		return errors.New("新建失败")
 	}
