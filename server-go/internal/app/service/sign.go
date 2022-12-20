@@ -55,11 +55,15 @@ func AuthLoginSignRequest(req request.AuthLoginSignRequest) (token string, err e
 			return token, err
 		}
 	}
+	var userName string
+	if user.Username != nil {
+		userName = *user.Username
+	}
 	// 验证成功返回JWT
 	j := utils.NewJWT()
 	claims := j.CreateClaims(utils.BaseClaims{
 		UserID:   user.ID,
-		UserName: *user.Username,
+		UserName: userName,
 		Address:  req.Address,
 	})
 	token, err = j.CreateToken(claims)
