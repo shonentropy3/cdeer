@@ -1,4 +1,3 @@
-import { useState,useEffect } from 'react';
 import User_detail from '../components/User/User_detail';
 
 export default function MyInfo() {

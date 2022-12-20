@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Input, Select, InputNumber, Button, Modal, Upload, message, Form } from 'antd';
-import { useAccount, useNetwork, useProvider, useTransaction, useWaitForTransaction } from 'wagmi';
+import { useAccount, useProvider } from 'wagmi';
 import { useRouter } from 'next/router'
 import { ethers } from "ethers";
 const { TextArea } = Input;

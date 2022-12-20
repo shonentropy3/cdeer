@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import qs from 'querystring';
 import { getApply, updatedApplySort } from "../http/_api/task";
-import { searchTask, searchTaskDetail } from "../http/_api/public";
+import { searchTaskDetail } from "../http/_api/public";
 import { deform_Count, deform_Skills } from "../utils/Deform";
 import { getDate } from "../utils/GetDate";
 import Image from "next/image";

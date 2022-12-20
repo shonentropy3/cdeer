@@ -1,18 +1,17 @@
 
 
-import { Button,Modal,message, notification } from 'antd';
+import { Button, message } from 'antd';
 import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { useRouter } from 'next/router';
 import { ethers } from "ethers";
 
 import { useContracts } from '../controller';
-import { cancelApply } from '../http/api/apply';
 
 import { deform_Count, deform_Skills } from '../utils/Deform';
 import ApplyTaskModal from '../components/CustomModal/ApplyTaskModal';
 import Computing_time from '../components/Computing_time';
-import { createUserInfo, getUserInfo, searchTaskDetail, updateUserInfo } from '../http/_api/public';
+import { getUserInfo, searchTaskDetail, updateUserInfo } from '../http/_api/public';
 import qs from 'querystring';
 import { createApply, getApplyStatus, deleteApply, updateApplyInfo } from '../http/_api/task';
 

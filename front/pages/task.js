@@ -9,11 +9,11 @@ import { applyFor,cancelApply } from "../http/api/apply";
 import TaskItem from "../components/CustomItem/taskItem";
 
 import qs from 'querystring';
-import withAuth from "./middleware";
 import { searchTask } from "../http/_api/public";
 import { Modal_ModifyTask } from "../components/Modal_modifyTask.js";
 import { getApplyList } from "../http/_api/task";
 import { getOrderList } from "../http/_api/order";
+import withAuth from "../components/middleware";
 
 function Task() {
 

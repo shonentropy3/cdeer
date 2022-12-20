@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Steps, Button, message, Modal, Image } from "antd";
-import { useAccount, useNetwork } from 'wagmi'
+import { Steps } from "antd";
+import { useAccount } from 'wagmi'
 const { Step } = Steps;
 import { deform_Skills } from '../utils/Deform';
 import qs from 'querystring';

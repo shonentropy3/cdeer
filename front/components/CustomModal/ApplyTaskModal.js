@@ -1,8 +1,7 @@
 import { Input, Select, Button, Checkbox, Col, Row, InputNumber, Modal } from "antd"
 import { useEffect, useState } from "react";
-import withAuth from "../../pages/middleware";
 import Computing_time from "../Computing_time";
-// import withAuth from "../middleware";
+import withAuth from "../middleware";
 
 const {TextArea} = Input
 const { Option } = Select;
