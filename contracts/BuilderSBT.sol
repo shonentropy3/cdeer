@@ -26,9 +26,9 @@ contract BuilderSBT is SBTBase, Ownable {
         _;
     }
 
-    function mint(uint orderId) external onlyDeorder {
-        Order memory order = IOrder(deOrder).getOrder(orderId);
-        _mint(order.worker, orderId);
+    // 
+    function mint(address who, uint orderId) external onlyDeorder {
+        _mint(who, orderId);
     }
 
 
