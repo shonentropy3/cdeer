@@ -1,6 +1,7 @@
 package service
 
 import (
+	"code-market-admin/internal/app/blockchain"
 	"code-market-admin/internal/app/global"
 	"code-market-admin/internal/app/model"
 	"code-market-admin/internal/app/model/request"
@@ -14,8 +15,8 @@ import (
 // GetOrderList
 // @function: GetOrderList
 // @description: 分页获取个⼈进⾏中的项⽬
-// @param:
-// @return:
+// @param: searchInfo request.GetOrderListRequest
+// @return: err error, list interface{}, total int64
 func GetOrderList(searchInfo request.GetOrderListRequest) (err error, list interface{}, total int64) {
 	var orderList []response.GetOrderListResponse
 	limit := searchInfo.PageSize
@@ -74,27 +75,38 @@ func CreateOrder(orderReq request.CreateOrderRequest, address string) (err error
 // UpdatedStage
 // @function: CreatedStage
 // @description: 创建阶段划分
-// @param:
-// @return:
+// @param: stage request.UpdatedStageRequest
+// @return: err error
 func UpdatedStage(stage request.UpdatedStageRequest) (err error) {
-	// 查询当前attachment
-	var attachment string
-	err = global.DB.Model(&model.Order{}).Select("attachment").Where("order_id = ?", stage.OrderId).First(&attachment).Error
-	if err != nil {
-		return err
+	if stage.Obj != "" {
+		// 查询当前attachment
+		var attachment string
+		err = global.DB.Model(&model.Order{}).Select("attachment").Where("order_id = ?", stage.OrderId).First(&attachment).Error
+		if err != nil {
+			return err
+		}
+		// 写入last字段
+		stage.Obj, _ = sjson.Set(stage.Obj, "last", attachment)
+		// 上传JSON获取IPFS CID
+		err, hashJSON := UploadJSON(stage.Obj)
+		if err != nil {
+			return err
+		}
+		// 更新数据
+		stage.Attachment = hashJSON
 	}
-	// 写入last字段
-	stage.Obj, _ = sjson.Set(stage.Obj, "last", attachment)
-	// 上传JSON获取IPFS CID
-	err, hashJSON := UploadJSON(stage.Obj)
-	if err != nil {
-		return err
-	}
-	// 更新数据
-	stage.Attachment = hashJSON
 	raw := global.DB.Model(&model.Order{}).Where("order_id = ?", stage.OrderId).Updates(&stage.Order)
 	if raw.RowsAffected == 0 {
 		return errors.New("创建失败")
 	}
 	return raw.Error
+}
+
+// UpdatedProgress
+// @description: 更新阶段状态
+// @param: updatedProgress request.UpdatedProgressRequest
+// @return:  err error
+func UpdatedProgress(updatedProgress request.UpdatedProgressRequest) (err error) {
+	err = blockchain.UpdatedProgress(updatedProgress.OrderId)
+	return err
 }

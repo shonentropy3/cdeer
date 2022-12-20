@@ -8,8 +8,10 @@ import (
 	"fmt"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/tidwall/gjson"
 	"gorm.io/gorm/clause"
+	"math/big"
 	"strings"
 )
 
@@ -64,4 +66,25 @@ func ParseOrderCreated(transHash model.TransHash, Logs []*types.Log) (err error)
 		}
 	}
 	return errors.New("事件解析失败")
+}
+
+func UpdatedProgress(orderID int64) (err error) {
+	client, err := ethclient.Dial(global.CONFIG.Contract.Provider)
+	if err != nil {
+		return err
+	}
+	address := global.ContractAddr["DeOrder"]
+	instance, err := ABI.NewDeOrder(address, client)
+	if err != nil {
+		return err
+	}
+	version, err := instance.GetOrder(nil, big.NewInt(orderID))
+	if err != nil {
+		return err
+	}
+	raw := global.DB.Model(&model.Order{}).Where("order_id = ?", orderID).Update("progress", version.Progress)
+	if raw.RowsAffected == 0 {
+		return errors.New("操作失败")
+	}
+	return raw.Error
 }

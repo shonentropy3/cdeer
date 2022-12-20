@@ -9,3 +9,7 @@ type PageInfo struct {
 type IDRequest struct {
 	ID uint `json:"id" form:"id"`
 }
+
+type HashRequest struct {
+	Hash string `json:"hash" form:"hash"`
+}

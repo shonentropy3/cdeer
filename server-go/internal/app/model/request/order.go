@@ -14,3 +14,7 @@ type UpdatedStageRequest struct {
 	model.Order
 	Obj string `json:"obj" form:"obj"`
 }
+
+type UpdatedProgressRequest struct {
+	model.Order
+}

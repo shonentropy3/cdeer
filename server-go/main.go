@@ -32,6 +32,8 @@ func main() {
 		db, _ := global.DB.DB()
 		defer db.Close()
 	}
+	// 初始化合约地址
+	initialize.InitContract()
 	// 初始化缓存
 	global.Cache = initialize.Cache()
 	// 启动扫块任务

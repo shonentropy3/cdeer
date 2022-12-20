@@ -14,6 +14,7 @@ func InitOrderRouter(Router *gin.RouterGroup) {
 		orderRouter.POST("createOrder", api.CreateOrder)  // 获取任务列表
 	}
 	{
-		orderRouterWithAuth.POST("updatedStage", api.UpdatedStage) // 创建阶段划分
+		orderRouterWithAuth.POST("updatedStage", api.UpdatedStage)       // 创建阶段划分
+		orderRouterWithAuth.POST("updatedProgress", api.UpdatedProgress) // 更新阶段状态
 	}
 }
