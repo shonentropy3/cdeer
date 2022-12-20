@@ -307,6 +307,19 @@ $pfR: PingFangSC-Regular, PingFang SC, Microsoft Yahei;
 $pfM: PingFangSC-Medium, PingFang SC, Microsoft Yahei;
 
 .Publish{
+    .ant-spin-nested-loading{
+        div {
+            .ant-spin {
+                .ant-spin-text{
+                    position: fixed;
+                }
+                .ant-spin-dot{
+                    position: fixed;
+                }   
+            }
+        }
+
+    }
     .banner{
         height: 226px;
         background-color: #1F1E2E;
