@@ -1,16 +1,49 @@
+import { Button } from "antd";
 import { useEffect, useState } from "react";
 import { getDate } from "../../utils/getDate";
 
 
 export default function StageOutput(params) {
     
-    const { data, index, edit, remove, isEdit, ongoing } = params;
-
+    const { data, index, edit, remove, isEdit, ongoing, stageIndex, who } = params;
     let [isOpen, setIsOpen] = useState(false);
 
+
+    const switchStatus = () => {
+        if (stageIndex === index) {
+            // 正在进行的阶段
+            return <div className="status ongoing">Ongoing</div>
+        }else if(stageIndex > index) {
+            // 已经完成的阶段 
+            return <div className="status completed">Completed</div>
+        }else{
+            // 待开始
+            return <div className="status wait">To be started</div>
+        }
+    }
+
+    const switchBtns = () => {
+        if (who === "issuer") {
+            // 甲方
+            return  <div className="btns">
+                    <Button>Delay</Button>
+                    <Button>Abort</Button>
+                    <Button>Comfirm</Button>
+                </div>
+        }else{
+            // 乙方
+            return  <div className="btns">
+                    <Button>Delay</Button>
+                    <Button>Abort</Button>
+                    <Button>Submit</Button>
+                </div>
+        }
+    }
+
     useEffect(() => {
-        if (ongoing) {
+        if (ongoing && (index === stageIndex)) {
             // 正在进行中
+            setIsOpen(true)
         }
     },[ongoing])
 
@@ -18,6 +51,10 @@ export default function StageOutput(params) {
         <div className="itemCard-nav">
             <p className="nav-index">P{index+1}</p>
             <p className="nav-title">{data.name}</p>
+            {
+                // 项目正在进行中 ==>
+                ongoing && switchStatus()
+            }
             {
                 (!isEdit || isEdit === "block") &&
                     <div className="operate">
@@ -45,9 +82,13 @@ export default function StageOutput(params) {
             </p>
             <p className="container">
                 <span>Delivery instructions:</span>
-                {data.desc}
+                <p>{data.desc}</p>
             </p>
             <div className="arrow" onClick={() => setIsOpen(!isOpen)}></div>
+            {   
+                //  项目可选按钮
+                ongoing && index === stageIndex && switchBtns()
+            }
         </div>
     </div>
 }

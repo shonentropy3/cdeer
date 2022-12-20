@@ -286,13 +286,34 @@
                         line-height: 45px;
                     }
                     .nav-title{
-                        width: 750px;
+                        max-width: 750px;
+                        margin: 23px;
                         font-size: 32px;
                         font-family: PingFangSC-Medium, PingFang SC;
                         font-weight: 500;
                         overflow: hidden;
                         text-overflow: ellipsis;
                         white-space: nowrap;
+                    }
+                    .status{
+                        padding: 4px 11px;
+                        border-radius: 2px;
+
+                        font-size: 14px;
+                        font-family: PingFangSC-Semibold, PingFang SC;
+                        font-weight: 600;
+                        color: #FFFFFF;
+                        line-height: 20px;
+                        letter-spacing: 0.3px;
+                    }
+                    .completed{
+                        background-color: #44D7B6;
+                    }
+                    .ongoing{
+                        background-color: #F7B500;
+                    }
+                    .wait{
+                        background-color: #0052D9;
                     }
                     .operate{
                         width: 110px;
@@ -326,6 +347,14 @@
                         font-weight: 500;
                         color: #1F1E2E;
                         letter-spacing: 0.64px;
+                        &:nth-child(4){
+                            width: calc(100% - 30px);
+                            margin: 0;
+                            p{
+                                padding: 7px 10px;
+                                background-color: #F6F6F6;
+                            }
+                        }
 
                         span{
                             margin-right: 10px;
@@ -346,6 +375,39 @@
                         right: 60px;
 
                         cursor: pointer;
+                    }
+                    .btns{
+                        width: 100%;
+                        margin-top: 30px;
+                        margin-right: 30px;
+                        display: flex;
+                        justify-content: flex-end;
+                        
+                        button{
+                            width: 148px;
+                            height: 45px;
+                            margin-right: 15px;
+                            border-radius: 4px;
+
+                            font-size: 16px;
+                            font-family: PingFangSC-Regular, PingFang SC;
+                            color: #0052D9;
+                            letter-spacing: 0.33px;
+                            &:nth-child(1){
+                                border: 1px solid #0052D9;
+                                color: #0052D9;
+                            }
+                            &:nth-child(2){
+                                border: 1px solid #D13B4E;
+                                color: #D13B4E;
+                            }
+                            &:last-child{
+                                margin-right: 0;
+                                border: 1px solid #1F1E2E;
+                                background-color: #1F1E2E;
+                                color: white;
+                            }
+                        }
                     }
                 }
                 .open{
