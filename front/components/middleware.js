@@ -2,7 +2,7 @@ import { Skeleton } from "antd";
 import { useContext, useEffect, useState } from "react"
 import { AuthContext } from "react-admin";
 import { useAccount } from "wagmi";
-import ConnectModal from "./CustomModal/connectModal";
+import ConnectModal from "./CustomModal/ConnectModal";
 
 export default function withAuth (Component)  {
     const Auth = props => {

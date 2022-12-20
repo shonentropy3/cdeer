@@ -2,7 +2,7 @@ import { CloseOutlined } from "@ant-design/icons"
 import { useRequest } from "ahooks";
 import { Button, Modal } from "antd"
 import { useEffect, useState } from "react";
-import { useAccount, useConnect, useDisconnect, useNetwork, useSigner, useSignMessage, useSwitchNetwork } from "wagmi";
+import { useAccount, useConnect, useNetwork, useSigner, useSwitchNetwork } from "wagmi";
 import Web3 from 'web3'
 import { authLoginSign, getLoginMessage } from "../../http/_api/sign";
 import { getJwt } from "../../utils/GetJwt";
