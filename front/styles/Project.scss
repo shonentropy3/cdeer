@@ -229,9 +229,14 @@ $familyR: PingFangSC-Regular, PingFang SC;
                     justify-content: space-between;
                     align-items: center;
                     padding: 10px 20px;
+                    font-size: 28px;
+                    font-weight: 400;
+                    color: #1F1E2E;
+                    line-height: 40px;
                     p{
-                        color: #0096FF;
+                        color: #1F1E2E;
                         cursor: pointer;
+                        letter-spacing: 2.7px;
                         &:first-child{
                             text-decoration-line: underline;
                         }
