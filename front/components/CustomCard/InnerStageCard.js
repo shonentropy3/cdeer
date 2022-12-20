@@ -9,12 +9,13 @@ import OutputStageCard from "./outputStageCard";
 export default function InnerStageCard(params) {
     
 
-    const { defaultAmount, getInner, dataStages } = params;
+    const { defaultAmount, getInner, dataStages, edit, setIsChange } = params;
 
     const [activeKey, setActiveKey] = useState();    //  当前选中标签
     let [items,setItems] = useState([]);    //  tabs
     let [inner,setInner] = useState({});    //  参数
     let [viewModel,setViewModel] = useState(false);    //  展示模式
+    let [dataViewModel, setDataViewModel] = useState(false);       //   data展示模式
 
     const { run } = useRequest(getInner, {
         debounceWait: 100,
@@ -28,6 +29,7 @@ export default function InnerStageCard(params) {
 
     // 添加tabs
     const add = () => {
+        setIsChange(true);  //  确认修改返回上层 ==> agree ==> 修改阶段划分
         const index = items.length + 1;
 
         // 收集各阶段参数
@@ -45,15 +47,19 @@ export default function InnerStageCard(params) {
                         inner={inner}
                         setInner={changeInner} 
                         setViewModel={setViewModel}     //  修改展示模式
+                        setDataViewModel={setDataViewModel}     //  修改data展示模式
                       />,
             key: `item-${index}`,
           },
         ]);
         setActiveKey(`item-${index}`)
+        setDataViewModel(true);
+
     };
 
     // 移除tabs
     const remove = (targetKey) => {
+        setIsChange(true);  //  确认修改返回上层 ==> agree ==> 修改阶段划分
         items.map((e,i) => {
             if (e.key === targetKey) {
                 items.splice(i,1);
@@ -74,6 +80,8 @@ export default function InnerStageCard(params) {
         setItems([...items]);
         setInner({...obj});
         setActiveKey(`item-${items.length}`)
+        setDataViewModel(true);
+
     };
 
     // tabs事件处理
@@ -88,6 +96,7 @@ export default function InnerStageCard(params) {
     // 切换tab
     const onChange = (key) => {
         setViewModel(false);
+        setDataViewModel(true);
         setActiveKey(key);
     }
 
@@ -116,7 +125,8 @@ export default function InnerStageCard(params) {
                                 inner={inner}
                                 setInner={changeInner} 
                                 setViewModel={setViewModel}     //  修改展示模式
-                              />,
+                                setDataViewModel={setDataViewModel}     //  修改data展示模式
+                            />,
                     key: `item-${i+1}`,
                 })
             })
@@ -124,6 +134,10 @@ export default function InnerStageCard(params) {
             setItems([...items]);
         }
     },[dataStages])
+
+    useEffect(() => {
+        dataViewModel && setIsChange(true)      //  确认修改返回上层 ==> agree ==> 修改阶段划分
+    },[dataViewModel])
 
     return <>
         {
@@ -151,9 +165,25 @@ export default function InnerStageCard(params) {
             </div>
         }
         {
-            items.length > 0 && dataStages && 
+            items.length > 0 && dataStages &&
             <div className="stageList">
-            <OutputStageCard edit={onChange} remove={remove} cache={inner} isEdit="none" />
+            {
+                !dataViewModel ? 
+                <OutputStageCard edit={onChange} remove={remove} cache={inner} isEdit={edit} />
+                :
+                <Tabs 
+                    type="editable-card" 
+                    className="tabs" 
+                    items={items} 
+                    onEdit={onEdit} 
+                    activeKey={activeKey}
+                    onChange={onChange}
+                /> 
+            }
+            {
+                edit === 'block' &&
+                <Button className="btn-add mb60" onClick={() => toggleModel()}>Establish</Button>
+            }
             </div>
         }
     </>

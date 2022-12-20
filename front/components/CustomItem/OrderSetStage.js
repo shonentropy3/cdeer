@@ -31,6 +31,8 @@ export default function OrderSetStage(params) {
     const { useSign, obj } = useSignData(signObj);
     let [isSigner,setIsSigner] = useState(false);
 
+    let [isChange,setIsChange] = useState(false);   //  是否修改了阶段划分
+
     // 设置阶段按钮
     let [btnDisabled,setBtnDisabled] = useState(true);
 
@@ -144,15 +146,24 @@ export default function OrderSetStage(params) {
         })
     }
 
+    // 同意阶段划分 
+    const permitStage = () => {
+        console.log(dataStages);
+        console.log(inner);
+    }
+
     // 总计各阶段
     const printStageTotal = () => {
-        let num = 0;
+        let arr = [];
         for (const i in inner) {
             if (inner[i].amount) {
-                num++;
-                return <p key={i}>P{num} stage cost: <span>{inner[i].amount}</span></p>
+                arr.push(inner[i]);
             }
         }
+        return arr.map((e,i) => 
+            <p key={i}>P{i+1} stage cost: <span>{e.amount}</span></p>
+        )
+        
     }
 
     // 总计金额
@@ -223,8 +234,8 @@ export default function OrderSetStage(params) {
             </>
             case 2:
                 // 判断是自己设置的还是对方设置的
-                if (order.issuer === address || order.worker === address) {
-                    if (order.sign_address === address) {
+                if (order.issuer === address || order.worker === address) {     
+                    if (order.sign_address === address) {       //  修改了这部分
                         // 是你的
                         return <>
                             <p className="title">Task stage division</p>
@@ -239,24 +250,56 @@ export default function OrderSetStage(params) {
                                     </div> 
                                 }
                             </div>
-                            <InnerStageCard defaultAmount={amount} getInner={getInner} dataStages={dataStages} />
-                            <>
-                                {/* 总计 */}
-                                <div className="total">
-                                    {
-                                        dataStages[0].period === 0 && 
-                                        <p>Advance charge: <span>{}</span></p>
-                                    }
-                                    {printStageTotal()}
-                                    {printTotal()}
-                                    {printTotalPeriod()}
-                                </div>
-                            </>
+                            <InnerStageCard defaultAmount={amount} getInner={getInner} dataStages={dataStages} edit="none" />
+                            {/* 总计 */}
+                            <div className="total">
+                                {
+                                    dataStages[0].period === 0 && 
+                                    <p>Advance charge: <span>{}</span></p>
+                                }
+                                {printStageTotal()}
+                                {printTotal()}
+                                {printTotalPeriod()}
+                            </div>
                         </>
                     }else{
                         // 不是 你的
                         return <>
-
+                            <p className="title">Task stage division</p>
+                            <div className="payModel">
+                                <Checkbox checked={dataStages[0].period === 0 ? true : false}>
+                                    Increase advance payment
+                                </Checkbox>
+                                { 
+                                    dataStages[0].period === 0 && 
+                                    <div className="prepay">
+                                        {dataStages[0].amount}
+                                    </div> 
+                                }
+                            </div>
+                            <InnerStageCard defaultAmount={amount} getInner={getInner} dataStages={dataStages} edit="block" setIsChange={setIsChange} />
+                            <div className="total">
+                                {
+                                    dataStages[0].period === 0 && 
+                                    <p>Advance charge: <span>{}</span></p>
+                                }
+                                {printStageTotal()}
+                                {printTotal()}
+                                {printTotalPeriod()}
+                            </div>
+                            {
+                                !isChange ? 
+                                <Button 
+                                    className="submit show"
+                                    onClick={() => permitStage()} 
+                                 >Agree</Button>
+                                :
+                                <Button 
+                                    className={`submit ${btnDisabled ? 'hidden' : 'show'}`} 
+                                    onClick={() => sendSignature()} 
+                                    disabled={btnDisabled}
+                                 >修改阶段划分</Button> 
+                            }
                         </>
                     }
                 }else{
@@ -268,11 +311,6 @@ export default function OrderSetStage(params) {
     }
 
     useEffect(() => {
-        if (dataStages) {
-            console.log(inner);
-        }
-
-
         // 判断是否设置过
         if (!order.signature) {
             progressSet = search.who === 'issuer' ? 0 : 1;  //  设置阶段初始化: 0:甲方的初始化 1:乙方的初始化
