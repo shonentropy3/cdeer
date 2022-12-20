@@ -764,7 +764,7 @@
 
 "@types/js-cookie@^2.x.x":
   "integrity" "sha512-aLkWa0C0vO5b4Sr798E26QgOkss68Un0bLjs7u9qxzPT5CG+8DuNTffWES58YzJs3hrVAOs1wonycqEBqNJubA=="
-  "resolved" "https://registry.npmmirror.com/@types/js-cookie/-/js-cookie-2.2.7.tgz"
+  "resolved" "https://registry.npmjs.org/@types/js-cookie/-/js-cookie-2.2.7.tgz"
   "version" "2.2.7"
 
 "@types/json5@^0.0.29":
@@ -1095,13 +1095,13 @@
 
 "ahooks-v3-count@^1.0.0":
   "integrity" "sha512-V7uUvAwnimu6eh/PED4mCDjE7tokeZQLKlxg9lCTMPhN+NjsSbtdacByVlR1oluXQzD3MOw55wylDmQo4+S9ZQ=="
-  "resolved" "https://registry.npmmirror.com/ahooks-v3-count/-/ahooks-v3-count-1.0.0.tgz"
+  "resolved" "https://registry.npmjs.org/ahooks-v3-count/-/ahooks-v3-count-1.0.0.tgz"
   "version" "1.0.0"
 
 "ahooks@^3.7.2":
-  "integrity" "sha512-nJPsQJcmJnGaNXiqgZdfO7UMs+o926LQg6VyDYt2vzKhXU8Ze/U87NsA/FeIvlIZB0rQr/j7uotFb1bGPp627A=="
-  "resolved" "https://registry.npmmirror.com/ahooks/-/ahooks-3.7.2.tgz"
-  "version" "3.7.2"
+  "integrity" "sha512-HzHD5xhI94xqWfij9rimfFtkbGm+TR/t86drdYrYHgAMth0rqLtHxlVOTCjgXqmXUt9xz0EbkBfrWZBl4lc2YQ=="
+  "resolved" "https://registry.npmjs.org/ahooks/-/ahooks-3.7.3.tgz"
+  "version" "3.7.3"
   dependencies:
     "@types/js-cookie" "^2.x.x"
     "ahooks-v3-count" "^1.0.0"
@@ -3059,14 +3059,6 @@
   "resolved" "https://registry.npmmirror.com/fs.realpath/-/fs.realpath-1.0.0.tgz"
   "version" "1.0.0"
 
-<<<<<<< HEAD
-"fsevents@~2.3.2":
-  "integrity" "sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA=="
-  "resolved" "https://registry.npmmirror.com/fsevents/-/fsevents-2.3.2.tgz"
-  "version" "2.3.2"
-
-=======
->>>>>>> mumbai
 "function-bind@^1.1.1":
   "integrity" "sha512-yIovAzMX49sF8Yl58fSCWJ5svSLuaibPxXQJFLmBObTuCr0Mf1KiPopGM9NiFjiYBCbfaa2Fh6breQ6ANVTI0A=="
   "resolved" "https://registry.npmmirror.com/function-bind/-/function-bind-1.1.1.tgz"
@@ -3443,7 +3435,7 @@
 
 "intersection-observer@^0.12.0":
   "integrity" "sha512-7m1vEcPCxXYI8HqnL8CKI6siDyD+eIWSwgB3DZA+ZTogxk9I4CDnj4wilt9x/+/QbHI4YG5YZNmC6458/e9Ktg=="
-  "resolved" "https://registry.npmmirror.com/intersection-observer/-/intersection-observer-0.12.2.tgz"
+  "resolved" "https://registry.npmjs.org/intersection-observer/-/intersection-observer-0.12.2.tgz"
   "version" "0.12.2"
 
 "intl-format-cache@^4.2.21":
@@ -3676,7 +3668,7 @@
 
 "js-cookie@^2.x.x":
   "integrity" "sha512-HvdH2LzI/EAZcUwA8+0nKNtWHqS+ZmijLA30RwZA0bo7ToCckjK5MkGhjED9KoRcXO6BaGI3I9UIzSA1FKFPOQ=="
-  "resolved" "https://registry.npmmirror.com/js-cookie/-/js-cookie-2.2.1.tgz"
+  "resolved" "https://registry.npmjs.org/js-cookie/-/js-cookie-2.2.1.tgz"
   "version" "2.2.1"
 
 "js-sha3@^0.5.7":
@@ -5248,7 +5240,7 @@
 
 "screenfull@^5.0.0":
   "integrity" "sha512-9BakfsO2aUQN2K9Fdbj87RJIEZ82Q9IGim7FqM5OsebfoFC6ZHXgDq/KvniuLTPdeM8wY2o6Dj3WQ7KeQCj3cA=="
-  "resolved" "https://registry.npmmirror.com/screenfull/-/screenfull-5.2.0.tgz"
+  "resolved" "https://registry.npmjs.org/screenfull/-/screenfull-5.2.0.tgz"
   "version" "5.2.0"
 
 "scroll-into-view-if-needed@^2.2.25":
