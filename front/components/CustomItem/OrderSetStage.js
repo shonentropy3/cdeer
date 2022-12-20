@@ -1,17 +1,19 @@
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { useSetState } from "ahooks";
-import { Button, Checkbox, InputNumber } from "antd";
+import { Button, Checkbox, InputNumber, message, Modal } from "antd";
 import { ethers } from "ethers";
 import Image from "next/image";
 import { useEffect, useState } from "react"
 import { useAccount, useNetwork } from "wagmi";
-import { useRead, useSignData } from "../../controller";
-import { updatedStage } from "../../http/_api/order";
+import { multicallWrite, muticallEncode, useRead, useSignData } from "../../controller";
+import { startOrder, updatedStage } from "../../http/_api/order";
 import { getDate } from "../../utils/getDate";
 import InnerStageCard from "../CustomCard/innerStageCard";
 
 export default function OrderSetStage(params) {
     
     const { search, order, amount, task, dataStages } = params;
+    const { confirm } = Modal;
     let [progressSet, setProgressSet] = useState();
     let [stage, setStage] = useSetState({
         orderModel: false,      //  预付款模式
@@ -35,7 +37,8 @@ export default function OrderSetStage(params) {
 
     // 设置阶段按钮
     let [btnDisabled,setBtnDisabled] = useState(true);
-
+    let [isLoading,setIsLoading] = useState(false);
+    
     //  切换order模式 ==> 预付款
     const toggleModel = (e) => {
         setStage({orderModel: e.target.checked})
@@ -148,8 +151,86 @@ export default function OrderSetStage(params) {
 
     // 同意阶段划分 
     const permitStage = () => {
-        console.log(dataStages);
-        console.log(inner);
+        if (order.worker === address) {
+            sendSignature()
+            return
+        }
+
+        setIsLoading(true);
+        let sum = 0;
+        dataStages.map(e => {
+            sum += e.amount;
+        })
+        if (sum > (task.budegt / Math.pow(10,18))) {
+            confirm({
+                title: '你确认支付这笔订单吗?',
+                icon: <ExclamationCircleOutlined />,
+                content: '当前总金额超出预期金额!',
+                onOk() {
+                  permit(sum);
+                },
+                onCancel() {},
+              });
+        }else{
+            permit(sum)
+        }
+    }
+
+    const permit = (sum) => {
+        let r = '0x' + order.signature.substring(2).substring(0, 64);
+        let s = '0x' + order.signature.substring(2).substring(64, 128);
+        let v = '0x' + order.signature.substring(2).substring(128, 130);
+        let value = ethers.utils.parseEther(`${sum}`);
+        let _amount = [];
+        let _period = [];
+        let funcList = [];
+
+        dataStages.map((e,i) => {
+            _amount.push(ethers.utils.parseEther(`${e.amount}`));
+            _period.push(`${e.period * 24 * 60 * 60}`);
+        })
+        funcList.push({
+            functionName: 'permitStage',
+            params: [order.order_id, _amount, _period, nonces.data, order.stages.deadline, v, r, s]
+        })
+        funcList.push({
+            functionName: 'payOrder',
+            params: [order.order_id, value]
+        })
+        if ((task.budegt / Math.pow(10,18)) !== sum) {
+            funcList.push({
+                functionName: 'modifyOrder',
+                params: [order.order_id, ethers.constants.AddressZero, value]
+            })
+        }
+        funcList.push({
+            functionName: 'startOrder',
+            params: [order.order_id]
+        })
+        console.log(funcList);
+        multicallWrite(muticallEncode(funcList),address,value)
+        .then(res => {
+            // 发送后端请求 ==> 开始任务
+            startOrder({
+                order_id: order.order_id
+            })
+            .then(res => {
+                if (res.code === 0) {
+                    message.success('项目开始')
+                    setTimeout(() => {
+                        history.go(0)
+                    }, 500);              
+                }else{
+                    setIsLoading(false);
+                }
+            })
+        })
+        .catch(err => {
+            console.log(err);
+            setIsLoading(false);
+        })
+
+
     }
 
     // 总计各阶段
@@ -292,6 +373,7 @@ export default function OrderSetStage(params) {
                                 <Button 
                                     className="submit show"
                                     onClick={() => permitStage()} 
+                                    loading={isLoading}
                                  >Agree</Button>
                                 :
                                 <Button 
