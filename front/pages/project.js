@@ -33,6 +33,8 @@ export default function Project() {
     let [progress, setProgress] = useState(0);
     // task用户报名信息
     let [applyInfo,setApplyInfo] = useState({})
+    // 报名按钮loading状态
+    let [applyLoading,setApplyLoading] = useState(false)
     
     const showModal = ()=>{
         setIsModalOpen(true)
@@ -64,6 +66,7 @@ export default function Project() {
             message.warning("请完善信息!")
             return
         }
+        setApplyLoading(true)
         Task.write({
             recklesslySetUnpreparedArgs:[
                 address,
@@ -84,10 +87,12 @@ export default function Project() {
         .then((res)=>{
             if ( res.code === 0 ) {
                 message.success(res.msg);
+                setApplyLoading(false)
                 setTimeout(()=>{
                     router.push(`/task?w=worker&bar=apply`)
                 },500)
             }else{
+                setApplyLoading(false)
                 message.error(res.msg);
             }
         })
@@ -100,11 +105,13 @@ export default function Project() {
         })
         .then(res => {
             if (res.code === 0) {
+                setApplyLoading(false)
                 message.success(res.msg);
                 setTimeout(() => {
                     router.push(`/task?w=worker&bar=apply`)    //  跳转链接
                 }, 500);
             } else {
+                setApplyLoading(false)
                 message.error(res.msg);
             }
         })
@@ -128,6 +135,7 @@ export default function Project() {
         .then((res) => {
             if ( res.code == 0 ) {
                 message.success(res.msg)
+                history.go(0)
             }else{
                 message.error(res.msg)
             }
@@ -315,7 +323,16 @@ export default function Project() {
             {/* <Modal_applyTask setParams={setParams} params={params} project={project} submit={apply} applyInfo={userApplyInfo} userContact={userContact} /> */}
             {
                 isModalOpen &&
-                <ApplyTaskModal open={isModalOpen} onCancel={handleCancel} project={detail} submit={apply} userContact={userContact} setUserContact={setUserContact} applyInfo={applyInfo} />
+                <ApplyTaskModal 
+                    open={isModalOpen} 
+                    onCancel={handleCancel} 
+                    project={detail} 
+                    submit={apply} 
+                    userContact={userContact} 
+                    setUserContact={setUserContact} 
+                    applyInfo={applyInfo} 
+                    applyLoading={applyLoading}
+                />
             }
     </div>
 }

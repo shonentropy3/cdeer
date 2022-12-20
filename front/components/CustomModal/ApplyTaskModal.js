@@ -8,7 +8,7 @@ const {TextArea} = Input
 const { Option } = Select;
 function ApplyTaskModal (props) {
    
-    const { open, onCancel, submit, project, userContact, setUserContact, applyInfo } = props;
+    const { open, onCancel, submit, project, userContact, setUserContact, applyInfo, applyLoading } = props;
 
     let [icons, setIcons] = useState([
         { title: 'telegram', value: '' },
@@ -131,7 +131,7 @@ function ApplyTaskModal (props) {
                 <p>Self recommendation</p>
                 <TextArea className="apply-task-applyInfo-text" rows={4} onChange={e => onchange(e.target.value, 'desc')} value={inner.desc} />
             </div>
-            <Button className="apply-task-btn" onClick={() => submit(inner)}>Sign up</Button>
+            <Button loading={applyLoading} className="apply-task-btn" onClick={() => submit(inner)}>Sign up</Button>
         </div>
     </div>
     
