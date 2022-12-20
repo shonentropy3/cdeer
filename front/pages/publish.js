@@ -9,7 +9,7 @@ const { Option } = Select;
 import { useContracts } from '../controller/index';
 import { BitOperation } from '../utils/BitOperation';
 import { uploadProps } from "../components/upload/config";
-import ConnectModal from "../components/CustomModal/connectModal";
+import ConnectModal from "../components/CustomModal/ConnectModal";
 import ComfirmTaskModal from "../components/CustomModal/ComfirmTaskModal";
 import { omit } from 'lodash';
 import { createTask } from "../http/_api/task";
