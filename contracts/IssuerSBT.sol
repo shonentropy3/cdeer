@@ -26,11 +26,9 @@ contract IssuerSBT is SBTBase, Ownable {
         _;
     }
 
-    function mint(uint orderId) external onlyDeorder {
-        Order memory order = IOrder(deOrder).getOrder(orderId);
-        _mint(order.issuer, orderId);
+    function mint(address who, uint orderId) external onlyDeorder {
+        _mint(who, orderId);
     }
-
 
     function setDeOrder(address _deOrder) external onlyOwner {
         deOrder = _deOrder;

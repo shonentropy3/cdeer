@@ -33,7 +33,7 @@ func GetOrderList(c *gin.Context) {
 }
 
 // CreateOrder
-// @Tags TaskApi
+// @Tags OrderApi
 // @Summary 添加任务
 // @accept application/json
 // @Produce application/json
@@ -56,7 +56,7 @@ func CreateOrder(c *gin.Context) {
 }
 
 // UpdatedStage
-// @Tags StageApi
+// @Tags OrderApi
 // @Summary 创建阶段划分
 // @accept application/json
 // @Produce application/json
@@ -65,12 +65,33 @@ func UpdatedStage(c *gin.Context) {
 	var stage request.UpdatedStageRequest
 	_ = c.ShouldBindJSON(&stage)
 	// 校验字段
-	//fmt.Println(stage.Order)
 	if err := utils.Verify(stage.Order, utils.CreatedStageVerify); err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
 	if err := service.UpdatedStage(stage); err != nil {
+		global.LOG.Error("操作失败!", zap.Error(err))
+		response.FailWithMessage("操作失败", c)
+	} else {
+		response.OkWithMessage("操作成功", c)
+	}
+}
+
+// UpdatedProgress
+// @Tags OrderApi
+// @Summary 更新阶段状态
+// @accept application/json
+// @Produce application/json
+// @Router /order/updatedStage [post]
+func UpdatedProgress(c *gin.Context) {
+	var updatedProgress request.UpdatedProgressRequest
+	_ = c.ShouldBindJSON(&updatedProgress)
+	// 校验字段
+	if err := utils.Verify(updatedProgress, utils.HashVerify); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	if err := service.UpdatedProgress(updatedProgress); err != nil {
 		global.LOG.Error("操作失败!", zap.Error(err))
 		response.FailWithMessage("操作失败", c)
 	} else {

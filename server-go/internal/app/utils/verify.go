@@ -21,7 +21,8 @@ var (
 	DeleteTaskVerify        = Rules{"Hash": {NotEmpty()}}
 	ModifyApplySwitchVerify = Rules{"TaskID": {NotEmpty()}}
 	// 任务
-	CreateOrderVerify = Rules{"TaskID": {NotEmpty()}}
+	CreateOrderVerify    = Rules{"TaskID": {NotEmpty()}}
+	UpdatedProgessVerify = Rules{"OrderId": {NotEmpty()}}
 	// 阶段划分
 	CreatedStageVerify = Rules{"OrderId": {NotEmpty()}, "Signature": {NotEmpty()}, "SignAddress": {NotEmpty()}, "Stages": {NotEmpty()}}
 )
