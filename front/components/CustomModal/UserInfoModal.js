@@ -21,7 +21,9 @@ export default function UserInfoModal(params) {
             
             {/* 详情 */}
             <div className="personal-info-btmBackground">
-                    <div className="personal-info-avator"></div>
+                    <div className="personal-info-avator">
+                        <img src={'http://192.168.1.10:8086/'+userInfo.avatar} />
+                    </div>
                     <p className="personal-info-name">{userInfo.username}</p>
                     <div className="personal-info-contact">
                         <div className="personal-info-contact-item">

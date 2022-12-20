@@ -1,40 +1,53 @@
-<svg id="a_1" data-name="b 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 319 399">
+<svg id="l_1" data-name="l 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 470 268">
   <defs>
     <style>
-      .cls-2{fill:#fff;opacity:0.85;}.cls-3{opacity:0.4;}.cls-4{fill:url(#a_14);}.cls-5{font-size:28.52px;fill:#1f1e2e;font-family:Arial-BoldMT, Arial;font-weight:700;}.cls-6{opacity:0.5;}.cls-7{fill-rule:evenodd;fill:url(#a_4-2);}.cls-8{isolation:isolate;font-size:4.68px;font-family:PingFangSC-Regular, PingFang SC;letter-spacing:0.09em;}.cls-10,.cls-9{font-size:9.04px;}.cls-9{font-family:PingFangSC-Light, PingFang SC;}.cls-10{font-family:PingFangSC-Medium, PingFang SC;}.cls-11{opacity:0.08;font-size:47.13px;font-family:PingFangSC-Semibold, PingFang SC;}
+      .c1,.c10,.c11,.c13,.c14{fill:none;}.c2{opacity:0.6;}.c3{fill:url(#b3);}.c4{fill:#1f1e2e;}.c5{opacity:0.2;}.c6{font-size:41.17px;letter-spacing:0.05em;}.c6,.c7,.c8,.c9{fill:#fff;}.c6,.c7{font-family:PingFangSC-Semibold-GBpc-EUC-H, PingFang SC;}.c7{font-size:28.52px;}.c8,.c9{font-size:9.04px;}.c8{font-family:PingFangSC-Light-GBpc-EUC-H, PingFang SC;}.c9{font-family:PingFangSC-Medium-GBpc-EUC-H, PingFang SC;}.c10,.c11,.c13,.c14{stroke-miterlimit:10;stroke-width:1.12px;}.c10,.c11{opacity:0.5;}.c10{stroke:url(#b1);}.c11{stroke:url(#b2);}.c12{clip-path:url(#clip-path);}.c13{stroke:url(#b1-2);}.c14{stroke:url(#b4);}
     </style>
-    <linearGradient id="a_4" x1="159.5" y1="3.99" x2="159.5" y2="398.06" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#fee7b9"/>
-      <stop offset="1" stop-color="#c91d3b"/>
-    </linearGradient>
-    <linearGradient id="a_14" x1="11.34" y1="199.66" x2="307.66" y2="199.66" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#fee7b9"/>
+    <linearGradient id="b3" x1="1.42" y1="134" x2="468.44" y2="134" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#dcff65"/>
       <stop offset="1" stop-color="#fff"/>
     </linearGradient>
-    <linearGradient id="a_4-2" x1="210.14" y1="127.21" x2="241" y2="127.21" xlink:href="#a_4"/>
+    <linearGradient id="b1" x1="298.21" y1="218.48" x2="329.4" y2="218.48" gradientUnits="userSpaceOnUse">
+      <stop offset="0.01" stop-color="#da0035"/>
+      <stop offset="0.99" stop-color="#ff766e"/>
+      <stop offset="1" stop-color="#ff776f"/>
+    </linearGradient>
+    <linearGradient id="b2" x1="298.21" y1="168.51" x2="457.31" y2="168.51" gradientUnits="userSpaceOnUse">
+      <stop offset="0.01" stop-color="#da0035"/>
+      <stop offset="0.52" stop-color="#ed7575"/>
+      <stop offset="1" stop-color="#ffe6b2"/>
+    </linearGradient>
+    <clipPath id="clip-path">
+      <path class="c1" d="M0-.62H410.63A46.41,46.41,0,0,1,457,45.8V207a46.41,46.41,0,0,1-46.41,46.41H0a0,0,0,0,1,0,0V-.62a0,0,0,0,1,0,0Z"/>
+    </clipPath>
+    <linearGradient id="b1-2" x1="292.25" y1="223.86" x2="323.44" y2="223.86" xlink:href="#b1"/>
+    <linearGradient id="b4" x1="292.25" y1="173.9" x2="451.35" y2="173.9" xlink:href="#b2"/>
   </defs>
-  <rect fill="url(#a_4)" width="319" height="399" rx="7"/>
-  <path class="cls-2" d="M35,.33H194a125,125,0,0,1,125,125V274A125,125,0,0,1,194,399H35A35,35,0,0,1,0,364V35.33A35,35,0,0,1,35,.33Z"/>
-  <g class="cls-3">
-    <path class="cls-4" d="M182.66,384.83H46.34a35,35,0,0,1-35-35V49.5a35,35,0,0,1,35-35H182.66a125,125,0,0,1,125,125V259.83A125,125,0,0,1,182.66,384.83Z"/>
+  <g class="c2">
+    <rect class="c3" x="-0.01" width="469.99" height="268"/>
   </g>
-  <text class="cls-5" transform="translate(23 105.47)">Dao operation and <tspan x="0" y="28.52">maintenance</tspan></text>
-  <g id="a-3" class="cls-6">
-    <path class="cls-7" d="M211.75,122.56h27.64a1.5,1.5,0,0,1,1.61,1.38v6.53a1.52,1.52,0,0,1-1.61,1.38H211.75a1.52,1.52,0,0,1-1.61-1.38v-6.53A1.5,1.5,0,0,1,211.75,122.56Z"/>
+  <path class="c4" d="M410.59,254H0V0H410.59A46.41,46.41,0,0,1,457,46.41V207.59A46.41,46.41,0,0,1,410.59,254Z"/>
+  <g class="c5">
+    <text class="c6" transform="translate(33.45 186.25) rotate(-90)">ISSUER</text>
   </g>
-  <g id="back-end-2">
-    <text class="cls-8" transform="translate(218.53 128.88)">Issuer</text>
+  <text class="c7" transform="translate(11.97 71.69)">Dao operation and maintenance</text>
+  <text class="c8" transform="translate(36.32 132.92)">Skill:</text>
+  <text class="c9" transform="translate(35.42 146.48)">Solidity</text>
+  <text class="c9" transform="translate(82.04 146.48)">Javascript</text>
+  <text class="c9" transform="translate(141.38 146.48)">IOS</text>
+  <text class="c8" transform="translate(36.32 164.3)">Token ID:</text>
+  <text class="c9" transform="translate(35.42 176.96)">1234</text>
+  <text class="c8" transform="translate(35.79 101.95)">Depository Hash:</text>
+  <text class="c9" transform="translate(35.42 115.6)">QmZStS3CuSA7SRvSpJgdiWVyjTa9yD5bxTNerTL2HUcdck</text>
+  <text class="c8" transform="translate(35.79 195.23)">Amount of money:</text>
+  <text class="c9" transform="translate(35.42 207.89)">≈0.22 ETH</text>
+  <path class="c10" d="M328.84,236.5a17,17,0,0,1-17,17H298.77V200.43a17,17,0,0,1,17-17h13.08Z"/>
+  <path class="c11" d="M373.76,83.52H315.91a17.14,17.14,0,0,0-17.14,17.14v48.87l.22,0H393.8a12.57,12.57,0,0,1,12.57,12.57v8.8a12.57,12.57,0,0,1-12.57,12.57h-31v70.06h11a83,83,0,0,0,83-83v-4A83,83,0,0,0,373.76,83.52Z"/>
+  <text class="c8" transform="translate(35.91 240.88)">GMT+8 2022-02-02 11:40:23</text>
+  <g class="c12">
+    <path class="c13" d="M322.88,241.88a17,17,0,0,1-17,17H292.81V205.82a17,17,0,0,1,17-17h13.07Z"/>
   </g>
-  <text class="cls-9" transform="translate(23.41 226.71)">Skills:</text>
-  <text class="cls-10" transform="translate(22.5 240.27)">Solidity</text>
-  <text class="cls-10" transform="translate(69.12 240.27)">Javascript</text>
-  <text class="cls-10" transform="translate(128.46 240.27)">IOS</text>
-  <text class="cls-9" transform="translate(23.41 262.26)">Token ID:</text>
-  <text class="cls-10" transform="translate(22.5 274.91)">1234</text>
-  <text class="cls-9" transform="translate(24.05 355.44)">GMT+8 2022-02-02 11:40:23</text>
-  <text class="cls-9" transform="translate(23.41 191.07)">Hash:</text>
-  <text class="cls-10" transform="translate(23.03 204.72)">QmZStS3CuSA7SRvSpJgdiWVyjTa9yD5bxTNerTL2HUcdck</text>
-  <text class="cls-9" transform="translate(23.41 297.36)">Amount:</text>
-  <text class="cls-10" transform="translate(23.03 310.01)">≈0.22 ETH</text>
-  <text class="cls-11" transform="translate(22.17 84.53)">ISSUER</text>
+  <g class="c12">
+    <path class="c14" d="M367.8,88.9H310a17.14,17.14,0,0,0-17.14,17.15v48.86h95a12.57,12.57,0,0,1,12.57,12.57v8.79a12.57,12.57,0,0,1-12.57,12.57h-31v70.06h11a83,83,0,0,0,83-83v-4A83,83,0,0,0,367.8,88.9Z"/>
+  </g>
 </svg>

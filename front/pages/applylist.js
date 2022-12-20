@@ -21,6 +21,7 @@ export default function ApplyList(params) {
     const { address } = useAccount();
     const provider = useProvider();
     const { useOrderContractWrite } = useContracts('createOrder');
+    const [imgUrl,setImgUrl] = useState('http://192.168.1.10:8086/')
     
     let [data, setData] = useState([]);     //  报名列表
     let [detail, setDetail] = useState({});     //  需求详情
@@ -110,6 +111,7 @@ export default function ApplyList(params) {
         .then(res => {
             if (res.code === 0) {
                 data = res.data.list;
+                console.log(res);
                 setData([...data]);
             }
         })
@@ -143,6 +145,10 @@ export default function ApplyList(params) {
                 break;
         }
     },[useOrderContractWrite.status])
+
+    useEffect(()=>{
+        console.log(imgUrl);
+    },[imgUrl])
 
     return <div className="Applylist">
         {/* 用户详情弹窗 */}
@@ -186,10 +192,10 @@ export default function ApplyList(params) {
                         <div className="product-list-item">
                             <div className="product-list-info">
                                 <div className="product-img">
-
+                                    <img src={imgUrl+e.user.avatar} />
                                 </div>
                                 <div className="product-info">
-                                    <p className="applicant-name" >{e.address}<span onClick={()=>showUserInfo(e.user)}>View personal information</span></p>
+                                    <p className="applicant-name" >{e.user.username ? e.user.username : e.apply_addr}<span onClick={()=>showUserInfo(e.user)}>View personal information</span></p>
                                     <p className="applicant-skill">
                                         <i className="good-skill">Good at skills：</i>
                                         {
@@ -198,19 +204,30 @@ export default function ApplyList(params) {
                                     </p>
                                     <div className="applicant-mess">
                                         <div className="applicant-mess-item">
-                                            <Image src="/icon/telegram.png" alt="" quality={100} width={29} height={29} />
+                                            {
+                                                e.user.telegram ? <Image src="/icon/telegram.png" alt="" quality={100} width={29} height={29} /> : ''
+                                            }
                                         </div>
                                         <div className="applicant-mess-item">
-                                            <Image src="/icon/skype.png" alt="" quality={100} width={29} height={29} />
+                                            {
+                                                e.user.skype ? 
+                                                <Image src="/icon/skype.png" alt="" quality={100} width={29} height={29} /> : ''
+                                            }
                                         </div>
                                         <div className="applicant-mess-item">
-                                            <Image src="/icon/wechat.png" alt="" quality={100} width={29} height={29} />
+                                            {
+                                                e.user.wechat ? <Image src="/icon/wechat.png" alt="" quality={100} width={29} height={29} /> : ''
+                                            }
                                         </div>
                                         <div className="applicant-mess-item">
-                                            <Image src="/icon/discord.png" alt="" quality={100} width={29} height={29} />
+                                            {
+                                                e.user.discord ? <Image src="/icon/discord.png" alt="" quality={100} width={29} height={29} /> : ''
+                                            }
                                         </div>
                                         <div className="applicant-mess-item">
-                                            <Image src="/icon/whatsapp.png" alt="" quality={100} width={29} height={29} />
+                                            {
+                                                e.user.phone ? <Image src="/icon/whatsapp.png" alt="" quality={100} width={29} height={29} /> : ''
+                                            }
                                         </div>
                                     </div>
                                 </div>

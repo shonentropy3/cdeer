@@ -303,28 +303,22 @@
                     display: flex;
                     margin-bottom: 38px;
                     .product-list-item{
-                        // height: 200px;
-                        // margin-right: 20px;
-                        // display: flex;
                         width: 750px;
                         padding-bottom: 15px;
-                        // justify-content: space-between;
                         .product-list-info{
                             display: flex;
                             .product-img{
                                 height: 119px;
                                 width: 119px;
-                                background-color: #1F1E2E;
                                 border-radius: 50%;
-                                // flex: 1.5;
-                                // position: relative;
+                                img{
+                                    width: 100%;
+                                    height: 100%;
+                                    border-radius: 50%;
+                                }
                             }
                             .product-info{
-                                // flex: 3;
-                                // width: 300px;
-                                // height: 150px;
                                 margin-left: 28px;
-                                // background-color: bisque;
                                 .applicant-name{
                                     height: 40px;
                                     font-size: 28px;
@@ -388,14 +382,8 @@
                                 }
                             }
                             .product-apply{
-                                // width: 180px;
-                                // flex: 1.5;
-                                // height: 150px;
                                 flex: 1;
-                                // background-color: blueviolet;
-                                // margin-left: 480px;
                                 text-align: right;
-                                // margin-left: 172px;
                                 .amount{
                                     display: flex;
                                     justify-content: flex-end;
@@ -482,7 +470,6 @@
                             font-weight: 400;
                         }
                         .product-collaborate-no{
-                            // border-bottom: 1px solid #ccc;
                             margin-top: 20px;
                             background-color: #fff;
                             box-shadow: 0px 2px 4px 0px rgba(0,0,0,0.5);
@@ -516,9 +503,13 @@
                 .personal-info-avator{
                     width: 129px;
                     height: 129px;
-                    background-color: #554AFF;
                     border-radius: 50%;
                     margin: -65px auto 0;
+                    img{
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 50%;
+                    }
                 }
                 .personal-info-name{
                     height: 40px;
@@ -748,15 +739,8 @@
         width: 863px;
         margin-left: 169px;
         font-family: PingFangSC-Regular, PingFang SC;
-        // height: 20px;
         .ant-steps{
-            // height: 20px;
-            // line-height: 20px;
             .ant-steps-item{
-                // flex: 1;
-                .ant-steps-item-container{
-                    // height: 20px;
-                }
                 .ant-steps-item-icon{
                     width: 20px;
                     height: 20px;
@@ -779,41 +763,15 @@
                     color: #949494;
                     height: 25px;
                     line-height: 25px;
-                    // width: 85px;
                     .ant-steps-item-title{
                         font-size: 18px;
                         height: 25px;
                         line-height: 25px;
                         letter-spacing: 1px;
                         font-weight: 400;
-                        // width: 85px;
                     }
                 }
             }
-            // .ant-steps-item-wait{
-            //     padding-left: 37px;
-            //     .ant-steps-item-container{
-            //         width: 168px;
-            //         &:nth-of-type(3){
-            //             width: 85px;
-            //         }
-            //     }
-            // }
-            // .steps-stage{
-            //     width: 205px !important;
-            //     margin-right: 60px;
-            //     .ant-steps-item-container{
-            //         .ant-steps-item-content{
-            //             width: 138px;
-            //             .ant-steps-item-title{
-            //                 width: 138px;
-            //             }
-            //         }
-            //     }
-            // }
-            // .steps-finish{
-            //     width: 122px;
-            // }
             .ant-steps-item-active{
                 .ant-steps-item-container{
                     .ant-steps-item-icon{
@@ -884,7 +842,6 @@
             .info{
                 display: flex;
                 flex-direction: column;
-                // justify-content: space-between;
                 .title{
                     height: 40px;
                     font-size: 28px;
@@ -952,7 +909,6 @@
     }
     .worker-signInStage{
         width: 100%;
-        // height: 500px;
         border: 1px solid #000;
         margin-bottom: 50px;
     }
