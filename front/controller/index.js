@@ -1,10 +1,10 @@
 import { useContractWrite, useSignTypedData, useContractReads, useContractRead, useNetwork, useContract } from 'wagmi';
-import task from '../../deployments/abi/DeTask.json'
-import taskAddr from `../../deployments/${process.env.NEXT_PUBLIC_DEVELOPMENT_CHAIN}/DeTask.json`
-import order from '../../deployments/abi/DeOrder.json'
-import orderAddr from `../../deployments/${process.env.NEXT_PUBLIC_DEVELOPMENT_CHAIN}/DeOrder.json`
-import stage from '../../deployments/abi/DeStage.json'
-import stageAddr from `../../deployments/${process.env.NEXT_PUBLIC_DEVELOPMENT_CHAIN}/DeStage.json`
+const task = require(`../../deployments/abi/DeTask.json`);
+const taskAddr = require(`../../deployments/${process.env.NEXT_PUBLIC_DEVELOPMENT_CHAIN}/DeTask.json`);
+const order = require(`../../deployments/abi/DeOrder.json`);
+const orderAddr = require(`../../deployments/${process.env.NEXT_PUBLIC_DEVELOPMENT_CHAIN}/DeOrder.json`);
+const stage = require(`../../deployments/abi/DeStage.json`);
+const stageAddr = require(`../../deployments/${process.env.NEXT_PUBLIC_DEVELOPMENT_CHAIN}/DeStage.json`);
 import { useEffect, useState } from 'react';
 
 var Web3 = require('web3');
