@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useDisconnect, useConnect, useAccount, useNetwork, useSwitchNetwork } from 'wagmi';    // 切换链 
 import Identicon, { IdenticonOptions } from "identicon.js";
-import ConnectModal from '../../components/CustomModal/connectModal';
+import ConnectModal from '../../components/CustomModal/ConnectModal';
 export default function Header(props) {
 
     const {isConnected, address} = useAccount()
