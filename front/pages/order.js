@@ -20,9 +20,10 @@ export default function Order(props) {
     let [task, setTask] = useState();           // task详情
     let [order, setOrder] = useState();         // order详情
     let [stages, setStages] = useState();       // 阶段详情
+    let [progress, setProgress] = useState(0);       // 阶段详情
+    
     
     const switchStages = () => {
-        // order.progress = 1;
         switch (order.progress) {
             case 0:
                 return <OrderSetStage 
@@ -33,7 +34,7 @@ export default function Order(props) {
                     dataStages={stages}
                  />     //   设置阶段
             default:
-                return <OrderStageList />     //   阶段开始
+                return <OrderStageList order={order} />     //   阶段开始
         }
     }
 
@@ -77,6 +78,11 @@ export default function Order(props) {
                 }
                 setStages([...stages]);
                 setOrder({...order});
+
+                if (order.progress !== 0) {
+                    progress = order.progress === 4 ? 1 : 2;
+                    setProgress(progress);
+                }
             }
         })
     }
@@ -92,7 +98,7 @@ export default function Order(props) {
                     order &&
                     <>
                         <div className="worker-steps">
-                            <Steps current={order.progress} size="small">
+                            <Steps current={progress} size="small">
                                 <Step title="Start" />
                                 <Step title="Stage plan" />
                                 <Step title="Finish" />
