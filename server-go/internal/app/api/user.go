@@ -125,13 +125,13 @@ func UnReadMsgCount(c *gin.Context) {
 		global.LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败", c)
 	} else {
-		response.OkWithDetailed(count, "获取成功", c)
+		response.OkWithDetailed(map[string]int64{"count": count}, "获取成功", c)
 	}
 }
 
 // UnReadMsg
 // @Tags UserApi
-// @Summary 获取未读消息数量
+// @Summary 获取未读消息
 // @Router /user/unReadMsg [get]
 func UnReadMsg(c *gin.Context) {
 	userID := c.GetUint("userID") // 操作人ID
@@ -164,11 +164,11 @@ func ReadMsg(c *gin.Context) {
 
 // MsgList
 // @Tags UserApi
-// @Summary 获取未读消息数量
+// @Summary 分页获取消息
 // @Router /user/msgList [get]
 func MsgList(c *gin.Context) {
 	var searchInfo request.MsgListRequest
-	_ = c.ShouldBindJSON(&searchInfo)
+	_ = c.ShouldBindQuery(&searchInfo)
 	userID := c.GetUint("userID") // 操作人ID
 	if list, total, err := service.MsgList(searchInfo, userID); err != nil {
 		global.LOG.Error("获取失败!", zap.Error(err))

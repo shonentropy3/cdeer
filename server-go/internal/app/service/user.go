@@ -97,14 +97,14 @@ func UnReadMsgCount(userID uint) (count int64, err error) {
 // @description: 获取未读消息
 // @param: userID string
 // @return: count int64, err error
-func UnReadMsg(userID uint) (list []model.Message, total int64, err error) {
+func UnReadMsg(userID uint) (list []response.MsgListRespond, total int64, err error) {
 	db := global.DB.Model(&model.Message{})
 	db = db.Where("status = 0 AND rec_id = ?", userID)
 	err = db.Count(&total).Error
 	if err != nil {
 		return list, total, err
 	}
-	err = db.Order("created_at desc").Find(&list).Error
+	err = db.Select("message.*,\"user\".avatar as avatar").Order("created_at desc").Joins("LEFT JOIN \"user\" ON \"user\".id=message.send_id").Find(&list).Error
 	return list, total, err
 }
 

@@ -173,6 +173,8 @@ func ParseApplyFor(transHash model.TransHash, Logs []*types.Log) (err error) {
 			price := applyFor.Cost.String()                                 // 报价
 			applyAddr := common.HexToAddress(vLog.Topics[2].Hex()).String() // 申请人
 			apply := model.Apply{TaskID: taskID, Price: price, ApplyAddr: applyAddr}
+			// 解析raw数据
+			apply.Desc = gjson.Get(transHash.Raw, "desc").String()
 			// 更新||插入数据
 			err = tx.Model(&model.Apply{}).Clauses(clause.OnConflict{
 				Columns:   []clause.Column{{Name: "apply_addr"}, {Name: "task_id"}},
@@ -183,7 +185,7 @@ func ParseApplyFor(transHash model.TransHash, Logs []*types.Log) (err error) {
 				return err
 			}
 			// 删除任务
-			if err = tx.Model(&model.TransHash{}).Where("hash = ?", vLog.TxHash.String()).Delete(&model.TransHash{}).Error; err != nil {
+			if err = tx.Model(&model.TransHash{}).Where("hash = ?", vLog.TxHash.String()).Updates(map[string]interface{}{"raw": "", "deleted_at": time.Now()}).Error; err != nil {
 				tx.Rollback()
 				return err
 			}

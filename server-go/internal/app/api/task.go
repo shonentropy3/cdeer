@@ -52,7 +52,8 @@ func CreateTask(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if err := service.CreateTask(task); err != nil {
+	address := c.GetString("address") // 操作人
+	if err := service.CreateTask(task, address); err != nil {
 		global.LOG.Error("创建失败!", zap.Error(err))
 		response.FailWithMessage("创建失败", c)
 	} else {
@@ -74,8 +75,8 @@ func UpdatedTask(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-
-	if err := service.UpdatedTask(task); err != nil {
+	address := c.GetString("address") // 操作人
+	if err := service.UpdatedTask(task, address); err != nil {
 		global.LOG.Error("更新失败!", zap.Error(err))
 		response.FailWithMessage(err.Error(), c)
 	} else {
