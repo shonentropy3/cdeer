@@ -75,6 +75,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
 
         currOrderId += 1;
         orders[currOrderId] = Order({
+            taskId: _taskId,
             issuer: _issuer,
             worker: _worker,
             token: _token,
