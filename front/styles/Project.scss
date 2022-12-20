@@ -1,3 +1,6 @@
+$familyR: PingFangSC-Regular, PingFang SC;
+
+
 .project,.WorkerProject{
     margin: 0 auto;
     width: 1200px;
@@ -21,6 +24,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin-bottom: 26px;
         .nav-left{
             display: flex;
             .img{
@@ -135,8 +139,19 @@
         line-height: 25px;
         margin-top: 33px;
     }
+    .applyed-tip2{
+        width: 975px;
+        height: 53px;
+        margin: 0 auto;
+        background-color: rgba($color: #7FF15D, $alpha: .5);
+        line-height: 53px;
+        font-family: $familyR;
+        font-size: 18px;
+        font-weight: 400;
+        color: #1F1E2E;
+        text-align: center;
+    }
     .content-container{
-        margin-top: 26px;
         border-radius: 30px;
         box-shadow: 0px 0px 44px -24px #7C7879;
         padding: 63px 57px 55px 59px;

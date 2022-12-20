@@ -225,6 +225,10 @@ export default function Project() {
         init()
     },[])
 
+    useEffect(()=> {
+        console.log(applyInfo);
+    })
+
     return <div className="project">
         {
             detail &&
