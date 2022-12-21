@@ -1,13 +1,37 @@
 import { useEffect, useState } from "react";
+import { useContracts } from "../../controller";
 import StageOutput from "../CustomItem/StageOutput";
 
 
 
 export default function OutputStageCard(params) {
     
-    const { edit, remove, cache, isEdit, data, stageIndex, who } = params;
+    const { edit, remove, cache, isEdit, data, stageIndex, who, oid } = params;
 
     let [list, setList] = useState([]);
+
+    const { useOrderContractWrite: updateAttachment } = useContracts('updateAttachment');
+    const { useOrderContractWrite: confirmAttachment } = useContracts('confirmDelivery');
+
+    // 提交阶段交付
+    const updateDelivery = () => {
+        // 上链
+
+        return
+        updateAttachment.write({
+            recklesslySetUnpreparedArgs: [Number(oid), '']
+        })
+    }
+
+    // 确认阶段交付
+    const confirmDelivery = () => {
+        // 上链
+
+        return
+        confirmAttachment.write({
+            recklesslySetUnpreparedArgs: [Number(oid), Number(stageIndex)]
+        })
+    }
 
 
     useEffect(() => {
@@ -49,6 +73,8 @@ export default function OutputStageCard(params) {
                         ongoing={data ? true : false} 
                         stageIndex={stageIndex} 
                         who={who}
+                        updateDelivery={updateDelivery}
+                        confirmDelivery={confirmDelivery}
                     />
                 </div>
             )

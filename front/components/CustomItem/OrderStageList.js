@@ -80,6 +80,7 @@ export default function OrderStageList(params) {
                     data={data} 
                     stageIndex={stageIndex} 
                     who={order.issuer === address ? 'issuer' : 'worker'} 
+                    oid={order.order_id}
                 />
                 <Button className="btn-add mb60" onClick={() => appendStage()}>Establish</Button>
             </div>
