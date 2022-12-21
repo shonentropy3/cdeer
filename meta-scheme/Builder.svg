@@ -23,7 +23,6 @@
     <linearGradient id="b6" x1="292.21" y1="224.48" x2="323.4" y2="224.48" xlink:href="#b3"/>
     <linearGradient id="b5" x1="292.21" y1="174.51" x2="451.31" y2="174.51" xlink:href="#b4"/>
   </defs>
-  <title>Detask-NFT-Builder</title>
   <rect class="c2" x="-0.01" width="469.99" height="268"/>
   <path class="c3" d="M410.59,254H0V0H410.59A46.41,46.41,0,0,1,457,46.41V207.59A46.41,46.41,0,0,1,410.59,254Z"/>
   <text class="c4" transform="translate(33.45 217.25) rotate(-90)">BUILDER</text>

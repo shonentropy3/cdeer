@@ -18,13 +18,17 @@ async function init() {
     await detask.deployed();
     console.log("detask:" + detask.address);
 
+    const MetaCommon = await hre.ethers.getContractFactory("MetaCommon");
+    const common = await MetaCommon.deploy();
+    await common.deployed();
+
     const TaskMetadata = await hre.ethers.getContractFactory("TaskMetadata");
-    metaData = await TaskMetadata.deploy(detask.address );
+    metaData = await TaskMetadata.deploy(detask.address, common.address );
     await metaData.deployed();
 
     console.log("metaAddr:" + metaData.address);
 
-    const tx = await detask.setMetadataContract(metaData.address);
+    const tx = await detask.setMetaContract(metaData.address);
     await tx.wait();
 }
 
@@ -60,11 +64,12 @@ describe("detask", function() {
 
         await tx.wait();
 
-        const taskInfo = await detask.tasks(1);
-        console.log(taskInfo)
+        // const taskInfo = await detask.tasks(1);
+        // console.log(taskInfo)
 
-        // const svg = await metaData.generateTokenUri(1);
-        // console.log(svg);
+        const svg = await metaData.generateSVG(1);
+        console.log("SVG");
+        console.log(svg);
 
     });
 
