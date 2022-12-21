@@ -55,6 +55,14 @@ func ParseOrderCreated(transHash model.TransHash, Logs []*types.Log) (err error)
 				tx.Rollback()
 				return err
 			}
+			// 插入日志表
+			orderFlow := model.OrderFlow{OrderId: vLog.Topics[2].Big().Int64()}
+			err = tx.Model(&model.OrderFlow{}).Create(&orderFlow).Error
+			if err != nil {
+				tx.Rollback()
+				return err
+			}
+
 			// 更新apply表状态
 			_ = tx.Model(&model.Apply{}).Where("apply_addr = ? AND task_id = ?", order.Worker, order.TaskID).Update("status", 1).Error
 			// 删除任务
