@@ -2,7 +2,7 @@
 
 import { Button, message } from 'antd';
 import { useEffect, useState } from 'react';
-import { useAccount } from 'wagmi';
+import { useAccount, useSigner } from 'wagmi';
 import { useRouter } from 'next/router';
 import { ethers } from "ethers";
 
@@ -14,6 +14,9 @@ import Computing_time from '../components/Computing_time';
 import { getUserInfo, searchTaskDetail, updateUserInfo } from '../http/_api/public';
 import qs from 'querystring';
 import { createApply, getApplyStatus, deleteApply, updateApplyInfo } from '../http/_api/task';
+import { getJwt } from '../utils/GetJwt';
+import { GetSignature } from '../utils/GetSignature';
+import ConnectModal from '../components/CustomModal/ConnectModal';
 
 export default function Project() {
     
@@ -35,8 +38,22 @@ export default function Project() {
     let [applyInfo,setApplyInfo] = useState({})
     // 报名按钮loading状态
     let [applyLoading,setApplyLoading] = useState(false)
-    
+    // 连接钱包弹窗
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    // 发送签名
+    const { data: signer } = useSigner();
+
     const showModal = ()=>{
+        // 判断是否登陆 && 是否签名 && token有效期
+        const token = localStorage.getItem(`session.${address?.toLowerCase()}`);
+        if (!address) {
+            setIsModalVisible(true)
+            return
+        }else if(!token || !getJwt(token)){
+            // 获取签名
+            GetSignature({address:address,signer:signer});
+            return  
+        }
         setIsModalOpen(true)
     }
 
@@ -235,6 +252,13 @@ export default function Project() {
     },[])
 
     return <div className="project">
+        {
+            isModalVisible && 
+            <ConnectModal
+                setStatus={setIsModalVisible} 
+                status={isModalVisible} 
+            />
+        }
         {
             detail &&
             <div className="project-content">

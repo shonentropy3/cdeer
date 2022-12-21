@@ -1,7 +1,6 @@
 import { Input, Select, Button, Checkbox, Col, Row, InputNumber, Modal } from "antd"
 import { useEffect, useState } from "react";
 import Computing_time from "../Computing_time";
-import withAuth from "../middleware";
 
 const {TextArea} = Input
 const { Option } = Select;
@@ -60,6 +59,7 @@ function ApplyTaskModal (props) {
             setInner({...inner})
         }
     },[applyInfo])
+
 
     return <Modal
             footer={null}
@@ -136,4 +136,4 @@ function ApplyTaskModal (props) {
     
     </Modal>
 }
-export default withAuth(ApplyTaskModal);
+export default ApplyTaskModal;
