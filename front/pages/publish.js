@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Input, Select, InputNumber, Button, Modal, Upload, message, Form, Spin } from 'antd';
-import { useAccount, useProvider } from 'wagmi';
+import { useAccount, useProvider, useSigner } from 'wagmi';
 import { useRouter } from 'next/router'
 import { ethers } from "ethers";
 const { TextArea } = Input;
@@ -14,9 +14,11 @@ import ComfirmTaskModal from "../components/CustomModal/ComfirmTaskModal";
 import { omit } from 'lodash';
 import { createTask } from "../http/_api/task";
 import { getJwt } from "../utils/GetJwt";
+import { test } from "../components/test";
 
 export default function Publish() {
     
+    const { data: signer } = useSigner();
     const _data = require("../data/data.json");
     const router = useRouter();
     const { address } = useAccount();
@@ -77,6 +79,7 @@ export default function Publish() {
 
 
     const handleChange = (info, list) => {
+        console.log('修改了 ==>');
         params.suffix = info.file.name;
         fileList = info.fileList;
         setFileList([...fileList]);
@@ -147,12 +150,6 @@ export default function Publish() {
             period: task.period,
          *  skills: task.skills,
          */
-        // 判断token有效期
-        const token = localStorage.getItem(`session.${address.toLowerCase()}`);
-        let status = getJwt(token);
-        if (!status) {
-            await getToken();
-        }
         setIsModalVisibleC(false); 
         setIsLoading(true)
         Task.write({
@@ -263,10 +260,16 @@ export default function Publish() {
     }
 
     const onFinish = (values) => {
-        // 判断是否登陆
+        // 判断是否登陆 && 是否签名 && token有效期
+        const token = localStorage.getItem(`session.${address?.toLowerCase()}`);
         if (!address) {
             setIsModalVisible(true)
             return
+        }else if(!token || !getJwt(token)){
+            // 获取签名
+            // setIsModalVisible(true)
+            test({address:address,signer:signer});
+            return  
         }
         params = {...values, ...params}
         setParams({...params});

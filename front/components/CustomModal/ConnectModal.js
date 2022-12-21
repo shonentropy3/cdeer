@@ -56,11 +56,6 @@ export default function ConnectModal(params) {
         }
     }
 
-
-
- 
-  
-
     const getToken = async() => {
         // 1、获取nonce
         await getLoginMessage({address: address})
@@ -117,6 +112,7 @@ export default function ConnectModal(params) {
 
     useEffect(() => {
         runAsync()
+
         // 本地是否存储token ? 
         // 是否是新用户
         // 签名

@@ -22,6 +22,7 @@ export default function Project() {
     let { useTaskContractWrite: Task } = useContracts("applyFor");
     let { useTaskContractWrite: celTask } = useContracts("cancelApply");
     let [isModalOpen,setIsModalOpen] = useState(false);
+    // task详情
     let [detail,setDetail] = useState();
 
     // 记录用户的联系方式
@@ -155,6 +156,23 @@ export default function Project() {
         : ""
     },[celTask.isSuccess])
 
+    const switchBtns = () => {
+        switch (progress) {
+            case 0:
+                return <Button className="btn" onClick={showModal}>Go to register</Button>
+            case 1:
+                return <div className='applyed-btns'>
+                    <Button className='applyed-inspect' onClick={()=>setIsModalOpen(true)}>Registration information</Button>
+                    <Button className='applyed-cancel' onClick={celApply}>Cancel registration</Button>
+                </div>
+            case 2:
+                        // 跳转Order页面
+                return <Button className="btn" onClick={() => router.push(`/order?w=worker&order_id=1`)}>Phase division</Button>
+            default:
+                break;
+        }
+    }
+
     const init = async() => {
         const { task_id, id, issuer } = qs.parse(location.search.slice(1));
         // 获取task详情
@@ -187,7 +205,6 @@ export default function Project() {
 
         // 获取该用户task状态
         var applyList;
-        var orderList;
         await getApplyStatus({
             address: address, task_id: task_id
         })
@@ -200,16 +217,9 @@ export default function Project() {
             if ( e.apply_addr == address ) {
                 applyInfo = e;
                 setApplyInfo({...applyInfo})
+                console.log(applyInfo);
             }
         })
-        // await getOrderStatus({
-        //     worker: address, task_id: task_id
-        // })
-        // .then(res => {
-        //     if (res.code === 0) {
-        //         orderList = res.data?.list || [];
-        //     }
-        // })
         if (applyList.length === 0) {
             progress = 0;   //  未报名
         }else if(applyList[0].status === 0) {
@@ -223,10 +233,6 @@ export default function Project() {
     useEffect(() => {
         init()
     },[])
-
-    useEffect(()=> {
-        console.log(applyInfo);
-    })
 
     return <div className="project">
         {
@@ -250,19 +256,7 @@ export default function Project() {
                         </p>
                     </div>
                 </div>
-                {
-                    progress === 0 ?
-                    <Button className="btn" onClick={showModal}>Go to register</Button>
-                    :
-                    progress === 1 ? 
-                    <div className='applyed-btns'>
-                        <Button className='applyed-inspect' onClick={()=>setIsModalOpen(true)}>Registration information</Button>
-                        <Button className='applyed-cancel' onClick={celApply}>Cancel registration</Button>
-                    </div> 
-                    :
-                    // 跳转Order页面
-                    <Button className="btn">Phase division</Button>
-                }
+                { switchBtns() }
             </div>
             {
                 progress === 1 ? 
