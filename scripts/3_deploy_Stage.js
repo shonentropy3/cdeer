@@ -23,7 +23,7 @@ async function main() {
         DeOrderAddr.address,
         owner);
     
-    let tx = await order.setDeStage(stage.address);
+    let tx = await order.setStage(stage.address);
     await tx.wait();
 
 }

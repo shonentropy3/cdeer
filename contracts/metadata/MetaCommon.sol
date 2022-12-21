@@ -127,6 +127,7 @@ contract MetaCommon is Ownable {
             "Z"));
     }
 
+    // 
     function valueStr(uint128 taskbudget, uint8 currency) public view returns (string memory budget) {
         if(taskbudget == 0) {
             return "Negotiable";

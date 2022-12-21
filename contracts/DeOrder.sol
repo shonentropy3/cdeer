@@ -25,7 +25,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
     uint public fee = 500;
     address public feeTo;
 
-    address public deStage;
+    address public stage;
     IWETH9 public weth;
 
     uint public currOrderId;
@@ -78,7 +78,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
             taskId: _taskId,
             issuer: _issuer,
             worker: _worker,
-            token: _token,
+            token: _token,  
             amount: _amount,
             progress: OrderProgess.Init,
             payType: PaymentType.Unknown,
@@ -119,7 +119,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
             order.progress = OrderProgess.StagingByIssuer;
         }
         
-        IStage(deStage).setStage(_orderId, _amounts, _periods);
+        IStage(stage).setStage(_orderId, _amounts, _periods);
         if(_periods[0] == 0) { //  
             order.payType = PaymentType.Confirm;
         } else {
@@ -155,7 +155,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
             revert PermissionsError(); 
         }
 
-        IStage(deStage).setStage(_orderId, _amounts, _periods);
+        IStage(stage).setStage(_orderId, _amounts, _periods);
     }
 
     function prolongStage(uint _orderId, uint _stageIndex, uint _appendPeriod,
@@ -170,7 +170,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
 
         if((order.worker == msg.sender && signAddr == order.issuer) ||
             (order.issuer == msg.sender && signAddr == order.worker)) {
-            IStage(deStage).prolongStage(_orderId, _stageIndex, _appendPeriod);
+            IStage(stage).prolongStage(_orderId, _stageIndex, _appendPeriod);
         } else {
             revert PermissionsError();
         } 
@@ -194,7 +194,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
         if(order.payed < order.amount) revert AmountError(1);
         
 
-        IStage(deStage).appendStage(_orderId, amount, period);
+        IStage(stage).appendStage(_orderId, amount, period);
     }
 
     function recoverVerify(bytes32 structHash, uint nonce, uint deadline, uint8 v, bytes32 r, bytes32 s) internal returns (address signAddr){
@@ -242,14 +242,14 @@ contract DeOrder is IOrder, Multicall, Ownable {
             revert PermissionsError();
         }
         
-        if(order.amount != IStage(deStage).totalAmount(_orderId)) revert AmountError(0);
+        if(order.amount != IStage(stage).totalAmount(_orderId)) revert AmountError(0);
         if(order.payed < order.amount) revert AmountError(1);
 
         order.progress = OrderProgess.Ongoing;
         order.startDate = block.timestamp;
         emit OrderStarted(_orderId, msg.sender);
         
-        IStage(deStage).startOrder(_orderId);
+        IStage(stage).startOrder(_orderId);
     }
 
     function confirmDelivery(uint _orderId, uint[] memory _stageIndexs) external {
@@ -257,7 +257,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
         if(msg.sender != orders[_orderId].issuer) revert PermissionsError();
 
         for (uint i = 0; i < _stageIndexs.length; i++) {
-            IStage(deStage).confirmDelivery(_orderId, _stageIndexs[i]);
+            IStage(stage).confirmDelivery(_orderId, _stageIndexs[i]);
         }
     }
 
@@ -275,7 +275,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
         } 
 
         (uint currStageIndex, uint issuerAmount, uint workerAmount) = 
-            IStage(deStage).abortOrder(_orderId, issuerAbort);
+            IStage(stage).abortOrder(_orderId, issuerAbort);
 
         if (issuerAbort) {
             order.progress = OrderProgess.IssuerAbort;
@@ -307,7 +307,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
         if(order.worker != msg.sender) revert PermissionsError();
         if(order.progress != OrderProgess.Ongoing) revert ProgressError();
 
-        (uint pending, uint nextStage) = IStage(deStage).pendingWithdraw(_orderId);
+        (uint pending, uint nextStage) = IStage(stage).pendingWithdraw(_orderId);
         if (pending > 0) {
             if (fee > 0) {
                 uint feeAmount = pending * fee / FEE_BASE;
@@ -317,14 +317,14 @@ contract DeOrder is IOrder, Multicall, Ownable {
                 doTransfer(order.token, to, pending);
             }
             
-            IStage(deStage).withdrawStage(_orderId, nextStage);
+            IStage(stage).withdrawStage(_orderId, nextStage);
         }
         
         if (nextStage > 0) {
             emit Withdraw(_orderId, pending, nextStage - 1);
         }
         
-        if (nextStage >= IStage(deStage).stagesLength(_orderId)) {
+        if (nextStage >= IStage(stage).stagesLength(_orderId)) {
             order.progress = OrderProgess.Done;
         }
     }
@@ -350,8 +350,8 @@ contract DeOrder is IOrder, Multicall, Ownable {
         emit FeeUpdated(_fee, _feeTo);
     } 
 
-    function setDeStage(address _stage) external onlyOwner {
-        deStage = _stage;
+    function setStage(address _stage) external onlyOwner {
+        stage = _stage;
         emit StageUpdated(_stage);
     }
 

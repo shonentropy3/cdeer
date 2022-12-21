@@ -11,7 +11,6 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract TaskMetadata is IMetadata {
     using MyStrings for string;
-    using BytesLib for bytes;
     using uint12a4 for uint48;
 
     ITask public taskAddr;
@@ -84,14 +83,14 @@ contract TaskMetadata is IMetadata {
                     '<svg id="l_1" data-name="l 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 147.98 99.64">',
                     '<defs><linearGradient id="a" x1="1074.54" y1="1581.87" x2="1074.55" y2="1456.31" gradientTransform="matrix(0 -1 -1 0 1595.1 1124.36)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#d3d9f7"/><stop offset="1" stop-color="#dff8fd"/></linearGradient>',
                     '<linearGradient id="d1" x1="-669.05" y1="1241.1" x2="-658.71" y2="1241.1" gradientTransform="matrix(0 1 1 0 -1228.87 694.87)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#d4dcf8"/><stop offset="1" stop-color="#999"/></linearGradient>',
-                    '<style>.b1,.b2,.b3{isolation:isolate}.b1{font-size:4px}.b1,.b3{fill:#1f1e2e;font-family:PingFangSC-Medium-GBpc-EUC-H,PingFang SC}.b1{letter-spacing:.09em}.b2,.b3{letter-spacing:.07em}.b2{font-size:3.4px;font-family:PingFangSC-Light-GBpc-EUC-H,PingFang SC;fill:gray}.b3{font-size:5px}</style>',
+                    '<style>.b1,.b2,.b3{isolation:isolate}.b1{font-size:4px}.b1,.b3{fill:#1f1e2e;font-family:PingFangSC-Medium,PingFang SC}.b1{letter-spacing:.09em}.b2,.b3{letter-spacing:.07em}.b2{font-size:3.4px;font-family:PingFangSC-Light,PingFang SC;fill:gray}.b3{font-size:5px}</style>',
                     '</defs>',
                     '<path fill="url(#a)" d="M0 99.64V0h148v99.64Z"/>',
                     '<text class="b3" transform="translate(10 17.25)">Detask.xyz</text><text class="b3" transform="translate(43 17.25)">#',
                     Strings.toString(taskId),
                     '</text>',
                     '<path d="m12.23 31.35-1.56-2.23-.53.76 2.09 3 2.09-3-.53-.76Zm0-3.29-1.56-2.23-.53.76 2.09 3 2.09-3-.53-.76Zm0 6.59-1.56-2.24-.53.76 2.09 3 2.09-2.94-.53-.82Z" style="fill:url(#d1)"/>',
-                    '<text transform="translate(10 54.91)" style="font-size:12px;font-family:PingFangSC-Semibold-GBpc-EUC-H,PingFang SC;letter-spacing:-.05em;fill:#1f1e2e">',
+                    '<text transform="translate(10 54.91)" style="font-size:12px;font-family:PingFangSC-Semibold,PingFang SC;letter-spacing:-.05em;fill:#1f1e2e">',
                     title,
                     '</text>',
                     '<text class="b2" transform="translate(10 65.07)">Skill:</text>',
@@ -100,10 +99,10 @@ contract TaskMetadata is IMetadata {
                     skillSVG(taskskills,2),
                     skillSVG(taskskills,3),
                     '<text class="b2" transform="translate(10 82.68)">Task budget:</text>',
-                    '<text transform="translate(10.13 87.72)" style="letter-spacing:.08em;font-family:PingFangSC-Medium-GBpc-EUC-H,PingFang SC;fill:#1f1e2e;font-size:4px;isolation:isolate">',
+                    '<text transform="translate(10.13 87.72)" style="letter-spacing:.08em;font-family:PingFangSC-Medium,PingFang SC;fill:#1f1e2e;font-size:4px;isolation:isolate">',
                     valueStr,
                     '</text>',
-                    '<text transform="translate(87.53 87.86)" style="font-size:3.4px;font-family:PingFangSC-Light-GBpc-EUC-H,PingFang SC;letter-spacing:.07em;fill:#1f1e2e;isolation:isolate">',
+                    '<text transform="translate(87.53 87.86)" style="font-size:3.4px;font-family:PingFangSC-Light,PingFang SC;letter-spacing:.07em;fill:#1f1e2e;isolation:isolate">',
                     nowDate,
                     '</text>',
                     '</svg>'
