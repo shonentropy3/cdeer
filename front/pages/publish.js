@@ -14,7 +14,7 @@ import ComfirmTaskModal from "../components/CustomModal/ComfirmTaskModal";
 import { omit } from 'lodash';
 import { createTask } from "../http/_api/task";
 import { getJwt } from "../utils/GetJwt";
-import { test } from "../components/test";
+import { GetSignature } from "../utils/GetSignature";
 
 export default function Publish() {
     
@@ -267,8 +267,7 @@ export default function Publish() {
             return
         }else if(!token || !getJwt(token)){
             // 获取签名
-            // setIsModalVisible(true)
-            test({address:address,signer:signer});
+            GetSignature({address:address,signer:signer});
             return  
         }
         params = {...values, ...params}

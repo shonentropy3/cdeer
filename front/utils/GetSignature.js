@@ -4,13 +4,10 @@ import { authLoginSign, getLoginMessage } from "../http/_api/sign";
 
 
 
-export async function test(params) {
+export async function GetSignature(params) {
     
     const { address, signer } = params;
-    // const { address } = useAccount();
-    // const { data: signer } = useSigner();
     let message;
-    // let [message, setMessage] = useState;
 
     // 1、获取nonce
     await getLoginMessage({address: address})

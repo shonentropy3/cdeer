@@ -6,6 +6,7 @@ import { useAccount, useConnect, useNetwork, useSigner, useSwitchNetwork } from 
 import Web3 from 'web3'
 import { authLoginSign, getLoginMessage } from "../../http/_api/sign";
 import { getJwt } from "../../utils/GetJwt";
+import { GetSignature } from "../../utils/GetSignature";
 
 
 export default function ConnectModal(params) {
@@ -57,34 +58,7 @@ export default function ConnectModal(params) {
     }
 
     const getToken = async() => {
-        // 1、获取nonce
-        await getLoginMessage({address: address})
-        .then(res => {
-            if (res.code === 0) {
-                message = res.data.loginMessage;
-            }
-        })
-        // 2、获取签名
-        await signer.signMessage(message)
-        .then(res => {
-            // 3、获取token
-            authLoginSign({
-                address: address,
-                message: message,
-                signature: res
-            })
-            .then(res => {
-                if (res.code === 0) {
-                    localStorage.setItem(`session.${address.toLowerCase()}`,res.data.token)
-                    setTimeout(() => {
-                        propsInit && propsInit()
-                    }, 100);
-                }
-            })
-        })
-        .catch(err => {
-            console.log(err);
-        })
+        GetSignature({address: address, signer: signer})
     }
 
     const init = () => {
