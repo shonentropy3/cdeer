@@ -116,7 +116,6 @@ export default function ConnectModal(params) {
     });
 
     useEffect(() => {
-
         runAsync()
         // 本地是否存储token ? 
         // 是否是新用户

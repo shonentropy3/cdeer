@@ -323,8 +323,10 @@ export default function Publish() {
             </div>
         </div>
         </Spin>
-        <ConnectModal setStatus={setIsModalVisible} status={isModalVisible} />
-        
+        {
+            isModalVisible && 
+            <ConnectModal setStatus={setIsModalVisible} status={isModalVisible} />
+        }
         <Modal
             className="Submit_item" 
             footer={null} 
