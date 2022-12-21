@@ -15,19 +15,6 @@ import (
 // @param: createuserInfo request.CreateUserInfoRequest
 // @return: err error
 func CreateUserInfo(createuserInfo request.CreateUserInfoRequest) (err error) {
-	//查找技能要求是否在列表中
-	var roleList []int64
-	for _, v := range createuserInfo.Role {
-		roleList = append(roleList, v)
-	}
-	var count int64
-	if err = global.DB.Model(&model.TaskRole{}).Where("role_num in ?", roleList).Count(&count).Error; err != nil {
-		return errors.New("新建失败")
-	}
-	if int(count) != len(createuserInfo.Role) {
-		return errors.New("新建失败")
-	}
-
 	if err = global.DB.Model(&model.User{}).Save(&createuserInfo.User).Error; err != nil {
 		return err
 	}
@@ -66,18 +53,6 @@ func GetUserInfo(userInfo request.GetUserInfoRequest) (err error, user model.Use
 // @param: updateuserInfo request.UpdateUserInfoRequest
 // @return: err error
 func UpdateUserInfo(updateuserInfo request.UpdateUserInfoRequest) (err error) {
-	// 查找技能要求是否在列表中
-	var roleList []int64
-	for _, v := range updateuserInfo.Role {
-		roleList = append(roleList, v)
-	}
-	var count int64
-	if err = global.DB.Model(&model.TaskRole{}).Where("role_num in ?", roleList).Count(&count).Error; err != nil {
-		return errors.New("修改失败")
-	}
-	if int(count) != len(updateuserInfo.Role) {
-		return errors.New("修改失败")
-	}
 	if err = global.DB.Model(&model.User{}).Where("address = ?", updateuserInfo.Address).Updates(&updateuserInfo.User).Error; err != nil {
 		return err
 	}

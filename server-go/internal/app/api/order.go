@@ -69,7 +69,8 @@ func UpdatedStage(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if err := service.UpdatedStage(stage); err != nil {
+	address := c.GetString("address") // 操作人
+	if err := service.UpdatedStage(stage, address); err != nil {
 		global.LOG.Error("操作失败!", zap.Error(err))
 		response.FailWithMessage("操作失败", c)
 	} else {
