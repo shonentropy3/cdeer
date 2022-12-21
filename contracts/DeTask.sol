@@ -19,7 +19,7 @@ contract DeTask is SBTBase, Ownable {
     address private feeReceiver;
 
     address public order;
-    address public metadataAddr;
+    address public meta;
 
     using Counters for Counters.Counter;
 
@@ -161,13 +161,13 @@ contract DeTask is SBTBase, Ownable {
         emit ModifyFee(_taskFee, _applyFee, _receiver);
     }
 
-    function setMetadataContract(address _meta) external onlyOwner {
+    function setMetaContract(address _meta) external onlyOwner {
         require(_meta != address(0), "zero address");
-        metadataAddr = _meta;
+        meta = _meta;
     }
 
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
-        return IMetadata(metadataAddr).tokenURI(tokenId);
+        return IMetadata(meta).tokenURI(tokenId);
     }
 
 }

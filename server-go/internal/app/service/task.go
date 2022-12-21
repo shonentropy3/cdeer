@@ -75,18 +75,6 @@ func GetTaskList(searchInfo request.GetTaskListRequest) (err error, list interfa
 // @param: taskReq request.CreateTaskRequest
 // @return: err error
 func CreateTask(taskReq request.CreateTaskRequest, address string) (err error) {
-	// 查找技能要求是否在列表中
-	var roleList []int64
-	for _, v := range taskReq.Role {
-		roleList = append(roleList, v)
-	}
-	var count int64
-	if err = global.DB.Model(&model.TaskRole{}).Where("role_num in ?", roleList).Count(&count).Error; err != nil {
-		return errors.New("新建失败")
-	}
-	if int(count) != len(taskReq.Role) {
-		return errors.New("新建失败")
-	}
 	// 保存请求数据
 	raw, err := json.Marshal(taskReq)
 	if err != nil {

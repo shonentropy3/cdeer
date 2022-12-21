@@ -1,91 +1,25 @@
 pragma solidity ^0.8.0;
 
-import "./interface/ITask.sol";
-import "./interface/IMetadata.sol";
-import "./libs/MyStrings.sol";
+import "../interface/ITask.sol";
+import "../interface/IMetadata.sol";
+import "../interface/IMetaComm.sol";
+import "../libs/MyStrings.sol";
 import "base64-sol/base64.sol";
+import "../libs/uint12a4.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "./libs/uint8a6.sol";
-import "./libs/DateTimeLibrary.sol";
 
-contract TaskMetadata is IMetadata, Ownable {
+
+contract TaskMetadata is IMetadata {
     using MyStrings for string;
     using BytesLib for bytes;
-    using uint8a6 for uint48;
-    
+    using uint12a4 for uint48;
 
     ITask public taskAddr;
+    IMetaComm public metaComm;
 
-    mapping (uint => string) currencyNames;
-    mapping (uint => string) skills;
-
-    constructor(address _task) {
+    constructor(address _task, address _metaComm) {
         taskAddr = ITask(_task);
-        currencyNames[1] = "USD";
-        currencyNames[2] = "ETH";
-        currencyNames[3] = "BNB";
-        currencyNames[4] = "MATIC";
-        currencyNames[5] = "OP";
-
-        // l1 category 
-        skills[1] = "Development";
-        skills[2] = "Product";
-        skills[3] = "Design";
-        skills[4] = "Testing";
-        skills[5] = "Writing";
-        skills[6] = "Marketing";
-        skills[7] = "Research";
-        skills[8] = "Operation";
-        skills[9] = "Translation";
-        skills[10] = "Training";
-        skills[11] = "Services";
-
-
-        // l2 category:  skills
-        skills[20] = "Web Frontend";
-        skills[21] = "Backend";
-        skills[22] = "Desktop Apps";
-        skills[23] = "Android/iOS";
-        skills[24] = "Auto/Bots";
-        skills[25] = "Mini Program";
-        skills[26] = "Full Stack";
-        skills[27] = "DevOps";
-        skills[28] = "Data Analysts";
-        skills[29] = "Blockchain"; 
-        skills[30] = "AI/ML";  
-
-
-        // l2 category: Langs
-        skills[40] = "JavaScript";
-        skills[41] = "Python";
-        skills[42] = "Java";
-        skills[43] = "Golang";
-        skills[44] = "Solidity";
-        skills[45] = "Rust";
-        skills[46] = "C/C++";
-        skills[47] = "PHP";
-        skills[48] = ".Net";
-        skills[49] = "SQL";
-        skills[50] = "Move";
-        skills[51] = "HTML/CSS";
-
-        skills[61] = "Hardhat";
-        skills[62] = "Defi";
-        skills[63] = "NFT";
-        
-        skills[64] = "Spring";
-        skills[65] = "Laravel";
-        skills[66] = "React";
-        skills[67] = "Vue.js";
-    }
-
-    function setSkillLabel(uint8 skillIndex,  string memory label) external onlyOwner {
-        skills[skillIndex] = label;
-    }
-
-    function setCurrencyNames(uint8 currencyIndex,  string memory label) external onlyOwner {
-        currencyNames[currencyIndex] = label;
+        metaComm = IMetaComm(_metaComm);
     }
 
     function tokenURI(uint256 tokenId) external view override returns (string memory) {
@@ -107,13 +41,12 @@ contract TaskMetadata is IMetadata, Ownable {
             '"image": "', svg, '",',
             '"attachment": "', attachment, '",',
             '"attributes": [',
-                    skillAttributes(taskskills, 0),
-                    skillAttributes(taskskills, 1),
-                    skillAttributes(taskskills, 2),
+                    metaComm.skillAttributes(taskskills, 0),
+                    metaComm.skillAttributes(taskskills, 1),
+                    metaComm.skillAttributes(taskskills, 2),
                     '{',
-                    '"display_type": "date",', 
-                    '"trait_type": "Created",', 
-                    '"value": ', Strings.toString(timestamp),
+                    '"name": "Created",', 
+                    '"value": ', metaComm.dateTime(timestamp),
                     '}',
             ']',
         '}'
@@ -125,48 +58,6 @@ contract TaskMetadata is IMetadata, Ownable {
                 Base64.encode(dataURI)
             )
         );
-    }
-
-
-    function nowDateTime(uint ts) internal view returns (string memory datatime) {
-        // block.timestamp
-        (uint year, uint month, uint day, uint hour, uint minute, uint second) = DateTimeLibrary.timestampToDateTime(ts);
-        // (GMT+8)
-        hour = (hour + 8) % 24;
-
-        // Format: 2017-06-21T22:13:59+0800
-        datatime = string(abi.encodePacked(Strings.toString(year),
-            "-",
-            month <10 ? "0": "",
-            Strings.toString(month),
-            "-",
-            day <10 ? "0": "",
-            Strings.toString(day),
-            "T",
-            hour <10 ? "0": "",
-            Strings.toString(hour),
-            ":",
-            minute <10 ? "0": "",
-            Strings.toString(minute),
-            ":",
-            second <10 ? "0": "",
-            Strings.toString(second),
-            "+0800"));
-    }
-
-    function skillAttributes(uint48 taskskills, uint i) internal view returns (string memory) {
-        uint skill = taskskills.get(i);
-        if (skill > 0) {
-            return string(
-                    abi.encodePacked(
-                    '{',
-                    '"trait_type": "Skill",', 
-                    '"value": "', skills[skill], '"'
-                    '},'));
-
-        } else {
-            return "";
-        }
     }
 
     function skillSVG(uint48 taskskills, uint i) internal view returns (string memory svgString) {
@@ -185,68 +76,29 @@ contract TaskMetadata is IMetadata, Ownable {
                         '<text class="c21" transform="translate(',
                         Strings.toString(xPos),
                         ' 90.08)">',
-                        skills[skill],
+                        metaComm.skills(skill),
                         '</text></g>'));
         }
         return "";
-    }
-
-
-    function getValueStr(uint128 taskbudget, uint8 currency) internal view returns (string memory budget) {
-        if(taskbudget == 0) {
-            return "Negotiable";
-        } else {
-            if (taskbudget / 1e18 > 0) {
-                
-                if(taskbudget / 1e18 < 10) {
-                    uint digit = taskbudget / 1e18;
-                    uint b = (taskbudget - (digit * 1e18)) / 1e17;
-                    budget = string(abi.encodePacked(unicode"≈", Strings.toString(digit),
-                    ".",
-                        Strings.toString(b)));
-                } else {
-                    budget = string(abi.encodePacked(unicode"≈", Strings.toString(taskbudget / 1e18))); 
-                }
-
-            } else if (taskbudget / 1e17 > 0) {
-                uint b = taskbudget / 1e17;
-                budget = string(abi.encodePacked(unicode"≈", "0.", Strings.toString(b)));
-            } else if (taskbudget / 1e16 > 0) {
-                uint b = taskbudget / 1e16;
-                budget = string(abi.encodePacked(unicode"≈", "0.0", Strings.toString(b)));
-            } else if (taskbudget / 1e15 > 0) {
-                uint b = taskbudget / 1e15;
-                budget = string(abi.encodePacked(unicode"≈", "0.00", Strings.toString(b)));
-            } else {
-                budget = "&lt;0.001";
-            }
-        }
-
-
-        return string(
-                    abi.encodePacked(budget, " ",
-            currencyNames[currency]));
     }
 
     function testGettask(uint taskId) external view returns (TaskInfo memory) {
         // TaskInfo memory task = 
         return taskAddr.tasks(taskId);
     }
-        
 
     function generateSVG(uint taskId) public view returns (bytes memory svg) {
         (string memory title, , string memory attachment, 
             uint8 currency, uint128 budget, ,uint48 taskskills, uint32 timestamp, 
             )= taskAddr.getTaskInfo(taskId);
 
-
         bytes memory hashb = bytes(attachment);
 
         string memory hashpart1 = string(hashb.slice(0, 30));
         string memory hashpart2 = string(hashb.slice(30, 16));
 
-        string memory nowDate = nowDateTime(timestamp);
-        string memory valueStr = getValueStr(budget, currency);
+        string memory nowDate = metaComm.dateTime(timestamp);
+        string memory valueStr = metaComm.valueStr(budget, currency);
 
 
         return abi.encodePacked(

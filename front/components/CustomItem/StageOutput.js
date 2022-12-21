@@ -1,11 +1,11 @@
 import { Button } from "antd";
 import { useEffect, useState } from "react";
-import { getDate } from "../../utils/getDate";
+import { getDate } from "../../utils/GetDate";
 
 
 export default function StageOutput(params) {
     
-    const { data, index, edit, remove, isEdit, ongoing, stageIndex, who } = params;
+    const { data, index, edit, remove, isEdit, ongoing, stageIndex, who, updateDelivery, confirmDelivery } = params;
     let [isOpen, setIsOpen] = useState(false);
 
 
@@ -28,14 +28,14 @@ export default function StageOutput(params) {
             return  <div className="btns">
                     <Button>Delay</Button>
                     <Button>Abort</Button>
-                    <Button>Comfirm</Button>
+                    <Button onClick={() => confirmDelivery()}>Comfirm</Button>
                 </div>
         }else{
             // 乙方
             return  <div className="btns">
                     <Button>Delay</Button>
                     <Button>Abort</Button>
-                    <Button>Submit</Button>
+                    <Button onClick={() => updateDelivery()}>Submit</Button>
                 </div>
         }
     }
@@ -80,10 +80,10 @@ export default function StageOutput(params) {
                 <span>Stage cost:</span>
                 {data.amount}
             </p>
-            <p className="container">
+            <div className="container">
                 <span>Delivery instructions:</span>
                 <p>{data.desc}</p>
-            </p>
+            </div>
             <div className="arrow" onClick={() => setIsOpen(!isOpen)}></div>
             {   
                 //  项目可选按钮

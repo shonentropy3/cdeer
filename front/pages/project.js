@@ -2,7 +2,7 @@
 
 import { Button, message } from 'antd';
 import { useEffect, useState } from 'react';
-import { useAccount } from 'wagmi';
+import { useAccount, useSigner } from 'wagmi';
 import { useRouter } from 'next/router';
 import { ethers } from "ethers";
 
@@ -14,6 +14,9 @@ import Computing_time from '../components/Computing_time';
 import { getUserInfo, searchTaskDetail, updateUserInfo } from '../http/_api/public';
 import qs from 'querystring';
 import { createApply, getApplyStatus, deleteApply, updateApplyInfo } from '../http/_api/task';
+import { getJwt } from '../utils/GetJwt';
+import { GetSignature } from '../utils/GetSignature';
+import ConnectModal from '../components/CustomModal/ConnectModal';
 
 export default function Project() {
     
@@ -22,6 +25,7 @@ export default function Project() {
     let { useTaskContractWrite: Task } = useContracts("applyFor");
     let { useTaskContractWrite: celTask } = useContracts("cancelApply");
     let [isModalOpen,setIsModalOpen] = useState(false);
+    // task详情
     let [detail,setDetail] = useState();
 
     // 记录用户的联系方式
@@ -34,8 +38,22 @@ export default function Project() {
     let [applyInfo,setApplyInfo] = useState({})
     // 报名按钮loading状态
     let [applyLoading,setApplyLoading] = useState(false)
-    
+    // 连接钱包弹窗
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    // 发送签名
+    const { data: signer } = useSigner();
+
     const showModal = ()=>{
+        // 判断是否登陆 && 是否签名 && token有效期
+        const token = localStorage.getItem(`session.${address?.toLowerCase()}`);
+        if (!address) {
+            setIsModalVisible(true)
+            return
+        }else if(!token || !getJwt(token)){
+            // 获取签名
+            GetSignature({address:address,signer:signer});
+            return  
+        }
         setIsModalOpen(true)
     }
 
@@ -155,6 +173,23 @@ export default function Project() {
         : ""
     },[celTask.isSuccess])
 
+    const switchBtns = () => {
+        switch (progress) {
+            case 0:
+                return <Button className="btn" onClick={showModal}>Go to register</Button>
+            case 1:
+                return <div className='applyed-btns'>
+                    <Button className='applyed-inspect' onClick={()=>setIsModalOpen(true)}>Registration information</Button>
+                    <Button className='applyed-cancel' onClick={celApply}>Cancel registration</Button>
+                </div>
+            case 2:
+                        // 跳转Order页面
+                return <Button className="btn" onClick={() => router.push(`/order?w=worker&order_id=1`)}>Phase division</Button>
+            default:
+                break;
+        }
+    }
+
     const init = async() => {
         const { task_id, id, issuer } = qs.parse(location.search.slice(1));
         // 获取task详情
@@ -187,7 +222,6 @@ export default function Project() {
 
         // 获取该用户task状态
         var applyList;
-        var orderList;
         await getApplyStatus({
             address: address, task_id: task_id
         })
@@ -200,16 +234,9 @@ export default function Project() {
             if ( e.apply_addr == address ) {
                 applyInfo = e;
                 setApplyInfo({...applyInfo})
+                console.log(applyInfo);
             }
         })
-        // await getOrderStatus({
-        //     worker: address, task_id: task_id
-        // })
-        // .then(res => {
-        //     if (res.code === 0) {
-        //         orderList = res.data?.list || [];
-        //     }
-        // })
         if (applyList.length === 0) {
             progress = 0;   //  未报名
         }else if(applyList[0].status === 0) {
@@ -224,11 +251,14 @@ export default function Project() {
         init()
     },[])
 
-    useEffect(()=> {
-        console.log(applyInfo);
-    })
-
     return <div className="project">
+        {
+            isModalVisible && 
+            <ConnectModal
+                setStatus={setIsModalVisible} 
+                status={isModalVisible} 
+            />
+        }
         {
             detail &&
             <div className="project-content">
@@ -250,19 +280,7 @@ export default function Project() {
                         </p>
                     </div>
                 </div>
-                {
-                    progress === 0 ?
-                    <Button className="btn" onClick={showModal}>Go to register</Button>
-                    :
-                    progress === 1 ? 
-                    <div className='applyed-btns'>
-                        <Button className='applyed-inspect' onClick={()=>setIsModalOpen(true)}>Registration information</Button>
-                        <Button className='applyed-cancel' onClick={celApply}>Cancel registration</Button>
-                    </div> 
-                    :
-                    // 跳转Order页面
-                    <Button className="btn">Phase division</Button>
-                }
+                { switchBtns() }
             </div>
             {
                 progress === 1 ? 

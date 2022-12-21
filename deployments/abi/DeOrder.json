@@ -508,6 +508,11 @@
         {
           "components": [
             {
+              "internalType": "uint256",
+              "name": "taskId",
+              "type": "uint256"
+            },
+            {
               "internalType": "address",
               "name": "issuer",
               "type": "address"

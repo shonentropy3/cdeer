@@ -3,7 +3,7 @@ import { Button, Checkbox, InputNumber, Tabs } from "antd";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { useRead } from "../../controller";
-import OutputStageCard from "../CustomCard/outputStageCard";
+import OutputStageCard from "../CustomCard/OutputStageCard";
 
 
 
@@ -80,6 +80,7 @@ export default function OrderStageList(params) {
                     data={data} 
                     stageIndex={stageIndex} 
                     who={order.issuer === address ? 'issuer' : 'worker'} 
+                    oid={order.order_id}
                 />
                 <Button className="btn-add mb60" onClick={() => appendStage()}>Establish</Button>
             </div>

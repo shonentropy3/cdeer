@@ -6,6 +6,7 @@ export const uploadProps = {
     multiple: false,
     maxCount: 1,
     onStart(file) {
+      console.log('开始了 ==>');
       // console.log('onStart', file, file.name);
     },
     onError(err) {

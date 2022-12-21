@@ -2,6 +2,7 @@ import { Skeleton } from "antd";
 import { useContext, useEffect, useState } from "react"
 import { AuthContext } from "react-admin";
 import { useAccount } from "wagmi";
+import { getJwt } from "../utils/GetJwt";
 import ConnectModal from "./CustomModal/ConnectModal";
 
 export default function withAuth (Component)  {
@@ -13,7 +14,7 @@ export default function withAuth (Component)  {
 
         useEffect(() => {
             setToken(localStorage.getItem(`session.${address?.toLowerCase()}`))
-            if (!token && !address) {
+            if (!address) {
                 setIsModalVisible(true)
             }
         },[user])

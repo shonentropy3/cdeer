@@ -20,19 +20,12 @@ async function writeAbiAddr(artifacts, addr, name, network){
   deployments["contractName"] = artifacts.contractName;
   await writeLog(deployments, name, network);
 
-  //写入server后端
-  const deploymentPathDeploy_node = path.resolve(__dirname, `../server/deployments/${name}.json`);
-  await writeFile(deploymentPathDeploy_node, JSON.stringify(deployments, null, 2));
-
   const abis = {};
   abis["contractName"] = artifacts.contractName;
   abis["abi"] = artifacts.abi;
   // 写入hardhat项目
   const deploymentPath = path.resolve(__dirname, `../deployments/abi/${abis["contractName"]}.json`);
   await writeFile(deploymentPath, JSON.stringify(abis, null, 2));
-  // 写入server后端
-  const deploymentPath_node = path.resolve(__dirname, `../server/deployments/abi/${abis["contractName"]}.json`);
-  await writeFile(deploymentPath_node, JSON.stringify(abis, null, 2));
 }
 
 // for Truffle deployment

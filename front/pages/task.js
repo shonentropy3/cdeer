@@ -13,7 +13,6 @@ import { searchTask } from "../http/_api/public";
 import { Modal_ModifyTask } from "../components/Modal_modifyTask.js";
 import { getApplyList } from "../http/_api/task";
 import { getOrderList } from "../http/_api/order";
-import withAuth from "../components/middleware";
 
 function Task() {
 
@@ -121,21 +120,20 @@ function Task() {
 
     const init = () => {
         const { w, bar } = qs.parse(location.search.slice(1));
-        who = w;
-        setWho(who);
-
-            
-        if (selectBar !== bar){
-            selectData = [];
-            setSelectData([...selectData]);
+        if (w) {
+            who = w;
+            setWho(who);
+                
+            if (selectBar !== bar){
+                selectData = [];
+                setSelectData([...selectData]);
+            }
+            selectBar = bar ? bar : sidbar[who][0].value;
+            setSelectBar(selectBar)
+    
+            pageConfig.page = 1;
+            setPageConfig({...pageConfig});
         }
-        selectBar = bar ? bar : sidbar[who][0].value;
-        setSelectBar(selectBar)
-
-
-
-        pageConfig.page = 1;
-        setPageConfig({...pageConfig});
     }
 
     // 获取发布的需求
@@ -296,4 +294,4 @@ function Task() {
     )
 }
 
-export default withAuth(Task);
+export default Task;

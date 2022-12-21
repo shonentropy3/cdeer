@@ -250,10 +250,13 @@ export default function ApplyList(params) {
                             </div>
                         </div>
                         <div>
-                            <div className="product-collaborate">
-                                <p onClick={() => invite(e.apply_addr)}>Invite</p>
-                                <p onClick={() => updateData(e)} className="product-collaborate-no">Improper</p>
-                            </div>
+                            {
+                                address && 
+                                <div className="product-collaborate">
+                                    <p onClick={() => invite(e.apply_addr)}>Invite</p>
+                                    <p onClick={() => updateData(e)} className="product-collaborate-no">Improper</p>
+                                </div>
+                            }
                         </div>
                     </li> )
                 }

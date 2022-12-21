@@ -1,9 +1,9 @@
 pragma solidity >=0.8.0;
 
-// uint8[6]
-library uint8a6 {
-    uint constant bits = 8;
-    uint constant elements = 6;
+// uint12[4]
+library uint12a4 {
+    uint constant bits = 12;
+    uint constant elements = 4;
     
     uint constant range = 1 << bits;
     uint constant max = range - 1;
