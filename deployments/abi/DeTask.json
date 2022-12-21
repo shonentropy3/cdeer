@@ -665,7 +665,7 @@
     },
     {
       "inputs": [],
-      "name": "metadataAddr",
+      "name": "meta",
       "outputs": [
         {
           "internalType": "address",
@@ -883,7 +883,7 @@
           "type": "address"
         }
       ],
-      "name": "setMetadataContract",
+      "name": "setMetaContract",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

@@ -7,29 +7,15 @@
           "internalType": "address",
           "name": "_task",
           "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_metaComm",
+          "type": "address"
         }
       ],
       "stateMutability": "nonpayable",
       "type": "constructor"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "previousOwner",
-          "type": "address"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "newOwner",
-          "type": "address"
-        }
-      ],
-      "name": "OwnershipTransferred",
-      "type": "event"
     },
     {
       "inputs": [
@@ -52,58 +38,15 @@
     },
     {
       "inputs": [],
-      "name": "owner",
+      "name": "metaComm",
       "outputs": [
         {
-          "internalType": "address",
+          "internalType": "contract IMetaComm",
           "name": "",
           "type": "address"
         }
       ],
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "renounceOwnership",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint8",
-          "name": "currencyIndex",
-          "type": "uint8"
-        },
-        {
-          "internalType": "string",
-          "name": "label",
-          "type": "string"
-        }
-      ],
-      "name": "setCurrencyNames",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint8",
-          "name": "skillIndex",
-          "type": "uint8"
-        },
-        {
-          "internalType": "string",
-          "name": "label",
-          "type": "string"
-        }
-      ],
-      "name": "setSkillLabel",
-      "outputs": [],
-      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -202,19 +145,6 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "newOwner",
-          "type": "address"
-        }
-      ],
-      "name": "transferOwnership",
-      "outputs": [],
-      "stateMutability": "nonpayable",
       "type": "function"
     }
   ]

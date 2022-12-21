@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Input, Select, InputNumber, Button, Modal, Upload, message, Form } from 'antd';
+import { Input, Select, InputNumber, Button, Modal, Upload, message, Form, Spin } from 'antd';
 import { useAccount, useProvider } from 'wagmi';
 import { useRouter } from 'next/router'
 import { ethers } from "ethers";
@@ -28,7 +28,8 @@ export default function Publish() {
     // })
     const provider = useProvider();
     let [isLoading, setIsLoading] = useState()
-    
+    // 遮罩层显示
+    let [showSpin,setShowSpin] = useState(false)
 
     const [inner,setInner] = useState([
         {title: 'Entry Name', type: 'input', desc: '项目名称', name: 'title'},
@@ -172,6 +173,7 @@ export default function Publish() {
                 // }, 500);
 
                 setIsLoading(false)
+                setShowSpin(true)
             } else {
                 message.error(res.msg);
             }
@@ -272,6 +274,7 @@ export default function Publish() {
     };
 
     return <div className="Publish">
+        <Spin tip={'加载中'} spinning={showSpin}>
         <div className="banner">
             <div className="banner-content">
                 <p className="title">Release your Task requirements</p>
@@ -319,7 +322,9 @@ export default function Publish() {
             </Form>
             </div>
         </div>
+        </Spin>
         <ConnectModal setStatus={setIsModalVisible} status={isModalVisible} />
+        
         <Modal
             className="Submit_item" 
             footer={null} 

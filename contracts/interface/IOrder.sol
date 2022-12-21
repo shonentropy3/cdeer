@@ -20,6 +20,7 @@ enum PaymentType {
 }
 
 struct Order {
+    uint taskId;
     address issuer;
     address worker;
     address token;
