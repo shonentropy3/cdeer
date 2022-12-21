@@ -78,8 +78,8 @@ export default function Order(props) {
                         })
                     })
                     stages = arr;
+                    setStages([...stages]);
                 }
-                setStages([...stages]);
                 setOrder({...order});
 
                 if (order.progress !== 0) {

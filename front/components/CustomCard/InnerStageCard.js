@@ -29,7 +29,9 @@ export default function InnerStageCard(params) {
 
     // 添加tabs
     const add = () => {
-        setIsChange(true);  //  确认修改返回上层 ==> agree ==> 修改阶段划分
+        if (setIsChange) {
+            setIsChange(true);  //  确认修改返回上层 ==> agree ==> 修改阶段划分
+        }
         const index = items.length + 1;
 
         // 收集各阶段参数
@@ -136,7 +138,7 @@ export default function InnerStageCard(params) {
     },[dataStages])
 
     useEffect(() => {
-        dataViewModel && setIsChange(true)      //  确认修改返回上层 ==> agree ==> 修改阶段划分
+        dataViewModel && setIsChange && setIsChange(true)      //  确认修改返回上层 ==> agree ==> 修改阶段划分
     },[dataViewModel])
 
     return <>
@@ -158,7 +160,7 @@ export default function InnerStageCard(params) {
             /> 
         }
         {
-            items.length > 0 && viewModel && 
+            items.length > 0 && viewModel && !dataStages &&
             <div className="stageList">
             <OutputStageCard edit={onChange} remove={remove} cache={inner} />
             <Button className="btn-add mb60" onClick={() => toggleModel()}>Establish</Button>

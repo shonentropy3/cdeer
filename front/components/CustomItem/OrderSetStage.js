@@ -27,6 +27,8 @@ export default function OrderSetStage(params) {
 
     // 链上数据
     const { useOrderRead: nonces } = useRead('nonces', address);
+    // 状态
+    let [status, setStatus] = useState(0);
 
     // 签名部分
     let [signObj,setSignObj] = useState({});    //  签名信息
@@ -83,13 +85,22 @@ export default function OrderSetStage(params) {
             _period.push(`${e.period * 24 * 60 * 60}`)
         })
         
+        // console.log({
+        //     signature: useSign.data,
+        //     sign_address: address,
+        //     order_id: order.order_id,
+        //     stages: JSON.stringify(stages),
+        //     status: status
+        // });
+        // return
+
         signObj = {
             amounts: _amount,
             periods: _period,
             chainId: chain.id,
             address: address,
             oid: search.order_id,
-            nonce: nonces.data.toString(),
+            nonce: nonces.data?.toString(),
             deadline: stages.deadline
         }
         setSignObj({...signObj})
@@ -136,16 +147,24 @@ export default function OrderSetStage(params) {
         })
         stages.amount = _amount;
         stages.period = _period;
+        
         updatedStage({
             signature: useSign.data,
             sign_address: address,
             obj: JSON.stringify(stageDetail),
             order_id: order.order_id,
             stages: JSON.stringify(stages),
-            status: 10
+            status: status
         })
         .then(res => {
-            console.log(res);
+            if (res.code === 0) {
+                message.success(res.msg)
+                setTimeout(() => {
+                    history.go(0);
+                }, 500);
+            }else{
+                message.error(res.msg)
+            }
         })
     }
 
@@ -272,6 +291,33 @@ export default function OrderSetStage(params) {
         </div>
     }
 
+    // 修改状态
+    const modifyStatus = () => {
+        if (order.sign_address === order.worker) {
+            // 甲方修改阶段划分
+            setStatus(12)
+        }else{
+            // 乙方修改阶段划分
+            setStatus(10)
+        }
+        sendSignature()
+    }
+    const initStatus = () => {
+        // 等待甲方确认阶段划分
+        setStatus(10)
+        sendSignature()
+    }
+    const permitStatus = () => {
+        if (order.sign_address === order.worker) {
+            // 甲方同意阶段划分
+            setStatus(11)
+        }else{
+            // 乙方同意阶段划分
+            setStatus(13)
+        }
+        permitStage()
+    }
+
     const switchSetStageCard = () => {
 
         switch (progressSet) {
@@ -309,7 +355,7 @@ export default function OrderSetStage(params) {
                             {printTotal()}
                             {printTotalPeriod()}
                         </div>
-                        <Button className={`submit ${btnDisabled ? 'hidden' : 'show'}`} onClick={() => sendSignature()} disabled={btnDisabled}>Complete and submit phasing</Button>
+                        <Button className={`submit ${btnDisabled ? 'hidden' : 'show'}`} onClick={() => initStatus()} disabled={btnDisabled}>Complete and submit phasing</Button>
                     </>
                 }
             </>
@@ -372,13 +418,13 @@ export default function OrderSetStage(params) {
                                 !isChange ? 
                                 <Button 
                                     className="submit show"
-                                    onClick={() => permitStage()} 
+                                    onClick={() => permitStatus()} 
                                     loading={isLoading}
                                  >Agree</Button>
                                 :
                                 <Button 
                                     className={`submit ${btnDisabled ? 'hidden' : 'show'}`} 
-                                    onClick={() => sendSignature()} 
+                                    onClick={() => modifyStatus()} 
                                     disabled={btnDisabled}
                                  >修改阶段划分</Button> 
                             }

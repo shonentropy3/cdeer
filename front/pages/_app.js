@@ -40,7 +40,7 @@ const {chains, provider} = configureChains([chain.mainnet,chain.goerli,chain.har
     default: 'https://backend.buildbear.io/node/charming-bohr-99d0de'
   },
 }],[
-  infuraProvider({ apiKey: 'd3fe47cdbf454c9584113d05a918694f' }),
+  infuraProvider({ apiKey: '9aa3d95b3bc440fa88ea12eaa4456161' }),
   jsonRpcProvider({
     rpc: (chain) => ({ http: chain.rpcUrls.default }),
   })
