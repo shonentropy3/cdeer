@@ -1,11 +1,13 @@
 import { Button, Empty, Modal, message } from "antd";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useAccount } from "wagmi";
 import { modifyApplySwitch, deleteTask } from '../../http/_api/task'
 export default function TaskItem(params) {
     
     const { taskList, select, who, taskModal, setTaskInfo, taskInfo, isLoading } = params;
     const router = useRouter();
+    const { address } = useAccount();
 
     // 修改报名开关
     const applySwitch = (id,sw) => {
@@ -79,9 +81,14 @@ export default function TaskItem(params) {
                                 <p>Number of applicants</p>
                             </div>
                         </div>
-                        <Button loading={isLoading} onClick={() => checkItem(e.task_id)}>Edit this item</Button>
-                        <Button onClick={() => applySwitch(e.task_id,e.apply_switch)}>报名开关</Button>
-                        <Button onClick={() => delTask(e.task_id) }>删除需求</Button>
+                        {
+                            address && 
+                            <>
+                                <Button loading={isLoading} onClick={() => checkItem(e.task_id)}>Edit this item</Button>
+                                <Button onClick={() => applySwitch(e.task_id,e.apply_switch)}>报名开关</Button>
+                                <Button onClick={() => delTask(e.task_id) }>删除需求</Button>
+                            </>
+                        }
                     </div>
                 )
             case 'apply':
