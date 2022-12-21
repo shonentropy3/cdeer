@@ -325,7 +325,10 @@ export default function Publish() {
         </Spin>
         {
             isModalVisible && 
-            <ConnectModal setStatus={setIsModalVisible} status={isModalVisible} />
+            <ConnectModal 
+                setStatus={setIsModalVisible} 
+                status={isModalVisible} 
+            />
         }
         <Modal
             className="Submit_item" 

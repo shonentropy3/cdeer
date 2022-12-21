@@ -10,7 +10,7 @@ import { getJwt } from "../../utils/GetJwt";
 
 export default function ConnectModal(params) {
     
-    const { setStatus, status } = params;
+    const { setStatus, status, propsInit } = params;
     const { connect, connectors } = useConnect();
     const { address, isConnecting } = useAccount();
     
@@ -82,8 +82,8 @@ export default function ConnectModal(params) {
                 if (res.code === 0) {
                     localStorage.setItem(`session.${address.toLowerCase()}`,res.data.token)
                     setTimeout(() => {
-                        history.go(0)
-                    }, 40);
+                        propsInit && propsInit()
+                    }, 100);
                 }
             })
         })
