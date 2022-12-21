@@ -5,9 +5,9 @@ export default function MyInfo() {
     
 
     
-    return <>
-    <div style={{height: '100px'}} ></div>
-    <User_detail />
-    </>
+    return <div className='personal-Myinfo'>
+        <User_detail />
+        <div className='showNFTs'></div>
+    </div>
     
 }

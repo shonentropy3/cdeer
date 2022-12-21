@@ -198,34 +198,50 @@ export default function User_detail () {
     },[info])
 
     return <div className="MyInfo">
-    <div className="myInfo-top">
-        <div className="top">
-            <div className="img">
-                {
-                    wagmi.isActive ? 
-                    <img src={avatar?avatar:hashAvt()} alt="" />
-                    :
-                    ""
-                }
-            </div>
-            <div className="info">
-                <p>{info.username?info.username:"未设置用户昵称"}</p>
-                <div className="li">
-                    {info.skype ? <SkypeOutlined /> : ''}
-                    {info.wechat ? <WechatOutlined /> : ''}
+    <div className='myInfo-data'>
+        <div className="myInfo-top">
+            <div className="top">
+                <div className="img">
+                    {
+                        wagmi.isActive ? 
+                        <img src={avatar?avatar:hashAvt()} alt="" />
+                        :
+                        ""
+                    }
+                </div>
+                <div className="info">
+                    <p>{info.username?info.username:"未设置用户昵称"}</p>
+                    <div className="li">
+                        {info.skype ? <SkypeOutlined /> : ''}
+                        {info.wechat ? <WechatOutlined /> : ''}
+                    </div>
                 </div>
             </div>
         </div>
-        <Button className="btn" onClick={showModal}>编辑个人资料</Button>
-    </div>
-    <div className="myInfo-bottom">
-        <p className="bg">擅长技能</p>
-        {
-            skills.map((e,i)=>(
-                e.status ? <span className='role-list' key={i}>{e.title}</span> : ''
-            ))
-        }
-        
+        <div className="myInfo-bottom">
+            <p className="bg">擅长技能</p>
+            {
+                skills.map((e,i)=>(
+                    e.status ? <span className='role-list' key={i}>{e.title}</span> : ''
+                ))
+            }
+            <Button className="btn" onClick={showModal}>编辑个人资料</Button>
+        </div>
+        <div className='myInfo-NFTs'>
+            <div className='myInfo-NFTs-all'>
+                <p>
+                    <span className='NFTs-all-text'>ALL NFTs</span>
+                </p>
+            </div>
+            <div className='myInfo-NFTs-detask'>
+                <p className='NFTs-detask-title'>Detask NFT</p>
+                <div className='NFTs-detask-list'>
+                    <p>
+                        <span>YugaLabs</span>
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
     <Modal title="修改资料" className="Modify_personal_information" footer={null} open={isModalVisible} onCancel={handleCancel}>
         <div className="avatar" onClick={changeAvatar}>
