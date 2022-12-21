@@ -31,20 +31,23 @@ import { useEffect } from 'react'
 import Web3 from 'web3'
 
 
-const {chains, provider} = configureChains([chain.mainnet,chain.goerli,chain.hardhat,chain.polygonMumbai,{
-  id: 8478,
-  name: 'BuildBear',
-  network: 'buildBear',
-  rpcUrls: {
-    // default: 'https://backend.buildbear.io/node/charming-bohr-99d0de',
-    default: 'https://backend.buildbear.io/node/charming-bohr-99d0de'
-  },
-}],[
-  infuraProvider({ apiKey: '9aa3d95b3bc440fa88ea12eaa4456161' }),
-  jsonRpcProvider({
-    rpc: (chain) => ({ http: chain.rpcUrls.default }),
-  })
-])
+const {chains, provider} = configureChains([chain.mainnet,chain.goerli,chain.hardhat,chain.polygonMumbai,
+  {
+    id: 8478,
+    name: 'BuildBear',
+    network: 'buildBear',
+    rpcUrls: {
+      // default: 'https://backend.buildbear.io/node/charming-bohr-99d0de',
+      default: 'https://backend.buildbear.io/node/charming-bohr-99d0de'
+    }
+  }],
+  [
+    infuraProvider({ apiKey: '9aa3d95b3bc440fa88ea12eaa4456161', priority: 0 }),
+    jsonRpcProvider({
+      rpc: (chain) => ({ http: chain.rpcUrls.default }),
+    })
+  ]
+)
 
 const client = createClient({
   autoConnect: true,
