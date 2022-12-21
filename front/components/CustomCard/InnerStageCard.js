@@ -2,7 +2,7 @@ import { useRequest, useSetState } from "ahooks";
 import { Button, Input, InputNumber, Tabs } from "antd";
 import { useEffect, useState } from "react";
 import StageInner from "../CustomItem/StageInner";
-import OutputStageCard from "./outputStageCard";
+import OutputStageCard from "./OutputStageCard";
 
 
 
