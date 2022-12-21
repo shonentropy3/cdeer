@@ -1,6 +1,6 @@
 import { Button } from "antd";
 import { useEffect, useState } from "react";
-import { getDate } from "../../utils/getDate";
+import { getDate } from "../../utils/GetDate";
 
 
 export default function StageOutput(params) {

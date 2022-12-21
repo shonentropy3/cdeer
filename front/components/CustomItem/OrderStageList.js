@@ -3,7 +3,7 @@ import { Button, Checkbox, InputNumber, Tabs } from "antd";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { useRead } from "../../controller";
-import OutputStageCard from "../CustomCard/outputStageCard";
+import OutputStageCard from "../CustomCard/OutputStageCard";
 
 
 

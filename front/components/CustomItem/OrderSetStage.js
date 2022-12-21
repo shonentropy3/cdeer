@@ -7,8 +7,8 @@ import { useEffect, useState } from "react"
 import { useAccount, useNetwork } from "wagmi";
 import { multicallWrite, muticallEncode, useRead, useSignData } from "../../controller";
 import { startOrder, updatedStage } from "../../http/_api/order";
-import { getDate } from "../../utils/getDate";
-import InnerStageCard from "../CustomCard/innerStageCard";
+import { getDate } from "../../utils/GetDate";
+import InnerStageCard from "../CustomCard/InnerStageCard";
 
 export default function OrderSetStage(params) {
     
