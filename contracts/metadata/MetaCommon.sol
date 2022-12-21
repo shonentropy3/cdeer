@@ -96,7 +96,7 @@ contract MetaCommon is Ownable {
             return string(
                     abi.encodePacked(
                     '{',
-                    '"name": "Skill",', 
+                    '"trait_type": "Skill",', 
                     '"value": "', skills[skill], '"'
                     '},'));
         } else {

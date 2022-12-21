@@ -27,8 +27,11 @@ export default function OrderSetStage(params) {
 
     // 链上数据
     const { useOrderRead: nonces } = useRead('nonces', address);
+    const { useOrderRead: getOrder } = useRead('getOrder', order.order_id);
+
+    
     // 状态
-    let [status, setStatus] = useState(0);
+    let [status, setStatus] = useState('WaitWorkerStage');
 
     // 签名部分
     let [signObj,setSignObj] = useState({});    //  签名信息
@@ -100,7 +103,7 @@ export default function OrderSetStage(params) {
             chainId: chain.id,
             address: address,
             oid: search.order_id,
-            nonce: nonces.data?.toString(),
+            nonce: nonces.data.toString(),
             deadline: stages.deadline
         }
         setSignObj({...signObj})
@@ -205,12 +208,15 @@ export default function OrderSetStage(params) {
         let funcList = [];
 
         dataStages.map((e,i) => {
+            // _amount.push(ethers.utils.parseEther(`${e.amount}`));
             _amount.push(ethers.utils.parseEther(`${e.amount}`));
-            _period.push(`${e.period * 24 * 60 * 60}`);
+            _period.push(e.period * 24 * 60 * 60);
+            // _period.push(`${e.period * 24 * 60 * 60}`);
         })
         funcList.push({
             functionName: 'permitStage',
-            params: [order.order_id, _amount, _period, nonces.data, order.stages.deadline, v, r, s]
+            // params: [order.order_id, _amount, _period, 0, order.stages.deadline, v, r, s]
+            params: [order.order_id, _amount, _period, Number(nonces.data.toString()), order.stages.deadline, v, r, s]
         })
         funcList.push({
             functionName: 'payOrder',
@@ -229,6 +235,7 @@ export default function OrderSetStage(params) {
         console.log(funcList);
         multicallWrite(muticallEncode(funcList),address,value)
         .then(res => {
+            console.log('res ==>',res);
             // 发送后端请求 ==> 开始任务
             startOrder({
                 order_id: order.order_id
@@ -295,25 +302,25 @@ export default function OrderSetStage(params) {
     const modifyStatus = () => {
         if (order.sign_address === order.worker) {
             // 甲方修改阶段划分
-            setStatus(12)
+            setStatus('WaitWorkerConfirmStage')
         }else{
             // 乙方修改阶段划分
-            setStatus(10)
+            setStatus('WaitIssuerAgree')
         }
         sendSignature()
     }
     const initStatus = () => {
         // 等待甲方确认阶段划分
-        setStatus(10)
+        setStatus('WaitIssuerAgree')
         sendSignature()
     }
     const permitStatus = () => {
         if (order.sign_address === order.worker) {
             // 甲方同意阶段划分
-            setStatus(11)
+            setStatus('IssuerAgreeStage')
         }else{
             // 乙方同意阶段划分
-            setStatus(13)
+            setStatus('WorkerAgreeStage')
         }
         permitStage()
     }
@@ -459,6 +466,12 @@ export default function OrderSetStage(params) {
     useEffect(() => {
         useSign.data && signObj && signSuccess()
     },[useSign.data])
+
+    useEffect(() => {
+        if (nonces) {
+            console.log(nonces.data.toString());
+        }
+    },[nonces])
 
     return  (
         <>
