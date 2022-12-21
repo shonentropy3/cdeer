@@ -13,7 +13,6 @@ import { searchTask } from "../http/_api/public";
 import { Modal_ModifyTask } from "../components/Modal_modifyTask.js";
 import { getApplyList } from "../http/_api/task";
 import { getOrderList } from "../http/_api/order";
-import withAuth from "../components/middleware";
 
 function Task() {
 
@@ -123,7 +122,6 @@ function Task() {
         const { w, bar } = qs.parse(location.search.slice(1));
         who = w;
         setWho(who);
-
             
         if (selectBar !== bar){
             selectData = [];
@@ -131,8 +129,6 @@ function Task() {
         }
         selectBar = bar ? bar : sidbar[who][0].value;
         setSelectBar(selectBar)
-
-
 
         pageConfig.page = 1;
         setPageConfig({...pageConfig});
@@ -296,4 +292,4 @@ function Task() {
     )
 }
 
-export default withAuth(Task);
+export default Task;

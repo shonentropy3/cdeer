@@ -13,7 +13,7 @@ export default function withAuth (Component)  {
 
         useEffect(() => {
             setToken(localStorage.getItem(`session.${address?.toLowerCase()}`))
-            if (!token && !address) {
+            if (!token || !address) {
                 setIsModalVisible(true)
             }
         },[user])

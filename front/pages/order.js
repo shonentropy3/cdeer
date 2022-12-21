@@ -52,6 +52,9 @@ export default function Order(props) {
         }else{
             obj.worker = address;
         }
+        if (!address) {
+            return
+        }
 
         getOrderDetail({order_id: order_id, ...obj})
         .then(res => {
@@ -62,7 +65,7 @@ export default function Order(props) {
                 delete res.data.list[0].task;
                 order = res.data.list[0];
                 if (order.stage_json) {
-                    order.stage_json = JSON.parse(order.stage_json);
+                    order.stage_json = JSON.parse(order?.stage_json);
                     order.stages = JSON.parse(order.stages);
 
                     let arr = []
