@@ -26,7 +26,7 @@ async function main() {
     await writeAbiAddr(artifact, metaData.address, "TaskMetadata", network.name);
 
     const task = await hre.ethers.getContractAt("DeTask", TaskAddr.address);
-    const tx = await task.setMetadataContract(metaData.address);
+    const tx = await task.setMetaContract(metaData.address);
     await tx.wait();
 }
 
