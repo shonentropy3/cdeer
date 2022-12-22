@@ -34,7 +34,11 @@ export default function Order(props) {
                     dataStages={stages}
                  />     //   设置阶段
             default:
-                return <OrderStageList order={order} dataStages={stages} />     //   阶段开始
+                return <OrderStageList 
+                    order={order} 
+                    dataStages={stages} 
+                    task={task} 
+                />     //   阶段开始
         }
     }
 
@@ -65,10 +69,23 @@ export default function Order(props) {
                 delete res.data.list[0].task;
                 order = res.data.list[0];
                 if (order.stage_json) {
+                    // 如果有last_stage_json ==>
+                    // 如果有last_stages ==>
+                    let arr = []
+                    if (order.status === 'WaitProlongAgree' || order.status === 'WaitAppendAgree') {
+                        let cache = order.stages;
+                        order.stages = order.last_stages;
+                        order.last_stages = JSON.parse(cache);
+                        if (order.status === 'WaitAppendAgree') {
+                            let cache = order.stage_json;
+                            order.stage_json = order.last_stage_json;
+                            order.last_stage_json = JSON.parse(cache);
+                        }
+                    }
+
                     order.stage_json = JSON.parse(order?.stage_json);
                     order.stages = JSON.parse(order.stages);
 
-                    let arr = []
                     order.stages.amount.map((e,i) => {
                         arr.push({
                             amount: e,
@@ -81,6 +98,7 @@ export default function Order(props) {
                     setStages([...stages]);
                 }
                 setOrder({...order});
+                console.log(order);
 
                 if (order.progress !== 0) {
                     progress = order.progress === 4 ? 1 : 2;

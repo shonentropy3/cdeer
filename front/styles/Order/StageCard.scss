@@ -394,19 +394,60 @@
                             font-family: PingFangSC-Regular, PingFang SC;
                             color: #0052D9;
                             letter-spacing: 0.33px;
-                            &:nth-child(1){
-                                border: 1px solid #0052D9;
+                        }
+                        .delay{
+                            border: 1px solid #0052D9;
+                            color: #0052D9;
+                        }
+                        .abort{
+                            border: 1px solid #D13B4E;
+                            color: #D13B4E;
+                        }
+                        .permit{
+                            margin-right: 0;
+                            border: 1px solid #1F1E2E;
+                            background-color: #1F1E2E;
+                            color: white;
+                        }
+                    }
+                    .event{
+                        width: 100%;
+                        margin-top: 30px;
+                        display: flex;
+                        justify-content: space-between;
+                        .btns{
+                            width: auto;
+                            margin-top: 0;
+                        }
+                        .content{
+                            height: 45px;
+                            margin-left: 10px;
+                            display: flex;
+                            align-items: center;
+
+                            line-height: 45px;
+                            font-size: 12px;
+                            font-family: PingFangSC-Regular, PingFang SC;
+                            letter-spacing: 0.43px;
+                            .wait{
                                 color: #0052D9;
                             }
-                            &:nth-child(2){
-                                border: 1px solid #D13B4E;
-                                color: #D13B4E;
+                            .handle{
+                                display: flex;
+                                .date{
+                                    margin-left: 20px;
+                                    display: flex;
+                                    align-items: center;
+                                    .icon{
+                                        margin: 0 10px;
+                                    }
+                                }
                             }
-                            &:last-child{
-                                margin-right: 0;
-                                border: 1px solid #1F1E2E;
-                                background-color: #1F1E2E;
-                                color: white;
+                            .icon{
+                                width: 16px;
+                                height: 16px;
+                                margin-right: 10px;
+                                background-color: yellowgreen;
                             }
                         }
                     }

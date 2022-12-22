@@ -9,7 +9,7 @@ import OutputStageCard from "../CustomCard/OutputStageCard";
 
 export default function OrderStageList(params) {
     
-    const { order, dataStages } = params;
+    const { order, dataStages, task } = params;
     const { address } = useAccount();
     let [data, setData] = useState([]);
     let [chainData, setChainData] = useState([]);
@@ -81,6 +81,8 @@ export default function OrderStageList(params) {
                     stageIndex={stageIndex} 
                     who={order.issuer === address ? 'issuer' : 'worker'} 
                     oid={order.order_id}
+                    task={task}
+                    order={order}
                 />
                 <Button className="btn-add mb60" onClick={() => appendStage()}>Establish</Button>
             </div>

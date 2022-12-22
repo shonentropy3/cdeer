@@ -1,0 +1,95 @@
+.prolongModal{
+    height: 414px;
+    padding: 0;
+    border-radius: 30px;
+    overflow: hidden;
+    .ant-modal-content{
+        height: 100%;
+    }
+    
+
+    .img{
+        width: 87px;
+        height: 83px;
+        margin: 0 auto;
+        position: relative;
+    }
+    .title{
+        margin-top: 10px;
+        margin-bottom: 13px;
+        text-align: center;
+        font-size: 24px;
+        font-family: PingFangSC-Medium, PingFang SC;
+        font-weight: 500;
+        color: #1F1E2E;
+        line-height: 33px;
+        letter-spacing: 0.86px;
+    }
+    .inner{
+        padding-bottom: 25px;
+        border-bottom: 1px solid #E2E2E2;
+        .inner-title{
+            font-size: 12px;
+            font-family: PingFangSC-Regular, PingFang SC;
+            color: #1F1E2E;
+            line-height: 17px;
+            letter-spacing: 0.43px;
+        }
+        .flex{
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            .input, input{
+                width: 372px;
+                height: 45px;
+            }
+            .input{
+                border-radius: 10px;
+                border: 1px solid #979797;
+            }
+            input, p{
+                font-size: 18px;
+                font-family: PingFangSC-Medium, PingFang SC;
+                font-weight: 500;
+                color: #1F1E2E;
+                line-height: 25px;
+                letter-spacing: 1px;
+            }
+            p{
+                margin-left: 25px;
+            }
+        }
+    }
+    .tips{
+        margin-top: 20px;
+        font-size: 12px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        color: #828282;
+        line-height: 17px;
+        letter-spacing: 0.43px;
+        text-align: center;
+    }
+    .btns{
+        margin-top: 25px;
+        display: flex;
+        justify-content: space-between;
+        button{
+            width: 206px;
+            height: 46px;
+            border: none;
+            border-radius: 4px;
+
+            font-size: 16px;
+            font-family: PingFangSC-Regular, PingFang SC;
+            color: white;
+            line-height: 22px;
+            letter-spacing: 0.57px;
+            &:first-child{
+                background-color: #ACACAC;
+            }
+            &:last-child{
+                background-color: #1F1E2E;
+            }
+        }
+    }
+}
