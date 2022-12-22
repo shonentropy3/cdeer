@@ -90,9 +90,50 @@ func UpdatedProgress(orderID int64) (err error) {
 	if err != nil {
 		return err
 	}
+	// 没有获取成功
+	if version.Progress == 0 {
+		return errors.New("操作失败")
+	}
+	// 修改ongoing
+	if version.Progress == 4 {
+		if err = ongoingOperation(orderID); err != nil {
+			return err
+		}
+	}
 	raw := global.DB.Model(&model.Order{}).Where("order_id = ?", orderID).Update("progress", version.Progress)
 	if raw.RowsAffected == 0 {
 		return errors.New("操作失败")
 	}
+	return raw.Error
+}
+
+// ongoing 状态操作
+func ongoingOperation(orderID int64) (err error) {
+	// 清空签名 && 修改状态
+	raw := global.DB.Model(&model.Order{}).Where("order_id = ?", orderID).Updates(map[string]interface{}{"signature": "", "sign_address": "", "sign_nonce": 0, "status": "IssuerAgreeStage"})
+	if raw.RowsAffected == 0 {
+		return errors.New("操作失败")
+	}
+
+	// 查询当前记录
+	var order model.Order
+	if err = global.DB.Model(&model.Order{}).Where("order_id = ?", orderID).First(&order).Error; err != nil {
+		return err
+	}
+	// 查询日志记录
+	var orderFlowTop model.OrderFlow
+	if err = global.DB.Model(&model.OrderFlow{}).Where("order_id = ? AND del = 0", orderID).Order("level desc").First(&orderFlowTop).Error; err != nil {
+		return err
+	}
+	// 插入日志表
+	orderFlow := model.OrderFlow{OrderId: order.OrderId}
+	orderFlow.Level = orderFlowTop.Level + 1 // 节点
+	orderFlow.Status = order.Status          // 阶段状态
+	orderFlow.Stages = order.Stages          // 阶段划分JSON
+	orderFlow.Attachment = order.Attachment  // JSON IPFS
+	if err = global.DB.Model(&model.OrderFlow{}).Create(&orderFlow).Error; err != nil {
+		return err
+	}
+
 	return raw.Error
 }

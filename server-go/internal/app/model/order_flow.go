@@ -17,6 +17,6 @@ type OrderFlow struct {
 	Obj         string    `gorm:"column:obj" json:"obj" form:"obj"`
 	Attachment  string    `gorm:"column:attachment" json:"attachment" form:"attachment"`
 	Stages      string    `gorm:"column:stages" json:"stages" form:"stages"`
-	Status      uint8     `gorm:"column:status;default:0" json:"status" form:"status"` // 事件状态
-	Audit       uint8     `gorm:"column:audit;default:0" json:"audit" form:"audit"`    // 审核状态 0: 未审核 1: 已审核
+	Status      string    `gorm:"column:status;default:'WaitWorkerStage'" json:"status" form:"status"` // 事件状态
+	Audit       uint8     `gorm:"column:audit;default:0" json:"audit" form:"audit"`                    // 审核状态 0: 未审核 1: 已审核
 }
