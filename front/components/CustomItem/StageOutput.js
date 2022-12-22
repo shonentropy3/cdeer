@@ -5,7 +5,7 @@ import { getDate } from "../../utils/GetDate";
 
 export default function StageOutput(params) {
     
-    const { data, index, edit, remove, isEdit, ongoing, stageIndex, who, updateDelivery, confirmDelivery, updateProlong, confirmProlong, rejectProlong, setActiveIndex, status, sign_address, address, Order } = params;
+    const { data, index, edit, remove, isEdit, ongoing, stageIndex, who, updateDelivery, confirmDelivery, updateProlong, confirmProlong, rejectProlong, setActiveIndex, status, sign_address, address, Order, loading } = params;
     let [isOpen, setIsOpen] = useState(false);
     let [detail, setDetail] = useState();
     // 延长
@@ -53,8 +53,8 @@ export default function StageOutput(params) {
                 </div>
             </div>
             <div className="btns">
-                <Button className="abort" onClick={() => rejectProlong()}>Refuse</Button>
-                <Button className="permit">Agree</Button>
+                <Button disabled={loading} className="abort" onClick={() => rejectProlong()}>Refuse</Button>
+                <Button loading={loading} className="permit" onClick={() => confirmProlong()}>Agree</Button>
             </div>
         </>
     }

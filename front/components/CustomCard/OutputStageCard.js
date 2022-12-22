@@ -27,8 +27,11 @@ export default function OutputStageCard(params) {
     
 
     const { useOrderRead: nonces } = useRead('nonces', address);
+    // 交付
     const { useOrderContractWrite: updateAttachment } = useContracts('updateAttachment');
     const { useOrderContractWrite: confirmAttachment } = useContracts('confirmDelivery');
+    // 延期
+    const { useOrderContractWrite: prolongStage } = useContracts('prolongStage');
 
     // 请求返回处理
     const handelRes = (res) => {
@@ -39,6 +42,7 @@ export default function OutputStageCard(params) {
             }, 500);
         }else{
             message.error(res.msg)
+            setIsLoading(false)
         }
     }
 
@@ -84,7 +88,14 @@ export default function OutputStageCard(params) {
 
     // 确认阶段延长
     const confirmProlong = () => {
-        
+        setIsLoading(true)
+        const prolongValue = (order.last_stages.period[stageIndex] - order.stages.period[stageIndex]) * 24 * 60 * 60
+        const r = '0x' + order.signature.substring(2).substring(0, 64);
+        const s = '0x' + order.signature.substring(2).substring(64, 128);
+        const v = '0x' + order.signature.substring(2).substring(128, 130);
+        prolongStage.write({
+            recklesslySetUnpreparedArgs: [oid, stageIndex, prolongValue, order.sign_nonce, order.last_stages.deadline, v, r, s]
+        })
     }
 
     // 拒绝阶段延长
@@ -182,6 +193,25 @@ export default function OutputStageCard(params) {
         }
     },[prolongObj])
 
+    // 确认延期成功
+    useEffect(() => {
+        if (prolongStage.isSuccess) {
+            updatedStage({
+                hash: prolongStage.data,
+                status: 'AgreeProlong'
+            })
+            .then(res => {
+                handelRes(res);
+            })
+        }
+    },[prolongStage.isSuccess])
+
+    useEffect(() => {
+        if (prolongStage.error || prolongStage.isError) {
+            setIsLoading(false)
+        }
+    },[prolongStage])
+
     return <>
     {
         isProlong && <ProlongModal close={setIsProlong} prolong={updateProlong} loading={isLoading}  />
@@ -211,6 +241,7 @@ export default function OutputStageCard(params) {
                         rejectProlong={rejectProlong}
 
                         Order={order}
+                        loading={isLoading}
                     />
                 </div>
             )
