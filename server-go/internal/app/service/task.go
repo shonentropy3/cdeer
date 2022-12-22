@@ -60,7 +60,7 @@ func GetTaskList(searchInfo request.GetTaskListRequest) (err error, list interfa
 	// 获取报名人数
 	for _, task := range taskList {
 		res := response.GetTaskListRespond{Task: task}
-		if err = global.DB.Model(&model.Apply{}).Where("task_id = ?", task.TaskID).Count(&res.ApplyCount).Error; err != nil {
+		if err = global.DB.Model(&model.Apply{}).Where("task_id = ? AND status = 0", task.TaskID).Count(&res.ApplyCount).Error; err != nil {
 			global.LOG.Error("", zap.Error(err))
 			return err, responses, total
 		}

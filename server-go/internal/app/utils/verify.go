@@ -24,5 +24,4 @@ var (
 	CreateOrderVerify    = Rules{"TaskID": {NotEmpty()}}
 	UpdatedProgessVerify = Rules{"OrderId": {NotEmpty()}}
 	// 阶段划分
-	CreatedStageVerify = Rules{"OrderId": {NotEmpty()}, "Signature": {NotEmpty()}, "SignAddress": {NotEmpty()}, "Stages": {NotEmpty()}}
 )

@@ -29,7 +29,7 @@ func GetApplyList(searchInfo request.GetApplyListRequest) (err error, list inter
 		return err, list, total
 	} else {
 		db = db.Limit(limit).Offset(offset)
-		err = db.Order("created_at desc").Preload("User").Find(&applyList).Error
+		err = db.Where("status = 0").Order("created_at desc").Preload("User").Find(&applyList).Error
 	}
 	return err, applyList, total
 }
