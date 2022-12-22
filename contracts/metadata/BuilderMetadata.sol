@@ -11,7 +11,7 @@ import "../libs/uint12a4.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
 
-contract Builder is IMetadata {
+contract BuilderMetadata is IMetadata {
     using MyStrings for string;
     using uint12a4 for uint48;
 

@@ -27,13 +27,13 @@
   <path d="M410.59 254H0V0h410.59A46.41 46.41 0 0 1 457 46.41v161.18A46.41 46.41 0 0 1 410.59 254Z" style="fill:#1f1e2e"/>
   <text transform="rotate(-90 126.725 93.275)" style="font-family:PingFangSC-Semibold,PingFang SC;fill:#fff;opacity:.2;font-size:41.17px;letter-spacing:.05em">BUILDER</text>
   <text transform="translate(11.97 71.69)" style="font-size:28.52px;font-family:PingFangSC-Semibold,PingFang SC;fill:#fff">Dao operation and maintenance</text>
-  <text class="c6" transform="translate(36 132.92)">Skill :</text>
+  <text class="c6" transform="translate(36 132.92)">Skill:</text>
   <text class="c7" transform="translate(36 146.48)">Development</text>
   <text class="c7" transform="translate(94 146.48)">Javascript</text>
   <text class="c7" transform="translate(152 146.48)">iOS</text>
-  <text class="c6" transform="translate(36 164.3)">Token ID :</text>
+  <text class="c6" transform="translate(36 164.3)">Token ID:</text>
   <text class="c7" transform="translate(36 176.96)">1234</text>
-  <text class="c6" transform="translate(36 101.95)">Hash :</text>
+  <text class="c6" transform="translate(36 101.95)">Hash:</text>
   <text class="c7" transform="translate(36 115.6)">QmZStS3CuSA7SRvSpJgdiWVyjTa9yD5bxTNerTL2HUcdck</text>
   <text class="c6" transform="translate(36 195.23)">Amount:</text>
   <text class="c7" transform="translate(36 207.89)">≈0.22 ETH</text>

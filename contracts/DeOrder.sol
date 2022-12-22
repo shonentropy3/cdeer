@@ -3,6 +3,7 @@
 pragma solidity ^0.8.0;
 
 import "./interface/IOrder.sol";
+import "./interface/IOrderSBT.sol";
 import "./interface/IStage.sol";
 import './interface/IWETH9.sol';
 import "@openzeppelin/contracts/token/ERC20/extensions/draft-IERC20Permit.sol";
@@ -26,7 +27,11 @@ contract DeOrder is IOrder, Multicall, Ownable {
     address public feeTo;
 
     address public stage;
+    address public builderSBT;
+    address public issuerSBT;
+
     IWETH9 public weth;
+    
 
     uint public currOrderId;
 
@@ -326,7 +331,16 @@ contract DeOrder is IOrder, Multicall, Ownable {
         
         if (nextStage >= IStage(stage).stagesLength(_orderId)) {
             order.progress = OrderProgess.Done;
+
+            if (builderSBT != address(0)) {
+                IOrderSBT(builderSBT).mint(order.worker, _orderId);
+            }
+
+            if (issuerSBT != address(0)) {
+                IOrderSBT(issuerSBT).mint(order.issuer, _orderId);
+            }
         }
+
     }
 
     function doTransfer(address _token, address _to, uint _amount) private {
@@ -350,9 +364,14 @@ contract DeOrder is IOrder, Multicall, Ownable {
         emit FeeUpdated(_fee, _feeTo);
     } 
 
-    function setStage(address _stage) external onlyOwner {
+    function setDeStage(address _stage) external onlyOwner {
         stage = _stage;
         emit StageUpdated(_stage);
+    }
+
+    function setSBT(address _builder, address _issuer) external onlyOwner {
+        builderSBT = _builder;
+        issuerSBT = _issuer;
     }
 
 }
