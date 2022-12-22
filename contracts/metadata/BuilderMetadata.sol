@@ -30,37 +30,58 @@ contract Builder is IMetadata {
         return generateTokenUri(tokenId);
     }
 
+    function genAttributes(uint orderId, uint48 taskskills, string memory attachment) internal view returns (string memory)  {
+      address stage = orderAddr.stage();
+      
+      Order memory order = orderAddr.getOrder(orderId);
+      uint startTs = order.startDate;
+      uint endTs = startTs + IStage(stage).totalStagePeriod(orderId);
+      
+      string memory valueStr = metaComm.humanValueToken(order.amount, order.token);
+      
+      return string(abi.encodePacked(
+                        metaComm.skillAttributes(taskskills, 0),
+                        metaComm.skillAttributes(taskskills, 1),
+                        metaComm.skillAttributes(taskskills, 2),
+                      '{"trait_type": "Amount",', 
+                      '"value": "', valueStr,
+                    '"},',
+
+                    '{"trait_type": "Start",', 
+                    '"value": "', metaComm.dateTime(startTs),
+                    '"},',
+
+                    '{"trait_type": "End",', 
+                    '"value": "', metaComm.dateTime(endTs),
+                    '"},',
+
+                    '{"trait_type": "IPFS",', 
+                    '"value": "', attachment,
+                    '"}'
+    ));
+    }
+
     // refer: https://docs.opensea.io/docs/metadata-standards
     function generateTokenUri(uint orderId) internal view returns (string memory) {
-        Order memory order = orderAddr.getOrder(orderId);
-        uint taskId = order.taskId;
-        address stage = orderAddr.stage();
-        uint startTs = order.startDate;
-        uint endTs = order.startDate + IStage(stage).totalStagePeriod(orderId);
+        
+        uint taskId; 
+        {
+          Order memory order = orderAddr.getOrder(orderId);
+          taskId = order.taskId;
+        }
 
         string memory svg = generateSVGBase64(generateSVG(taskId));
-        (string memory title, string memory desc, string memory attachment, 
+        (string memory title, , string memory attachment, 
             , , ,uint48 taskskills, , )= taskAddr.getTaskInfo(taskId);
-        
+
         bytes memory dataURI = abi.encodePacked(
         '{',
-            '"name": "DeTask Buidler #', Strings.toString(taskId), '",',
+            '"name": "DeTask Buidler #', Strings.toString(orderId), '",',
             '"title": "', title, '",',
-            '"description": "', desc, ' More details on: https://detask.xyz/order/' , Strings.toString(orderId) , '",',   // on ...
+            '"description": " More details on: https://detask.xyz/order/' , Strings.toString(orderId) , '",',   // on ...
             '"image": "', svg, '",',
-            '"attachment": "', attachment, '",',
             '"attributes": [',
-                    metaComm.skillAttributes(taskskills, 0),
-                    metaComm.skillAttributes(taskskills, 1),
-                    metaComm.skillAttributes(taskskills, 2),
-                    '{',
-                    '"name": "Start",', 
-                    '"value": ', metaComm.dateTime(startTs),
-                    '}',
-                    '{',
-                    '"name": "End",', 
-                    '"value": ', metaComm.dateTime(endTs),
-                    '}',
+              genAttributes(orderId, taskskills, attachment),
             ']',
         '}'
         );
@@ -93,8 +114,7 @@ contract Builder is IMetadata {
         uint taskId = order.taskId;
         (string memory title, ,string memory attachment ,,,,uint48 taskskills,,)= taskAddr.getTaskInfo(taskId);
 
-        // TODO:
-        // string memory valueStr = metaComm.valueStr(order.amount, order.token);
+        string memory valueStr = metaComm.humanValueToken(order.amount, order.token);
 
         return abi.encodePacked(
                     '<svg id="l1" data-name="L1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 470 268">',
@@ -122,11 +142,11 @@ contract Builder is IMetadata {
                     skillSVG(taskskills,2),
                     skillSVG(taskskills,3),
                     '<text class="c6" transform="translate(36 164.3)">Token ID:</text><text class="c7" transform="translate(36 176.96)">',
-                    Strings.toString(taskId),
+                    Strings.toString(orderId),
                     '</text><text class="c6" transform="translate(36 101.95)">Task:</text>  <text class="c7" transform="translate(36 115.6)">',
                     attachment,
                     '</text><text class="c6" transform="translate(36 195.23)">Amount:</text><text class="c7" transform="translate(36 207.89)">',
-                    // valueStr,
+                    valueStr,
                     '</text>',
                     '<g style="opacity:.5"><path d="M328.84 236.5a17 17 0 0 1-17 17h-13.07v-53.07a17 17 0 0 1 17-17h13.08Z" style="stroke:url(#b3);stroke-miterlimit:10;stroke-width:1.12px;fill:none"/> <path d="M373.76 83.52h-57.85a17.14 17.14 0 0 0-17.14 17.14v48.87h95.03a12.57 12.57 0 0 1 12.57 12.57v8.8a12.57 12.57 0 0 1-12.57 12.57h-31v70.06h11a83 83 0 0 0 83-83v-4a83 83 0 0 0-83.04-83.01Z" style="stroke:url(#b4);stroke-miterlimit:10;stroke-width:1.12px;fill:none"/></g>',
                     '<path d="M322.84 242.5a17 17 0 0 1-17 17h-13.07v-53.07a17 17 0 0 1 17-17h13.08Z" style="stroke:url(#b6);stroke-miterlimit:10;stroke-width:1.12px;fill:none" class="c11"/>',

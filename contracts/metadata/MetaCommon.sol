@@ -6,6 +6,11 @@ import "../libs/DateTimeLibrary.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
+interface IERC20 {
+  function decimals() external view returns (uint8);
+  function symbol() external view returns (string memory);
+}
+
 
 contract MetaCommon is Ownable {
     using MyStrings for string;
@@ -104,7 +109,7 @@ contract MetaCommon is Ownable {
         }
     }
 
-    function dateTime(uint ts) external view returns (string memory datatime) {
+    function dateTime(uint ts) external pure returns (string memory datatime) {
         // block.timestamp
         (uint year, uint month, uint day, uint hour, uint minute, uint second) = DateTimeLibrary.timestampToDateTime(ts);
         // Format: 2017-06-21T22:13:59+0800
@@ -127,37 +132,74 @@ contract MetaCommon is Ownable {
             "Z"));
     }
 
-    // 
-    function valueStr(uint128 taskbudget, uint8 currency) public view returns (string memory budget) {
-        if(taskbudget == 0) {
-            return "Negotiable";
-        } else {
-            if (taskbudget / 1e18 > 0) {
-                
-                if(taskbudget / 1e18 < 10) {
-                    uint digit = taskbudget / 1e18;
-                    uint b = (taskbudget - (digit * 1e18)) / 1e17;
+    function amountApprox(uint amount, uint dec) internal pure returns (string memory budget) {
+          uint base = 1 * 10 ** dec;
+          uint base_d10 = base / 10;
+          uint base_d100 = base / 100;
+          uint base_d1000 = base / 1000;
+          uint base_d10000 = base / 10000;
+
+          if (amount / base > 0) {
+                if(amount / base < 10) {
+                    uint digit = amount / base;
+                    uint b = (amount - (digit * base)) / base_d10;
                     budget = string(abi.encodePacked(unicode"≈", Strings.toString(digit),
                     ".",
                         Strings.toString(b)));
                 } else {
-                    budget = string(abi.encodePacked(unicode"≈", Strings.toString(taskbudget / 1e18))); 
+                    budget = string(abi.encodePacked(unicode"≈", Strings.toString(amount / base))); 
                 }
 
-            } else if (taskbudget / 1e17 > 0) {
-                uint b = taskbudget / 1e17;
-                budget = string(abi.encodePacked(unicode"≈", "0.", Strings.toString(b)));
-            } else if (taskbudget / 1e16 > 0) {
-                uint b = taskbudget / 1e16;
-                budget = string(abi.encodePacked(unicode"≈", "0.0", Strings.toString(b)));
-            } else if (taskbudget / 1e15 > 0) {
-                uint b = taskbudget / 1e15;
-                budget = string(abi.encodePacked(unicode"≈", "0.00", Strings.toString(b)));
+            } else if (amount / base_d10 > 0) {
+                uint b = amount / base_d10;
+                uint b2 = (amount - (b * base_d10)) / base_d100;
+                budget = string(abi.encodePacked(unicode"≈", "0.", Strings.toString(b), Strings.toString(b2)));
+            } else if (amount / base_d100 > 0) {
+                uint b = amount / base_d100;
+                uint b2 = (amount - (b * base_d100)) / base_d1000;
+                budget = string(abi.encodePacked(unicode"≈", "0.0", Strings.toString(b), Strings.toString(b2)));
+            } else if (amount / base_d1000 > 0) {
+                uint b = amount / base_d1000;
+                uint b2 = (amount - (b * base_d1000)) / base_d10000;
+                budget = string(abi.encodePacked(unicode"≈", "0.00", Strings.toString(b), Strings.toString(b2)));
             } else {
                 budget = "&lt;0.001";
             }
-        }
+    }
 
+    function humanValueToken(uint amount, address token) external view returns (string memory budget) {
+      uint dec = 18;
+      string memory symbol;
+      if (token != address(0)) {
+          dec = IERC20(token).decimals();
+          if (block.chainid == 56 || block.chainid == 97) {
+            symbol = "BNB";
+          } else if (block.chainid == 137 || block.chainid == 80001) {
+            symbol = "MATIC";
+          } else {
+            symbol = "ETH";
+          }
+      } else {
+        symbol = IERC20(token).symbol();
+      }
+      
+      if(amount == 0) {
+        return "Negotiable";
+      }
+      
+      budget = amountApprox(amount, 18);
+      return string(
+                    abi.encodePacked(budget, " ",
+            symbol));
+    }
+
+    // 
+    function humanValue(uint amount, uint8 currency) external view returns (string memory budget) {
+        if(amount == 0) {
+            return "Negotiable";
+        } 
+
+        budget = amountApprox(amount, 18);
         return string(
                     abi.encodePacked(budget, " ",
             currencyNames[currency]));

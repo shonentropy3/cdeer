@@ -28,24 +28,30 @@ contract TaskMetadata is IMetadata {
     // refer: https://docs.opensea.io/docs/metadata-standards
     function generateTokenUri(uint taskId) internal view returns (string memory) {
         string memory svg = generateSVGBase64(generateSVG(taskId));
-        (string memory title, string memory desc, string memory attachment, 
-            , , ,uint48 taskskills, uint32 timestamp, )= taskAddr.getTaskInfo(taskId);
+        (string memory title, , string memory attachment, 
+            uint8 currency, uint128 budget, ,uint48 taskskills, uint32 timestamp, )= taskAddr.getTaskInfo(taskId);
+
+        string memory valueStr = metaComm.humanValue(budget, currency);
         
         bytes memory dataURI = abi.encodePacked(
         '{',
             '"name": "DeTask #', Strings.toString(taskId), '",',
             '"title": "', title, '",',
-            '"description": "', desc, ' More details on: https://detask.xyz/task/' ,  Strings.toString(taskId) , '",'   // on ...
+            '"description": "Task details on: https://detask.xyz/task/' ,  Strings.toString(taskId) , '",'   // on ...
             '"image": "', svg, '",',
-            '"attachment": "', attachment, '",',
             '"attributes": [',
                     metaComm.skillAttributes(taskskills, 0),
                     metaComm.skillAttributes(taskskills, 1),
                     metaComm.skillAttributes(taskskills, 2),
-                    '{',
-                    '"name": "Created",', 
-                    '"value": ', metaComm.dateTime(timestamp),
-                    '}',
+                    '{"trait_type": "Created",', 
+                    '"value": "', metaComm.dateTime(timestamp),
+                    '"},',
+                    '{"trait_type": "Amount",', 
+                    '"value": "', valueStr,
+                    '"},',
+                    '{"trait_type": "IPFS",', 
+                    '"value": "', attachment,
+                    '"}',
             ']',
         '}'
         );
@@ -73,11 +79,11 @@ contract TaskMetadata is IMetadata {
         return "";
     }
 
-    function generateSVG(uint taskId) public view returns (bytes memory svg) {
+    function generateSVG(uint taskId) internal view returns (bytes memory svg) {
         (string memory title, , ,uint8 currency, uint128 budget, ,uint48 taskskills, uint32 timestamp,)= taskAddr.getTaskInfo(taskId);
 
-        string memory nowDate = metaComm.dateTime(timestamp);
-        string memory valueStr = metaComm.valueStr(budget, currency);
+        string memory dateStr = metaComm.dateTime(timestamp);
+        string memory valueStr = metaComm.humanValue(budget, currency);
 
         return abi.encodePacked(
                     '<svg id="l_1" data-name="l 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 147.98 99.64">',
@@ -103,7 +109,7 @@ contract TaskMetadata is IMetadata {
                     valueStr,
                     '</text>',
                     '<text transform="translate(87.53 87.86)" style="font-size:3.4px;font-family:PingFangSC-Light,PingFang SC;letter-spacing:.07em;fill:#1f1e2e;isolation:isolate">',
-                    nowDate,
+                    dateStr,
                     '</text>',
                     '</svg>'
                 );
