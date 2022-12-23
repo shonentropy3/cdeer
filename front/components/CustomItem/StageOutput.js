@@ -81,7 +81,7 @@ export default function StageOutput(params) {
                     <>
                     <div className="content">
                         <div className="icon"></div>
-                        <p className="wait">You submitted the Application for Extension and waited for Party B's consent.</p>
+                        <p className="wait">You submitted the Application for Extension and waited for Party Bs consent.</p>
                     </div>
                     <div className="btns">
                         <Button loading={loading} className="abort" onClick={() => abort()}>Abort</Button>
@@ -110,7 +110,7 @@ export default function StageOutput(params) {
                     <>
                     <div className="content">
                         <div className="icon"></div>
-                        <p className="wait">You submitted the Application for Extension and waited for Party B's consent.</p>
+                        <p className="wait">You submitted the Application for Extension and waited for Party Bs consent.</p>
                     </div>
                     <div className="btns">
                         <Button loading={loading} className="abort" onClick={() => abort()}>Abort</Button>
@@ -153,7 +153,7 @@ export default function StageOutput(params) {
             return <div className="event">
                     <div className="content">
                         <div className="icon"></div>
-                        <p className="wait">You submitted the Application for Extension and waited for Party B's consent.</p>
+                        <p className="wait">You submitted the Application for Extension and waited for Party Bs consent.</p>
                     </div>
             </div>
         }else{
@@ -161,7 +161,7 @@ export default function StageOutput(params) {
             return <div className="event">
                     <div className="content">
                         <div className="icon"></div>
-                        <p className="wait">You submitted the Application for Extension and waited for Party B's consent.</p>
+                        <p className="wait">You submitted the Application for Extension and waited for Party Bs consent.</p>
                     </div>
                     <div className="btns">
                         <Button disabled={loading} className="abort" onClick={() => rejectAppend()}>Refuse</Button>
