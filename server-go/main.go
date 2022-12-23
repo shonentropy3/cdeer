@@ -62,5 +62,4 @@ func main() {
 	//}
 	//fmt.Println(version) // "1.0"
 	fmt.Printf("%+v", version) // "1.0"
-
 }
