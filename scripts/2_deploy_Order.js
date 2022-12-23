@@ -26,6 +26,8 @@ async function main() {
     const DeOrderSBTFactory = await hre.ethers.getContractFactory("DeOrderSBT");
     const builderSBT = await DeOrderSBTFactory.deploy(order.address, "Detask Builder SBT", "DBuilder");
     await builderSBT.deployed();
+    let orderSBTArtifact = await artifacts.readArtifact("DeOrderSBT");
+    await writeAbiAddr(orderSBTArtifact, builderSBT.address, "BuilderSBT", network.name);
 
     const BuilderMetadataFactory = await hre.ethers.getContractFactory("BuilderMetadata");
     const builderMeta = await BuilderMetadataFactory.deploy(TaskAddr.address, 
@@ -37,6 +39,7 @@ async function main() {
 
     const issuerSBT = await DeOrderSBTFactory.deploy(order.address, "Detask Issuer SBT", "DIssuer");
     await issuerSBT.deployed();
+    await writeAbiAddr(orderSBTArtifact, issuerSBT.address, "IssuerSBT", network.name);
 
     const IssuerMetadataFactory = await hre.ethers.getContractFactory("IssuerMetadata");
     const issuerMeta = await IssuerMetadataFactory.deploy(TaskAddr.address, 

@@ -132,7 +132,7 @@ contract MetaCommon is Ownable {
             "Z"));
     }
 
-    function amountApprox(uint amount, uint dec) internal pure returns (string memory budget) {
+    function amountConvert(uint amount, uint dec) internal pure returns (string memory budget) {
           uint base = 1 * 10 ** dec;
           uint base_d10 = base / 10;
           uint base_d100 = base / 100;
@@ -167,11 +167,10 @@ contract MetaCommon is Ownable {
             }
     }
 
-    function humanValueToken(uint amount, address token) external view returns (string memory budget) {
+    function tokenAmountApprox(uint amount, address token) external view returns (string memory budget) {
       uint dec = 18;
       string memory symbol;
-      if (token != address(0)) {
-          dec = IERC20(token).decimals();
+      if (token == address(0)) {
           if (block.chainid == 56 || block.chainid == 97) {
             symbol = "BNB";
           } else if (block.chainid == 137 || block.chainid == 80001) {
@@ -180,6 +179,7 @@ contract MetaCommon is Ownable {
             symbol = "ETH";
           }
       } else {
+        dec = IERC20(token).decimals();
         symbol = IERC20(token).symbol();
       }
       
@@ -187,19 +187,19 @@ contract MetaCommon is Ownable {
         return "Negotiable";
       }
       
-      budget = amountApprox(amount, 18);
+      budget = amountConvert(amount, 18);
       return string(
                     abi.encodePacked(budget, " ",
             symbol));
     }
 
     // 
-    function humanValue(uint amount, uint8 currency) external view returns (string memory budget) {
+    function amountApprox(uint amount, uint8 currency) external view returns (string memory budget) {
         if(amount == 0) {
             return "Negotiable";
         } 
 
-        budget = amountApprox(amount, 18);
+        budget = amountConvert(amount, 18);
         return string(
                     abi.encodePacked(budget, " ",
             currencyNames[currency]));

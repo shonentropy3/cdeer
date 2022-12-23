@@ -37,7 +37,7 @@ contract BuilderMetadata is IMetadata {
       uint startTs = order.startDate;
       uint endTs = startTs + IStage(stage).totalStagePeriod(orderId);
       
-      string memory valueStr = metaComm.humanValueToken(order.amount, order.token);
+      string memory valueStr = metaComm.tokenAmountApprox(order.amount, order.token);
       
       return string(abi.encodePacked(
                         metaComm.skillAttributes(taskskills, 0),
@@ -114,7 +114,7 @@ contract BuilderMetadata is IMetadata {
         uint taskId = order.taskId;
         (string memory title, ,string memory attachment ,,,,uint48 taskskills,,)= taskAddr.getTaskInfo(taskId);
 
-        string memory valueStr = metaComm.humanValueToken(order.amount, order.token);
+        string memory valueStr = metaComm.tokenAmountApprox(order.amount, order.token);
 
         return abi.encodePacked(
                     '<svg id="l1" data-name="L1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 470 268">',

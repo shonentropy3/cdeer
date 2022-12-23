@@ -42,7 +42,7 @@ contract IssuerMetadata is IMetadata {
         uint startTs = order.startDate;
         uint endTs = startTs + IStage(stage).totalStagePeriod(orderId);
 
-        string memory valueStr = metaComm.humanValueToken(
+        string memory valueStr = metaComm.tokenAmountApprox(
             order.amount,
             order.token
         );
@@ -161,7 +161,7 @@ contract IssuerMetadata is IMetadata {
 
         ) = taskAddr.getTaskInfo(taskId);
 
-        string memory valueStr = metaComm.humanValueToken(
+        string memory valueStr = metaComm.tokenAmountApprox(
             order.amount,
             order.token
         );
@@ -180,7 +180,7 @@ contract IssuerMetadata is IMetadata {
                 "</defs>",
                 '<path style="fill:url(#a4)" d="M-.01 0h469.99v268H-.01z"/>',
                 '<path d="M410.59 254H0V0h410.59A46.41 46.41 0 0 1 457 46.41v161.18A46.41 46.41 0 0 1 410.59 254Z" style="fill:#1f1e2e"/>',
-                '<text transform="rotate(-90 109.85 76.4)" style="font-family:PingFangSC-Semibold,PingFang SC;fill:#fff;font-size:41.17px;letter-spacing:.05em">ISSUER</text>',
+                '<g style="opacity:.2"><text transform="rotate(-90 109.85 76.4)" style="font-family:PingFangSC-Semibold,PingFang SC;fill:#fff;font-size:41.17px;letter-spacing:.05em">ISSUER</text></g>',
                 '<text transform="translate(11.97 71.69)" style="font-size:28.52px;font-family:PingFangSC-Semibold,PingFang SC;fill:#fff">',
                 title,
                 "</text>",

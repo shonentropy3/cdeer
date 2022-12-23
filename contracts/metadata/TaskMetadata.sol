@@ -31,7 +31,7 @@ contract TaskMetadata is IMetadata {
         (string memory title, , string memory attachment, 
             uint8 currency, uint128 budget, ,uint48 taskskills, uint32 timestamp, )= taskAddr.getTaskInfo(taskId);
 
-        string memory valueStr = metaComm.humanValue(budget, currency);
+        string memory valueStr = metaComm.amountApprox(budget, currency);
         
         bytes memory dataURI = abi.encodePacked(
         '{',
@@ -83,7 +83,7 @@ contract TaskMetadata is IMetadata {
         (string memory title, , ,uint8 currency, uint128 budget, ,uint48 taskskills, uint32 timestamp,)= taskAddr.getTaskInfo(taskId);
 
         string memory dateStr = metaComm.dateTime(timestamp);
-        string memory valueStr = metaComm.humanValue(budget, currency);
+        string memory valueStr = metaComm.amountApprox(budget, currency);
 
         return abi.encodePacked(
                     '<svg id="l_1" data-name="l 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 147.98 99.64">',
