@@ -96,10 +96,17 @@ func parseAppendStage(Logs []*types.Log) (err error) {
 		ParseErr := contractAbi.UnpackIntoInterface(&appendStage, "AppendStage", vLog.Data)
 		// 解析成功
 		if ParseErr == nil {
+			if contractAbi.Events["AppendStage"].ID != vLog.Topics[0] {
+				continue
+			}
+			orderID := vLog.Topics[1].Big().Uint64()
+			// 保存order日志
+			if err = issuerAgreeOperation(int64(orderID)); err != nil {
+				return err
+			}
 			// 开始事务
 			tx := global.DB.Begin()
 			// 更新数据
-			orderID := vLog.Topics[1].Big().Uint64()
 			err = tx.Model(&model.OrderFlow{}).Where("order_id = ? AND audit = 0 AND del = 0", orderID).Update("audit", 1).Error
 			if err != nil {
 				tx.Rollback()
@@ -133,10 +140,17 @@ func parseProlongStage(Logs []*types.Log) (err error) {
 		ParseErr := contractAbi.UnpackIntoInterface(&prolongStage, "ProlongStage", vLog.Data)
 		// 解析成功
 		if ParseErr == nil {
+			if contractAbi.Events["ProlongStage"].ID != vLog.Topics[0] {
+				continue
+			}
+			orderID := vLog.Topics[1].Big().Uint64()
+			// 保存order日志
+			if err = issuerAgreeOperation(int64(orderID)); err != nil {
+				return err
+			}
 			// 开始事务
 			tx := global.DB.Begin()
 			// 更新数据
-			orderID := vLog.Topics[1].Big().Uint64()
 			err = tx.Model(&model.OrderFlow{}).Where("order_id = ? AND audit = 0 AND del = 0", orderID).Update("audit", 1).Error
 			if err != nil {
 				tx.Rollback()

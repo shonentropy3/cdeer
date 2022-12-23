@@ -102,8 +102,8 @@ func UpdatedStage(stage request.UpdatedStageRequest, address string) (err error)
 		return err
 	}
 	// 查询level
-	var level uint
-	if err = global.DB.Model(&model.OrderFlow{}).Select("level").Where("order_id = ?", stage.OrderId).Order("level desc").First(&level).Error; err != nil {
+	var level int64
+	if err = global.DB.Model(&model.OrderFlow{}).Where("order_id = ?", stage.OrderId).Count(&level).Error; err != nil {
 		return err
 	}
 	// 查询日志记录
@@ -154,12 +154,12 @@ func UpdatedStage(stage request.UpdatedStageRequest, address string) (err error)
 	}
 	// 插入日志表
 	orderFlow := model.OrderFlow{OrderId: stage.OrderId, Signature: stage.Signature, SignAddress: stage.SignAddress, SignNonce: stage.SignNonce}
-	orderFlow.Level = orderFlowTop.Level + 1 // 节点
-	orderFlow.Status = stage.Status          // 阶段状态
-	orderFlow.Operator = address             // 操作人
-	orderFlow.Obj = stage.Obj                // 阶段详情交付物JSON
-	orderFlow.Stages = stage.Stages          // 阶段划分JSON
-	orderFlow.Attachment = stage.Attachment  // JSON IPFS
+	orderFlow.Level = level + 1             // 节点
+	orderFlow.Status = stage.Status         // 阶段状态
+	orderFlow.Operator = address            // 操作人
+	orderFlow.Obj = stage.Obj               // 阶段详情交付物JSON
+	orderFlow.Stages = stage.Stages         // 阶段划分JSON
+	orderFlow.Attachment = stage.Attachment // JSON IPFS
 	if stage.Attachment == "" {
 		orderFlow.Attachment = orderFlowTop.Attachment // JSON IPFS
 	}
