@@ -29,7 +29,7 @@ func GetApplyList(searchInfo request.GetApplyListRequest) (err error, list inter
 		return err, list, total
 	} else {
 		db = db.Limit(limit).Offset(offset)
-		err = db.Order("created_at desc").Preload("User").Find(&applyList).Error
+		err = db.Where("status = 0").Order("created_at desc").Preload("User").Find(&applyList).Error
 	}
 	return err, applyList, total
 }
@@ -47,6 +47,9 @@ func GetApply(searchInfo request.GetApplyRequest) (err error, list interface{}, 
 	// 根据报名人地址过滤
 	if searchInfo.TaskID != 0 {
 		db = db.Where("task_id = ?", searchInfo.TaskID)
+	} else {
+		// 列表显示
+		db = db.Where("status = 0")
 	}
 	if searchInfo.ApplyAddr != "" {
 		db = db.Where("apply_addr = ?", searchInfo.ApplyAddr)

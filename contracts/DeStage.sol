@@ -85,6 +85,13 @@ contract DeStage is Ownable {
         emit AppendStage(_orderId, _amount, _period);
     }
 
+    function totalStagePeriod(uint orderId) external view returns(uint total) {
+        Stage[] storage stages = orderStages[orderId];
+        for ( uint i = 0; i < stages.length; i++ ) {
+            total += stages[i].period;
+        }
+    }
+
     function totalAmount(uint orderId) external view returns(uint total)  {
         Stage[] storage stages = orderStages[orderId];
         for ( uint i = 0; i < stages.length; i++ ) {

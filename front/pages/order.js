@@ -34,7 +34,11 @@ export default function Order(props) {
                     dataStages={stages}
                  />     //   设置阶段
             default:
-                return <OrderStageList order={order} dataStages={stages} />     //   阶段开始
+                return <OrderStageList 
+                    order={order} 
+                    dataStages={stages} 
+                    task={task} 
+                />     //   阶段开始
         }
     }
 
@@ -43,7 +47,6 @@ export default function Order(props) {
         search.who = w;
         search.order_id = order_id;
         setSearch({...search});
-
         // 获取任务详情
 
         let obj = {};
@@ -58,6 +61,7 @@ export default function Order(props) {
 
         getOrderDetail({order_id: order_id, ...obj})
         .then(res => {
+            console.log(res);
             if (res.data?.list.length !== 0) {
                 task = res.data.list[0].task;
                 task.role = deform_Skills(task.role);
@@ -65,10 +69,23 @@ export default function Order(props) {
                 delete res.data.list[0].task;
                 order = res.data.list[0];
                 if (order.stage_json) {
+                    // 如果有last_stage_json ==>
+                    // 如果有last_stages ==>
+                    let arr = []
+                    if (order.status === 'WaitProlongAgree') {
+                        let cache = order.stages;
+                        order.stages = order.last_stages;
+                        order.last_stages = JSON.parse(cache);
+                    }
+
+                    if (order.status === "WaitAppendAgree") {
+                        order.last_stages = JSON.parse(order.last_stages);
+                        order.last_stage_json = JSON.parse(order.last_stage_json);
+                    }
+
                     order.stage_json = JSON.parse(order?.stage_json);
                     order.stages = JSON.parse(order.stages);
 
-                    let arr = []
                     order.stages.amount.map((e,i) => {
                         arr.push({
                             amount: e,

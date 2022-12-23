@@ -1,11 +1,16 @@
 package main
 
 import (
+	ABI "code-market-admin/abi"
 	"code-market-admin/internal/app/blockchain"
 	"code-market-admin/internal/app/core"
 	"code-market-admin/internal/app/global"
 	"code-market-admin/internal/app/initialize"
+	"fmt"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/ethclient"
 	"go.uber.org/zap"
+	"log"
 	"time"
 )
 
@@ -33,23 +38,28 @@ func main() {
 	// 启动扫块任务
 	go blockchain.HandleTransaction()
 	core.RunWindowsServer()
-	/*
-		client, err := ethclient.Dial("https://backend.buildbear.io/node/charming-bohr-99d0de")
-		if err != nil {
-			log.Fatal(err)
-		}
-		address := common.HexToAddress("0x0F6332bA28917FcEeB3e8184b2cfF242958Da0e6")
-		instance, err := DeTaskABI.NewDeOrder(address, client)
-		if err != nil {
-			fmt.Println("1")
-			fmt.Println(err)
-		}
-		version, err := instance.GetOrder(nil, big.NewInt(5))
-		if err != nil {
-			fmt.Println("2")
-			fmt.Println(err)
-		}
 
-		fmt.Printf("%+v", version) // "1.0"
-	*/
+	//client, err := ethclient.Dial("https://summer-tame-pine.matic-testnet.discover.quiknode.pro/fdf3c786bf1dd3e5e848f0c98947ea4f5caee358/")
+	client, err := ethclient.Dial("https://polygon-mumbai.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161")
+	if err != nil {
+		log.Fatal(err)
+	}
+	address := common.HexToAddress("0xbFfCBB5b474D208B7F82F3958E08c664f29365f4")
+	instance, err := ABI.NewDeOrder(address, client)
+	if err != nil {
+		fmt.Println("1")
+		fmt.Println(err)
+	}
+	version, err := instance.Nonces(nil, common.HexToAddress("0x7d32D1DE76acd73d58fc76542212e86ea63817d8"))
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	//version, err := instance.GetOrder(nil, big.NewInt(7))
+	//if err != nil {
+	//	fmt.Println(err)
+	//}
+	fmt.Println(version) // "1.0"
+	//fmt.Printf("%+v", version) // "1.0"
+
 }

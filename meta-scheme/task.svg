@@ -9,19 +9,19 @@
       <stop offset="1" stop-color="#999"/>
     </linearGradient>
     <style>
-      .b1,.b2,.b3{isolation:isolate}.b1{font-size:4px}.b1,.b3{fill:#1f1e2e;font-family:PingFangSC-Medium-GBpc-EUC-H,PingFang SC}.b1{letter-spacing:.09em}.b2,.b3{letter-spacing:.07em}.b2{font-size:3.4px;font-family:PingFangSC-Light-GBpc-EUC-H,PingFang SC;fill:gray}.b3{font-size:5px}
+      .b1,.b2,.b3{isolation:isolate}.b1{font-size:4px}.b1,.b3{fill:#1f1e2e;font-family:PingFangSC-Medium,PingFang SC}.b1{letter-spacing:.09em}.b2,.b3{letter-spacing:.07em}.b2{font-size:3.4px;font-family:PingFangSC-Light,PingFang SC;fill:gray}.b3{font-size:5px}
     </style>
   </defs>
   <path fill="url(#a)" d="M0 99.64V0h148v99.64Z"/>
   <text class="b3" transform="translate(10 17.25)">Detask.xyz</text>
   <text class="b3" transform="translate(43 17.25)">#1</text>
   <path d="m12.23 31.35-1.56-2.23-.53.76 2.09 3 2.09-3-.53-.76Zm0-3.29-1.56-2.23-.53.76 2.09 3 2.09-3-.53-.76Zm0 6.59-1.56-2.24-.53.76 2.09 3 2.09-2.94-.53-.82Z" style="fill:url(#d1)"/>
-  <text transform="translate(10 54.91)" style="font-size:12px;font-family:PingFangSC-Semibold-GBpc-EUC-H,PingFang SC;letter-spacing:-.05em;fill:#1f1e2e">New Task Dao operation</text>
+  <text transform="translate(10 54.91)" style="font-size:12px;font-family:PingFangSC-Semibold,PingFang SC;letter-spacing:-.05em;fill:#1f1e2e">New Task Dao operation</text>
   <text class="b2" transform="translate(10 65.07)">Skill:</text>
   <text class="b1" transform="translate(10 70.25)">Development</text>
   <text class="b1" transform="translate(45 70.25)">Frontend</text>
   <text class="b1" transform="translate(80 70.25)">Design</text>
   <text class="b2" transform="translate(10 82.68)">Task budget:</text>
-  <text transform="translate(10.13 87.72)" style="letter-spacing:.08em;font-family:PingFangSC-Medium-GBpc-EUC-H,PingFang SC;fill:#1f1e2e;font-size:4px;isolation:isolate">&lt;0.001 USD</text>
-  <text transform="translate(87.53 87.86)" style="font-size:3.4px;font-family:PingFangSC-Light-GBpc-EUC-H,PingFang SC;letter-spacing:.07em;fill:#1f1e2e;isolation:isolate">2022-12-14T17:54:00Z</text>
+  <text transform="translate(10.13 87.72)" style="letter-spacing:.08em;font-family:PingFangSC-Medium,PingFang SC;fill:#1f1e2e;font-size:4px;isolation:isolate">&lt;0.001 USD</text>
+  <text transform="translate(87.53 87.86)" style="font-size:3.4px;font-family:PingFangSC-Light,PingFang SC;letter-spacing:.07em;fill:#1f1e2e;isolation:isolate">2022-12-14T17:54:00Z</text>
 </svg>

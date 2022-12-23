@@ -129,6 +129,20 @@ export default function TaskItem(params) {
                     </div>
                 )
             default:
+                return taskList.map((e,i) => 
+                    <div className="item" key={i} onClick={() => router.push(`/order?w=${who}&order_id=${e.order_id}`)}>
+                        <div className="li">
+                            <div className="li-info">
+                                <p className="title">{e.task.title}</p>
+                                <p className="role">Recruitment type: {e.task.role.map((ele,index) => <span key={index}>{ele}</span> )}</p>
+                                <div className="detail">
+                                    <p>Cycle: {e.task.period / 60 / 60 / 24}天 <span>&nbsp;</span></p>
+                                    <p>Cost: <span>{e.task.budget}{e.task.currency}</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )
                 break;
         }
     }

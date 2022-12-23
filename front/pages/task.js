@@ -12,7 +12,7 @@ import qs from 'querystring';
 import { searchTask } from "../http/_api/public";
 import { Modal_ModifyTask } from "../components/Modal_modifyTask.js";
 import { getApplyList } from "../http/_api/task";
-import { getOrderList } from "../http/_api/order";
+import { getOrderFinish, getOrderList } from "../http/_api/order";
 
 function Task() {
 
@@ -175,7 +175,7 @@ function Task() {
 
     // 获取甲方正在进行中的任务
     const getDevelopping = (who) => {
-        let obj = {...pageConfig};
+        let obj = {...pageConfig, state: 0};
         obj[who] = address;
         getOrderList(obj)
         .then(res => {
@@ -188,6 +188,28 @@ function Task() {
                     e.task.budget = deform_Count(e.task.budget, e.task.currency)
                 })
                 setSelectData([...selectData]);
+                console.log(selectData);
+            }
+        })
+    }
+
+    // 获取结束的任务
+    const getDevelopend = (who) => {
+        let obj = {...pageConfig};
+        obj[who] = address;
+        getOrderFinish(obj)
+        .then(res => {
+            if (res.code === 0) {
+                pageConfig.total = res.data.total;
+                setPageConfig({...pageConfig});
+                selectData = res.data.list ? res.data.list : [];
+                selectData.map(e => {
+                    e.task.role = deform_Skills(e.task?.role || []);
+                    e.task.budget = deform_Count(e.task.budget, e.task.currency)
+                })
+                setSelectData([...selectData]);
+                console.log(selectData);
+                console.log(pageConfig);
             }
         })
     }
@@ -214,11 +236,10 @@ function Task() {
                 getDevelopping(w);
                 break;       
             case 'developend':
-                console.log('查询结束的');
+                getDevelopend(w);
                 break;
             case 'apply':
                 getApplys();
-                console.log('执行了 ==>');
                 break;
             default:
                 break;

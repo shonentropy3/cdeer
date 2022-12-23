@@ -152,6 +152,9 @@ export default function Publish() {
          */
         setIsModalVisibleC(false); 
         setIsLoading(true)
+        console.log(
+            [address, obj, fee]
+        );
         Task.write({
             recklesslySetUnpreparedArgs: [address, obj, fee]
         })

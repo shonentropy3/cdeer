@@ -30,13 +30,16 @@ describe("testCreateOrder&Sign", function () {
     let amount = ethers.utils.parseEther("1")
     console.log("amount:" + amount)
 
-    let tx = await DeOrder.createOrder(0, 
+    let tx = await DeOrder.createOrder(1, 
       account1.address,
       account2.address, 
       ethers.constants.AddressZero,
       amount);
     
     await tx.wait();
+
+    let receipt = await ethers.provider.getTransactionReceipt(tx.hash);
+    console.log("createOrder gasUsed" , receipt.gasUsed);
 
     orderId = await DeOrder.currOrderId()
     console.log("orderId:" + orderId)

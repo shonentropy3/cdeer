@@ -103,7 +103,7 @@ export default function OrderSetStage(params) {
             chainId: chain.id,
             address: address,
             oid: search.order_id,
-            nonce: nonces.data.toString(),
+            nonce: Number(nonces.data.toString()),
             deadline: stages.deadline
         }
         setSignObj({...signObj})
@@ -154,6 +154,7 @@ export default function OrderSetStage(params) {
         updatedStage({
             signature: useSign.data,
             sign_address: address,
+            sign_nonce: Number(nonces.data.toString()),
             obj: JSON.stringify(stageDetail),
             order_id: order.order_id,
             stages: JSON.stringify(stages),
@@ -216,7 +217,7 @@ export default function OrderSetStage(params) {
         funcList.push({
             functionName: 'permitStage',
             // params: [order.order_id, _amount, _period, 0, order.stages.deadline, v, r, s]
-            params: [order.order_id, _amount, _period, Number(nonces.data.toString()), order.stages.deadline, v, r, s]
+            params: [order.order_id, _amount, _period, order.sign_nonce, order.stages.deadline, v, r, s]
         })
         funcList.push({
             functionName: 'payOrder',
@@ -466,13 +467,6 @@ export default function OrderSetStage(params) {
     useEffect(() => {
         useSign.data && signObj && signSuccess()
     },[useSign.data])
-
-    useEffect(() => {
-        if (nonces) {
-            console.log(nonces.data.toString());
-        }
-    },[nonces])
-
     return  (
         <>
             <div className="stageCard">

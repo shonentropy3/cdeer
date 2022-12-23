@@ -54,6 +54,41 @@
             }
         }
     }
+    .new-tabs{
+        border: 1px solid #6DD400;
+        .tabs-title{
+            font-size: 48px;
+            font-family: PingFangSC-Semibold, PingFang SC;
+            font-weight: 600;
+            color: #1F1E2E;
+            line-height: 67px;
+            letter-spacing: 1px;
+            // padding: 20px;
+            padding-left: 50px;
+            padding-top: 20px;
+        }
+        .stageInner{
+            .btns{
+                width: 100%;
+                display: flex;
+                justify-content: flex-end;
+                .confirm{
+                    margin-right: 15px;
+                    position: static;
+                    right: 0; 
+                    &:first-child{
+                        border: 1px solid #1F1E2E;
+                        background-color: white;
+                        color: #1F1E2E;
+                    }
+                    &:last-child{
+                        margin-right: 0;
+                    }
+                }
+            }
+            
+        }
+    }
     // tabs
     .tabs{
         margin-top: 30px;
@@ -285,6 +320,15 @@
                         font-family: PingFangSC-Semibold, PingFang SC;
                         font-weight: 600;
                         line-height: 45px;
+                        letter-spacing: 0.67px;
+                    }
+                    .new-nav-index{
+                        font-size: 32px;
+                        font-family: PingFangSC-Semibold, PingFang SC;
+                        font-weight: 600;
+                        color: #7FF15D;
+                        line-height: 45px;
+                        letter-spacing: 0.67px;
                     }
                     .nav-title{
                         max-width: 750px;
@@ -309,6 +353,9 @@
                     }
                     .completed{
                         background-color: #44D7B6;
+                    }
+                    .abort{
+                        background-color: #D13B4E;
                     }
                     .ongoing{
                         background-color: #F7B500;
@@ -394,19 +441,100 @@
                             font-family: PingFangSC-Regular, PingFang SC;
                             color: #0052D9;
                             letter-spacing: 0.33px;
-                            &:nth-child(1){
-                                border: 1px solid #0052D9;
+                        }
+                        .delay{
+                            border: 1px solid #0052D9;
+                            color: #0052D9;
+                        }
+                        .abort{
+                            border: 1px solid #D13B4E;
+                            color: #D13B4E;
+                        }
+                        .permit{
+                            margin-right: 0;
+                            border: 1px solid #1F1E2E;
+                            background-color: #1F1E2E;
+                            color: white;
+                        }
+                    }
+                    .event{
+                        width: 100%;
+                        margin-top: 30px;
+                        display: flex;
+                        justify-content: space-between;
+                        .btns{
+                            width: auto;
+                            margin-top: 0;
+                        }
+                        .content{
+                            height: 45px;
+                            margin-left: 10px;
+                            display: flex;
+                            align-items: center;
+
+                            line-height: 45px;
+                            font-size: 12px;
+                            font-family: PingFangSC-Regular, PingFang SC;
+                            letter-spacing: 0.43px;
+                            .wait{
                                 color: #0052D9;
                             }
-                            &:nth-child(2){
-                                border: 1px solid #D13B4E;
-                                color: #D13B4E;
+                            .handle{
+                                display: flex;
+                                .date{
+                                    margin-left: 20px;
+                                    display: flex;
+                                    align-items: center;
+                                    .icon{
+                                        margin: 0 10px;
+                                    }
+                                }
                             }
-                            &:last-child{
-                                margin-right: 0;
-                                border: 1px solid #1F1E2E;
-                                background-color: #1F1E2E;
-                                color: white;
+                            .icon{
+                                width: 16px;
+                                height: 16px;
+                                margin-right: 10px;
+                                background-color: yellowgreen;
+                            }
+                        }
+                    }
+                    .delivery{
+                        width: 990px;
+                        margin-top: 17px;
+                        padding-top: 17px;
+                        border-top: 1px solid #E2E2E2;
+                        .delivery-title{
+                            font-size: 18px;
+                            font-family: PingFangSC-Regular, PingFang SC;
+                            color: #828282;
+                            line-height: 25px;
+                        }
+                        .delivery-content{
+                            margin-top: 5px;
+                            padding: 13px;
+                            background-color: #F6F6F6;            
+                            span{
+                                margin-right: 10px;
+                                font-size: 12px;
+                                color: #828282;
+                                line-height: 22px;
+                                letter-spacing: 1.33px;
+                                display: inline-block;
+                            }
+                            a{
+                                color: #554AFF;
+                                text-decoration: underline;
+                            }
+                            .content{
+                                width: 100%;
+                                color: #1F1E2E;
+                            }
+                            .item{
+                                display: flex;
+                                align-items: flex-start;
+                                &:last-child{
+                                    margin-top: 5px;
+                                }
                             }
                         }
                     }

@@ -42,10 +42,6 @@ func GetTaskList(searchInfo request.GetTaskListRequest) (err error, list interfa
 		//报名开关: 0.关  1.开  这里前端显示
 		db = db.Where("apply_switch = 1")
 	}
-	//// 根据技能要求过滤
-	//if searchInfo.Status != 0 {
-	//	db = db.Where("status = ?", searchInfo.Status)
-	//}
 	// 根据技能要求过滤
 	if searchInfo.Role != nil {
 		db = db.Where("role && ?", searchInfo.Role)
@@ -60,7 +56,7 @@ func GetTaskList(searchInfo request.GetTaskListRequest) (err error, list interfa
 	// 获取报名人数
 	for _, task := range taskList {
 		res := response.GetTaskListRespond{Task: task}
-		if err = global.DB.Model(&model.Apply{}).Where("task_id = ?", task.TaskID).Count(&res.ApplyCount).Error; err != nil {
+		if err = global.DB.Model(&model.Apply{}).Where("task_id = ? AND status = 0", task.TaskID).Count(&res.ApplyCount).Error; err != nil {
 			global.LOG.Error("", zap.Error(err))
 			return err, responses, total
 		}

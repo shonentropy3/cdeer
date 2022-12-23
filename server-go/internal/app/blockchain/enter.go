@@ -19,7 +19,8 @@ func HandleTraverseSuccess(transHash model.TransHash, Logs []*types.Log) error {
 		return err
 	} else if haveBool, err = DeOrder(transHash, Logs); haveBool {
 		return err
+	} else if haveBool, err = DeStage(transHash, Logs); haveBool {
+		return err
 	}
-
 	return errors.New("处理失败")
 }

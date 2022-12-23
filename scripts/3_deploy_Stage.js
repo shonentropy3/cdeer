@@ -19,10 +19,9 @@ async function main() {
     let artifact = await artifacts.readArtifact("DeStage");
     await writeAbiAddr(artifact, stage.address, "DeStage", network.name);
 
-    const order = await ethers.getContractAt("DeOrder",
-        DeOrderAddr.address,
-        owner);
-    
+    let order = await ethers.getContractAt("DeOrder",
+        DeOrderAddr.address);
+
     let tx = await order.setDeStage(stage.address);
     await tx.wait();
 

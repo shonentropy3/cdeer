@@ -12,7 +12,16 @@ export const createOrder = (data) => {
 // 获取个人进行中的项目
 export const getOrderList = (data) => {
     return serviceAxios({
-        url: `/order/getOrderList?page=${data.page}&pageSize=${data.pageSize}${data.issuer ? '&issuer='+data.issuer : ''}${data.worker ? '&worker='+data.worker : ''}`,
+        url: `/order/getOrderList?page=${data.page}&pageSize=${data.pageSize}&state=0${data.issuer ? '&issuer='+data.issuer : ''}${data.worker ? '&worker='+data.worker : ''}`,
+        method: "get",
+        data,
+    });
+}
+
+// 获取个人结束的项目
+export const getOrderFinish = (data) => {
+    return serviceAxios({
+        url: `/order/getOrderList?page=${data.page}&pageSize=${data.pageSize}&state=1${data.issuer ? '&issuer='+data.issuer : ''}${data.worker ? '&worker='+data.worker : ''}`,
         method: "get",
         data,
     });

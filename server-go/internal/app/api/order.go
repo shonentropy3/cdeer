@@ -64,11 +64,6 @@ func CreateOrder(c *gin.Context) {
 func UpdatedStage(c *gin.Context) {
 	var stage request.UpdatedStageRequest
 	_ = c.ShouldBindJSON(&stage)
-	// 校验字段
-	if err := utils.Verify(stage.Order, utils.CreatedStageVerify); err != nil {
-		response.FailWithMessage(err.Error(), c)
-		return
-	}
 	address := c.GetString("address") // 操作人
 	if err := service.UpdatedStage(stage, address); err != nil {
 		global.LOG.Error("操作失败!", zap.Error(err))
