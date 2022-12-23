@@ -19,6 +19,8 @@ enum PaymentType {
     Confirm // by Confirm , if has pre pay
 }
 
+// TODO: padding space
+
 struct Order {
     uint taskId;
     address issuer;
@@ -33,4 +35,5 @@ struct Order {
 
 interface IOrder {
     function getOrder(uint orderId) external view returns (Order memory);
+    function stage() external view returns (address);
 }

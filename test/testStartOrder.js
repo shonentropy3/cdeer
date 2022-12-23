@@ -91,10 +91,13 @@ describe("testStartOrder", function () {
       let v = '0x' + sig.substring(2).substring(128, 130);
       
       
-    await DeOrder.prolongStage(orderId, 1 , period, nonce, deadline, v, r, s);
+    let tx = await DeOrder.prolongStage(orderId, 1 , period, nonce, deadline, v, r, s);
     console.log("prolongStage OK ");
 
   });
+
+
+
 
   // it("取出多余的款， 无法多取", async function () {
   //   await expect(DeOrder.refund(orderId, account1.address, 100)).to.be.revertedWith('AmountError(1)');
