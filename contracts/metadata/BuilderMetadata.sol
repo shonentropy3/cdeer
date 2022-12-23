@@ -94,19 +94,41 @@ contract BuilderMetadata is IMetadata {
         );
     }
 
-    function skillSVG(uint48 taskskills, uint i) internal view returns (string memory svgString) {
+    function skillSVGs(uint48 taskskills) internal view returns (string memory svgString){
+        uint pos = 36;
+        string memory curSVG = "";
+        for(uint i = 0; i < 4; i++) {
+            (curSVG, pos) = skillSVG(taskskills, i, pos);
+            svgString = abi.encodePacked(svgString, curSVG);
+        }
+        
+    }
+
+    function skillSVG(
+        uint48 taskskills,
+        uint i, 
+        uint posStart
+    ) internal view returns (string memory svgString, uint pos) {
         uint skill = taskskills.get(i);
         if (skill > 0) {
-            uint xPos = 36 + i * 58;
-            return string(
+            string memory label = metaComm.skills(skill);
+           
+            svgString = string(
                     abi.encodePacked(
                         '<text class="c7" transform="translate(',
-                        Strings.toString(xPos),
+                        Strings.toString(posStart),
                         ' 146.48)">',
-                        metaComm.skills(skill),
-                        '</text>'));
+                        label,
+                        "</text>"
+                    )
+                );
+
+            (uint slen, uint blen) = label.strlen();
+            pos = posStart + slen * 5 + 10;
+        } else {
+            pos = posStart;
+            svgString = "";
         }
-        return "";
     }
 
     function generateSVG(uint orderId) public view returns (bytes memory svg) {
@@ -136,11 +158,7 @@ contract BuilderMetadata is IMetadata {
                     '</text>',
 
                     '<text class="c6" transform="translate(36 132.92)">Skill:</text>',
-                    
-                    skillSVG(taskskills,0),
-                    skillSVG(taskskills,1),
-                    skillSVG(taskskills,2),
-                    skillSVG(taskskills,3),
+                    skillSVGs(taskskills),
                     '<text class="c6" transform="translate(36 164.3)">Token ID:</text><text class="c7" transform="translate(36 176.96)">',
                     Strings.toString(orderId),
                     '</text><text class="c6" transform="translate(36 101.95)">Task:</text>  <text class="c7" transform="translate(36 115.6)">',
