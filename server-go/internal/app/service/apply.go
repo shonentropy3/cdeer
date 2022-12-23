@@ -47,6 +47,9 @@ func GetApply(searchInfo request.GetApplyRequest) (err error, list interface{}, 
 	// 根据报名人地址过滤
 	if searchInfo.TaskID != 0 {
 		db = db.Where("task_id = ?", searchInfo.TaskID)
+	} else {
+		// 列表显示
+		db = db.Where("status = 0")
 	}
 	if searchInfo.ApplyAddr != "" {
 		db = db.Where("apply_addr = ?", searchInfo.ApplyAddr)

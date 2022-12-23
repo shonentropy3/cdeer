@@ -42,10 +42,6 @@ func GetTaskList(searchInfo request.GetTaskListRequest) (err error, list interfa
 		//报名开关: 0.关  1.开  这里前端显示
 		db = db.Where("apply_switch = 1")
 	}
-	//// 根据技能要求过滤
-	//if searchInfo.Status != 0 {
-	//	db = db.Where("status = ?", searchInfo.Status)
-	//}
 	// 根据技能要求过滤
 	if searchInfo.Role != nil {
 		db = db.Where("role && ?", searchInfo.Role)

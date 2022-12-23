@@ -210,15 +210,23 @@ func rollbackStatus(old string, new string, stage request.UpdatedStageRequest) (
 // statusValid 校验阶段状态流转
 func statusValid(old string, new string, stage request.UpdatedStageRequest) (err error) {
 	// 状态正确性
-	if !utils.SliceIsExist([]string{"WaitWorkerStage", "WaitIssuerAgree", "IssuerAgreeStage", "WaitWorkerConfirmStage", "WorkerAgreeStage", "WaitProlongAgree", "AgreeProlong", "DisagreeProlong", "WaitAppendAgree", "AgreeAppend", "DisagreeAppend"}, new) {
+	if !utils.SliceIsExist([]string{"WaitWorkerStage", "WaitIssuerAgree", "IssuerAgreeStage", "WaitWorkerConfirmStage",
+		"WorkerAgreeStage", "WaitProlongAgree", "AgreeProlong", "DisagreeProlong", "WaitAppendAgree", "AgreeAppend", "DisagreeAppend"}, new) {
 		return errors.New("状态错误")
 	}
 	// 需要验证链上状态
 	if utils.SliceIsExist([]string{"AgreeProlong", "AgreeAppend"}, new) && stage.Hash == "" {
 		return errors.New("hash不能为空")
 	}
-	statusMap := map[string][]string{"WaitWorkerStage": {"WaitIssuerAgree"}, "WaitIssuerAgree": {"IssuerAgreeStage", "WaitWorkerConfirmStage"}, "WaitWorkerConfirmStage": {"WorkerAgreeStage", "WaitIssuerAgree"}, "WorkerAgreeStage": {"IssuerAgreeStage"}, "IssuerAgreeStage": {"WaitProlongAgree", "WaitAppendAgree", "AbortOrder"}, "WaitProlongAgree": {"AgreeProlong", "DisagreeProlong", "IssuerAgreeStage"}, "WaitAppendAgree": {"AgreeAppend", "DisagreeAppend", "IssuerAgreeStage"}}
 	// 校验阶段状态流转
+	statusMap := map[string][]string{"WaitWorkerStage": {"WaitIssuerAgree"},
+		"WaitIssuerAgree":        {"IssuerAgreeStage", "WaitWorkerConfirmStage"},
+		"WaitWorkerConfirmStage": {"WorkerAgreeStage", "WaitIssuerAgree"},
+		"WorkerAgreeStage":       {"IssuerAgreeStage"},
+		"IssuerAgreeStage":       {"WaitProlongAgree", "WaitAppendAgree", "AbortOrder"},
+		"WaitProlongAgree":       {"AgreeProlong", "DisagreeProlong", "IssuerAgreeStage"},
+		"WaitAppendAgree":        {"AgreeAppend", "DisagreeAppend", "IssuerAgreeStage"},
+	}
 	status, ok := statusMap[old]
 	if !ok {
 		return errors.New("状态流转不存在")
