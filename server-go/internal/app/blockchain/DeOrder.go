@@ -100,10 +100,40 @@ func UpdatedProgress(orderID int64) (err error) {
 			return err
 		}
 	}
+	// 任务完成 修改state
+	if version.Progress == 7 || version.Progress == 6 {
+		if err = orderDoneOperation(orderID); err != nil {
+			return err
+		}
+	}
 	raw := global.DB.Model(&model.Order{}).Where("order_id = ?", orderID).Update("progress", version.Progress)
 	if raw.RowsAffected == 0 {
 		return errors.New("操作失败")
 	}
+	return raw.Error
+}
+
+// orderDoneOperation 状态操作
+func orderDoneOperation(orderID int64) (err error) {
+	// 修改任务状态
+	raw := global.DB.Model(&model.Order{}).Where("order_id = ?", orderID).Update("state", 1)
+	if raw.RowsAffected == 0 {
+		return errors.New("操作失败")
+	}
+	if err = saveOrderFlow(orderID); err != nil {
+		return err
+	}
+	// 查询任务
+	var order model.Order
+	if err = global.DB.Model(&model.Order{}).Where("order_id =?", orderID).First(&order).Error; err != nil {
+		return err
+	}
+
+	// 删除apply信息
+	if err = global.DB.Model(&model.Apply{}).Unscoped().Where("task_id =? AND apply_addr = ?", order.TaskID, order.Worker).Delete(&model.Apply{}).Error; err != nil {
+		return err
+	}
+
 	return raw.Error
 }
 

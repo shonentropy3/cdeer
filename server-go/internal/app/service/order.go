@@ -40,7 +40,9 @@ func GetOrderList(searchInfo request.GetOrderListRequest) (err error, list inter
 		db = db.Where("task_id = ?", searchInfo.TaskID)
 	}
 	// 根据状态过滤
-	db = db.Where("state = ?", searchInfo.State)
+	if searchInfo.State != nil {
+		db = db.Where("state = ?", searchInfo.State)
+	}
 	err = db.Count(&total).Error
 	if err != nil {
 		return err, list, total
@@ -61,7 +63,13 @@ func GetOrderList(searchInfo request.GetOrderListRequest) (err error, list inter
 		}
 		// WaitAppendAgree 状态需要 返回原始数据
 		if orderList[0].Status == "WaitAppendAgree" {
-			global.DB.Model(&model.OrderFlow{}).Select("obj").Where("order_id = ? AND status = 'IssuerAgreeStage' AND del = 0", orderList[0].OrderId).Order("level desc").First(&orderList[0].LastStageJson)
+			var attachment string
+			global.DB.Model(&model.OrderFlow{}).Select("attachment").Where("order_id = ? AND status = 'IssuerAgreeStage' AND del = 0", orderList[0].OrderId).Order("level desc").First(&attachment)
+			url := fmt.Sprintf("http://ipfs.learnblockchain.cn/%s", attachment)
+			orderList[0].LastStageJson, err = utils.GetRequest(url)
+			if err != nil {
+				return err, orderList, total
+			}
 		}
 	}
 	return err, orderList, total
