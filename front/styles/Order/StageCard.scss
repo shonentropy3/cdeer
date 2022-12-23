@@ -54,6 +54,41 @@
             }
         }
     }
+    .new-tabs{
+        border: 1px solid #6DD400;
+        .tabs-title{
+            font-size: 48px;
+            font-family: PingFangSC-Semibold, PingFang SC;
+            font-weight: 600;
+            color: #1F1E2E;
+            line-height: 67px;
+            letter-spacing: 1px;
+            // padding: 20px;
+            padding-left: 50px;
+            padding-top: 20px;
+        }
+        .stageInner{
+            .btns{
+                width: 100%;
+                display: flex;
+                justify-content: flex-end;
+                .confirm{
+                    margin-right: 15px;
+                    position: static;
+                    right: 0; 
+                    &:first-child{
+                        border: 1px solid #1F1E2E;
+                        background-color: white;
+                        color: #1F1E2E;
+                    }
+                    &:last-child{
+                        margin-right: 0;
+                    }
+                }
+            }
+            
+        }
+    }
     // tabs
     .tabs{
         margin-top: 30px;
@@ -285,6 +320,15 @@
                         font-family: PingFangSC-Semibold, PingFang SC;
                         font-weight: 600;
                         line-height: 45px;
+                        letter-spacing: 0.67px;
+                    }
+                    .new-nav-index{
+                        font-size: 32px;
+                        font-family: PingFangSC-Semibold, PingFang SC;
+                        font-weight: 600;
+                        color: #7FF15D;
+                        line-height: 45px;
+                        letter-spacing: 0.67px;
                     }
                     .nav-title{
                         max-width: 750px;

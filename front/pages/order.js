@@ -72,15 +72,15 @@ export default function Order(props) {
                     // 如果有last_stage_json ==>
                     // 如果有last_stages ==>
                     let arr = []
-                    if (order.status === 'WaitProlongAgree' || order.status === 'WaitAppendAgree') {
+                    if (order.status === 'WaitProlongAgree') {
                         let cache = order.stages;
                         order.stages = order.last_stages;
                         order.last_stages = JSON.parse(cache);
-                        if (order.status === 'WaitAppendAgree') {
-                            let cache = order.stage_json;
-                            order.stage_json = order.last_stage_json;
-                            order.last_stage_json = JSON.parse(cache);
-                        }
+                    }
+
+                    if (order.status === "WaitAppendAgree") {
+                        order.last_stages = JSON.parse(order.last_stages);
+                        order.last_stage_json = JSON.parse(order.last_stage_json);
                     }
 
                     order.stage_json = JSON.parse(order?.stage_json);
@@ -98,7 +98,6 @@ export default function Order(props) {
                     setStages([...stages]);
                 }
                 setOrder({...order});
-                console.log(order);
 
                 if (order.progress !== 0) {
                     progress = order.progress === 4 ? 1 : 2;

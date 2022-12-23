@@ -4,17 +4,21 @@ import { useAccount, useNetwork } from "wagmi";
 import { useContracts, useRead, useSignProData } from "../../controller";
 import { updatedStage } from "../../http/_api/order";
 import StageOutput from "../CustomItem/StageOutput";
+import DeliveryModal from "../CustomModal/DeliveryModal";
 import ProlongModal from "../CustomModal/ProlongModal";
 
 
 
 export default function OutputStageCard(params) {
     
-    const { edit, remove, cache, isEdit, data, stageIndex, who, oid, task, order } = params;
+    const { edit, remove, cache, isEdit, data, stageIndex, who, oid, task, order, agreeAppend, payAppend } = params;
     const { chain } = useNetwork();
     const { address } = useAccount();
 
     let [list, setList] = useState([]);
+    
+    let [isDelivery, setIsDelivery] = useState(false);  //  交付弹窗
+    let [deliveryObj, setDeliveryObj] = useState({});
 
     let [isProlong, setIsProlong] = useState(false);
     let [prolongObj,setProlongObj] = useState({});  //  延长签名
@@ -47,12 +51,29 @@ export default function OutputStageCard(params) {
     }
 
     // 提交阶段交付
-    const updateDelivery = () => {
-        // 上链
+    const updateDelivery = (e) => {
+        setIsLoading(true);
+        console.log(e);
+        console.log('order ==>', order);
+        deliveryObj = e;
+        setDeliveryObj({...deliveryObj})
 
-        return
+        // 上链 ==> 更新数据库
         updateAttachment.write({
-            recklesslySetUnpreparedArgs: [Number(oid), '']
+            recklesslySetUnpreparedArgs: [Number(oid), e.attachment]
+        })
+    }
+    const updateAttachmentSuccess = (hash) => {
+        order.stage_json.stages[stageIndex].delivery = deliveryObj;
+
+        updatedStage({
+            obj: JSON.stringify(order.stage_json),
+            order_id: oid,
+            hash: hash,
+            status: "IssuerAgreeStage"
+        })
+        .then(res => {
+            handelRes(res)
         })
     }
 
@@ -103,6 +124,29 @@ export default function OutputStageCard(params) {
         updatedStage({
             order_id: oid,
             status: 'DisagreeProlong'
+        })
+        .then(res => {
+            handelRes(res)
+        })
+    }
+
+    // 确认新增阶段
+    const confirmAppend = () => {
+        // 判断是谁
+        if (who === 'issuer') {
+            // 直接付款
+            payAppend()
+        }else{
+            // 签名
+            agreeAppend()
+        }
+    }
+
+    // 拒绝阶段新增
+    const rejectAppend = () => {
+        updatedStage({
+            order_id: oid,
+            status: 'DisagreeAppend'
         })
         .then(res => {
             handelRes(res)
@@ -212,7 +256,22 @@ export default function OutputStageCard(params) {
         }
     },[prolongStage])
 
+    // 提交交付成功
+    useEffect(() => {
+        if (updateAttachment.isSuccess) {
+            // 更新数据库
+            updateAttachmentSuccess(updateAttachment.data.hash)
+        }
+        if (updateAttachment.isError) {
+            message.error('error')
+            setIsLoading(false);
+        }
+    },[updateAttachment])
+
     return <>
+    {
+        isDelivery && <DeliveryModal close={setIsDelivery} updateDelivery={updateDelivery} loading={isLoading} stageIndex={stageIndex} />
+    }
     {
         isProlong && <ProlongModal close={setIsProlong} prolong={updateProlong} loading={isLoading}  />
     }
@@ -234,11 +293,15 @@ export default function OutputStageCard(params) {
                         address={address}
 
                         setActiveIndex={setActiveIndex}
-                        updateDelivery={updateDelivery}
+                        updateDelivery={setIsDelivery}
                         confirmDelivery={confirmDelivery}
+
                         updateProlong={setIsProlong}
                         confirmProlong={confirmProlong}
                         rejectProlong={rejectProlong}
+
+                        rejectAppend={rejectAppend}
+                        confirmAppend={confirmAppend}
 
                         Order={order}
                         loading={isLoading}

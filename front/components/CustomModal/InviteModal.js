@@ -24,7 +24,7 @@ export default function InviteModal(params) {
         closeIcon={<img src="/closeIcon.png" />}
     >
         <div className="order-receiver-icon">
-            <Image src="/tipIcon.png" width={87} height={79} quality={100} />
+            <Image src="/img/tipIcon.png" width={87} height={79} quality={100} />
         </div>
         <p className="order-receiver-title">Give your budget</p>
         <InputNumber className="order-receiver-price" controls={false} addonAfter={selectAfter} value={amount} onChange={e => setAmount(e)} />
