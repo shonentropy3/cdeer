@@ -8,7 +8,7 @@ export default function DeliveryModal({close, updateDelivery, loading, stageInde
     
     let [fileList, setFileList] = useState([]);
     let [params, setParams] = useState({
-        content: '', attachment: '', filetype: ''
+        content: '', attachment: '', fileType: ''
     })
 
     const changeDesc = (e) => {
@@ -17,7 +17,7 @@ export default function DeliveryModal({close, updateDelivery, loading, stageInde
     }
 
     const handleChange = (info, list) => {
-        params.filetype = info.file.name;
+        params.fileType = info.file.name;
         setParams({...params});
         fileList = info.fileList;
         setFileList([...fileList]);

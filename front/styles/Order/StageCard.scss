@@ -495,6 +495,46 @@
                             }
                         }
                     }
+                    .delivery{
+                        width: 990px;
+                        margin-top: 17px;
+                        padding-top: 17px;
+                        border-top: 1px solid #E2E2E2;
+                        .delivery-title{
+                            font-size: 18px;
+                            font-family: PingFangSC-Regular, PingFang SC;
+                            color: #828282;
+                            line-height: 25px;
+                        }
+                        .delivery-content{
+                            margin-top: 5px;
+                            padding: 13px;
+                            background-color: #F6F6F6;            
+                            span{
+                                margin-right: 10px;
+                                font-size: 12px;
+                                color: #828282;
+                                line-height: 22px;
+                                letter-spacing: 1.33px;
+                                display: inline-block;
+                            }
+                            a{
+                                color: #554AFF;
+                                text-decoration: underline;
+                            }
+                            .content{
+                                width: 100%;
+                                color: #1F1E2E;
+                            }
+                            .item{
+                                display: flex;
+                                align-items: flex-start;
+                                &:last-child{
+                                    margin-top: 5px;
+                                }
+                            }
+                        }
+                    }
                 }
                 .open{
                     max-height: max-content;

@@ -33,9 +33,13 @@ export default function OutputStageCard(params) {
     const { useOrderRead: nonces } = useRead('nonces', address);
     // 交付
     const { useOrderContractWrite: updateAttachment } = useContracts('updateAttachment');
-    const { useOrderContractWrite: confirmAttachment } = useContracts('confirmDelivery');
+    // 确认交付
+    const { useOrderContractWrite: confirmAttachment, test } = useContracts('confirmDelivery');
     // 延期
     const { useOrderContractWrite: prolongStage } = useContracts('prolongStage');
+    // 领钱
+    const { useOrderContractWrite: getWithdraw } = useContracts('withdraw');
+    
 
     // 请求返回处理
     const handelRes = (res) => {
@@ -50,11 +54,17 @@ export default function OutputStageCard(params) {
         }
     }
 
+    // 领钱
+    const withdraw = () => {
+        setIsLoading(true);
+        getWithdraw.write({
+            recklesslySetUnpreparedArgs: [Number(oid), address]
+        })
+    }
+
     // 提交阶段交付
     const updateDelivery = (e) => {
         setIsLoading(true);
-        console.log(e);
-        console.log('order ==>', order);
         deliveryObj = e;
         setDeliveryObj({...deliveryObj})
 
@@ -79,11 +89,21 @@ export default function OutputStageCard(params) {
 
     // 确认阶段交付
     const confirmDelivery = () => {
-        // 上链
-
-        return
+        // 上链 ==> 更新数据库
+        console.log(Number(oid), Number(stageIndex));
+        setIsLoading(true);
         confirmAttachment.write({
-            recklesslySetUnpreparedArgs: [Number(oid), Number(stageIndex)]
+            recklesslySetUnpreparedArgs: [Number(oid), [Number(stageIndex)]]
+        })
+    }
+    const confirmAttachmentSuccess = (hash) => {
+        updatedStage({
+            order_id: oid,
+            hash: hash,
+            status: "IssuerAgreeStage"
+        })
+        .then(res => {
+            handelRes(res)
         })
     }
 
@@ -268,6 +288,31 @@ export default function OutputStageCard(params) {
         }
     },[updateAttachment])
 
+    // 确认交付成功
+    useEffect(() => {
+        if (confirmAttachment.isSuccess) {
+            // 更新数据库
+            confirmAttachmentSuccess(confirmAttachment.data.hash)
+        }
+        if (confirmAttachment.error) {
+            message.error('error')
+            setIsLoading(false);
+        }
+    },[confirmAttachment])
+
+    // 领钱成功
+    useEffect(() => {
+        if (getWithdraw.isSuccess) {
+            message.success("操作成功")
+            setIsLoading(false);
+        }
+        if (getWithdraw.error) {
+            message.error('error')
+            setIsLoading(false);
+        }
+    },[getWithdraw])
+    
+
     return <>
     {
         isDelivery && <DeliveryModal close={setIsDelivery} updateDelivery={updateDelivery} loading={isLoading} stageIndex={stageIndex} />
@@ -302,6 +347,8 @@ export default function OutputStageCard(params) {
 
                         rejectAppend={rejectAppend}
                         confirmAppend={confirmAppend}
+
+                        withdraw={withdraw}
 
                         Order={order}
                         loading={isLoading}
