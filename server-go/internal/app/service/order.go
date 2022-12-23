@@ -49,11 +49,19 @@ func GetOrderList(searchInfo request.GetOrderListRequest) (err error, list inter
 		err = db.Order("created_at desc").Preload("Task").Find(&orderList).Error
 	}
 	// 根据订单ID过滤 需要获取IPFS 具体内容
-	if searchInfo.OrderId != 0 && len(orderList) == 1 {
+	if searchInfo.OrderId != 0 && len(orderList) == 1 && orderList[0].Attachment != "" {
 		url := fmt.Sprintf("http://ipfs.learnblockchain.cn/%s", orderList[0].Attachment)
 		orderList[0].StageJson, err = utils.GetRequest(url)
 		if err != nil {
 			return err, orderList, total
+		}
+		// WaitProlongAgree 状态需要 返回原始数据
+		if orderList[0].Status == "WaitProlongAgree" || orderList[0].Status == "WaitAppendAgree" {
+			global.DB.Model(&model.OrderFlow{}).Select("stages").Where("order_id = ? AND status = 'IssuerAgreeStage' AND del = 0", orderList[0].OrderId).Order("level desc").First(&orderList[0].LastStages)
+		}
+		// WaitAppendAgree 状态需要 返回原始数据
+		if orderList[0].Status == "WaitAppendAgree" {
+			global.DB.Model(&model.OrderFlow{}).Select("obj").Where("order_id = ? AND status = 'IssuerAgreeStage' AND del = 0", orderList[0].OrderId).Order("level desc").First(&orderList[0].LastStageJson)
 		}
 	}
 	return err, orderList, total
@@ -80,9 +88,22 @@ func CreateOrder(orderReq request.CreateOrderRequest, address string) (err error
 // @return: err error
 func UpdatedStage(stage request.UpdatedStageRequest, address string) (err error) {
 	// TODO: 权限控制
+	// 保存交易Hash
+	runBool, err := storeHash(stage.Hash, stage.Status, address)
+	if err != nil {
+		return err
+	}
+	if runBool {
+		return nil
+	}
 	// 查询当前记录
 	var order model.Order
 	if err = global.DB.Model(&model.Order{}).Where("order_id = ?", stage.OrderId).First(&order).Error; err != nil {
+		return err
+	}
+	// 查询level
+	var level uint
+	if err = global.DB.Model(&model.OrderFlow{}).Select("level").Where("order_id = ?", stage.OrderId).Order("level desc").First(&level).Error; err != nil {
 		return err
 	}
 	// 查询日志记录
@@ -90,12 +111,8 @@ func UpdatedStage(stage request.UpdatedStageRequest, address string) (err error)
 	if err = global.DB.Model(&model.OrderFlow{}).Where("order_id = ? AND del = 0", stage.OrderId).Order("level desc").First(&orderFlowTop).Error; err != nil {
 		return err
 	}
-	// 保存交易Hash
-	if err = storeHash(stage.Hash, stage.Status, address); err != nil {
-		return err
-	}
 	// 状态流转 校验正确性
-	if stage.Status != 0 && order.Status != stage.Status {
+	if stage.Status != "WaitWorkerStage" && order.Status != stage.Status {
 		err = statusValid(order.Status, stage.Status, stage)
 		if err != nil {
 			return err
@@ -128,13 +145,13 @@ func UpdatedStage(stage request.UpdatedStageRequest, address string) (err error)
 		// 更新数据
 		stage.Attachment = hashJSON
 	} else {
-		fmt.Println("相同不操作")
+		fmt.Println("相同不需操作")
 	}
+	// 更新Order表
 	raw := global.DB.Model(&model.Order{}).Where("order_id = ?", stage.OrderId).Updates(&stage.Order)
-	if raw.RowsAffected == 0 {
+	if raw.RowsAffected == 0 || raw.Error != nil {
 		return errors.New("创建失败")
 	}
-
 	// 插入日志表
 	orderFlow := model.OrderFlow{OrderId: stage.OrderId, Signature: stage.Signature, SignAddress: stage.SignAddress, SignNonce: stage.SignNonce}
 	orderFlow.Level = orderFlowTop.Level + 1 // 节点
@@ -146,23 +163,22 @@ func UpdatedStage(stage request.UpdatedStageRequest, address string) (err error)
 	if stage.Attachment == "" {
 		orderFlow.Attachment = orderFlowTop.Attachment // JSON IPFS
 	}
-
 	if err = global.DB.Model(&model.OrderFlow{}).Create(&orderFlow).Error; err != nil {
 		return err
 	}
 
-	return raw.Error
+	return nil
 }
 
-func rollbackStatus(old uint8, new uint8, stage request.UpdatedStageRequest) (err error, okRun bool) {
-	statusMap := map[uint8][]uint8{12: {14}, 20: {22, 11}, 25: {27, 11}}
+func rollbackStatus(old string, new string, stage request.UpdatedStageRequest) (err error, okRun bool) {
+	statusMap := map[string][]string{"WaitProlongAgree": {"DisagreeProlong", "IssuerAgreeStage"}, "WaitAppendAgree": {"DisagreeAppend", "IssuerAgreeStage"}}
 	// 校验阶段状态流转
 	status, ok := statusMap[old]
 	if !ok {
 		return nil, okRun
 	}
 	if utils.SliceIsExist(status, new) {
-		rollMap := map[uint8]uint8{14: 10, 22: 11, 27: 11}
+		rollMap := map[string]string{"DisagreeProlong": "IssuerAgreeStage", "DisagreeAppend": "IssuerAgreeStage"}
 		rollStatus, ok := rollMap[new]
 		if !ok {
 			return nil, okRun
@@ -174,8 +190,7 @@ func rollbackStatus(old uint8, new uint8, stage request.UpdatedStageRequest) (er
 			return err, okRun
 		}
 		// 回滚操作
-		//order := model.Order{Attachment: orderFlow.Attachment, Status: orderFlow.Status}
-		order := map[string]interface{}{"attachment": orderFlow.Attachment, "Status": orderFlow.Status, "signature": "", "sign_address": "", "sign_nonce": 0}
+		order := map[string]interface{}{"attachment": orderFlow.Attachment, "stages": orderFlow.Stages, "Status": orderFlow.Status, "signature": orderFlow.Signature, "sign_address": orderFlow.SignAddress, "sign_nonce": orderFlow.SignNonce}
 		raw := global.DB.Model(&model.Order{}).Where("order_id = ?", stage.OrderId).Updates(&order)
 		if raw.RowsAffected == 0 {
 			return errors.New("回滚失败"), okRun
@@ -193,17 +208,25 @@ func rollbackStatus(old uint8, new uint8, stage request.UpdatedStageRequest) (er
 }
 
 // statusValid 校验阶段状态流转
-func statusValid(old uint8, new uint8, stage request.UpdatedStageRequest) (err error) {
+func statusValid(old string, new string, stage request.UpdatedStageRequest) (err error) {
 	// 状态正确性
-	if !utils.SliceIsExist([]uint8{0, 10, 11, 12, 13, 14, 20, 21, 22, 25, 26, 27, 31}, new) {
+	if !utils.SliceIsExist([]string{"WaitWorkerStage", "WaitIssuerAgree", "IssuerAgreeStage", "WaitWorkerConfirmStage",
+		"WorkerAgreeStage", "WaitProlongAgree", "AgreeProlong", "DisagreeProlong", "WaitAppendAgree", "AgreeAppend", "DisagreeAppend"}, new) {
 		return errors.New("状态错误")
 	}
 	// 需要验证链上状态
-	if utils.SliceIsExist([]uint8{11, 21, 26}, new) && stage.Hash == "" {
+	if utils.SliceIsExist([]string{"AgreeProlong", "AgreeAppend"}, new) && stage.Hash == "" {
 		return errors.New("hash不能为空")
 	}
-	statusMap := map[uint8][]uint8{0: {10}, 10: {11, 12}, 12: {13, 14}, 14: {10}, 13: {11}, 11: {20, 25, 31}, 20: {21, 22, 11}, 25: {26, 27, 11}}
 	// 校验阶段状态流转
+	statusMap := map[string][]string{"WaitWorkerStage": {"WaitIssuerAgree"},
+		"WaitIssuerAgree":        {"IssuerAgreeStage", "WaitWorkerConfirmStage"},
+		"WaitWorkerConfirmStage": {"WorkerAgreeStage", "WaitIssuerAgree"},
+		"WorkerAgreeStage":       {"IssuerAgreeStage"},
+		"IssuerAgreeStage":       {"WaitProlongAgree", "WaitAppendAgree", "AbortOrder"},
+		"WaitProlongAgree":       {"AgreeProlong", "DisagreeProlong", "IssuerAgreeStage"},
+		"WaitAppendAgree":        {"AgreeAppend", "DisagreeAppend", "IssuerAgreeStage"},
+	}
 	status, ok := statusMap[old]
 	if !ok {
 		return errors.New("状态流转不存在")
@@ -214,28 +237,24 @@ func statusValid(old uint8, new uint8, stage request.UpdatedStageRequest) (err e
 	return nil
 }
 
-func storeHash(hash string, status uint8, address string) (err error) {
+func storeHash(hash string, status string, address string) (runBool bool, err error) {
 	if hash == "" {
-		return nil
+		return runBool, nil
 	}
-	if status == 11 {
-		// 确认阶段划分
-		transHash := model.TransHash{SendAddr: address, EventName: "SetStage", Hash: hash}
-		if err = SaveHash(transHash); err != nil {
-			return errors.New("操作失败")
-		}
-	} else if status == 21 {
+	if status == "AgreeProlong" {
+		runBool = true
 		transHash := model.TransHash{SendAddr: address, EventName: "ProlongStage", Hash: hash}
 		if err = SaveHash(transHash); err != nil {
-			return errors.New("操作失败")
+			return runBool, errors.New("操作失败")
 		}
-	} else if status == 26 {
+	} else if status == "AgreeAppend" {
+		runBool = true
 		transHash := model.TransHash{SendAddr: address, EventName: "AppendStage", Hash: hash}
 		if err = SaveHash(transHash); err != nil {
-			return errors.New("操作失败")
+			return runBool, errors.New("操作失败")
 		}
 	}
-	return nil
+	return runBool, nil
 }
 
 // UpdatedProgress
