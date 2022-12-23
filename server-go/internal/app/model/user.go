@@ -8,7 +8,7 @@ import (
 type User struct {
 	global.MODEL
 	Address  string        `gorm:"column:address;type:char(42);UNIQUE" json:"address" form:"address"`
-	Username *string       `gorm:"column:username" json:"username" form:"username"`
+	Username *string       `gorm:"column:username;UNIQUE" json:"username" form:"username"`
 	Avatar   *string       `gorm:"column:avatar" json:"avatar" form:"avatar"`
 	Telegram *string       `gorm:"column:telegram" json:"telegram" form:"telegram"`
 	Wechat   *string       `gorm:"column:wechat" json:"wechat" form:"wechat"`

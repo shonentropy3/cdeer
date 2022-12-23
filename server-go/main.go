@@ -11,6 +11,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"go.uber.org/zap"
 	"log"
+	"math/big"
 	"time"
 )
 
@@ -50,7 +51,7 @@ func main() {
 		fmt.Println("1")
 		fmt.Println(err)
 	}
-	version, err := instance.Nonces(nil, common.HexToAddress("0x7d32D1DE76acd73d58fc76542212e86ea63817d8"))
+	version, err := instance.GetOrder(nil, big.NewInt(10))
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -59,7 +60,7 @@ func main() {
 	//if err != nil {
 	//	fmt.Println(err)
 	//}
-	fmt.Println(version) // "1.0"
-	//fmt.Printf("%+v", version) // "1.0"
+	//fmt.Println(version) // "1.0"
+	fmt.Printf("%+v", version) // "1.0"
 
 }

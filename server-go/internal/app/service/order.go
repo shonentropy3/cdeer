@@ -40,7 +40,9 @@ func GetOrderList(searchInfo request.GetOrderListRequest) (err error, list inter
 		db = db.Where("task_id = ?", searchInfo.TaskID)
 	}
 	// 根据状态过滤
-	db = db.Where("state = ?", searchInfo.State)
+	if searchInfo.State != nil {
+		db = db.Where("state = ?", searchInfo.State)
+	}
 	err = db.Count(&total).Error
 	if err != nil {
 		return err, list, total
@@ -61,7 +63,13 @@ func GetOrderList(searchInfo request.GetOrderListRequest) (err error, list inter
 		}
 		// WaitAppendAgree 状态需要 返回原始数据
 		if orderList[0].Status == "WaitAppendAgree" {
-			global.DB.Model(&model.OrderFlow{}).Select("obj").Where("order_id = ? AND status = 'IssuerAgreeStage' AND del = 0", orderList[0].OrderId).Order("level desc").First(&orderList[0].LastStageJson)
+			var attachment string
+			global.DB.Model(&model.OrderFlow{}).Select("attachment").Where("order_id = ? AND status = 'IssuerAgreeStage' AND del = 0", orderList[0].OrderId).Order("level desc").First(&attachment)
+			url := fmt.Sprintf("http://ipfs.learnblockchain.cn/%s", attachment)
+			orderList[0].LastStageJson, err = utils.GetRequest(url)
+			if err != nil {
+				return err, orderList, total
+			}
 		}
 	}
 	return err, orderList, total
@@ -102,8 +110,8 @@ func UpdatedStage(stage request.UpdatedStageRequest, address string) (err error)
 		return err
 	}
 	// 查询level
-	var level uint
-	if err = global.DB.Model(&model.OrderFlow{}).Select("level").Where("order_id = ?", stage.OrderId).Order("level desc").First(&level).Error; err != nil {
+	var level int64
+	if err = global.DB.Model(&model.OrderFlow{}).Where("order_id = ?", stage.OrderId).Count(&level).Error; err != nil {
 		return err
 	}
 	// 查询日志记录
@@ -154,12 +162,12 @@ func UpdatedStage(stage request.UpdatedStageRequest, address string) (err error)
 	}
 	// 插入日志表
 	orderFlow := model.OrderFlow{OrderId: stage.OrderId, Signature: stage.Signature, SignAddress: stage.SignAddress, SignNonce: stage.SignNonce}
-	orderFlow.Level = orderFlowTop.Level + 1 // 节点
-	orderFlow.Status = stage.Status          // 阶段状态
-	orderFlow.Operator = address             // 操作人
-	orderFlow.Obj = stage.Obj                // 阶段详情交付物JSON
-	orderFlow.Stages = stage.Stages          // 阶段划分JSON
-	orderFlow.Attachment = stage.Attachment  // JSON IPFS
+	orderFlow.Level = level + 1             // 节点
+	orderFlow.Status = stage.Status         // 阶段状态
+	orderFlow.Operator = address            // 操作人
+	orderFlow.Obj = stage.Obj               // 阶段详情交付物JSON
+	orderFlow.Stages = stage.Stages         // 阶段划分JSON
+	orderFlow.Attachment = stage.Attachment // JSON IPFS
 	if stage.Attachment == "" {
 		orderFlow.Attachment = orderFlowTop.Attachment // JSON IPFS
 	}

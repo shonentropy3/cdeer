@@ -16,7 +16,7 @@ var (
 	CONFIG       config.Server // 配置信息
 	LOG          *zap.Logger
 	VIP          *viper.Viper
-	Cache        *bigcache.BigCache
+	Cache        *bigcache.BigCache // 缓存
 	StartTime    time.Time
 	Traversed    atomic.Bool               // 任务运行状态
 	ContractAddr map[string]common.Address // 合约地址

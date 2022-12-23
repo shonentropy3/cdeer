@@ -56,7 +56,7 @@ func ParseOrderCreated(transHash model.TransHash, Logs []*types.Log) (err error)
 				return err
 			}
 			// 插入日志表
-			orderFlow := model.OrderFlow{OrderId: vLog.Topics[2].Big().Int64()}
+			orderFlow := model.OrderFlow{OrderId: order.OrderId}
 			err = tx.Model(&model.OrderFlow{}).Create(&orderFlow).Error
 			if err != nil {
 				tx.Rollback()
@@ -96,7 +96,13 @@ func UpdatedProgress(orderID int64) (err error) {
 	}
 	// 修改ongoing
 	if version.Progress == 4 {
-		if err = ongoingOperation(orderID); err != nil {
+		if err = issuerAgreeOperation(orderID); err != nil {
+			return err
+		}
+	}
+	// 任务完成 修改state
+	if version.Progress == 7 || version.Progress == 6 {
+		if err = orderDoneOperation(orderID); err != nil {
 			return err
 		}
 	}
@@ -107,33 +113,62 @@ func UpdatedProgress(orderID int64) (err error) {
 	return raw.Error
 }
 
-// ongoing 状态操作
-func ongoingOperation(orderID int64) (err error) {
+// orderDoneOperation 状态操作
+func orderDoneOperation(orderID int64) (err error) {
+	// 修改任务状态
+	raw := global.DB.Model(&model.Order{}).Where("order_id = ?", orderID).Update("state", 1)
+	if raw.RowsAffected == 0 {
+		return errors.New("操作失败")
+	}
+	if err = saveOrderFlow(orderID); err != nil {
+		return err
+	}
+	// 查询任务
+	var order model.Order
+	if err = global.DB.Model(&model.Order{}).Where("order_id =?", orderID).First(&order).Error; err != nil {
+		return err
+	}
+
+	// 删除apply信息
+	if err = global.DB.Model(&model.Apply{}).Unscoped().Where("task_id =? AND apply_addr = ?", order.TaskID, order.Worker).Delete(&model.Apply{}).Error; err != nil {
+		return err
+	}
+
+	return raw.Error
+}
+
+// issuerAgreeOperation 状态操作
+func issuerAgreeOperation(orderID int64) (err error) {
 	// 清空签名 && 修改状态
 	raw := global.DB.Model(&model.Order{}).Where("order_id = ?", orderID).Updates(map[string]interface{}{"signature": "", "sign_address": "", "sign_nonce": 0, "status": "IssuerAgreeStage"})
 	if raw.RowsAffected == 0 {
 		return errors.New("操作失败")
 	}
+	if err = saveOrderFlow(orderID); err != nil {
+		return err
+	}
+	return raw.Error
+}
 
+func saveOrderFlow(orderID int64) (err error) {
 	// 查询当前记录
 	var order model.Order
 	if err = global.DB.Model(&model.Order{}).Where("order_id = ?", orderID).First(&order).Error; err != nil {
 		return err
 	}
-	// 查询日志记录
-	var orderFlowTop model.OrderFlow
-	if err = global.DB.Model(&model.OrderFlow{}).Where("order_id = ? AND del = 0", orderID).Order("level desc").First(&orderFlowTop).Error; err != nil {
+	// 查询level
+	var level int64
+	if err = global.DB.Model(&model.OrderFlow{}).Where("order_id = ?", order.OrderId).Count(&level).Error; err != nil {
 		return err
 	}
 	// 插入日志表
-	orderFlow := model.OrderFlow{OrderId: order.OrderId}
-	orderFlow.Level = orderFlowTop.Level + 1 // 节点
-	orderFlow.Status = order.Status          // 阶段状态
-	orderFlow.Stages = order.Stages          // 阶段划分JSON
-	orderFlow.Attachment = order.Attachment  // JSON IPFS
+	orderFlow := model.OrderFlow{OrderId: order.OrderId, Status: order.Status, Stages: order.Stages}
+	orderFlow.Level = level + 1             // 节点
+	orderFlow.Attachment = order.Attachment // JSON IPFS
+	orderFlow.Operator = order.Issuer       // 甲方
 	if err = global.DB.Model(&model.OrderFlow{}).Create(&orderFlow).Error; err != nil {
 		return err
 	}
 
-	return raw.Error
+	return nil
 }
