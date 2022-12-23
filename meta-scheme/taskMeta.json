@@ -1,26 +1,28 @@
 {
   "name": "DeTask #1",
   "title": "新任务",
-  "description": "... More details on: https://detask.xyz/task/1",
-  "image": "data:application/json;base64,.....",
-  "attachment": ".....",
+  "description": "Task details on: https://detask.xyz/task/1",
+  "image": "data:application/json;base64,...",
   "attributes": [
     {
       "trait_type": "Skill",
-      "value": "Development"
+      "value": ""
     },
     {
       "trait_type": "Skill",
-      "value": "Product"
+      "value": ".Net"
     },
     {
-      "trait_type": "Skill",
-      "value": "Design"
-    },
-    {
-      "display_type": "date",
       "trait_type": "Created",
-      "value": 1671096525
+      "value": "2022-12-22T08:21:35Z"
+    },
+    {
+      "trait_type": "Amount",
+      "value": "≈11 ETH"
+    },
+    {
+      "trait_type": "IPFS",
+      "value": "QmSsw6EcnwEiTT9c4rnAGeSENvsJMepNHmbrgi2S9bXNJr"
     }
   ]
 }

@@ -19,7 +19,9 @@ async function main() {
     console.log("Order task:", TaskAddr.address);
 
     const metaData = await TaskMetadata.deploy(TaskAddr.address, common.address);
+    let MetaArtifact = await artifacts.readArtifact("TaskMetadata");
     await metaData.deployed();
+    await writeAbiAddr(MetaArtifact, common.address, "MetaCommon", network.name);
 
     console.log("TaskMetadata deployed to:", metaData.address);
     let artifact = await artifacts.readArtifact("TaskMetadata");
