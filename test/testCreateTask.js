@@ -28,7 +28,7 @@ describe("testCreateTask", function () {
         const tx = await DeTask.createTask(
             account1.address,
         { 
-            title: "Create SBT on Polygan",
+            title: "Create SBT on Polygon",
             desc: "QmSsw6EcnwEiTT9c4rnAGeSENvsJMepNHmbrgi2S9bXNJr",
             attachment: "QmSsw6EcnwEiTT9c4rnAGeSENvsJMepNHmbrgi2S9bXNJr",
             currency: 2,
@@ -44,6 +44,9 @@ describe("testCreateTask", function () {
         );
 
         await tx.wait();
+
+        const uri = await DeTask.tokenURI(1);
+        console.log("detask tokenURI:", uri);
 
 
         let receipt = await ethers.provider.getTransactionReceipt(tx.hash);

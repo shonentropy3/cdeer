@@ -64,19 +64,38 @@ contract TaskMetadata is IMetadata {
         );
     }
 
-    function skillSVG(uint48 taskskills, uint i) internal view returns (string memory svgString) {
+
+    function skillSVGs(uint48 taskskills) internal view returns (string memory svgString){
+        uint pos = 10;
+        string memory curSVG = "";
+        for(uint i = 0; i < 4; i++) {
+            (curSVG, pos) = skillSVG(taskskills, i, pos);
+            svgString = string(abi.encodePacked(svgString, curSVG));
+        }
+        
+    }
+
+    function skillSVG(uint48 taskskills, uint i, uint posStart) internal view returns (string memory svgString, uint pos) {
         uint skill = taskskills.get(i);
         if (skill > 0) {
-            uint xPos = 10 + i * 35;
-            return string(
+            string memory label = metaComm.skills(skill);
+
+            svgString = string(
                     abi.encodePacked(
                         '<text class="b1" transform="translate(',
-                        Strings.toString(xPos),
+                        Strings.toString(posStart),
                         ' 70.25)">',
                         metaComm.skills(skill),
                         '</text>'));
+
+            (uint slen, uint blen) = label.strlen();
+
+            pos = posStart + slen * 3 + 4;
+        } else {
+            pos = posStart;
+            svgString = "";
         }
-        return "";
+        
     }
 
     function generateSVG(uint taskId) internal view returns (bytes memory svg) {
@@ -100,10 +119,7 @@ contract TaskMetadata is IMetadata {
                     title,
                     '</text>',
                     '<text class="b2" transform="translate(10 65.07)">Skill:</text>',
-                    skillSVG(taskskills,0),
-                    skillSVG(taskskills,1),
-                    skillSVG(taskskills,2),
-                    skillSVG(taskskills,3),
+                    skillSVGs(taskskills),
                     '<text class="b2" transform="translate(10 82.68)">Task budget:</text>',
                     '<text transform="translate(10.13 87.72)" style="letter-spacing:.08em;font-family:PingFangSC-Medium,PingFang SC;fill:#1f1e2e;font-size:4px;isolation:isolate">',
                     valueStr,

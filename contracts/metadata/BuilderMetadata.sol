@@ -43,6 +43,7 @@ contract BuilderMetadata is IMetadata {
                         metaComm.skillAttributes(taskskills, 0),
                         metaComm.skillAttributes(taskskills, 1),
                         metaComm.skillAttributes(taskskills, 2),
+                        metaComm.skillAttributes(taskskills, 3),
                       '{"trait_type": "Amount",', 
                       '"value": "', valueStr,
                     '"},',
@@ -99,7 +100,7 @@ contract BuilderMetadata is IMetadata {
         string memory curSVG = "";
         for(uint i = 0; i < 4; i++) {
             (curSVG, pos) = skillSVG(taskskills, i, pos);
-            svgString = abi.encodePacked(svgString, curSVG);
+            svgString = string(abi.encodePacked(svgString, curSVG));
         }
         
     }
@@ -112,7 +113,7 @@ contract BuilderMetadata is IMetadata {
         uint skill = taskskills.get(i);
         if (skill > 0) {
             string memory label = metaComm.skills(skill);
-           
+
             svgString = string(
                     abi.encodePacked(
                         '<text class="c7" transform="translate(',

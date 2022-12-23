@@ -130,7 +130,7 @@ contract IssuerMetadata is IMetadata {
         string memory curSVG = "";
         for(uint i = 0; i < 4; i++) {
             (curSVG, pos) = skillSVG(taskskills, i, pos);
-            svgString = abi.encodePacked(svgString, curSVG);
+            svgString = string(abi.encodePacked(svgString, curSVG));
         }
         
     }
