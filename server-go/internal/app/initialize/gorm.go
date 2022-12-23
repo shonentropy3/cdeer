@@ -27,6 +27,7 @@ func RegisterTables(db *gorm.DB) {
 		model.Skill{},
 		model.Message{},
 		model.OrderFlow{},
+		model.MessageTmpl{},
 	)
 	if err != nil {
 		global.LOG.Error("register table failed", zap.Error(err))

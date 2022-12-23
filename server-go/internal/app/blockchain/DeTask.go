@@ -3,6 +3,7 @@ package blockchain
 import (
 	ABI "code-market-admin/abi"
 	"code-market-admin/internal/app/global"
+	"code-market-admin/internal/app/message"
 	"code-market-admin/internal/app/model"
 	"errors"
 	"fmt"
@@ -70,6 +71,11 @@ func ParseTaskCreated(transHash model.TransHash, Logs []*types.Log) (err error) 
 			}
 			// 删除任务
 			if err = tx.Model(&model.TransHash{}).Where("hash = ?", vLog.TxHash.String()).Updates(map[string]interface{}{"raw": "", "deleted_at": time.Now()}).Error; err != nil {
+				tx.Rollback()
+				return err
+			}
+			// 发送消息
+			if err = message.Template("TaskCreated", task, "", task.Issuer); err != nil {
 				tx.Rollback()
 				return err
 			}
