@@ -47,7 +47,6 @@ export default function Order(props) {
         search.who = w;
         search.order_id = order_id;
         setSearch({...search});
-
         // 获取任务详情
 
         let obj = {};
@@ -62,6 +61,7 @@ export default function Order(props) {
 
         getOrderDetail({order_id: order_id, ...obj})
         .then(res => {
+            console.log(res);
             if (res.data?.list.length !== 0) {
                 task = res.data.list[0].task;
                 task.role = deform_Skills(task.role);

@@ -5,7 +5,7 @@ import { getDate } from "../../utils/GetDate";
 
 export default function StageOutput(params) {
     
-    const { data, index, edit, remove, isEdit, ongoing, stageIndex, who, updateDelivery, confirmDelivery, updateProlong, confirmProlong, rejectProlong, confirmAppend, rejectAppend, setActiveIndex, status, sign_address, address, Order, loading, withdraw } = params;
+    const { data, index, edit, remove, isEdit, ongoing, stageIndex, who, updateDelivery, confirmDelivery, updateProlong, confirmProlong, rejectProlong, confirmAppend, rejectAppend, setActiveIndex, status, sign_address, address, Order, loading, withdraw, abort } = params;
     let [isOpen, setIsOpen] = useState(false);
     let [detail, setDetail] = useState();
     let [last, setLast] = useState(false);
@@ -24,12 +24,15 @@ export default function StageOutput(params) {
     }
 
     const switchStatus = () => {
-        if (stageIndex === index) {
+        if (stageIndex === index && data.status === 0) {
             // 正在进行的阶段
             return <div className="status ongoing">Ongoing</div>
-        }else if(stageIndex > index) {
+        }else if(stageIndex > index || data.status === 1 || data.status === 3) {
             // 已经完成的阶段 
             return <div className="status completed">Completed</div>
+        }else if(data.status === 2){
+            // 已经完成的阶段 
+            return <div className="status abort">Abort</div>
         }else{
             // 待开始
             return <div className="status wait">To be started</div>
@@ -81,7 +84,7 @@ export default function StageOutput(params) {
                         <p className="wait">You submitted the Application for Extension and waited for Party B's consent.</p>
                     </div>
                     <div className="btns">
-                        <Button className="abort">Abort</Button>
+                        <Button loading={loading} className="abort" onClick={() => abort()}>Abort</Button>
                         <Button className="permit" loading={loading} onClick={() => confirmDelivery()}>Comfirm</Button>
                     </div>
                     </>
@@ -92,7 +95,7 @@ export default function StageOutput(params) {
         }else{
             return <div className="btns">
                 <Button className="delay" onClick={() => checkProlong()}>Delay</Button>
-                <Button className="abort">Abort</Button>
+                <Button loading={loading} className="abort" onClick={() => abort()}>Abort</Button>
                 <Button className="permit" loading={loading} onClick={() => confirmDelivery()}>Comfirm</Button>
             </div>
         }
@@ -110,7 +113,7 @@ export default function StageOutput(params) {
                         <p className="wait">You submitted the Application for Extension and waited for Party B's consent.</p>
                     </div>
                     <div className="btns">
-                        <Button className="abort">Abort</Button>
+                        <Button loading={loading} className="abort" onClick={() => abort()}>Abort</Button>
                         <Button className="permit" onClick={() => checkDelivery()}>
                             {
                                 Order.stage_json.stages[index].delivery.attachment ? "Resubmit" : "Submit"
@@ -125,7 +128,7 @@ export default function StageOutput(params) {
         }else{
             return <div className="btns">
                 <Button className="delay" onClick={() => checkProlong()}>Delay</Button>
-                <Button className="abort">Abort</Button>
+                <Button loading={loading} className="abort" onClick={() => abort()}>Abort</Button>
                 <Button className="permit" onClick={() => checkDelivery()}>
                     {
                         Order.stage_json.stages[index].delivery.attachment ? "Resubmit" : "Submit"
@@ -192,12 +195,12 @@ export default function StageOutput(params) {
 
     useEffect(() => {
         // 新增阶段
-        if (index === Order.last_stage_json.stages?.length) {
+        if (index === Order?.last_stage_json?.stages?.length) {
             setIsOpen(true);
             setLast(true);
         }
         // 初始化交付数据 || 已完成
-        if (Order.stage_json.stages[index].delivery.attachment) {
+        if (Order?.stage_json.stages[index].delivery.attachment) {
             // 乙方交付过当前阶段
             delevery = Order.stage_json.stages[index].delivery;
             setDelevery({...delevery})
@@ -279,7 +282,7 @@ export default function StageOutput(params) {
             }
             {   
                 //  项目可选按钮
-                ongoing && index === stageIndex && switchBtns()
+                ongoing && index === stageIndex && data.status === 0 && switchBtns()
             }
             {
                 // 同意、拒绝 新增

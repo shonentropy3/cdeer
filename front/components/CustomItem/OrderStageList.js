@@ -16,7 +16,6 @@ export default function OrderStageList(params) {
     const { address } = useAccount();
     const { chain } = useNetwork();
     let [data, setData] = useState([]);
-    let [chainData, setChainData] = useState([]);
     let [stageIndex, setStageIndex] = useState(0);
 
     let [isLoading, setIsLoading] = useState(false);
@@ -190,18 +189,14 @@ export default function OrderStageList(params) {
                 e.deliveryDate = deliveryDate;
             })
             data = dataStages;
-            setData([...data]);
 
-            let arr = [];
-            chainStages.data.map(e => {
-                arr.push({
-                    amount: e.amount.toString() / Math.pow(10,18),
-                    period: e.period.toString() / (24 * 60 * 60),
-                    status: e.status
-                })
+            chainStages.data.map((e,i) => {
+                data[i].amount = e.amount.toString() / Math.pow(10,18);
+                data[i].period = e.period.toString() / (24 * 60 * 60);
+                data[i].status = e.status;
             })
-            chainData = arr;
-            setChainData([...chainData]);
+            setData([...data]);
+            console.log('data ==>',data);
         }
     },[chainStages.data])
 
@@ -210,7 +205,7 @@ export default function OrderStageList(params) {
             let going = chainOngoing.data;
             stageIndex = Number(going.stageIndex.toString());
             setStageIndex(stageIndex);
-            console.log('ongoing ==> ',going);
+            console.log('ongoing ==> ',going.stageIndex.toString());
         }
     },[chainOngoing.data])
 
@@ -269,12 +264,13 @@ export default function OrderStageList(params) {
                         />
                     </div>
                     :
-                    order.status !== 'WaitAppendAgree' && 
+                    order.progress === 4 && order.status !== 'WaitAppendAgree' && 
                     <Button className="btn-add mb60" onClick={() => setIsAppend(true)}>Establish</Button>
                 }
                 {
                     order.status === 'WaitAppendAgree' && switchAppend()
                 }
+
             </div>
         </div>
     )

@@ -2,7 +2,7 @@ import { message } from "antd";
 import { useEffect, useState } from "react";
 import { useAccount, useNetwork } from "wagmi";
 import { useContracts, useRead, useSignProData } from "../../controller";
-import { updatedStage } from "../../http/_api/order";
+import { startOrder, updatedStage } from "../../http/_api/order";
 import StageOutput from "../CustomItem/StageOutput";
 import DeliveryModal from "../CustomModal/DeliveryModal";
 import ProlongModal from "../CustomModal/ProlongModal";
@@ -39,6 +39,9 @@ export default function OutputStageCard(params) {
     const { useOrderContractWrite: prolongStage } = useContracts('prolongStage');
     // 领钱
     const { useOrderContractWrite: getWithdraw } = useContracts('withdraw');
+    // 终止
+    const { useOrderContractWrite: abortOrder } = useContracts('abortOrder');
+    
     
 
     // 请求返回处理
@@ -59,6 +62,14 @@ export default function OutputStageCard(params) {
         setIsLoading(true);
         getWithdraw.write({
             recklesslySetUnpreparedArgs: [Number(oid), address]
+        })
+    }
+
+    // 终止
+    const abort = () => {
+        setIsLoading(true);
+        abortOrder.write({
+            recklesslySetUnpreparedArgs: [Number(oid)]
         })
     }
 
@@ -151,15 +162,17 @@ export default function OutputStageCard(params) {
     }
 
     // 确认新增阶段
-    const confirmAppend = () => {
+    const confirmAppend = async() => {
+        setIsLoading(true);
         // 判断是谁
         if (who === 'issuer') {
             // 直接付款
-            payAppend()
+            await payAppend()
         }else{
             // 签名
-            agreeAppend()
+            await agreeAppend()
         }
+        setIsLoading(false);
     }
 
     // 拒绝阶段新增
@@ -261,18 +274,16 @@ export default function OutputStageCard(params) {
     useEffect(() => {
         if (prolongStage.isSuccess) {
             updatedStage({
-                hash: prolongStage.data,
+                hash: prolongStage.data.hash,
                 status: 'AgreeProlong'
             })
             .then(res => {
                 handelRes(res);
             })
         }
-    },[prolongStage.isSuccess])
-
-    useEffect(() => {
-        if (prolongStage.error || prolongStage.isError) {
-            setIsLoading(false)
+        if (prolongStage.error) {
+            message.error('error');
+            setIsLoading(false);
         }
     },[prolongStage])
 
@@ -305,6 +316,12 @@ export default function OutputStageCard(params) {
         if (getWithdraw.isSuccess) {
             message.success("操作成功")
             setIsLoading(false);
+            startOrder({
+                order_id: order.order_id
+            })
+            .then(res => {
+                handelRes(res)
+            })
         }
         if (getWithdraw.error) {
             message.error('error')
@@ -312,6 +329,24 @@ export default function OutputStageCard(params) {
         }
     },[getWithdraw])
     
+    // 终止成功
+    
+    useEffect(() => {
+        if (abortOrder.isSuccess) {
+            message.success("操作成功")
+            setIsLoading(false);
+            startOrder({
+                order_id: order.order_id
+            })
+            .then(res => {
+                handelRes(res)
+            })
+        }
+        if (abortOrder.error) {
+            message.error('error')
+            setIsLoading(false);
+        }
+    },[abortOrder])
 
     return <>
     {
@@ -349,6 +384,8 @@ export default function OutputStageCard(params) {
                         confirmAppend={confirmAppend}
 
                         withdraw={withdraw}
+
+                        abort={abort}
 
                         Order={order}
                         loading={isLoading}

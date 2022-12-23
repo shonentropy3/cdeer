@@ -246,6 +246,7 @@ export async function multicallWrite(arr,address,total) {
   try {
     return await contract.methods.multicall(arr).send({from: address, gas: 1000000, value: total})
       .then(res => {
+        return res.transactionHash
         console.log('index ===>',res);
       })
   } catch(err) {
