@@ -2,5 +2,5 @@
 src = 'src'
 out = 'out'
 libs = ['lib']
-remappings = ['@openzeppelin=lib/openzeppelin-contracts/','base64-sol=lib/base64-sol/','codemark=../contracts/']
+remappings = ['@openzeppelin=lib/openzeppelin-contracts/','base64-sol=lib/base64-sol/']
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config

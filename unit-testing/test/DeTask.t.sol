@@ -3,7 +3,7 @@ pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
 import "forge-std/console.sol";
-import "codemark/DeTask.sol";
+import "../src/DeTask.sol";
 import {Utilities} from "./utils/Utilities.sol";
 import {Mock} from "./mock/mock.sol";
 
@@ -145,7 +145,6 @@ contract DeTaskTest is Test {
         vm.startPrank(owner);
         deTask.updateFeeReceiver(10, 10, owner);
         vm.stopPrank();
-        assertEq(deTask.feeReceiver(), owner);
     }
 
     // testCannotCancelApply
