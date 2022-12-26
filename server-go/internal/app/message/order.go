@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"code-market-admin/internal/app/global"
 	"code-market-admin/internal/app/model"
+	"gorm.io/gorm"
 	"strings"
 	"text/template"
 )
@@ -72,7 +73,14 @@ func messageSend(form string, to string, msg string) (err error) {
 	var sendID uint
 	if form != "" {
 		if err = global.DB.Model(&model.User{}).Select("id").Where("address = ?", form).First(&sendID).Error; err != nil {
-			return err
+			// 不存在则新增
+			if err == gorm.ErrRecordNotFound {
+				if err = global.DB.Model(&model.User{}).Save(&model.User{Address: form}).Error; err != nil {
+					return err
+				}
+			} else {
+				return err
+			}
 		}
 	}
 
@@ -80,7 +88,14 @@ func messageSend(form string, to string, msg string) (err error) {
 	var recID uint
 	if to != "" {
 		if err = global.DB.Model(&model.User{}).Select("id").Where("address = ?", to).First(&recID).Error; err != nil {
-			return err
+			// 不存在则新增
+			if err == gorm.ErrRecordNotFound {
+				if err = global.DB.Model(&model.User{}).Save(&model.User{Address: to}).Error; err != nil {
+					return err
+				}
+			} else {
+				return err
+			}
 		}
 	}
 	db := global.DB.Model(&model.Message{})
