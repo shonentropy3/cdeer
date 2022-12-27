@@ -5,6 +5,7 @@ import (
 	"code-market-admin/internal/app/global"
 	"code-market-admin/internal/app/message"
 	"code-market-admin/internal/app/model"
+	"code-market-admin/internal/app/utils"
 	"errors"
 	"fmt"
 	"github.com/ethereum/go-ethereum/accounts/abi"
@@ -75,7 +76,7 @@ func ParseTaskCreated(transHash model.TransHash, Logs []*types.Log) (err error) 
 				return err
 			}
 			// 发送消息
-			if err = message.Template("TaskCreated", task, task.Issuer, ""); err != nil {
+			if err = message.Template("TaskCreated", utils.StructToMap([]any{task}), task.Issuer, "", ""); err != nil {
 				tx.Rollback()
 				return err
 			}
@@ -187,6 +188,18 @@ func ParseApplyFor(transHash model.TransHash, Logs []*types.Log) (err error) {
 				UpdateAll: true,
 			}).Create(&apply).Error
 			if err != nil {
+				tx.Rollback()
+				return err
+			}
+			// 查询Task信息
+			var task model.Task
+			err = tx.Model(&model.Task{}).Where("task_id =?", taskID).First(&task).Error
+			if err != nil {
+				tx.Rollback()
+				return err
+			}
+			// 发送消息
+			if err = message.Template("ApplyFor", utils.StructToMap([]any{apply, task}), task.Issuer, apply.ApplyAddr, ""); err != nil {
 				tx.Rollback()
 				return err
 			}

@@ -3,6 +3,7 @@ package service
 import (
 	"code-market-admin/internal/app/blockchain"
 	"code-market-admin/internal/app/global"
+	"code-market-admin/internal/app/message"
 	"code-market-admin/internal/app/model"
 	"code-market-admin/internal/app/model/request"
 	"code-market-admin/internal/app/model/response"
@@ -263,6 +264,49 @@ func storeHash(hash string, status string, address string) (runBool bool, err er
 		}
 	}
 	return runBool, nil
+}
+
+func sendMessage(status string, order model.Order, stage request.UpdatedStageRequest, orderFlowTop model.OrderFlow, sender string) (err error) {
+	// 状态改变
+	if status == "WaitIssuerAgree" || status == "WorkerAgreeStage" || status == "WorkerDelivery" {
+		// 查询task
+		var task model.Task
+		if err = global.DB.Model(&model.Task{}).Where("task_id =?", order.TaskID).First(&task).Error; err != nil {
+			return err
+		}
+		// 发送消息
+		if err = message.Template(status, utils.StructToMap([]any{order, task}), order.Issuer, order.Worker, ""); err != nil {
+			return err
+		}
+	}
+	if status == "WaitProlongAgree" || status == "WaitAppendAgree" {
+		// 查询task
+		var task model.Task
+		if err = global.DB.Model(&model.Task{}).Where("task_id =?", order.TaskID).First(&task).Error; err != nil {
+			return err
+		}
+		// 发送消息
+		if err = message.Template(status, utils.StructToMap([]any{order, task}), order.Issuer, order.Worker, sender); err != nil {
+			return err
+		}
+	}
+
+	// 交付物
+	if stage.Obj == "" && gjson.Get(orderFlowTop.Obj, "stages").String() == gjson.Get(stage.Obj, "stages").String() {
+		return nil
+	} else {
+		// 判断是否有新交付物
+		attachmentNew := gjson.Get(stage.Obj, "stages.#.delivery.attachment")
+		attachmentOld := gjson.Get(orderFlowTop.Obj, "stages.#.delivery.attachment")
+		for i := 0; i < len(attachmentNew.Array()); i++ {
+			if attachmentNew.Array()[0].String() != attachmentOld.Array()[0].String() {
+				if err = message.Template(status, map[string]interface{}{"stage": "P1"}, order.Issuer, order.Worker, ""); err != nil {
+					return err
+				}
+			}
+		}
+	}
+	return err
 }
 
 // UpdatedProgress

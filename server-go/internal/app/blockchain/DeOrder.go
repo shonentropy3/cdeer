@@ -3,7 +3,9 @@ package blockchain
 import (
 	ABI "code-market-admin/abi"
 	"code-market-admin/internal/app/global"
+	"code-market-admin/internal/app/message"
 	"code-market-admin/internal/app/model"
+	"code-market-admin/internal/app/utils"
 	"errors"
 	"fmt"
 	"github.com/ethereum/go-ethereum/accounts/abi"
@@ -19,6 +21,9 @@ func DeOrder(transHash model.TransHash, Logs []*types.Log) (haveBool bool, err e
 	switch transHash.EventName {
 	case "OrderCreated":
 		err = ParseOrderCreated(transHash, Logs)
+		return true, err
+	case "OrderAbort":
+		err = ParseOrderAbort(transHash, Logs)
 		return true, err
 	}
 
@@ -86,31 +91,89 @@ func UpdatedProgress(orderID int64) (err error) {
 	if err != nil {
 		return err
 	}
-	version, err := instance.GetOrder(nil, big.NewInt(orderID))
+	order, err := instance.GetOrder(nil, big.NewInt(orderID))
 	if err != nil {
 		return err
 	}
 	// 没有获取成功
-	if version.Progress == 0 {
+	if order.Progress == 0 {
 		return errors.New("操作失败")
 	}
 	// 修改ongoing
-	if version.Progress == 4 {
+	if order.Progress == 4 {
 		if err = issuerAgreeOperation(orderID); err != nil {
 			return err
 		}
 	}
 	// 任务完成 修改state
-	if version.Progress == 7 || version.Progress == 6 {
+	if order.Progress == 7 || order.Progress == 6 {
 		if err = orderDoneOperation(orderID); err != nil {
 			return err
 		}
 	}
-	raw := global.DB.Model(&model.Order{}).Where("order_id = ?", orderID).Update("progress", version.Progress)
+	// 发送消息
+	sendMessage(order)
+	raw := global.DB.Model(&model.Order{}).Where("order_id = ?", orderID).Update("progress", order.Progress)
 	if raw.RowsAffected == 0 {
 		return errors.New("操作失败")
 	}
 	return raw.Error
+}
+
+func ParseOrderAbort(transHash model.TransHash, Logs []*types.Log) (err error) {
+	contractAbi, err := abi.JSON(strings.NewReader(ABI.DeOrderMetaData.ABI))
+	if err != nil {
+		fmt.Println(err)
+	}
+	for _, vLog := range Logs {
+		var orderAbort ABI.DeOrderOrderAbort
+		ParseErr := contractAbi.UnpackIntoInterface(&orderAbort, "OrderAbort", vLog.Data)
+		// parse success
+		if ParseErr == nil {
+			// 开始事务
+			tx := global.DB.Begin()
+			// 更新数据
+			fmt.Println("Transaction")
+			orderId := vLog.Topics[1].Big().Int64()
+			var order model.Order
+			if err = tx.Model(&model.Order{}).Where("order_id =?", orderId).First(&order).Error; err != nil {
+				tx.Rollback()
+				return err
+			}
+
+			if err = message.Template("OrderStarted", utils.StructToMap([]any{order}), order.Issuer, order.Worker, orderAbort.Who.String()); err != nil {
+				return err
+			}
+			// 删除任务
+			if err = tx.Model(&model.TransHash{}).Where("hash = ?", vLog.TxHash.String()).Delete(&model.TransHash{}).Error; err != nil {
+				tx.Rollback()
+				return err
+			}
+			return tx.Commit().Error
+		}
+	}
+	return errors.New("事件解析失败")
+}
+
+// sendMessage 发送消息
+func sendMessage(order ABI.Order) (err error) {
+	if order.Progress == 7 {
+		// 任务完成
+		if err = message.Template("OrderDone", utils.StructToMap([]any{order}), order.Issuer.String(), order.Worker.String(), ""); err != nil {
+			return err
+		}
+	} else if order.Progress == 4 {
+		// 任务开始
+		if err = message.Template("OrderStarted", utils.StructToMap([]any{order}), order.Issuer.String(), order.Worker.String(), ""); err != nil {
+			return err
+		}
+	} else if order.Progress == 6 {
+		// 任务中止
+		if err = message.Template("OrderAbort", utils.StructToMap([]any{order}), order.Issuer.String(), order.Worker.String(), ""); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // orderDoneOperation 状态操作
