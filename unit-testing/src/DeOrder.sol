@@ -11,8 +11,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import './libs/TransferHelper.sol';
 import "./libs/ECDSA.sol";
 import './Multicall.sol';
-
-
+import "forge-std/console.sol";
 
 contract DeOrder is IOrder, Multicall, Ownable {
     error PermissionsError();
@@ -202,7 +201,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
         IStage(stage).appendStage(_orderId, amount, period);
     }
 
-    function recoverVerify(bytes32 structHash, uint nonce, uint deadline, uint8 v, bytes32 r, bytes32 s) internal returns (address signAddr){
+    function recoverVerify(bytes32 structHash, uint nonce, uint deadline, uint8 v, bytes32 r, bytes32 s) public returns (address signAddr){
         bytes32 digest = ECDSA.toTypedDataHash(DOMAIN_SEPARATOR, structHash);
         signAddr = ECDSA.recover(digest, v, r, s);
 
@@ -246,7 +245,8 @@ contract DeOrder is IOrder, Multicall, Ownable {
         } else {
             revert PermissionsError();
         }
-        
+        console.log(order.amount);
+        console.log(IStage(stage).totalAmount(_orderId));
         if(order.amount != IStage(stage).totalAmount(_orderId)) revert AmountError(0);
         if(order.payed < order.amount) revert AmountError(1);
 
