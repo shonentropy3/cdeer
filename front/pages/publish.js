@@ -283,7 +283,7 @@ export default function Publish() {
                                     {
                                         e.type === 'inputNumber' && 
                                         <Checkbox 
-                                            value={amountModel} 
+                                            checked={amountModel} 
                                             className="nav-box" 
                                             onChange={changeAmount}
                                         >由乙方报价</Checkbox>
