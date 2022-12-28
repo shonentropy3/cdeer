@@ -5,6 +5,7 @@ import (
 	"code-market-admin/internal/app/global"
 	"code-market-admin/internal/app/message"
 	"code-market-admin/internal/app/model"
+	"code-market-admin/internal/app/utils"
 	"errors"
 	"fmt"
 	"github.com/ethereum/go-ethereum/accounts/abi"
@@ -58,7 +59,7 @@ func ParseTaskCreated(transHash model.TransHash, Logs []*types.Log) (err error) 
 			task.Attachment = taskCreated.Task.Attachment
 			task.Currency = currencyNames[taskCreated.Task.Currency]
 			task.Role = ParseSkills(taskCreated.Task.Skills.Int64())
-			// 解析raw数据
+			// 解析Raw数据
 			task.Suffix = gjson.Get(transHash.Raw, "suffix").String()
 			// 更新||插入数据
 			err = tx.Model(&model.Task{}).Clauses(clause.OnConflict{
@@ -75,7 +76,7 @@ func ParseTaskCreated(transHash model.TransHash, Logs []*types.Log) (err error) 
 				return err
 			}
 			// 发送消息
-			if err = message.Template("TaskCreated", task, "", task.Issuer); err != nil {
+			if err = message.Template("TaskCreated", utils.StructToMap([]any{task}), task.Issuer, "", ""); err != nil {
 				tx.Rollback()
 				return err
 			}
@@ -105,7 +106,7 @@ func ParseTaskModified(transHash model.TransHash, Logs []*types.Log) (err error)
 			task.Attachment = taskModified.Task.Attachment
 			task.Currency = currencyNames[taskModified.Task.Currency]
 			task.Role = ParseSkills(taskModified.Task.Skills.Int64())
-			// 解析raw数据
+			// 解析Raw数据
 			task.Suffix = gjson.Get(transHash.Raw, "suffix").String()
 			// 更新||插入数据
 			err = tx.Model(&model.Task{}).Clauses(clause.OnConflict{
@@ -179,7 +180,7 @@ func ParseApplyFor(transHash model.TransHash, Logs []*types.Log) (err error) {
 			price := applyFor.Cost.String()                                 // 报价
 			applyAddr := common.HexToAddress(vLog.Topics[2].Hex()).String() // 申请人
 			apply := model.Apply{TaskID: taskID, Price: price, ApplyAddr: applyAddr}
-			// 解析raw数据
+			// 解析Raw数据
 			apply.Desc = gjson.Get(transHash.Raw, "desc").String()
 			// 更新||插入数据
 			err = tx.Model(&model.Apply{}).Clauses(clause.OnConflict{
@@ -187,6 +188,18 @@ func ParseApplyFor(transHash model.TransHash, Logs []*types.Log) (err error) {
 				UpdateAll: true,
 			}).Create(&apply).Error
 			if err != nil {
+				tx.Rollback()
+				return err
+			}
+			// 查询Task信息
+			var task model.Task
+			err = tx.Model(&model.Task{}).Where("task_id =?", taskID).First(&task).Error
+			if err != nil {
+				tx.Rollback()
+				return err
+			}
+			// 发送消息
+			if err = message.Template("ApplyFor", utils.StructToMap([]any{apply, task}), task.Issuer, apply.ApplyAddr, ""); err != nil {
 				tx.Rollback()
 				return err
 			}
