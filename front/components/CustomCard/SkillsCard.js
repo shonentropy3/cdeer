@@ -4,16 +4,23 @@ import { useEffect, useState } from "react";
 
 export default function SkillsCard(params) {
     
-    const { stree } = params;
-    let [selectItem,setSelectItem] = useState();
+    const { stree,value } = params;
+    let [selectItem,setSelectItem] = useState([]);
     let [tree,setTree] = useState([]);
 
     const checkItem = (e) => {
-        setSelectItem(e.en);
+        selectItem[0] = e.en;
+        setSelectItem([...selectItem]);
+        value.push(e.index);
+        console.log(e.index);
         if (e.children) {
             tree = e.children;
             setTree([...tree])
         }
+    }
+
+    const removeSelectItem = () => {
+
     }
 
     useEffect(() => {
@@ -24,7 +31,11 @@ export default function SkillsCard(params) {
     },[stree])
 
     return <div className="skillsCard">
-        <h1 className="checkItem">{selectItem}</h1>
+        {
+            selectItem.map((e,i) => 
+                <h1 key={i} className="checkItem" onClick={() => removeSelectItem()}>{e}</h1>
+            )
+        }
         {
             tree.map(e => 
             

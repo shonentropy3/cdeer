@@ -81,8 +81,6 @@ export default function Publish() {
         </Form.Item>
     )
 
-
-
     const handleChange = (info, list) => {
         console.log('修改了 ==>');
         params.suffix = info.file.name;
@@ -103,17 +101,6 @@ export default function Publish() {
         }
     }
 
-    const changeSelect = (obj, i) => {
-        if (limiter(obj.list, i) === false) {
-            message.error('最多可选择4个')
-            return
-        }
-        obj.list[i].status = !obj.list[i].status
-        skills.list[i] = obj.list[i]
-        setSkills({...skills})
-        set(obj)
-    }
-
     const limiter = (arr,i) => {
         let length = 0;
         arr.map(e => {
@@ -124,19 +111,6 @@ export default function Publish() {
         }
     }
 
-    const set = (obj) => {
-        let arr = [];
-        let role = [];
-        obj.list.map((ele,index) => {
-            if (ele.status) {
-                arr.push(index+1)
-                role.push(ele.value)
-            }
-        })
-        params.skills = BitOperation(arr);
-        params.role = role;
-    }
-    
     const comfirm = async() => {
         var obj = _.omit(params,'role');
         obj.currency = obj.currency === 'ETH' ? 1 : 1;
@@ -172,11 +146,6 @@ export default function Publish() {
         await createTask(obj)
         .then(res => {
             if (res.code === 0) {
-                // message.success(res.msg);
-                // setTimeout(() => {
-                //     router.push({pathname: '/task', search: 'issuer'})    //  跳转链接
-                // }, 500);
-
                 setIsLoading(false)
                 setShowSpin(true)
             } else {
@@ -204,7 +173,7 @@ export default function Publish() {
 
     const changeAmount = (e) => {
         if (e.target.checked) {
-            inner[4].value = 0;
+            params.budget = 0;
         }
         setAmountModel(e.target.checked)
     }
@@ -218,17 +187,6 @@ export default function Publish() {
     },[Task.error])
 
     useEffect(() => {
-        let arr = [];
-        _data.skills.map((e,i) => {
-            if (i > 0) {
-                arr.push({
-                    title: e.name, status: false, value: e.value
-                })
-            }
-        })
-        skills.list = arr;
-        setSkills({...skills});
-
         // 获取技能树
         getSillTreeMap()
         .then(res => {
@@ -240,7 +198,6 @@ export default function Publish() {
         })
     },[])
 
-
     const innerPrint = (e) => {
         switch (e.type) {
             case 'input':
@@ -248,7 +205,7 @@ export default function Publish() {
             case 'textarea':
                 return <TextArea className="item-text" onChange={value => {e.value = value.target.value}} />
             case 'ul':
-                return <SkillsCard stree={skill} />
+                return <SkillsCard stree={skill} value={skills.list} />
             case 'inputNumber':
                 if (amountModel) {
                     return
@@ -333,7 +290,7 @@ export default function Publish() {
                                     }
                                 </div>
                                 {
-                                    e.type !== 'ul' && e.type !== 'select' && e.type !== 'upload' ? 
+                                    e.type !== 'inputNumber' && e.type !== 'ul' && e.type !== 'select' && e.type !== 'upload' ? 
                                     <Form.Item name={e.name} 
                                         rules={[{
                                             required: true,
