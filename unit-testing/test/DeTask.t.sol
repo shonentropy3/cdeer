@@ -3,7 +3,11 @@ pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
 import "forge-std/console.sol";
+<<<<<<< HEAD
+import "codemark/DeTask.sol";
+=======
 import "../src/DeTask.sol";
+>>>>>>> 0dd39094a1e2054212b9508d70b6c34c4729e138
 import {Utilities} from "./utils/Utilities.sol";
 import {Mock} from "./mock/mock.sol";
 
@@ -27,7 +31,10 @@ contract DeTaskTest is Test {
         // 打印信息
         console.log(owner);
         console.log(issuer);
+<<<<<<< HEAD
+=======
         console.log(worker);
+>>>>>>> 0dd39094a1e2054212b9508d70b6c34c4729e138
     }
 
     // testCreateTask
@@ -146,6 +153,10 @@ contract DeTaskTest is Test {
         vm.startPrank(owner);
         deTask.updateFeeReceiver(10, 10, owner);
         vm.stopPrank();
+<<<<<<< HEAD
+        assertEq(deTask.feeReceiver(), owner);
+=======
+>>>>>>> 0dd39094a1e2054212b9508d70b6c34c4729e138
     }
 
     // testCannotCancelApply
@@ -154,6 +165,11 @@ contract DeTaskTest is Test {
         testApplyFor();
         vm.expectRevert(bytes("Not applied."));
         deTask.cancelApply(1);
+<<<<<<< HEAD
+
+        deTask.cancelApply(10);
+=======
+>>>>>>> 0dd39094a1e2054212b9508d70b6c34c4729e138
     }
 
     // testCancelApply
@@ -189,6 +205,8 @@ contract DeTaskTest is Test {
         deTask.applyAndCancel{value: 20}(worker, _taskIds, costs, cancelIds);
     }
 
+<<<<<<< HEAD
+=======
     // testApplyAndCancel
     // @Summary 批量操作报名 && 批量操作取消报名
     function testApplyAndCancel() public {
@@ -309,4 +327,5 @@ contract DeTaskTest is Test {
     // function testTokenURI()public{
     //     console.log(deTask.tokenURI(1));
     // }
+>>>>>>> 0dd39094a1e2054212b9508d70b6c34c4729e138
 }
