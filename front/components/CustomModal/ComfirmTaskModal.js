@@ -10,12 +10,9 @@ export default function ComfirmTaskModal(params) {
     
     useEffect(()=>{
         let nedSkills = []
+        console.log(skills.list);
         skills.list.map(ele=>{
-            inner.role.map(e=>{
-                if(e == ele.value){
-                    nedSkills.push(ele.title)
-                }
-            })
+            nedSkills.push(ele.en)
         })
         needSkills = nedSkills
         setNeedSkills([...needSkills])

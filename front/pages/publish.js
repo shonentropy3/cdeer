@@ -101,21 +101,17 @@ export default function Publish() {
         }
     }
 
-    const limiter = (arr,i) => {
-        let length = 0;
-        arr.map(e => {
-            e.status ? length++ : '';
-        })
-        if (length === 4 && !arr[i].status) {
-            return false
-        }
-    }
-
     const comfirm = async() => {
         var obj = _.omit(params,'role');
+        // console.log(skills);
+        let arr = [];
+        skills.list.map(e => {
+            arr.push(e.index);
+        })
+        obj.skills = BitOperation(arr)
         obj.currency = obj.currency === 'ETH' ? 1 : 1;
         obj.period = obj.period * 24 * 60 * 60;
-        obj.budget = ethers.utils.parseEther(obj.budget);
+        obj.budget = obj.budget === 0 ? obj.budget : ethers.utils.parseEther(obj.budget);
         obj.attachment = obj.attachment ? obj.attachment : '';
         obj.timestamp = 0;
         obj.disabled = false;
@@ -205,7 +201,7 @@ export default function Publish() {
             case 'textarea':
                 return <TextArea className="item-text" onChange={value => {e.value = value.target.value}} />
             case 'ul':
-                return <SkillsCard stree={skill} value={skills.list} />
+                return <SkillsCard stree={skill} value={skills} setValue={setSkills} />
             case 'inputNumber':
                 if (amountModel) {
                     return

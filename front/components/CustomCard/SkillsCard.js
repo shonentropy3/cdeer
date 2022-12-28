@@ -1,11 +1,10 @@
-import { Button, Cascader, Divider, Dropdown, message, Popover } from "antd";
+import { message, Popover } from "antd";
 import { useEffect, useState } from "react";
-const { SHOW_CHILD } = Cascader;
 
 
 export default function SkillsCard(params) {
     
-    const { stree,value } = params;
+    const { stree, value ,setValue } = params;
     let [selectItem,setSelectItem] = useState([]);
     let [tree1,setTree1] = useState([]);
     let [tree2,setTree2] = useState([]);
@@ -69,6 +68,13 @@ export default function SkillsCard(params) {
         })
         setSelectItem([...selectItem]);
     }
+
+    useEffect(() => {
+        let obj = JSON.stringify(selectItem);
+        value.list = JSON.parse(obj);
+        setValue({...value});
+            console.log(value);
+    },[selectItem])
 
     const panel = <div className="tree">
         <ul>
