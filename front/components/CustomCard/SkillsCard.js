@@ -1,48 +1,136 @@
+import { Button, Cascader, Divider, Dropdown, message, Popover } from "antd";
 import { useEffect, useState } from "react";
-
+const { SHOW_CHILD } = Cascader;
 
 
 export default function SkillsCard(params) {
     
     const { stree,value } = params;
     let [selectItem,setSelectItem] = useState([]);
-    let [tree,setTree] = useState([]);
+    let [tree1,setTree1] = useState([]);
+    let [tree2,setTree2] = useState([]);
+    const [open, setOpen] = useState(false);
+
+    const handleOpenChange = (newOpen) => {
+      setOpen(newOpen);
+    };
+
+    const changeTree1 = (e) => {
+        checkItem(e)
+        if (e.children) {
+            tree1 = e.children;
+        }else{
+            tree1 = [];
+        }
+        setTree1([...tree1]);
+        setTree2([...[]]);
+    }
+
+    const changeTree2 = (e) => {
+        checkItem(e)
+        if (e.children) {
+            tree2 = e.children;
+        }else{
+            tree2 = [];
+        }
+        setTree2([...tree2]);
+    }
 
     const checkItem = (e) => {
-        selectItem[0] = e.en;
+        // max显示
+        if (selectItem.length === 4) {
+            message.warning('最多可选4个')
+            return
+        }
+        e.checked = e.checked ? false : true;
+        let flag = true;
+        selectItem.map((ele,index) => {
+            if (ele.id === e.id) {
+                selectItem.splice(index,1);
+                flag = false;
+            }
+        })
+        if (flag) {
+            selectItem.push({
+                en: e.en,
+                zh: e.zh,
+                id: e.id,
+                index: e.index
+            });
+            setSelectItem([...selectItem]);
+        }
+    }
+
+    const removeSelectItem = (e) => {
+        selectItem.map((ele,index) => {
+            if (ele.id === e.id) {
+                selectItem.splice(index,1)
+            }
+        })
         setSelectItem([...selectItem]);
-        value.push(e.index);
-        console.log(e.index);
-        if (e.children) {
-            tree = e.children;
-            setTree([...tree])
-        }
     }
 
-    const removeSelectItem = () => {
-
-    }
-
-    useEffect(() => {
-        if (stree) {
-            tree = stree;
-            setTree([...tree]);
-        }
-    },[stree])
+    const panel = <div className="tree">
+        <ul>
+            {
+                stree.map(e => 
+                    <li 
+                        key={e.id}
+                        onClick={()=>changeTree1(e)}
+                        className={e.checked ? 'active':''}
+                    >{e.en}</li>
+                )
+            }
+        </ul>
+        <ul>
+            {
+                tree1.map(e => 
+                    <li 
+                        key={e.id}
+                        className={e.checked ? 'active':''}
+                        onClick={()=>changeTree2(e)}
+                    >{e.en}</li>
+                )
+            }
+        </ul>
+        <ul>
+            {
+                tree2.map(e => 
+                    <li 
+                        key={e.id}
+                        className={e.checked ? 'active':''}
+                        onClick={()=>checkItem(e)}
+                    >{e.en}</li>
+                )
+            }
+        </ul>
+    </div>
 
     return <div className="skillsCard">
-        {
-            selectItem.map((e,i) => 
-                <h1 key={i} className="checkItem" onClick={() => removeSelectItem()}>{e}</h1>
-            )
-        }
-        {
+
+        <Popover
+            overlayClassName="Tree"
+            placement="bottomLeft"
+            content={panel}
+            trigger="click"
+            open={open}
+            onOpenChange={handleOpenChange}
+            >
+            <div className="inner">
+                {
+                    selectItem.map(e => 
+                        <p key={e.id} className="checkItem" onClick={() => removeSelectItem(e)}>{e.en}</p>
+                    )
+                }
+            </div>
+        </Popover>
+        {/* {
             tree.map(e => 
             
                 <div className="skill-item" key={e.id} onClick={() => checkItem(e)}>
                     {e.en}
                 </div>
             )
-        }
+        } */}
     </div>
 }
