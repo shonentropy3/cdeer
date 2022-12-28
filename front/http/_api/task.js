@@ -99,3 +99,12 @@ export const getApplyStatus = (data) => {
     });
 }
 
+// 获取技能树   ==>     所有技能树
+export const getSillTreeMap = (data) => {
+    return serviceAxios({
+        url: `/task/getSillTreeMap?id=0`,
+        method: "get",
+        data,
+    });
+}
+
