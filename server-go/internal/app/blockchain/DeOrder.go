@@ -254,6 +254,13 @@ func saveOrderFlow(orderID int64) (err error) {
 	orderFlow.Level = level + 1             // 节点
 	orderFlow.Attachment = order.Attachment // JSON IPFS
 	orderFlow.Operator = order.Issuer       // 甲方
+	if order.Attachment != "" {
+		url := fmt.Sprintf("%s/%s", global.CONFIG.IPFS.API, order.Attachment)
+		orderFlow.Obj, err = utils.GetRequest(url)
+		if err != nil {
+			return err
+		}
+	}
 	if err = global.DB.Model(&model.OrderFlow{}).Create(&orderFlow).Error; err != nil {
 		return err
 	}
