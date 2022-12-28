@@ -76,11 +76,7 @@ func ParseTaskCreated(transHash model.TransHash, Logs []*types.Log) (err error) 
 				return err
 			}
 			// 发送消息
-<<<<<<< HEAD
-			if err = message.Template("TaskCreated", task, task.Issuer, ""); err != nil {
-=======
 			if err = message.Template("TaskCreated", utils.StructToMap([]any{task}), task.Issuer, "", ""); err != nil {
->>>>>>> 0dd39094a1e2054212b9508d70b6c34c4729e138
 				tx.Rollback()
 				return err
 			}
