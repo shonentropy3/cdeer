@@ -59,7 +59,7 @@ func ParseTaskCreated(transHash model.TransHash, Logs []*types.Log) (err error) 
 			task.Attachment = taskCreated.Task.Attachment
 			task.Currency = currencyNames[taskCreated.Task.Currency]
 			task.Role = ParseSkills(taskCreated.Task.Skills.Int64())
-			// 解析raw数据
+			// 解析Raw数据
 			task.Suffix = gjson.Get(transHash.Raw, "suffix").String()
 			// 更新||插入数据
 			err = tx.Model(&model.Task{}).Clauses(clause.OnConflict{
@@ -106,7 +106,7 @@ func ParseTaskModified(transHash model.TransHash, Logs []*types.Log) (err error)
 			task.Attachment = taskModified.Task.Attachment
 			task.Currency = currencyNames[taskModified.Task.Currency]
 			task.Role = ParseSkills(taskModified.Task.Skills.Int64())
-			// 解析raw数据
+			// 解析Raw数据
 			task.Suffix = gjson.Get(transHash.Raw, "suffix").String()
 			// 更新||插入数据
 			err = tx.Model(&model.Task{}).Clauses(clause.OnConflict{
@@ -180,7 +180,7 @@ func ParseApplyFor(transHash model.TransHash, Logs []*types.Log) (err error) {
 			price := applyFor.Cost.String()                                 // 报价
 			applyAddr := common.HexToAddress(vLog.Topics[2].Hex()).String() // 申请人
 			apply := model.Apply{TaskID: taskID, Price: price, ApplyAddr: applyAddr}
-			// 解析raw数据
+			// 解析Raw数据
 			apply.Desc = gjson.Get(transHash.Raw, "desc").String()
 			// 更新||插入数据
 			err = tx.Model(&model.Apply{}).Clauses(clause.OnConflict{

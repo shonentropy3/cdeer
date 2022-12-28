@@ -6,7 +6,6 @@ import (
 	"code-market-admin/internal/app/model/response"
 	"code-market-admin/internal/app/service"
 	"code-market-admin/internal/app/utils"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -129,7 +128,6 @@ func UpdatedApply(c *gin.Context) {
 func DeleteApply(c *gin.Context) {
 	var apply request.DeleteApplyRequest
 	_ = c.ShouldBindJSON(&apply)
-	fmt.Println("apply")
 	if err := utils.Verify(apply, utils.HashVerify); err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -156,7 +154,8 @@ func UpdatedApplySort(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if err := service.UpdatedApplySort(apply); err != nil {
+	address := c.GetString("address") // 操作人
+	if err := service.UpdatedApplySort(apply, address); err != nil {
 		global.LOG.Error("设置失败!", zap.Error(err))
 		response.FailWithMessage(err.Error(), c)
 	} else {
