@@ -30,7 +30,8 @@ func UploadFile(header *multipart.FileHeader) (err error, hash string) {
 		return errors.New("文件大小超过限制！"), hash
 	}
 	// 发送请求
-	res, err := utils.PostFileRequest("http://47.242.152.213:3022/v1/upload/image", header)
+	url := fmt.Sprintf("%s/upload/image", global.CONFIG.IPFS.UploadAPI)
+	res, err := utils.PostFileRequest(url, header)
 	if err != nil {
 		return err, hash
 	}
@@ -62,7 +63,8 @@ func UploadJSON(data string) (err error, hash string) {
 	jsonReq := make(map[string]interface{})
 	jsonReq["body"] = data
 	// 发送请求
-	res, err := utils.PostRequest("http://47.242.152.213:3022/v1/upload/json", jsonReq, "application/json")
+	url := fmt.Sprintf("%s/upload/json", global.CONFIG.IPFS.UploadAPI)
+	res, err := utils.PostRequest(url, jsonReq, "application/json")
 	if err != nil {
 		return err, hash
 	}

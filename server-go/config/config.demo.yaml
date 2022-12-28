@@ -42,3 +42,8 @@ jwt:
 # local configuration
 local:
   path: 'uploads/file'
+
+# ipfs configuration
+ipfs:
+  api: "http://ipfs.learnblockchain.cn"
+  upload-api: "http://47.242.152.213:3022/v1"
