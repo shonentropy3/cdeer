@@ -125,7 +125,7 @@ func UpdatedApplySort(sortReq request.UpdatedApplySortRequest, address string) (
 	db := global.DB.Model(&model.Apply{})
 	// 是否任务本人操作
 	if err = global.DB.Model(&model.Task{}).Where("task_id = ? AND issuer = ?", sortReq.TaskID, address).First(&model.Task{}).Error; err != nil {
-		return err
+		return errors.New("设置失败")
 	}
 	// 更新状态
 	raw := db.Where("task_id = ?", sortReq.TaskID).Where("apply_addr = ?", sortReq.ApplyAddr).Update("sort_time", time.Now())

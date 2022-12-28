@@ -12,7 +12,6 @@ import (
 	"fmt"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
-	"strconv"
 )
 
 // GetOrderList
@@ -172,7 +171,7 @@ func UpdatedStage(stage request.UpdatedStageRequest, address string) (err error)
 	}
 	// 消息通知
 	err = sendMessage(order, stage, orderFlowTop, address)
-	return nil
+	return err
 }
 
 // UpdatedProgress
@@ -238,7 +237,7 @@ func statusValid(old string, new string, stage request.UpdatedStageRequest) (err
 	statusMap := map[string][]string{"WaitWorkerStage": {"WaitIssuerAgree"},
 		"WaitIssuerAgree":        {"IssuerAgreeStage", "WaitWorkerConfirmStage"},
 		"WaitWorkerConfirmStage": {"WorkerAgreeStage", "WaitIssuerAgree"},
-		"WorkerAgreeStage":       {"IssuerAgreeStage"},
+		"WorkerAgreeStage":       {"IssuerAgreeStage", "WaitWorkerConfirmStage"},
 		"IssuerAgreeStage":       {"WaitProlongAgree", "WaitAppendAgree", "AbortOrder"},
 		"WaitProlongAgree":       {"AgreeProlong", "DisagreeProlong", "IssuerAgreeStage"},
 		"WaitAppendAgree":        {"AgreeAppend", "DisagreeAppend", "IssuerAgreeStage"},
@@ -294,7 +293,7 @@ func sendMessage(order model.Order, stage request.UpdatedStageRequest, orderFlow
 		}
 	}
 	// 区分甲方乙方
-	if status == "WaitProlongAgree" || status == "WaitAppendAgree" {
+	if status == "WaitProlongAgree" || status == "WaitAppendAgree" || status == "WaitWorkerConfirmStage" {
 		// 查询task
 		var task model.Task
 		if err = global.DB.Model(&model.Task{}).Where("task_id =?", order.TaskID).First(&task).Error; err != nil {
@@ -312,11 +311,18 @@ func sendMessage(order model.Order, stage request.UpdatedStageRequest, orderFlow
 		// 判断是否有新交付物
 		attachmentNew := gjson.Get(stage.Obj, "stages.#.delivery.attachment")
 		attachmentOld := gjson.Get(orderFlowTop.Obj, "stages.#.delivery.attachment")
+		var attachmentNewString string
+		var attachmentOldString string
 		for i := 0; i < len(attachmentNew.Array()); i++ {
-			if attachmentNew.Array()[i].String() != attachmentOld.Array()[i].String() && attachmentNew.Array()[i].String() == "" {
-				if err = message.Template(status, map[string]interface{}{"stage": "P" + strconv.Itoa(i)}, order.Issuer, order.Worker, ""); err != nil {
-					return err
-				}
+			attachmentNewString = attachmentNewString + attachmentNew.Array()[i].String()
+		}
+		for i := 0; i < len(attachmentOld.Array()); i++ {
+			attachmentOldString = attachmentOldString + attachmentOld.Array()[i].String()
+		}
+
+		if attachmentNewString != attachmentOldString && len(attachmentNewString) > len(attachmentOldString) {
+			if err = message.Template(status, map[string]interface{}{}, order.Issuer, order.Worker, ""); err != nil {
+				return err
 			}
 		}
 	}

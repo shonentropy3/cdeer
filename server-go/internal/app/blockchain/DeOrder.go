@@ -69,9 +69,14 @@ func ParseOrderCreated(transHash model.TransHash, Logs []*types.Log) (err error)
 				tx.Rollback()
 				return err
 			}
-
 			// 更新apply表状态
 			_ = tx.Model(&model.Apply{}).Where("apply_addr = ? AND task_id = ?", order.Worker, order.TaskID).Update("status", 1).Error
+			// 发送消息
+			var task model.Task
+			_ = tx.Model(&model.Task{}).Where("task_id = ?", order.TaskID).First(&task).Error
+			if err = message.Template("OrderCreated", utils.StructToMap([]any{order, task}), order.Issuer, order.Worker, ""); err != nil {
+				return err
+			}
 			// 删除任务
 			if err = tx.Model(&model.TransHash{}).Where("hash = ?", vLog.TxHash.String()).Delete(&model.TransHash{}).Error; err != nil {
 				tx.Rollback()
@@ -132,7 +137,7 @@ func UpdatedProgress(orderID int64) (err error) {
 	// 状态更新
 	if order.Progress != progress {
 		// 发送消息
-		if err = sendMessage(order); err != nil {
+		if err = sendMessage(model.Order{TaskID: order.TaskId.Int64(), Issuer: order.Issuer.String(), Worker: order.Worker.String(), OrderId: orderID}); err != nil {
 			return err
 		}
 		// 更新progress
@@ -160,16 +165,6 @@ func ParseOrderAbort(transHash model.TransHash, Logs []*types.Log) (err error) {
 			tx := global.DB.Begin()
 			// 更新数据
 			fmt.Println("Transaction")
-			orderId := vLog.Topics[1].Big().Int64()
-			var order model.Order
-			if err = tx.Model(&model.Order{}).Where("order_id =?", orderId).First(&order).Error; err != nil {
-				tx.Rollback()
-				return err
-			}
-
-			if err = message.Template("OrderStarted", utils.StructToMap([]any{order}), order.Issuer, order.Worker, orderAbort.Who.String()); err != nil {
-				return err
-			}
 			// 删除任务
 			if err = tx.Model(&model.TransHash{}).Where("hash = ?", vLog.TxHash.String()).Delete(&model.TransHash{}).Error; err != nil {
 				tx.Rollback()
@@ -182,20 +177,24 @@ func ParseOrderAbort(transHash model.TransHash, Logs []*types.Log) (err error) {
 }
 
 // sendMessage 发送消息
-func sendMessage(order ABI.Order) (err error) {
+func sendMessage(order model.Order) (err error) {
+	var task model.Task
+	if err = global.DB.Model(&model.Task{}).Where("task_id = ?", order.TaskID).First(&task).Error; err != nil {
+		return err
+	}
 	if order.Progress == 7 {
 		// 任务完成
-		if err = message.Template("OrderDone", utils.StructToMap([]any{order}), order.Issuer.String(), order.Worker.String(), ""); err != nil {
+		if err = message.Template("OrderDone", utils.StructToMap([]any{order, task}), order.Issuer, order.Worker, ""); err != nil {
 			return err
 		}
 	} else if order.Progress == 4 {
 		// 任务开始
-		if err = message.Template("OrderStarted", utils.StructToMap([]any{order}), order.Issuer.String(), order.Worker.String(), ""); err != nil {
+		if err = message.Template("OrderStarted", utils.StructToMap([]any{order, task}), order.Issuer, order.Worker, ""); err != nil {
 			return err
 		}
 	} else if order.Progress == 6 {
 		// 任务中止
-		if err = message.Template("OrderAbort", utils.StructToMap([]any{order}), order.Issuer.String(), order.Worker.String(), ""); err != nil {
+		if err = message.Template("OrderAbort", utils.StructToMap([]any{order, task}), order.Issuer, order.Worker, ""); err != nil {
 			return err
 		}
 	}
