@@ -1,1 +1,0 @@
-When sub-directories already exist, we can do "Merge" or "Replace".
