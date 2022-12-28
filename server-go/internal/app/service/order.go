@@ -3,6 +3,7 @@ package service
 import (
 	"code-market-admin/internal/app/blockchain"
 	"code-market-admin/internal/app/global"
+	"code-market-admin/internal/app/message"
 	"code-market-admin/internal/app/model"
 	"code-market-admin/internal/app/model/request"
 	"code-market-admin/internal/app/model/response"
@@ -11,6 +12,7 @@ import (
 	"fmt"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
+	"strconv"
 )
 
 // GetOrderList
@@ -43,16 +45,18 @@ func GetOrderList(searchInfo request.GetOrderListRequest) (err error, list inter
 	if searchInfo.State != nil {
 		db = db.Where("state = ?", searchInfo.State)
 	}
+	// 获取数量
 	err = db.Count(&total).Error
 	if err != nil {
 		return err, list, total
-	} else {
-		db = db.Limit(limit).Offset(offset)
-		err = db.Order("created_at desc").Preload("Task").Find(&orderList).Error
 	}
+	// 分页获取
+	db = db.Limit(limit).Offset(offset)
+	err = db.Order("created_at desc").Preload("Task").Find(&orderList).Error
+
 	// 根据订单ID过滤 需要获取IPFS 具体内容
 	if searchInfo.OrderId != 0 && len(orderList) == 1 && orderList[0].Attachment != "" {
-		url := fmt.Sprintf("http://ipfs.learnblockchain.cn/%s", orderList[0].Attachment)
+		url := fmt.Sprintf("%s/%s", global.CONFIG.IPFS.API, orderList[0].Attachment)
 		orderList[0].StageJson, err = utils.GetRequest(url)
 		if err != nil {
 			return err, orderList, total
@@ -65,7 +69,7 @@ func GetOrderList(searchInfo request.GetOrderListRequest) (err error, list inter
 		if orderList[0].Status == "WaitAppendAgree" {
 			var attachment string
 			global.DB.Model(&model.OrderFlow{}).Select("attachment").Where("order_id = ? AND status = 'IssuerAgreeStage' AND del = 0", orderList[0].OrderId).Order("level desc").First(&attachment)
-			url := fmt.Sprintf("http://ipfs.learnblockchain.cn/%s", attachment)
+			url := fmt.Sprintf("%s/%s", global.CONFIG.IPFS.API, attachment)
 			orderList[0].LastStageJson, err = utils.GetRequest(url)
 			if err != nil {
 				return err, orderList, total
@@ -98,11 +102,8 @@ func UpdatedStage(stage request.UpdatedStageRequest, address string) (err error)
 	// TODO: 权限控制
 	// 保存交易Hash
 	runBool, err := storeHash(stage.Hash, stage.Status, address)
-	if err != nil {
+	if err != nil || runBool {
 		return err
-	}
-	if runBool {
-		return nil
 	}
 	// 查询当前记录
 	var order model.Order
@@ -121,18 +122,14 @@ func UpdatedStage(stage request.UpdatedStageRequest, address string) (err error)
 	}
 	// 状态流转 校验正确性
 	if stage.Status != "WaitWorkerStage" && order.Status != stage.Status {
-		err = statusValid(order.Status, stage.Status, stage)
-		if err != nil {
+		if err = statusValid(order.Status, stage.Status, stage); err != nil {
 			return err
 		}
 	}
 	// rollback操作
 	err, okRun := rollbackStatus(order.Status, stage.Status, stage)
-	if err != nil {
+	if err != nil || okRun {
 		return err
-	}
-	if okRun {
-		return nil
 	}
 	// 需要更新Obj
 	if stage.Obj != "" && gjson.Get(orderFlowTop.Obj, "stages").String() != gjson.Get(stage.Obj, "stages").String() {
@@ -142,7 +139,6 @@ func UpdatedStage(stage request.UpdatedStageRequest, address string) (err error)
 		if err != nil {
 			return err
 		}
-
 		// 写入last字段
 		stage.Obj, _ = sjson.Set(stage.Obj, "last", attachment)
 		// 上传JSON获取IPFS CID
@@ -153,7 +149,7 @@ func UpdatedStage(stage request.UpdatedStageRequest, address string) (err error)
 		// 更新数据
 		stage.Attachment = hashJSON
 	} else {
-		fmt.Println("相同不需操作")
+		fmt.Println("相同")
 	}
 	// 更新Order表
 	raw := global.DB.Model(&model.Order{}).Where("order_id = ?", stage.OrderId).Updates(&stage.Order)
@@ -174,12 +170,24 @@ func UpdatedStage(stage request.UpdatedStageRequest, address string) (err error)
 	if err = global.DB.Model(&model.OrderFlow{}).Create(&orderFlow).Error; err != nil {
 		return err
 	}
-
+	// 消息通知
+	err = sendMessage(order, stage, orderFlowTop, address)
 	return nil
 }
 
+// UpdatedProgress
+// @description: 更新阶段状态
+// @param: updatedProgress request.UpdatedProgressRequest
+// @return:  err error
+func UpdatedProgress(updatedProgress request.UpdatedProgressRequest) (err error) {
+	err = blockchain.UpdatedProgress(updatedProgress.OrderId)
+	return err
+}
+
+// rollbackStatus 回滚操作
 func rollbackStatus(old string, new string, stage request.UpdatedStageRequest) (err error, okRun bool) {
-	statusMap := map[string][]string{"WaitProlongAgree": {"DisagreeProlong", "IssuerAgreeStage"}, "WaitAppendAgree": {"DisagreeAppend", "IssuerAgreeStage"}}
+	statusMap := map[string][]string{"WaitProlongAgree": {"DisagreeProlong", "IssuerAgreeStage"},
+		"WaitAppendAgree": {"DisagreeAppend", "IssuerAgreeStage"}}
 	// 校验阶段状态流转
 	status, ok := statusMap[old]
 	if !ok {
@@ -245,6 +253,7 @@ func statusValid(old string, new string, stage request.UpdatedStageRequest) (err
 	return nil
 }
 
+// storeHash 保存Hash
 func storeHash(hash string, status string, address string) (runBool bool, err error) {
 	if hash == "" {
 		return runBool, nil
@@ -265,11 +274,51 @@ func storeHash(hash string, status string, address string) (runBool bool, err er
 	return runBool, nil
 }
 
-// UpdatedProgress
-// @description: 更新阶段状态
-// @param: updatedProgress request.UpdatedProgressRequest
-// @return:  err error
-func UpdatedProgress(updatedProgress request.UpdatedProgressRequest) (err error) {
-	err = blockchain.UpdatedProgress(updatedProgress.OrderId)
+// sendMessage 发送消息
+func sendMessage(order model.Order, stage request.UpdatedStageRequest, orderFlowTop model.OrderFlow, sender string) (err error) {
+	// 相同状态不需发送
+	if order.Status == stage.Status {
+		return nil
+	}
+	status := stage.Status
+	// 状态改变发送消息
+	if status == "WaitIssuerAgree" || status == "WorkerAgreeStage" || status == "WorkerDelivery" {
+		// 查询task
+		var task model.Task
+		if err = global.DB.Model(&model.Task{}).Where("task_id =?", order.TaskID).First(&task).Error; err != nil {
+			return err
+		}
+		// 发送消息
+		if err = message.Template(status, utils.StructToMap([]any{order, task}), order.Issuer, order.Worker, ""); err != nil {
+			return err
+		}
+	}
+	// 区分甲方乙方
+	if status == "WaitProlongAgree" || status == "WaitAppendAgree" {
+		// 查询task
+		var task model.Task
+		if err = global.DB.Model(&model.Task{}).Where("task_id =?", order.TaskID).First(&task).Error; err != nil {
+			return err
+		}
+		// 发送消息
+		if err = message.Template(status, utils.StructToMap([]any{order, task}), order.Issuer, order.Worker, sender); err != nil {
+			return err
+		}
+	}
+	// 阶段提交交付
+	if stage.Obj == "" && gjson.Get(orderFlowTop.Obj, "stages").String() == gjson.Get(stage.Obj, "stages").String() {
+		return nil
+	} else {
+		// 判断是否有新交付物
+		attachmentNew := gjson.Get(stage.Obj, "stages.#.delivery.attachment")
+		attachmentOld := gjson.Get(orderFlowTop.Obj, "stages.#.delivery.attachment")
+		for i := 0; i < len(attachmentNew.Array()); i++ {
+			if attachmentNew.Array()[i].String() != attachmentOld.Array()[i].String() && attachmentNew.Array()[i].String() == "" {
+				if err = message.Template(status, map[string]interface{}{"stage": "P" + strconv.Itoa(i)}, order.Issuer, order.Worker, ""); err != nil {
+					return err
+				}
+			}
+		}
+	}
 	return err
 }

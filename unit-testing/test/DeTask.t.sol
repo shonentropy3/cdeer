@@ -3,7 +3,11 @@ pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
 import "forge-std/console.sol";
+<<<<<<< HEAD
 import "codemark/DeTask.sol";
+=======
+import "../src/DeTask.sol";
+>>>>>>> 0dd39094a1e2054212b9508d70b6c34c4729e138
 import {Utilities} from "./utils/Utilities.sol";
 import {Mock} from "./mock/mock.sol";
 
@@ -27,6 +31,10 @@ contract DeTaskTest is Test {
         // 打印信息
         console.log(owner);
         console.log(issuer);
+<<<<<<< HEAD
+=======
+        console.log(worker);
+>>>>>>> 0dd39094a1e2054212b9508d70b6c34c4729e138
     }
 
     // testCreateTask
@@ -145,7 +153,10 @@ contract DeTaskTest is Test {
         vm.startPrank(owner);
         deTask.updateFeeReceiver(10, 10, owner);
         vm.stopPrank();
+<<<<<<< HEAD
         assertEq(deTask.feeReceiver(), owner);
+=======
+>>>>>>> 0dd39094a1e2054212b9508d70b6c34c4729e138
     }
 
     // testCannotCancelApply
@@ -154,8 +165,11 @@ contract DeTaskTest is Test {
         testApplyFor();
         vm.expectRevert(bytes("Not applied."));
         deTask.cancelApply(1);
+<<<<<<< HEAD
 
         deTask.cancelApply(10);
+=======
+>>>>>>> 0dd39094a1e2054212b9508d70b6c34c4729e138
     }
 
     // testCancelApply
@@ -191,4 +205,127 @@ contract DeTaskTest is Test {
         deTask.applyAndCancel{value: 20}(worker, _taskIds, costs, cancelIds);
     }
 
+<<<<<<< HEAD
+=======
+    // testApplyAndCancel
+    // @Summary 批量操作报名 && 批量操作取消报名
+    function testApplyAndCancel() public {
+        testCreateTask();
+        testCreateTask();
+        uint256[] memory _taskIds = new uint256[](2);
+        uint256[] memory costs = new uint256[](2);
+        uint256[] memory cancelIds = new uint256[](0);
+        _taskIds[0] = 1;
+        _taskIds[1] = 2;
+        costs[0] = 1;
+        costs[1] = 1; // costs为0相当于未申请
+        // 不足支付手续费
+        testUpdateFeeReceiver();
+        vm.deal(worker, 20);
+        vm.startPrank(worker); // 乙方
+        // 批量操作报名
+        deTask.applyAndCancel{value: 20}(worker, _taskIds, costs, cancelIds);
+        // 批量操作取消报名
+        _taskIds = new uint256[](0);
+        costs = new uint256[](0);
+        cancelIds = new uint256[](2);
+        cancelIds[0] = 1;
+        cancelIds[1] = 2;
+        deTask.applyAndCancel(worker, _taskIds, costs, cancelIds);
+        vm.stopPrank();
+    }
+
+    // testCannotDisableTask
+    // @Summary 非本人修改Task报名状态 && 修改Task为相同状态
+    function testCannotDisableTask() public {
+        testCreateTask();
+        // 非本人修改Task报名状态
+        vm.expectRevert(bytes("No permission."));
+        deTask.disableTask(1, true);
+        // 修改Task为相同状态
+        vm.startPrank(issuer); // 甲方
+        vm.expectRevert(bytes("same state."));
+        deTask.disableTask(1, false);
+        vm.stopPrank();
+    }
+
+    // testDisableTask
+    // @Summary 修改Task报名状态
+    function testDisableTask() public {
+        testCreateTask();
+        vm.startPrank(issuer); // 甲方
+        deTask.disableTask(1, true);
+        vm.stopPrank();
+        (, , , , , , , , bool disabled) = deTask.getTaskInfo(1);
+        assertEq(disabled, true);
+    }
+
+    // TODO: ERROR
+    // testTransferFee
+    // @Summary 收取手续费
+    function testTransferFee() public {
+        vm.deal(issuer, 20 ether);
+        // vm.startPrank(issuer); // 甲方
+        // TransferHelper.safeTransferETH(owner, 1);
+        // deTask.transferFee(1);
+        // console.log(address(worker).balance);
+        // (bool success, ) = address(worker).call{value: 1}(new bytes(0));
+        // require(
+        //     success,
+        //     "TransferHelper::safeTransferETH: ETH transfer failed"
+        // );
+        //
+        // vm.stopPrank();
+    }
+
+    // testCannotSetOrder
+    // @Summary 非合约创建者设置Order合约地址 && 设置Order合约地址为 零地址
+    function testCannotSetOrder() public {
+        // 非合约创建者设置order合约地址
+        vm.expectRevert(bytes("Ownable: caller is not the owner"));
+        deTask.setOrder(address(0xd2EeE6cB28C99767BA7F8469C3C621033bb09C77));
+        // 设置Order合约地址为 零地址
+        vm.startPrank(owner);
+        vm.expectRevert(bytes("zero address"));
+        deTask.setOrder(address(0));
+        vm.stopPrank();
+    }
+
+    // testSetOrder
+    // @Summary 设置Order合约地址
+    function testSetOrder() public {
+        address addr = address(0xd2EeE6cB28C99767BA7F8469C3C621033bb09C77);
+        vm.startPrank(owner);
+        deTask.setOrder(addr);
+        vm.stopPrank();
+        assertEq(deTask.order(), addr);
+    }
+
+    // testCannotSetMetaContract
+    // @Summary 非合约创建者设置Meta合约地址 && 设置Meta合约地址为 零地址
+    function testCannotSetMetaContract() public {
+        // 非合约创建者设置order合约地址
+        vm.expectRevert(bytes("Ownable: caller is not the owner"));
+        deTask.setMetaContract(address(0xd2EeE6cB28C99767BA7F8469C3C621033bb09C77));
+        // 设置Order合约地址为 零地址
+        vm.startPrank(owner);
+        vm.expectRevert(bytes("zero address"));
+        deTask.setMetaContract(address(0));
+        vm.stopPrank();
+    }
+
+    // testSetMetaContract
+    // @Summary 设置Meta合约地址
+    function testSetMetaContract() public {
+        address addr = address(0xd2EeE6cB28C99767BA7F8469C3C621033bb09C77);
+        vm.startPrank(owner);
+        deTask.setMetaContract(addr);
+        vm.stopPrank();
+        assertEq(deTask.meta(), addr);
+    }    
+
+    // function testTokenURI()public{
+    //     console.log(deTask.tokenURI(1));
+    // }
+>>>>>>> 0dd39094a1e2054212b9508d70b6c34c4729e138
 }

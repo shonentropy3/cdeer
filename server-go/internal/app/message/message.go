@@ -10,11 +10,14 @@ import (
 	"text/template"
 )
 
+<<<<<<< HEAD
 //	func TaskCreated(task model.Task) error {
 //		Template("TaskCreated", task)
 //		return nil
 //	}
 
+=======
+>>>>>>> 0dd39094a1e2054212b9508d70b6c34c4729e138
 func Template(status string, variable map[string]interface{}, issuer string, worker string, sender string) (err error) {
 	issuerInfo, workerInfo, err := getUserInfo(issuer, worker)
 	if err != nil {

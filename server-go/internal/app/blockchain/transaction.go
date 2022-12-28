@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"go.uber.org/zap"
 	"strings"
 	"sync"
 	"time"
@@ -69,7 +70,8 @@ func HandleTransactionReceipt(client *ethclient.Client, txMap sync.Map, hash str
 	// 错误处理
 	defer func() {
 		if err := recover(); err != nil {
-			global.LOG.Error("HandleTransactionReceipt致命错误")
+			txMap.Delete(hash)
+			global.LOG.Error("HandleTransactionReceipt致命错误", zap.Any("err ", err))
 		}
 	}()
 	// 是否在处理列表

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Input, Select, InputNumber, Button, Modal, Upload, message, Form, Spin } from 'antd';
+import { Input, Select, InputNumber, Button, Modal, Upload, message, Form, Spin, Checkbox } from 'antd';
 import { useAccount, useProvider, useSigner } from 'wagmi';
 import { useRouter } from 'next/router'
 import { ethers } from "ethers";
@@ -12,9 +12,10 @@ import { uploadProps } from "../components/upload/config";
 import ConnectModal from "../components/CustomModal/ConnectModal";
 import ComfirmTaskModal from "../components/CustomModal/ComfirmTaskModal";
 import { omit } from 'lodash';
-import { createTask } from "../http/_api/task";
+import { createTask, getSillTreeMap } from "../http/_api/task";
 import { getJwt } from "../utils/GetJwt";
 import { GetSignature } from "../utils/GetSignature";
+import SkillsCard from "../components/CustomCard/SkillsCard";
 
 export default function Publish() {
     
@@ -46,6 +47,10 @@ export default function Publish() {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isModalVisibleC, setIsModalVisibleC] = useState(false);
     let [fileList, setFileList] = useState([]);
+    let [skill,setSkill] = useState([]);
+    // 可议价模式
+    let [amountModel,setAmountModel] = useState(false);
+    
     let [skills,setSkills] = useState({
         title: '技能要求',
         subtitle: '你擅长的技能*(最多4个)',
@@ -76,8 +81,6 @@ export default function Publish() {
         </Form.Item>
     )
 
-
-
     const handleChange = (info, list) => {
         console.log('修改了 ==>');
         params.suffix = info.file.name;
@@ -98,17 +101,6 @@ export default function Publish() {
         }
     }
 
-    const changeSelect = (obj, i) => {
-        if (limiter(obj.list, i) === false) {
-            message.error('最多可选择4个')
-            return
-        }
-        obj.list[i].status = !obj.list[i].status
-        skills.list[i] = obj.list[i]
-        setSkills({...skills})
-        set(obj)
-    }
-
     const limiter = (arr,i) => {
         let length = 0;
         arr.map(e => {
@@ -119,19 +111,6 @@ export default function Publish() {
         }
     }
 
-    const set = (obj) => {
-        let arr = [];
-        let role = [];
-        obj.list.map((ele,index) => {
-            if (ele.status) {
-                arr.push(index+1)
-                role.push(ele.value)
-            }
-        })
-        params.skills = BitOperation(arr);
-        params.role = role;
-    }
-    
     const comfirm = async() => {
         var obj = _.omit(params,'role');
         obj.currency = obj.currency === 'ETH' ? 1 : 1;
@@ -167,11 +146,6 @@ export default function Publish() {
         await createTask(obj)
         .then(res => {
             if (res.code === 0) {
-                // message.success(res.msg);
-                // setTimeout(() => {
-                //     router.push({pathname: '/task', search: 'issuer'})    //  跳转链接
-                // }, 500);
-
                 setIsLoading(false)
                 setShowSpin(true)
             } else {
@@ -197,6 +171,13 @@ export default function Publish() {
         message.error('交易失败')
     }
 
+    const changeAmount = (e) => {
+        if (e.target.checked) {
+            params.budget = 0;
+        }
+        setAmountModel(e.target.checked)
+    }
+
     useEffect(() => {
         Task.data?.hash && writeSuccess()
     },[Task.data?.hash])
@@ -206,18 +187,16 @@ export default function Publish() {
     },[Task.error])
 
     useEffect(() => {
-        let arr = [];
-        _data.skills.map((e,i) => {
-            if (i > 0) {
-                arr.push({
-                    title: e.name, status: false, value: e.value
-                })
+        // 获取技能树
+        getSillTreeMap()
+        .then(res => {
+            console.log(res);
+            if (res.code === 0) {
+                skill = res.data;
+                setSkill([...skill]);
             }
         })
-        skills.list = arr;
-        setSkills({...skills});
     },[])
-
 
     const innerPrint = (e) => {
         switch (e.type) {
@@ -226,13 +205,11 @@ export default function Publish() {
             case 'textarea':
                 return <TextArea className="item-text" onChange={value => {e.value = value.target.value}} />
             case 'ul':
-                return <div className="item-ul">{
-                        skills.list.map((e,i) => 
-                            <div key={i} className={`li ${e.status ? 'active':''}`} onClick={() => changeSelect(skills,i)}>
-                                {e.title}
-                            </div>)}
-                    </div>
+                return <SkillsCard stree={skill} value={skills.list} />
             case 'inputNumber':
+                if (amountModel) {
+                    return
+                }
                 return <div className="item-num">
                             <InputNumber controls={false} addonAfter={selectAfter} />
                         </div>
@@ -299,11 +276,21 @@ export default function Publish() {
                     inner.map((e,i) => 
                         
                             <div className="item" key={i}>
+                                <div className="item-nav">
+                                    {
+                                        e.title && <p className="item-title">{e.title}</p>
+                                    }
+                                    {
+                                        e.type === 'inputNumber' && 
+                                        <Checkbox 
+                                            value={amountModel} 
+                                            className="nav-box" 
+                                            onChange={changeAmount}
+                                        >由乙方报价</Checkbox>
+                                    }
+                                </div>
                                 {
-                                    e.title && <p className="item-title">{e.title}</p>
-                                }
-                                {
-                                    e.type !== 'ul' && e.type !== 'select' && e.type !== 'upload' ? 
+                                    e.type !== 'inputNumber' && e.type !== 'ul' && e.type !== 'select' && e.type !== 'upload' ? 
                                     <Form.Item name={e.name} 
                                         rules={[{
                                             required: true,

@@ -2,34 +2,40 @@
 pragma solidity >=0.8.0;
 
 import "forge-std/Test.sol";
+import "../../src/DeOrder.sol";
+import "../../src/libs/ECDSA.sol";
+import "../../src/mock/WETH.sol";
 
 contract Utilities is Test {
-    bytes32 internal nextUser = keccak256(abi.encodePacked("user address"));
+    DeOrder internal deOrder;
+    WETH internal _weth;
 
-    function getNextUserAddress() external returns (address payable) {
-        //bytes32 to address conversion
-        address payable user = payable(address(uint160(uint256(nextUser))));
-        nextUser = keccak256(abi.encodePacked(nextUser));
-        return user;
+    function setUp() public {
+        _weth = new WETH();
+        deOrder = new DeOrder(address(_weth));
     }
 
-    /// @notice create users with 100 ether balance
-    function createUsers(uint256 userNum)
-        external
-        returns (address payable[] memory)
-    {
-        address payable[] memory users = new address payable[](userNum);
-        for (uint256 i = 0; i < userNum; i++) {
-            address payable user = this.getNextUserAddress();
-            vm.deal(user, 100 ether);
-            users[i] = user;
-        }
-        return users;
-    }
+    // getSignBytes
+    // @Summary 获取签名Bytes
+    function getSignBytes(
+        bytes32 TYPEHASH,
+        uint256 _orderId,
+        uint256[] memory _amounts,
+        uint256[] memory _periods,
+        uint256 nonce,
+        uint256 deadline
+    ) public returns (bytes32) {
+        bytes32 structHash = keccak256(
+            abi.encode(
+                TYPEHASH,
+                _orderId,
+                keccak256(abi.encodePacked(_amounts)),
+                keccak256(abi.encodePacked(_periods)),
+                nonce,
+                deadline
+            )
+        );
 
-    /// @notice move block.number forward by a given number of blocks
-    function mineBlocks(uint256 numBlocks) external {
-        uint256 targetBlock = block.number + numBlocks;
-        vm.roll(targetBlock);
+        return ECDSA.toTypedDataHash(deOrder.DOMAIN_SEPARATOR(), structHash);
     }
 }

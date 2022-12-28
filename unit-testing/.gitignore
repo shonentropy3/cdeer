@@ -10,4 +10,5 @@ out/
 # Dotenv file
 .env
 
-/lib/%
+/lib/forge-std/%
+/lib/openzeppelin-contracts/%

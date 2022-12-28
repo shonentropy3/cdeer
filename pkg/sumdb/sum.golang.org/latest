@@ -1,5 +1,12 @@
 go.sum database tree
+<<<<<<< HEAD
 14510105
 NEXXB9O8upfJDWmHoJwp2EB+6gzBaBgYCofv0DfMqEU=
 
 — sum.golang.org Az3grrnbxmVHJDJ5eF3t29332AHeaP42PVZAc7eXyM/ng5BfcptLyKeoovK+Pu5GDQAQl4X3guC3OogsmrCnj9kZ5AQ=
+=======
+14499435
+4Sb4HRpAVq2+Q0N3+DOZ6yWSMbDPiKAnoDhAeoPr1GQ=
+
+— sum.golang.org Az3grgdf/fnHvwpeXdc/qIKVJILQACvs6Z+HWhudnuPYlzG5M6WjaRa/C2SliGeGnCtuVj0nJDQB99OmQrPqhgCVFg0=
+>>>>>>> 0dd39094a1e2054212b9508d70b6c34c4729e138

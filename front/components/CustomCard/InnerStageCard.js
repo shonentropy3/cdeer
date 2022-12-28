@@ -61,7 +61,9 @@ export default function InnerStageCard(params) {
 
     // 移除tabs
     const remove = (targetKey) => {
-        setIsChange(true);  //  确认修改返回上层 ==> agree ==> 修改阶段划分
+        if (setIsChange) {
+            setIsChange(true);  //  确认修改返回上层 ==> agree ==> 修改阶段划分
+        }
         items.map((e,i) => {
             if (e.key === targetKey) {
                 items.splice(i,1);

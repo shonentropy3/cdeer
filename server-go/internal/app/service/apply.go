@@ -121,8 +121,13 @@ func DeleteApply(hash string, address string) (err error) {
 // @description: 更新报名列表排序
 // @param: taskReq request.CreateTaskRequest
 // @return: err error
-func UpdatedApplySort(sortReq request.UpdatedApplySortRequest) (err error) {
+func UpdatedApplySort(sortReq request.UpdatedApplySortRequest, address string) (err error) {
 	db := global.DB.Model(&model.Apply{})
+	// 是否任务本人操作
+	if err = global.DB.Model(&model.Task{}).Where("task_id = ? AND issuer = ?", sortReq.TaskID, address).First(&model.Task{}).Error; err != nil {
+		return err
+	}
+	// 更新状态
 	raw := db.Where("task_id = ?", sortReq.TaskID).Where("apply_addr = ?", sortReq.ApplyAddr).Update("sort_time", time.Now())
 	if raw.RowsAffected == 0 {
 		return errors.New("设置失败")

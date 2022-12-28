@@ -367,6 +367,14 @@ $pfM: PingFangSC-Medium, PingFang SC, Microsoft Yahei;
         }
         .item{
             margin-bottom: 53px;
+
+            .item-nav{
+                display: flex;
+                align-items: center;
+                .nav-box{
+                    margin-left: 20px;
+                }
+            }
             &:nth-child(1){
                 margin-bottom: 53px;
             }

@@ -8,9 +8,9 @@ pgsql:
   path: "127.0.0.1"
   port: "5432"
   config: ""
-  db-name: "detask"
+  db-name: "postgres"
   username: "postgres"
-  password: "123456"
+  password: "1234"
   max-idle-conns: 10
   max-open-conns: 100
   log-mode: "info"
@@ -42,3 +42,8 @@ jwt:
 # local configuration
 local:
   path: 'uploads/file'
+
+# ipfs configuration
+ipfs:
+  api: "http://ipfs.learnblockchain.cn"
+  upload-api: "http://47.242.152.213:3022/v1"
