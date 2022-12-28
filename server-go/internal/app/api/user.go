@@ -129,13 +129,13 @@ func UnReadMsgCount(c *gin.Context) {
 	}
 }
 
-// UnReadMsg
+// UnReadMsgList
 // @Tags UserApi
 // @Summary 获取未读消息
-// @Router /user/unReadMsg [get]
-func UnReadMsg(c *gin.Context) {
+// @Router /user/unReadMsgList [get]
+func UnReadMsgList(c *gin.Context) {
 	userID := c.GetUint("userID") // 操作人ID
-	if list, total, err := service.UnReadMsg(userID); err != nil {
+	if list, total, err := service.UnReadMsgList(userID); err != nil {
 		global.LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败", c)
 	} else {
@@ -155,6 +155,22 @@ func ReadMsg(c *gin.Context) {
 	_ = c.ShouldBindJSON(&IDReq)
 	userID := c.GetUint("userID") // 操作人ID
 	if err := service.ReadMsg(userID, IDReq.ID); err != nil {
+		global.LOG.Error("操作失败!", zap.Error(err))
+		response.FailWithMessage("操作失败", c)
+	} else {
+		response.OkWithMessage("操作成功", c)
+	}
+}
+
+// ReadAllMsg
+// @Tags UserApi
+// @Summary 阅读信息
+// @Router /user/readAllMsg [post]
+func ReadAllMsg(c *gin.Context) {
+	var IDReq request.IDRequest
+	_ = c.ShouldBindJSON(&IDReq)
+	userID := c.GetUint("userID") // 操作人ID
+	if err := service.ReadAllMsg(userID); err != nil {
 		global.LOG.Error("操作失败!", zap.Error(err))
 		response.FailWithMessage("操作失败", c)
 	} else {

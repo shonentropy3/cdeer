@@ -68,11 +68,11 @@ func UnReadMsgCount(userID uint) (count int64, err error) {
 	return count, err
 }
 
-// UnReadMsg
+// UnReadMsgList
 // @description: 获取未读消息
 // @param: userID string
 // @return: count int64, err error
-func UnReadMsg(userID uint) (list []response.MsgListRespond, total int64, err error) {
+func UnReadMsgList(userID uint) (list []response.MsgListRespond, total int64, err error) {
 	db := global.DB.Model(&model.Message{})
 	db = db.Where("status = 0 AND rec_id = ?", userID)
 	err = db.Count(&total).Error
@@ -89,6 +89,18 @@ func UnReadMsg(userID uint) (list []response.MsgListRespond, total int64, err er
 // @return: err error
 func ReadMsg(userID uint, msgID uint) (err error) {
 	raw := global.DB.Model(&model.Message{}).Where("rec_id = ? AND id = ?", userID, msgID).Update("status", 1)
+	if raw.RowsAffected == 0 {
+		return errors.New("修改状态失败")
+	}
+	return raw.Error
+}
+
+// ReadAllMsg
+// @description: 全部已读
+// @param: userID string
+// @return: err error
+func ReadAllMsg(userID uint) (err error) {
+	raw := global.DB.Model(&model.Message{}).Where("rec_id = ?", userID).Update("status", 1)
 	if raw.RowsAffected == 0 {
 		return errors.New("修改状态失败")
 	}
