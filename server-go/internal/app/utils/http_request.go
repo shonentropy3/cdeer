@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"strings"
@@ -15,22 +14,30 @@ import (
 // GetRequest 发送GET请求
 // url：         请求地址
 // response：    请求返回的内容
-func GetRequest(url string) (string, error) {
-	// 超时时间：60秒
-	client := &http.Client{Timeout: time.Second * 60}
-	req, err := http.NewRequest("GET", url, nil)
-	req.Header.Set("Accept", "*/*")
-	req.Header.Set("Content-Type", "application/json")
-	if err != nil {
-		return "", err
+func GetRequest(url string) (res string, err error) {
+	tryTimes := 3 // 重试次数
+	for i := 0; i < tryTimes; i++ {
+		fmt.Println(i)
+		// 超时时间：60秒
+		client := &http.Client{Timeout: time.Second * 60}
+		req, errReq := http.NewRequest("GET", url, nil)
+		req.Header.Set("Accept", "*/*")
+		req.Header.Set("Content-Type", "application/json")
+		if errReq != nil {
+			err = errReq
+			continue
+		}
+		resp, errReq := client.Do(req)
+		if errReq != nil {
+			err = errReq
+			resp.Body.Close()
+			continue
+		}
+		resp.Body.Close()
+		result, _ := io.ReadAll(resp.Body)
+		return string(result), nil
 	}
-	resp, err := client.Do(req)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-	result, _ := io.ReadAll(resp.Body)
-	return string(result), nil
+	return "", err
 }
 
 // PostRequest 发送POST请求
@@ -38,19 +45,25 @@ func GetRequest(url string) (string, error) {
 // data：        POST请求提交的数据
 // contentType： 请求体格式，如：application/json
 // content：     请求放回的内容
-func PostRequest(url string, data interface{}, contentType string) ([]byte, error) {
-	// 超时时间：60秒
-	client := &http.Client{Timeout: 60 * time.Second}
-	fmt.Println(data)
-	jsonStr, _ := json.Marshal(data)
-	fmt.Println(string(jsonStr))
-	resp, err := client.Post(url, contentType, bytes.NewBuffer(jsonStr))
-	if err != nil {
-		return nil, err
+func PostRequest(url string, data interface{}, contentType string) (res []byte, err error) {
+	tryTimes := 3 // 重试次数
+	for i := 0; i < tryTimes; i++ {
+		// 超时时间：60秒
+		client := &http.Client{Timeout: 60 * time.Second}
+		fmt.Println(data)
+		jsonStr, _ := json.Marshal(data)
+		fmt.Println(string(jsonStr))
+		resp, errReq := client.Post(url, contentType, bytes.NewBuffer(jsonStr))
+		if errReq != nil {
+			err = errReq
+			resp.Body.Close()
+			continue
+		}
+		resp.Body.Close()
+		result, _ := io.ReadAll(resp.Body)
+		return result, nil
 	}
-	defer resp.Body.Close()
-	result, _ := io.ReadAll(resp.Body)
-	return result, nil
+	return res, err
 }
 
 // PostFileRequest 发送POST请求 上传文件
@@ -77,30 +90,26 @@ func PostFileRequest(url string, header *multipart.FileHeader) (res []byte, err 
 	if err != nil {
 		fmt.Println(" post err=", err)
 	}
-	request, err := http.NewRequest("POST", url, body)
-	//writer.FormDataContentType() ： 返回w对应的HTTP multipart请求的Content-Type的值，多以multipart/form-data起始
-	request.Header.Set("Content-Type", writer.FormDataContentType())
-	//设置host，只能用request.Host = “”，不能用request.Header.Add(),也不能用request.Header.Set()来添加host
-	//request.Host = "api.shouji.com"
-	t := http.DefaultTransport.(*http.Transport).Clone()
-	t.MaxIdleConns = 100
-	t.MaxConnsPerHost = 100
-	t.MaxIdleConnsPerHost = 100
-	clt := http.Client{
-		Timeout:   10 * time.Second,
-		Transport: t,
-	}
-	defer clt.CloseIdleConnections()
-	result, err := clt.Do(request)
-	//http返回的response的body必须close,否则就会有内存泄露
-	defer result.Body.Close()
-	if err != nil {
-		fmt.Println("err is ", err)
-	}
-	res, err = ioutil.ReadAll(result.Body)
-	if err != nil {
-		fmt.Println("ioutil.ReadAll  err is ", err)
-		return
+	tryTimes := 3 // 重试次数
+	for i := 0; i < tryTimes; i++ {
+		request, err := http.NewRequest("POST", url, body)
+		if err != nil {
+			return nil, err
+		}
+		//writer.FormDataContentType() ： 返回w对应的HTTP multipart请求的Content-Type的值，多以multipart/form-data起始
+		request.Header.Set("Content-Type", writer.FormDataContentType())
+		// 超时时间：60秒
+		client := &http.Client{Timeout: 60 * time.Second}
+		result, errReq := client.Do(request)
+		if errReq != nil {
+			err = errReq
+			//http返回的response的body必须close,否则就会有内存泄露
+			result.Body.Close()
+			continue
+		}
+		result.Body.Close()
+		res, _ = io.ReadAll(result.Body)
+		return res, nil
 	}
 	return res, err
 }
