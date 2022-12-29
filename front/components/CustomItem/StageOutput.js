@@ -179,6 +179,14 @@ export default function StageOutput(params) {
         }
     }
 
+    const printIndex = () => {
+        if (Order.stages.period[0] === 0) {
+            return index
+        }else{
+            return index+1
+        }
+    }
+
     useEffect(() => {
         if (ongoing && (index === stageIndex)) {
             // 正在进行中
@@ -211,7 +219,7 @@ export default function StageOutput(params) {
         <div className="itemCard-nav">
             {
                 !last ? 
-                <p className="nav-index">P{index+1}</p>
+                <p className="nav-index">P{printIndex()}</p>
                 :
                 <p className="new-nav-index">New stage</p>
             }
@@ -295,7 +303,7 @@ export default function StageOutput(params) {
                 <div className="event">
                     <div className="content">
                         <div className="icon"></div>
-                        <p className="wait" style={{color: "#1F1E2E"}}>The demander has paid the P{index+1} fee, go to withdraw</p>
+                        <p className="wait" style={{color: "#1F1E2E"}}>The demander has paid the P{printIndex()} fee, go to withdraw</p>
                     </div> 
                     <div className="btns">
                         <Button style={{width: "auto"}} loading={loading} className="permit" onClick={() => withdraw()}>Withdraw money</Button>

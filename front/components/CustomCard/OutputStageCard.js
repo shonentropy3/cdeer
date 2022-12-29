@@ -358,6 +358,7 @@ export default function OutputStageCard(params) {
     <div className="items">
         {
             list.map((e,i) => 
+            e.period !== 0 &&
                 <div className="stageItem" key={i}>
                     <StageOutput 
                         data={e} 

@@ -37,8 +37,25 @@
                 }
             }
         }
-        .prepay{
+        .flex{
             margin-top: 15px;
+            margin-left: 43px;
+            display: flex;
+            align-items: center;
+            button{
+                height: 45px;
+                margin-left: 50px;
+                background-color: #1F1E2E;
+                border-radius: 4px;
+
+                color: white;
+                font-size: 16px;
+                font-family: PingFangSC-Regular, PingFang SC;
+                line-height: 22px;
+                letter-spacing: 0.33px;
+            }
+        }
+        .prepay{
             display: flex;
             align-items: center;
             .ant-input-number{

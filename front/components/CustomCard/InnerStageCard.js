@@ -119,20 +119,22 @@ export default function InnerStageCard(params) {
         if (dataStages) {
             let arr = [];
             dataStages.map((e,i) => {
-                inner[`item-${i+1}`] = { ...e };
-                setInner({...inner});
-                arr.push({
-                    label: `P ${i+1}`,
-                    children: <StageInner 
-                                defaultAmount={defaultAmount} 
-                                index={`item-${i+1}`}
-                                inner={inner}
-                                setInner={changeInner} 
-                                setViewModel={setViewModel}     //  修改展示模式
-                                setDataViewModel={setDataViewModel}     //  修改data展示模式
-                            />,
-                    key: `item-${i+1}`,
-                })
+                if (e.period !== 0) {
+                    inner[`item-${i+1}`] = { ...e };
+                    setInner({...inner});
+                    arr.push({
+                        label: `P ${i+1}`,
+                        children: <StageInner 
+                                    defaultAmount={defaultAmount} 
+                                    index={`item-${i+1}`}
+                                    inner={inner}
+                                    setInner={changeInner} 
+                                    setViewModel={setViewModel}     //  修改展示模式
+                                    setDataViewModel={setDataViewModel}     //  修改data展示模式
+                                />,
+                        key: `item-${i+1}`,
+                    })
+                }
             })
             items = arr;
             setItems([...items]);

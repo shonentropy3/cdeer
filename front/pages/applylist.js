@@ -200,7 +200,7 @@ export default function ApplyList(params) {
                                     <img src={imgUrl+e.user.avatar} />
                                 </div>
                                 <div className="product-info">
-                                    <p className="applicant-name" >{e.user.username ? e.user.username : e.apply_addr}<span onClick={()=>showUserInfo(e.user)}>View personal information</span></p>
+                                    <p className="applicant-name" >{e.user.username ? e.user.username : e.apply_addr.substring(0,5)+"..."+e.apply_addr.substring(38,42)}<span onClick={()=>showUserInfo(e.user)}>View personal information</span></p>
                                     <p className="applicant-skill">
                                         <i className="good-skill">Good at skills：</i>
                                         {

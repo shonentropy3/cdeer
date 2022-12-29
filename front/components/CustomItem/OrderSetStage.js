@@ -17,7 +17,9 @@ export default function OrderSetStage(params) {
     let [progressSet, setProgressSet] = useState();
     let [stage, setStage] = useSetState({
         orderModel: false,      //  预付款模式
+        value: ''
     });
+
     let [stages, setStages] = useState({
         amount: [], period: [], deadline: ''
     })
@@ -27,9 +29,7 @@ export default function OrderSetStage(params) {
 
     // 链上数据
     const { useOrderRead: nonces } = useRead('nonces', address);
-    const { useOrderRead: getOrder } = useRead('getOrder', order.order_id);
 
-    
     // 状态
     let [status, setStatus] = useState('WaitWorkerStage');
 
@@ -80,6 +80,11 @@ export default function OrderSetStage(params) {
         let _amount = [];
         let _period = [];
         let arr = [];
+        // 是否有预付款
+        if (stage.orderModel) {
+            _amount.push(ethers.utils.parseEther(`${stage.value}`))
+            _period.push(`${0 * 24 * 60 * 60}`)
+        }
         for (const i in inner) {
             arr.push(inner[i]);
         }
@@ -87,15 +92,6 @@ export default function OrderSetStage(params) {
             _amount.push(ethers.utils.parseEther(`${e.amount}`))
             _period.push(`${e.period * 24 * 60 * 60}`)
         })
-        
-        // console.log({
-        //     signature: useSign.data,
-        //     sign_address: address,
-        //     order_id: order.order_id,
-        //     stages: JSON.stringify(stages),
-        //     status: status
-        // });
-        // return
 
         signObj = {
             amounts: _amount,
@@ -131,6 +127,22 @@ export default function OrderSetStage(params) {
         let _period = [];
         for (const i in inner) {
             arr.push(inner[i]);
+        }
+        if (stage.orderModel) {
+            _amount.push(stage.value);
+            _period.push(0);
+            stageDetail.stages.push({
+                milestone: {
+                    type: 'raw',
+                    content: '',
+                    title: ''
+                },
+                delivery: {
+                    attachment: '',
+                    fileType: '',
+                    content: ''
+                }
+            })
         }
         arr.map(e => {
             _amount.push(e.amount);
@@ -236,21 +248,26 @@ export default function OrderSetStage(params) {
         console.log(funcList);
         multicallWrite(muticallEncode(funcList),address,value)
         .then(res => {
-            console.log('res ==>',res);
-            // 发送后端请求 ==> 开始任务
-            startOrder({
-                order_id: order.order_id
-            })
-            .then(res => {
-                if (res.code === 0) {
-                    message.success('项目开始')
-                    setTimeout(() => {
-                        history.go(0)
-                    }, 500);              
-                }else{
-                    setIsLoading(false);
-                }
-            })
+            if (res) {
+                // 发送后端请求 ==> 开始任务
+                startOrder({
+                    order_id: order.order_id
+                })
+                .then(res => {
+                    if (res.code === 0) {
+                        message.success('项目开始')
+                        setTimeout(() => {
+                            history.go(0)
+                        }, 500);              
+                    }else{
+                        setIsLoading(false);
+                    }
+                })  
+            }else{
+                // 交易失败
+                setIsLoading(false);
+                message.warning('交易已终止')
+            }
         })
         .catch(err => {
             console.log(err);
@@ -277,6 +294,9 @@ export default function OrderSetStage(params) {
     // 总计金额
     const printTotal = () => {
         let sum = 0;
+        if (stage.orderModel) {
+            sum+=stage.value
+        }
         for (const i in inner) {
             sum+=inner[i].amount;
         }
@@ -326,6 +346,12 @@ export default function OrderSetStage(params) {
         permitStage()
     }
 
+    const changeAdvance = (e) => {
+        stage.value = e;
+        setStage({...stage});
+        setIsChange(true);
+    }
+
     const switchSetStageCard = () => {
 
         switch (progressSet) {
@@ -346,7 +372,10 @@ export default function OrderSetStage(params) {
                     { 
                         stage.orderModel && 
                         <div className="prepay">
-                            <InputNumber /><span>{order.currency}</span>
+                            <InputNumber
+                                value={stage.value} 
+                                onChange={ e => changeAdvance(e)}
+                            /><span>{order.currency}</span>
                         </div> 
                     }
                 </div>
@@ -357,7 +386,7 @@ export default function OrderSetStage(params) {
                         {/* 总计 */}
                         <div className="total">
                             {
-                                stage.orderModel && <p>Advance charge: <span>{}</span></p>
+                                stage.orderModel && <p>Advance charge: <span>{stage.value}</span></p>
                             }
                             {printStageTotal()}
                             {printTotal()}
@@ -390,7 +419,7 @@ export default function OrderSetStage(params) {
                             <div className="total">
                                 {
                                     dataStages[0].period === 0 && 
-                                    <p>Advance charge: <span>{}</span></p>
+                                    <p>Advance charge: <span>{stage.value}</span></p>
                                 }
                                 {printStageTotal()}
                                 {printTotal()}
@@ -402,13 +431,20 @@ export default function OrderSetStage(params) {
                         return <>
                             <p className="title">Task stage division</p>
                             <div className="payModel">
-                                <Checkbox checked={dataStages[0].period === 0 ? true : false}>
+                                <Checkbox 
+                                    defaultChecked={dataStages[0].period === 0 ? true : false}
+                                    onChange={toggleModel}
+                                >
                                     Increase advance payment
                                 </Checkbox>
                                 { 
-                                    dataStages[0].period === 0 && 
+                                    dataStages[0].period === 0 && stage.orderModel &&
                                     <div className="prepay">
-                                        {dataStages[0].amount}
+                                        
+                                        <InputNumber
+                                            defaultValue={dataStages[0].amount}
+                                            onChange={ e => changeAdvance(e)}
+                                        /><span>{order.currency}</span>
                                     </div> 
                                 }
                             </div>
@@ -416,7 +452,7 @@ export default function OrderSetStage(params) {
                             <div className="total">
                                 {
                                     dataStages[0].period === 0 && 
-                                    <p>Advance charge: <span>{}</span></p>
+                                    <p>Advance charge: <span>{stage.value}</span></p>
                                 }
                                 {printStageTotal()}
                                 {printTotal()}
@@ -454,6 +490,12 @@ export default function OrderSetStage(params) {
             progressSet = 2;    //  2:已经有一方设置了阶段 => 双方显示一样的
         }
         setProgressSet(progressSet);
+
+        if (dataStages && dataStages[0].period === 0) {
+            stage.orderModel = true;
+            stage.value = dataStages[0].amount;
+            setStage({...stage});
+        }
     },[])
 
     // 发起签名

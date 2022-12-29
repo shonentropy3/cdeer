@@ -3,8 +3,8 @@ import { Button, Checkbox, InputNumber, message, Tabs } from "antd";
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import { useAccount, useNetwork } from "wagmi";
-import { multicallWrite, muticallEncode, useRead, useSignAppendData } from "../../controller";
-import { updatedStage } from "../../http/_api/order";
+import { multicallWrite, muticallEncode, useContracts, useRead, useSignAppendData } from "../../controller";
+import { startOrder, updatedStage } from "../../http/_api/order";
 import OutputStageCard from "../CustomCard/OutputStageCard";
 import AppendStage from "./AppendStage";
 
@@ -30,6 +30,16 @@ export default function OrderStageList(params) {
     const { useStageRead: chainStages } = useRead('getStages',order.order_id);
     const { useStageRead: chainOngoing } = useRead('ongoingStage',order.order_id);
     const { useOrderRead: nonces } = useRead('nonces', address);
+    // 领钱
+    const { useOrderContractWrite: getWithdraw } = useContracts('withdraw');
+
+    // 领钱
+    const withdraw = () => {
+        setIsLoading(true);
+        getWithdraw.write({
+            recklesslySetUnpreparedArgs: [Number(order.order_id), address]
+        })
+    }
 
     // 请求返回处理
     const handelRes = (res) => {
@@ -190,6 +200,8 @@ export default function OrderStageList(params) {
             })
             data = dataStages;
 
+            
+
             chainStages.data.map((e,i) => {
                 data[i].amount = e.amount.toString() / Math.pow(10,18);
                 data[i].period = e.period.toString() / (24 * 60 * 60);
@@ -223,6 +235,24 @@ export default function OrderStageList(params) {
         }
     },[appendParams])
 
+      // 领钱成功
+      useEffect(() => {
+        if (getWithdraw.isSuccess) {
+            message.success("操作成功")
+            setIsLoading(false);
+            startOrder({
+                order_id: order.order_id
+            })
+            .then(res => {
+                handelRes(res)
+            })
+        }
+        if (getWithdraw.error) {
+            message.error('error')
+            setIsLoading(false);
+        }
+    },[getWithdraw])
+
     return (
         <div className="stageCard">
             <p className="title">Task stage division</p>
@@ -234,9 +264,13 @@ export default function OrderStageList(params) {
                     <Checkbox checked disabled>
                         Increase advance payment
                     </Checkbox>
-                    <div className="prepay">
-                        {dataStages[0].amount}
-                    </div> 
+
+                    <div className="flex">
+                        <div className="prepay">
+                            {dataStages[0].amount}  
+                        </div> 
+                        <Button loading={isLoading} onClick={() => withdraw()}>Withdraw money</Button>
+                    </div>
                 </div>
             }
             <div className="stageList">
@@ -254,7 +288,7 @@ export default function OrderStageList(params) {
                 {
                     isAppend ? 
                     <div className="tabs new-tabs">
-                        <p className="tabs-title">P{dataStages.length + 1}</p>
+                        <p className="tabs-title">P{dataStages[0].period === 0 ? dataStages.length : dataStages.length + 1}</p>
                         <AppendStage 
                             setInner={setAppendObj} 
                             inner={appendObj}
