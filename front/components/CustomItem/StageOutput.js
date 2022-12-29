@@ -180,7 +180,7 @@ export default function StageOutput(params) {
     }
 
     const printIndex = () => {
-        if (Order.stages.period[0] === 0) {
+        if ( Order && Order.stages.period[0] === 0) {
             return index
         }else{
             return index+1
