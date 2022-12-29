@@ -90,8 +90,8 @@ export default function OutputStageCard(params) {
         updatedStage({
             obj: JSON.stringify(order.stage_json),
             order_id: oid,
-            hash: hash,
-            status: "IssuerAgreeStage"
+            hash: hash
+            // status: "IssuerAgreeStage"
         })
         .then(res => {
             handelRes(res)
