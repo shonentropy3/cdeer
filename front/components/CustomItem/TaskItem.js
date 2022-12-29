@@ -71,7 +71,15 @@ export default function TaskItem(params) {
                                 <p className="role">Recruitment type: {e.role.map((ele,index) => <span key={index}>{ele}</span> )}</p>
                                 <div className="detail">
                                     <p>Cycle: {e.period / 60 / 60 / 24}天 <span>&nbsp;</span></p>
-                                    <p>Cost: <span>{e.budget}{e.currency}</span></p>
+                                    
+                                    <p>Cost: 
+                                    {
+                                        e.budget == 0 ? 
+                                        <span>可报价</span>
+                                        :
+                                        <span>{e.budget}{e.currency}</span>
+                                    }
+                                    </p>
                                 </div>
                             </div>
                             {/* TODO: 修改Task ==> resolution */}
@@ -100,7 +108,14 @@ export default function TaskItem(params) {
                                 <p className="role">Recruitment type: {e.role.map((ele,index) => <span key={index}>{ele}</span> )}</p>
                                 <div className="detail">
                                     <p>Cycle: {e.period / 60 / 60 / 24}天 <span>&nbsp;</span></p>
-                                    <p>Cost: <span>{e.budget}{e.currency}</span></p>
+                                    <p>Cost: 
+                                    {
+                                        e.budget == 0 ? 
+                                        <span>可报价</span>
+                                        :
+                                        <span>{e.budget}{e.currency}</span>
+                                    }    
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -122,7 +137,14 @@ export default function TaskItem(params) {
                                 <p className="role">Recruitment type: {e.task.role.map((ele,index) => <span key={index}>{ele}</span> )}</p>
                                 <div className="detail">
                                     <p>Cycle: {e.task.period / 60 / 60 / 24}天 <span>&nbsp;</span></p>
-                                    <p>Cost: <span>{e.task.budget}{e.task.currency}</span></p>
+                                    <p>Cost: 
+                                    {
+                                        e.task.budget == 0 ? 
+                                        <span>可报价</span>
+                                        :
+                                        <span>{e.task.budget}{e.task.currency}</span>
+                                    }   
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -137,7 +159,14 @@ export default function TaskItem(params) {
                                 <p className="role">Recruitment type: {e.task.role.map((ele,index) => <span key={index}>{ele}</span> )}</p>
                                 <div className="detail">
                                     <p>Cycle: {e.task.period / 60 / 60 / 24}天 <span>&nbsp;</span></p>
-                                    <p>Cost: <span>{e.task.budget}{e.task.currency}</span></p>
+                                    <p>Cost: 
+                                    {
+                                        e.task.budget == 0 ? 
+                                        <span>可报价</span>
+                                        :
+                                        <span>{e.task.budget}{e.task.currency}</span>
+                                    }
+                                    </p>
                                 </div>
                             </div>
                         </div>

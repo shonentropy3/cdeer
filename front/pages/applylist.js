@@ -171,7 +171,12 @@ export default function ApplyList(params) {
                         <p className="task-cycle">cycle：
                             <span>{parseInt(detail.period/86400)}天</span>
                             Cost：
-                            <span>{detail.budget}{detail.currency}</span>
+                            {
+                                detail.budget == 0 ? 
+                                <span>可报价</span>
+                                :
+                                <span>{detail.budget}{detail.currency}</span>
+                            }
                         </p>
                     </div>
                     {/* <div className="task-changeInfo" onClick={showModifyModal}>修改信息</div> */}

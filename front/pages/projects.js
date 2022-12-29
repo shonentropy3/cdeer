@@ -133,7 +133,12 @@ export default function Projects() {
                                 <div className="price">
                                     <p>
                                         <span className='price-cost'>Cost:</span> 
-                                        <span className='price-num'>{e.budget/1000000000000000000}ETH</span>
+                                        {
+                                            e.budget == 0 ? 
+                                            <span className='price-num'>可报价</span>
+                                            :
+                                            <span className='price-num'>{e.budget/Math.pow(10,18)}ETH</span>
+                                        }
                                     </p>
                                 </div>
                                 <div className='item-btn'>
