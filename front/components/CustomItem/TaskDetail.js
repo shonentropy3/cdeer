@@ -14,7 +14,12 @@ export default function TaskDetail(params) {
                     </p>
                     <p className='task-cost task-li'>
                         <span className='task-cost-title title'>Cost：</span>
-                        <span className='task-cost-price content'>{task.budget / Math.pow(10,18)}ETH</span>
+                        {
+                            task.budget == 0 ? 
+                            <span className="title-cost-price content">可报价</span>
+                            :
+                            <span className='task-cost-price content'>{task.budget / Math.pow(10,18)}{task.currency}</span>
+                        }
                     </p>
                     <p className='task-date task-li'>
                         <span className='task-date-title title'>Cycle：</span>

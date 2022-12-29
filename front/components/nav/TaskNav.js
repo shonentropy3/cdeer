@@ -16,7 +16,14 @@ export default function TaskNav(params) {
             </div>
         </div>
         <div className="title-cost">
-            <p className="title-cost-line">cost: <span className="title-cost-price">{task.budget / Math.pow(10,18)}{task.currency}</span> </p>
+            <p className="title-cost-line">cost: 
+            {
+                task.budget == 0 ? 
+                <span className="title-cost-price">可报价</span>
+                :
+                <span className="title-cost-price">{task.budget}{task.currency}</span>
+            }
+            </p>
         </div>
     </div>
 }

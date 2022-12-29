@@ -33,7 +33,12 @@ export default function ComfirmTaskModal(params) {
                 <div className="info-full info-half">
                     <div>
                         <p className="title">Task budget</p>
-                        <div className="content">{inner.budget} ETH</div>
+                        {
+                            inner.budget == 0 ? 
+                            <div className="content">可报价</div>
+                            :
+                            <div className="content">{inner.budget} ETH</div>
+                        }
                     </div>
                     <div>
                         <p className="title">Task cycle</p>
