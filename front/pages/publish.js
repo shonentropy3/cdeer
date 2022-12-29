@@ -103,7 +103,6 @@ export default function Publish() {
 
     const comfirm = async() => {
         var obj = _.omit(params,'role');
-        // console.log(skills);
         let arr = [];
         skills.list.map(e => {
             arr.push(e.index);
@@ -111,7 +110,7 @@ export default function Publish() {
         obj.skills = BitOperation(arr)
         obj.currency = obj.currency === 'ETH' ? 1 : 1;
         obj.period = obj.period * 24 * 60 * 60;
-        obj.budget = obj.budget === 0 ? obj.budget : ethers.utils.parseEther(obj.budget);
+        obj.budget = obj.budget === 0 ? obj.budget : ethers.utils.parseEther(`${obj.budget}`);
         obj.attachment = obj.attachment ? obj.attachment : '';
         obj.timestamp = 0;
         obj.disabled = false;
@@ -207,7 +206,7 @@ export default function Publish() {
                     return
                 }
                 return <div className="item-num">
-                            <InputNumber controls={false} addonAfter={selectAfter} />
+                            <InputNumber controls={false} addonAfter={selectAfter} onChange={(e)=>{params.budget = e}} />
                         </div>
             case 'select': 
                 return <div className="item-select">
