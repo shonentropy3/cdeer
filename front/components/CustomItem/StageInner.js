@@ -13,6 +13,7 @@ export default function StageInner(params) {
         {title: '75%', value: 0.75, active: false},
         {title: '100%', value: 1, active: false}
     ])
+    let [amount,setAmount] = useState();
 
     const changePercent = (i) => {
         percent.map(e => {
@@ -20,6 +21,12 @@ export default function StageInner(params) {
         })
         percent[i].active = true;
         setPercent([...percent]);
+
+        // 百分比
+        if (defaultAmount !== 0) {
+            inner[index].amount = defaultAmount * percent[i].value;
+            setInner(inner)
+        }
     }
 
     const onChange = (key, value) => {
@@ -72,7 +79,13 @@ export default function StageInner(params) {
                     }
                 </div>
                 <div className="flex">
-                    <InputNumber className="amount" defaultValue={inner[index]?.amount} onChange={(e) => onChange('amount', e)} /> <p>currency</p>
+                    <InputNumber 
+                        className="amount" 
+                        defaultValue={inner[index]?.amount} 
+                        value={inner[index].amount}
+                        onChange={(e) => onChange('amount', e)} 
+                    /> 
+                    {/* <p>currency</p> */}
                 </div>
             </div>
         </div>

@@ -66,6 +66,22 @@ export default function SkillsCard(params) {
                 selectItem.splice(index,1)
             }
         })
+        tree2.map(ele => {
+            if (ele.id === e.id) {
+                ele.checked = !ele.checked
+            }
+        })
+        tree1.map(ele => {
+            if (ele.id === e.id) {
+                ele.checked = !ele.checked
+            }
+        })
+        stree.map(ele => {
+            if (ele.id === e.id) {
+                ele.checked = !ele.checked
+            }
+        })
+
         setSelectItem([...selectItem]);
     }
 
@@ -73,7 +89,6 @@ export default function SkillsCard(params) {
         let obj = JSON.stringify(selectItem);
         value.list = JSON.parse(obj);
         setValue({...value});
-            console.log(value);
     },[selectItem])
 
     const panel = <div className="tree">

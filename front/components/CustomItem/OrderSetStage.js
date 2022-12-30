@@ -1,6 +1,7 @@
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { useSetState } from "ahooks";
 import { Button, Checkbox, InputNumber, message, Modal } from "antd";
+import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import Image from "next/image";
 import { useEffect, useState } from "react"
@@ -293,14 +294,14 @@ export default function OrderSetStage(params) {
 
     // 总计金额
     const printTotal = () => {
-        let sum = 0;
+        let sum = new BigNumber(0);
         if (stage.orderModel) {
-            sum+=stage.value
+            sum = sum.plus(stage.value)
         }
         for (const i in inner) {
-            sum+=inner[i].amount;
+            sum = sum.plus(inner[i].amount)
         }
-        return <p className="totalText">Total expenses: <span>{sum}</span></p>
+        return <p className="totalText">Total expenses: <span>{sum.toString()}</span></p>
     }
 
     // 总计周期
@@ -438,11 +439,11 @@ export default function OrderSetStage(params) {
                                     Increase advance payment
                                 </Checkbox>
                                 { 
-                                    dataStages[0].period === 0 && stage.orderModel &&
+                                    (dataStages[0].period === 0 || stage.orderModel) &&
                                     <div className="prepay">
                                         
                                         <InputNumber
-                                            defaultValue={dataStages[0].amount}
+                                            defaultValue={ dataStages[0].period === 0 ? dataStages[0].amount : null}
                                             onChange={ e => changeAdvance(e)}
                                         /><span>{order.currency}</span>
                                     </div> 
