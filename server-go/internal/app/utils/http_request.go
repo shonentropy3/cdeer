@@ -17,7 +17,6 @@ import (
 func GetRequest(url string) (res string, err error) {
 	tryTimes := 3 // 重试次数
 	for i := 0; i < tryTimes; i++ {
-		fmt.Println(i)
 		// 超时时间：60秒
 		client := &http.Client{Timeout: time.Second * 60}
 		req, errReq := http.NewRequest("GET", url, nil)
@@ -33,8 +32,8 @@ func GetRequest(url string) (res string, err error) {
 			resp.Body.Close()
 			continue
 		}
-		resp.Body.Close()
 		result, _ := io.ReadAll(resp.Body)
+		resp.Body.Close()
 		return string(result), nil
 	}
 	return "", err
@@ -59,8 +58,8 @@ func PostRequest(url string, data interface{}, contentType string) (res []byte, 
 			resp.Body.Close()
 			continue
 		}
-		resp.Body.Close()
 		result, _ := io.ReadAll(resp.Body)
+		resp.Body.Close()
 		return result, nil
 	}
 	return res, err
@@ -107,8 +106,8 @@ func PostFileRequest(url string, header *multipart.FileHeader) (res []byte, err 
 			result.Body.Close()
 			continue
 		}
-		result.Body.Close()
 		res, _ = io.ReadAll(result.Body)
+		result.Body.Close()
 		return res, nil
 	}
 	return res, err

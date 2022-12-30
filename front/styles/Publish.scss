@@ -448,7 +448,13 @@ $pfM: PingFangSC-Medium, PingFang SC, Microsoft Yahei;
                 .img{
                     width: 39px;
                     height: 32px;
-                    background-color: yellowgreen;
+                    // background-color: yellowgreen;
+
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 32px;
+                    color: #979797;
                 }
                 p{
                     width: 543px;

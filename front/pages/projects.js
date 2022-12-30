@@ -54,8 +54,10 @@ export default function Projects() {
                         e.role = deform_Skills(e?.role || []);
                     })
                     projects = data;
-                    setProjects([...projects]);
+                }else{
+                    projects = [];
                 }
+                setProjects([...projects]);
                 pageConfig.total = res.data.total;
                 setPageConfig({...pageConfig});
             }
@@ -93,11 +95,13 @@ export default function Projects() {
                     <span className='tags-keyword'>Screen</span>
                     <div className="tags-list">
                         {
-                            role.map((e,i) => <div 
-                                                key={i} 
-                                                className={`tags-li ${selectRole === e.value ? 'tags-li-active':''}`}
-                                                onClick={() =>{selectRole = e.value,setSelectRole(selectRole)}}
-                                                >
+                            role.map((e,i) => 
+                                i < 12 &&
+                                <div 
+                                    key={i} 
+                                    className={`tags-li ${selectRole === e.value ? 'tags-li-active':''}`}
+                                    onClick={() =>{selectRole = e.value,setSelectRole(selectRole)}}
+                                >
                                 {e.name}
                             </div>)
                         }

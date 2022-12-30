@@ -28,6 +28,7 @@ export default function OutputStageCard(params) {
     let [isLoading, setIsLoading] = useState(false);
     let [activeIndex, setActiveIndex] = useState();
     let [deadline, setDeadline] = useState();
+    let [going, setGoing] = useState(false);
     
 
     const { useOrderRead: nonces } = useRead('nonces', address);
@@ -54,6 +55,7 @@ export default function OutputStageCard(params) {
         }else{
             message.error(res.msg)
             setIsLoading(false)
+            // setGoing(false)  
         }
     }
 
@@ -289,15 +291,20 @@ export default function OutputStageCard(params) {
 
     // 提交交付成功
     useEffect(() => {
-        if (updateAttachment.isSuccess) {
+        if (updateAttachment.data) {
             // 更新数据库
             updateAttachmentSuccess(updateAttachment.data.hash)
         }
+    },[updateAttachment.data])
+
+    useEffect(() => {
         if (updateAttachment.isError) {
             message.error('error')
             setIsLoading(false);
         }
-    },[updateAttachment])
+    },[updateAttachment.error])
+
+    
 
     // 确认交付成功
     useEffect(() => {
