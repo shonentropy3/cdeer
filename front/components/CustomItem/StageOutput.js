@@ -208,7 +208,7 @@ export default function StageOutput(params) {
             setLast(true);
         }
         // 初始化交付数据 || 已完成
-        if (Order?.stage_json.stages[index].delivery.attachment) {
+        if (Order?.stage_json.stages[index].delivery.content) {
             // 乙方交付过当前阶段
             delevery = Order.stage_json.stages[index].delivery;
             setDelevery({...delevery})
