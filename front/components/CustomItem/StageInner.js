@@ -84,7 +84,8 @@ export default function StageInner(params) {
                         defaultValue={inner[index]?.amount} 
                         value={inner[index].amount}
                         onChange={(e) => onChange('amount', e)} 
-                    /> <p>currency</p>
+                    /> 
+                    {/* <p>currency</p> */}
                 </div>
             </div>
         </div>
