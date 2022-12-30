@@ -47,13 +47,13 @@ describe("detask", function() {
         const tx = await detask.createTask(
             accounts[1].address,
         { 
-            title: "新任务",
+            title: "new task",
             desc: "QmSsw6EcnwEiTT9c4rnAGeSENvsJMepNHmbrgi2S9bXNJr",
             attachment: "QmSsw6EcnwEiTT9c4rnAGeSENvsJMepNHmbrgi2S9bXNJr",
             currency: 2,
             budget: ethers.utils.parseEther("11.23"),
             period: 123213,
-            skills: "197121" , // 1, 2, 3,
+            skills: "50331650" , // 1, 2, 3,
             timestamp: 123213,
             disabled: false
         },

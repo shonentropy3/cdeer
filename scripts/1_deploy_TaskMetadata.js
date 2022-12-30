@@ -2,26 +2,19 @@ const hre = require("hardhat");
 const { writeAbiAddr } = require('./artifact_log.js');
 
 const TaskAddr = require(`../deployments/${hre.network.name}/DeTask.json`);
+const MetaCommonAddr = require(`../deployments/${hre.network.name}/MetaCommon.json`);
 
 async function main() {
     await hre.run('compile');
 
     const [owner] = await hre.ethers.getSigners();
 
-    const MetaCommon = await hre.ethers.getContractFactory("MetaCommon");
-    const common = await MetaCommon.deploy();
-    await common.deployed();
-
-
     const TaskMetadata = await hre.ethers.getContractFactory("TaskMetadata");
 
     // Deploy contract with the correct constructor arguments
     console.log("Order task:", TaskAddr.address);
-
-    const metaData = await TaskMetadata.deploy(TaskAddr.address, common.address);
-    let MetaArtifact = await artifacts.readArtifact("TaskMetadata");
+    const metaData = await TaskMetadata.deploy(TaskAddr.address, MetaCommonAddr.address);
     await metaData.deployed();
-    await writeAbiAddr(MetaArtifact, common.address, "MetaCommon", network.name);
 
     console.log("TaskMetadata deployed to:", metaData.address);
     let artifact = await artifacts.readArtifact("TaskMetadata");

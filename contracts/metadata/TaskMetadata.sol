@@ -31,7 +31,7 @@ contract TaskMetadata is IMetadata {
         (string memory title, , string memory attachment, 
             uint8 currency, uint128 budget, ,uint48 taskskills, uint32 timestamp, )= taskAddr.getTaskInfo(taskId);
 
-        string memory valueStr = metaComm.amountApprox(budget, currency);
+        string memory valueStr = metaComm.amountApprox(budget, currency, false);
         
         bytes memory dataURI = abi.encodePacked(
         '{',
@@ -102,7 +102,7 @@ contract TaskMetadata is IMetadata {
         (string memory title, , ,uint8 currency, uint128 budget, ,uint48 taskskills, uint32 timestamp,)= taskAddr.getTaskInfo(taskId);
 
         string memory dateStr = metaComm.dateTime(timestamp);
-        string memory valueStr = metaComm.amountApprox(budget, currency);
+        string memory valueStr = metaComm.amountApprox(budget, currency, true);
 
         return abi.encodePacked(
                     '<svg id="l_1" data-name="l 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 147.98 99.64">',
@@ -136,25 +136,12 @@ contract TaskMetadata is IMetadata {
         pure
         returns (string memory)
     {
-        return
-            string(
-                abi.encodePacked(
-                    "data:application/json;base64,",
-                    Base64.encode(
-                        bytes(
-                            abi.encodePacked(
-                                '{"image": "',
-                                "data:image/svg+xml;base64,",
-                                Base64.encode(svgFormat),
-                                '"}'
-                            )
-                        )
-                    )
-                )
-            );
+        return string(
+            abi.encodePacked(
+                "data:image/svg+xml;base64,",
+                Base64.encode(svgFormat)
+            )    
+        );
     }
-
-
-
 
 }
