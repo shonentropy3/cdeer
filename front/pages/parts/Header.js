@@ -47,7 +47,7 @@ export default function Header(props) {
 
     const signOut = () => {
         disconnect();
-        localStorage.clear();
+        // localStorage.clear();
     }
 
 
