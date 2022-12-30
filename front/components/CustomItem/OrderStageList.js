@@ -56,6 +56,10 @@ export default function OrderStageList(params) {
 
     // 发起新增
     const updateAppend = () => {
+        if (order.status === 'WaitProlongAgree') {
+            message.warning('请先确认「延期申请」')
+            return
+        }
         setIsLoading(true);
 
         let now = parseInt(new Date().getTime()/1000);
