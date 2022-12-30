@@ -9,7 +9,7 @@ if (typeof window !== "undefined") {
 
   // 创建 axios 请求实例
 serviceAxios = axios.create({
-  baseURL: url + process.env.NEXT_PUBLIC_DEVELOPMENT_API, // 基础请求地址
+  baseURL: process.env.NEXT_PUBLIC_DEVELOPMENT_API, // 基础请求地址
   timeout: 10000 // 请求超时设置
 //   withCredentials: false, // 跨域请求是否需要携带 cookie
 });
