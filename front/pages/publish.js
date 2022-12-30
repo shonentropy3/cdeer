@@ -16,6 +16,9 @@ import { createTask, getSillTreeMap } from "../http/_api/task";
 import { getJwt } from "../utils/GetJwt";
 import { GetSignature } from "../utils/GetSignature";
 import SkillsCard from "../components/CustomCard/SkillsCard";
+import {
+    UploadOutlined
+  } from '@ant-design/icons';
 
 export default function Publish() {
     
@@ -229,7 +232,11 @@ export default function Publish() {
                                 format: (percent) => percent && `${parseFloat(percent.toFixed(2))}%`,
                             }}
                         >
-                <Button><div className="img" /><p>Upload Task requirement document（Word、Excel、PPT、PDF、image、video）<br/>maximum file size：20MB</p></Button>
+                <Button>
+                    <div className="img" >
+                    <UploadOutlined />
+                    </div>
+                    <p>Upload Task requirement document（Word、Excel、PPT、PDF、image、video）<br/>maximum file size：20MB</p></Button>
               </Upload>
         }
     }

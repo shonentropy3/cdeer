@@ -1,6 +1,7 @@
 import { Input, Select, Button, Checkbox, Col, Row, InputNumber, Modal } from "antd"
 import { useEffect, useState } from "react";
 import Computing_time from "../Computing_time";
+import Image from "next/image"
 
 const {TextArea} = Input
 const { Option } = Select;
@@ -9,11 +10,11 @@ function ApplyTaskModal (props) {
     const { open, onCancel, submit, project, userContact, setUserContact, applyInfo, applyLoading } = props;
 
     let [icons, setIcons] = useState([
-        { title: 'telegram', value: '' },
-        { title: 'wechat', value: '' },
-        { title: 'skype', value: '' },
-        { title: 'discord', value: '' },
-        { title: 'phone', value: '' }
+        { title: 'telegram', value: '', icon: "/icon/telegram.png" },
+        { title: 'wechat', value: '', icon: "/icon/wechat.png" },
+        { title: 'skype', value: '', icon: "/icon/skype.png" },
+        { title: 'discord', value: '', icon: "/icon/discord.png" },
+        { title: 'phone', value: '', icon: "/icon/whatsapp.png" }
     ])
 
     let [inner,setInner] = useState({
@@ -116,7 +117,9 @@ function ApplyTaskModal (props) {
                     {
                         icons.map((e,i) => 
                             <div className="item" key={i}>
-                                <div className="icon"></div>
+                                <div className="icon">
+                                    <Image src={e.icon} width={38} height={38} />
+                                </div>
                                 <Input
                                     value={e.value}
                                     onChange={e => changeContact(i,e.target.value)}
