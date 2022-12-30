@@ -136,14 +136,14 @@ func UpdatedProgress(orderID int64) (err error) {
 	}
 	// 状态更新
 	if order.Progress != progress {
-		// 发送消息
-		if err = sendMessage(model.Order{TaskID: order.TaskId.Int64(), Issuer: order.Issuer.String(), Worker: order.Worker.String(), OrderId: orderID}); err != nil {
-			return err
-		}
 		// 更新progress
 		raw := global.DB.Model(&model.Order{}).Where("order_id = ?", orderID).Update("progress", order.Progress)
 		if raw.RowsAffected == 0 {
 			return errors.New("操作失败")
+		}
+		// 发送消息
+		if err = SendMessage(model.Order{TaskID: order.TaskId.Int64(), Issuer: order.Issuer.String(), Worker: order.Worker.String(), OrderId: orderID}); err != nil {
+			return err
 		}
 		return raw.Error
 	}
@@ -165,19 +165,25 @@ func ParseOrderAbort(transHash model.TransHash, Logs []*types.Log) (err error) {
 			tx := global.DB.Begin()
 			// 更新数据
 			fmt.Println("Transaction")
+			// 更新任务状态
+			orderID := vLog.Topics[1].Big().Int64()
+			if err = UpdatedProgress(orderID); err != nil {
+				return err
+			}
 			// 删除任务
 			if err = tx.Model(&model.TransHash{}).Where("hash = ?", vLog.TxHash.String()).Delete(&model.TransHash{}).Error; err != nil {
 				tx.Rollback()
 				return err
 			}
+
 			return tx.Commit().Error
 		}
 	}
 	return errors.New("事件解析失败")
 }
 
-// sendMessage 发送消息
-func sendMessage(order model.Order) (err error) {
+// SendMessage 发送消息
+func SendMessage(order model.Order) (err error) {
 	var task model.Task
 	if err = global.DB.Model(&model.Task{}).Where("task_id = ?", order.TaskID).First(&task).Error; err != nil {
 		return err

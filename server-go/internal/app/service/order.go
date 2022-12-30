@@ -116,10 +116,14 @@ func UpdatedStage(stage request.UpdatedStageRequest, address string) (err error)
 		return err
 	}
 	// 状态流转 校验正确性
-	if stage.Status != "WaitWorkerStage" && order.Status != stage.Status {
+	if stage.Status != "WaitWorkerStage" && order.Status != stage.Status && stage.Status != "" {
 		if err = statusValid(order.Status, stage.Status, stage); err != nil {
 			return err
 		}
+	}
+	// 消息通知
+	if err = sendMessage(order, stage, orderFlowTop, address); err != nil {
+		return err
 	}
 	// rollback操作
 	err, okRun := rollbackStatus(order.Status, stage.Status, stage)
@@ -155,9 +159,8 @@ func UpdatedStage(stage request.UpdatedStageRequest, address string) (err error)
 	if err = saveFlow(stage, address); err != nil {
 		return err
 	}
-	// 消息通知
-	err = sendMessage(order, stage, orderFlowTop, address)
-	return err
+
+	return nil
 }
 
 // UpdatedProgress
@@ -315,10 +318,6 @@ func storeHash(hash string, status string, address string) (runBool bool, err er
 
 // sendMessage 发送消息
 func sendMessage(order model.Order, stage request.UpdatedStageRequest, orderFlowTop model.OrderFlow, sender string) (err error) {
-	// 相同状态不需发送
-	if order.Status == stage.Status {
-		return nil
-	}
 	// 查询task
 	var task model.Task
 	if err = global.DB.Model(&model.Task{}).Where("task_id =?", order.TaskID).First(&task).Error; err != nil {
@@ -332,14 +331,24 @@ func sendMessage(order model.Order, stage request.UpdatedStageRequest, orderFlow
 			return err
 		}
 	}
-
 	// 区分甲方乙方
-	if status == "WaitWorkerConfirmStage" {
+	if status == "WaitWorkerConfirmStage" || status == "DisagreeProlong" {
 		// 发送消息
 		if err = message.Template(status, utils.StructToMap([]any{order, task}), order.Issuer, order.Worker, sender); err != nil {
 			return err
 		}
 	}
+
+	if status == "DisagreeAppend" {
+		mapStr := utils.StructToMap([]any{order, task})
+		stagesNew := gjson.Get(orderFlowTop.Obj, "stages.#.milestone.title")
+		mapStr["stage_name"] = stagesNew.Array()[len(stagesNew.Array())-1].String()
+		// 发送消息
+		if err = message.Template(status, mapStr, order.Issuer, order.Worker, sender); err != nil {
+			return err
+		}
+	}
+	
 	// 申请阶段延长
 	if status == "WaitProlongAgree" && gjson.Get(orderFlowTop.Stages, "period").String() != gjson.Get(stage.Stages, "period").String() {
 		// 判断是否有新交付物
@@ -362,13 +371,22 @@ func sendMessage(order model.Order, stage request.UpdatedStageRequest, orderFlow
 		}
 	}
 	// 申请添加阶段
-	if status == "WaitAppendAgree" && gjson.Get(orderFlowTop.Stages, "period").String() != gjson.Get(stage.Stages, "period").String() {
-		stagesNew := gjson.Get(stage.Stages, "period")
-		mapStr := utils.StructToMap([]any{order, task})
-		mapStr["stage"] = "P" + strconv.Itoa(len(stagesNew.Array()))
-		// 发送消息
-		if err = message.Template(status, mapStr, order.Issuer, order.Worker, sender); err != nil {
-			return err
+	if status == "WaitAppendAgree" {
+		if gjson.Get(order.Stages, "period").String() != gjson.Get(stage.Stages, "period").String() {
+			stagesNew := gjson.Get(stage.Obj, "stages.#.milestone.title")
+			mapStr := utils.StructToMap([]any{order, task})
+			mapStr["stage_name"] = stagesNew.Array()[len(stagesNew.Array())-1].String()
+			// 发送消息
+			if err = message.Template(status, mapStr, order.Issuer, order.Worker, sender); err != nil {
+				return err
+			}
+		} else if order.Status == stage.Status && stage.SignAddress != order.SignAddress && stage.SignAddress != "" && order.SignAddress != "" {
+			stagesNew := gjson.Get(stage.Obj, "stages.#.milestone.title")
+			mapStr := utils.StructToMap([]any{order, task})
+			mapStr["stage_name"] = stagesNew.Array()[len(stagesNew.Array())-1].String()
+			if err = message.Template("WaitAppendPayment", mapStr, order.Issuer, order.Worker, ""); err != nil {
+				return err
+			}
 		}
 	}
 	// 阶段提交交付
