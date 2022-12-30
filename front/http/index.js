@@ -12,7 +12,7 @@ export const addr = () => {
   // 创建 axios 请求实例
 const serviceAxios = axios.create({
   baseURL: process.env.NEXT_PUBLIC_DEVELOPMENT_API, // 基础请求地址
-  timeout: 10000 // 请求超时设置
+  timeout: 20000 // 请求超时设置
 //   withCredentials: false, // 跨域请求是否需要携带 cookie
 });
   // 创建请求拦截
