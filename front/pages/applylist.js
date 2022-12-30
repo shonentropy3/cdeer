@@ -14,6 +14,7 @@ import { useContracts } from "../controller";
 import { ethers } from "ethers";
 import { createOrder } from "../http/_api/order";
 import { useRouter } from "next/router";
+import Identicon from "identicon.js";
 
 export default function ApplyList(params) {
 
@@ -21,7 +22,6 @@ export default function ApplyList(params) {
     const { address } = useAccount();
     const provider = useProvider();
     const { useOrderContractWrite } = useContracts('createOrder');
-    const [imgUrl,setImgUrl] = useState('http://192.168.1.10:8086/')
     
     let [data, setData] = useState([]);     //  报名列表
     let [detail, setDetail] = useState({});     //  需求详情
@@ -98,6 +98,23 @@ export default function ApplyList(params) {
         })
     }
 
+    // 头像
+    const hashAvt = (address) => {
+        var hash = address;  // 15+ hex chars
+        // var options = {
+        //     foreground: [r, g, b, 255],               // rgba black
+        //     background: [255, 255, 255, 255],         // rgba white
+        //     margin: 0.2,                              // 20% margin
+        //     size: 420,                                // 420px square
+        //     format: 'svg'                             // use SVG instead of PNG
+        //     };
+        // create a base64 encoded SVG
+        // var data = new Identicon(hash, options).toString();
+        var data = new Identicon(hash, {format: 'svg'}).toString();
+        data = `data:image/svg+xml;base64,${data}`
+        return data
+    }
+
     const init = async() => {
         const { task_id } = qs.parse(location.search.slice(1));
         contractParams = {
@@ -117,7 +134,8 @@ export default function ApplyList(params) {
         })
         await searchTaskDetail({task_id: task_id})
         .then(res => {
-            if (res.code === 0) {
+            if (res.code === 0 && res.data.list) {
+                
                 detail = res.data.list[0];
                 detail.role = deform_Skills(detail?.role || []);
                 detail.budget = deform_Count(detail.budget,detail.currency);
@@ -145,10 +163,6 @@ export default function ApplyList(params) {
                 break;
         }
     },[useOrderContractWrite.status])
-
-    useEffect(()=>{
-        console.log(imgUrl);
-    },[imgUrl])
 
     return <div className="Applylist">
         {/* 用户详情弹窗 */}
@@ -197,7 +211,15 @@ export default function ApplyList(params) {
                         <div className="product-list-item">
                             <div className="product-list-info">
                                 <div className="product-img">
-                                    <img src={imgUrl+e.user.avatar} />
+                                    {
+                                        process &&
+                                        <img 
+                                            src={ e.user.avatar ? 
+                                            "http://" + window.document.location.hostname + process.env.NEXT_PUBLIC_DEVELOPMENT_API + e.user.avatar 
+                                            :
+                                            hashAvt(e.apply_addr)} 
+                                        />
+                                    }
                                 </div>
                                 <div className="product-info">
                                     <p className="applicant-name" >{e.user.username ? e.user.username : e.apply_addr.substring(0,5)+"..."+e.apply_addr.substring(38,42)}<span onClick={()=>showUserInfo(e.user)}>View personal information</span></p>
