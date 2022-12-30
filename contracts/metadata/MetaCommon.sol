@@ -132,7 +132,7 @@ contract MetaCommon is Ownable {
             "Z"));
     }
 
-    function amountConvert(uint amount, uint dec) internal pure returns (string memory budget) {
+    function amountConvert(uint amount, uint dec, bool escape) internal pure returns (string memory budget) {
           uint base = 1 * 10 ** dec;
           uint base_d10 = base / 10;
           uint base_d100 = base / 100;
@@ -163,11 +163,16 @@ contract MetaCommon is Ownable {
                 uint b2 = (amount - (b * base_d1000)) / base_d10000;
                 budget = string(abi.encodePacked(unicode"≈", "0.00", Strings.toString(b), Strings.toString(b2)));
             } else {
-                budget = "&lt;0.001";
+                if (escape) {
+                    budget = "&lt;0.001";
+                } else {
+                    budget = "<0.001";
+                }
+                
             }
     }
 
-    function tokenAmountApprox(uint amount, address token) external view returns (string memory budget) {
+    function tokenAmountApprox(uint amount, address token, bool escape) external view returns (string memory budget) {
       uint dec = 18;
       string memory symbol;
       if (token == address(0)) {
@@ -187,19 +192,19 @@ contract MetaCommon is Ownable {
         return "Negotiable";
       }
       
-      budget = amountConvert(amount, 18);
+      budget = amountConvert(amount, 18, escape);
       return string(
                     abi.encodePacked(budget, " ",
             symbol));
     }
 
     // 
-    function amountApprox(uint amount, uint8 currency) external view returns (string memory budget) {
+    function amountApprox(uint amount, uint8 currency, bool escape) external view returns (string memory budget) {
         if(amount == 0) {
             return "Negotiable";
         } 
 
-        budget = amountConvert(amount, 18);
+        budget = amountConvert(amount, 18, escape);
         return string(
                     abi.encodePacked(budget, " ",
             currencyNames[currency]));

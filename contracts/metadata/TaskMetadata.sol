@@ -31,7 +31,7 @@ contract TaskMetadata is IMetadata {
         (string memory title, , string memory attachment, 
             uint8 currency, uint128 budget, ,uint48 taskskills, uint32 timestamp, )= taskAddr.getTaskInfo(taskId);
 
-        string memory valueStr = metaComm.amountApprox(budget, currency);
+        string memory valueStr = metaComm.amountApprox(budget, currency, false);
         
         bytes memory dataURI = abi.encodePacked(
         '{',
@@ -102,10 +102,10 @@ contract TaskMetadata is IMetadata {
         (string memory title, , ,uint8 currency, uint128 budget, ,uint48 taskskills, uint32 timestamp,)= taskAddr.getTaskInfo(taskId);
 
         string memory dateStr = metaComm.dateTime(timestamp);
-        string memory valueStr = metaComm.amountApprox(budget, currency);
+        string memory valueStr = metaComm.amountApprox(budget, currency, true);
 
         return abi.encodePacked(
-                    '<svg id="l_1" data-name="l 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 147.98 99.64">',
+                    '<svg id="l_1" data-name="l 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 147.98 99.64">',
                     '<defs><linearGradient id="a" x1="1074.54" y1="1581.87" x2="1074.55" y2="1456.31" gradientTransform="matrix(0 -1 -1 0 1595.1 1124.36)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#d3d9f7"/><stop offset="1" stop-color="#dff8fd"/></linearGradient>',
                     '<linearGradient id="d1" x1="-669.05" y1="1241.1" x2="-658.71" y2="1241.1" gradientTransform="matrix(0 1 1 0 -1228.87 694.87)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#d4dcf8"/><stop offset="1" stop-color="#999"/></linearGradient>',
                     '<style>.b1,.b2,.b3{isolation:isolate}.b1{font-size:4px}.b1,.b3{fill:#1f1e2e;font-family:PingFangSC-Medium,PingFang SC}.b1{letter-spacing:.09em}.b2,.b3{letter-spacing:.07em}.b2{font-size:3.4px;font-family:PingFangSC-Light,PingFang SC;fill:gray}.b3{font-size:5px}</style>',

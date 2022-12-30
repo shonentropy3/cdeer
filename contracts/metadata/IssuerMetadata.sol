@@ -44,7 +44,8 @@ contract IssuerMetadata is IMetadata {
 
         string memory valueStr = metaComm.tokenAmountApprox(
             order.amount,
-            order.token
+            order.token,
+            false
         );
 
         return
@@ -179,7 +180,8 @@ contract IssuerMetadata is IMetadata {
 
         string memory valueStr = metaComm.tokenAmountApprox(
             order.amount,
-            order.token
+            order.token,
+            true
         );
 
         return
