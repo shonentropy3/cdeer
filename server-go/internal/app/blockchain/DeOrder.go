@@ -142,7 +142,7 @@ func UpdatedProgress(orderID int64) (err error) {
 			return errors.New("操作失败")
 		}
 		// 发送消息
-		if err = SendMessage(model.Order{TaskID: order.TaskId.Int64(), Issuer: order.Issuer.String(), Worker: order.Worker.String(), OrderId: orderID}); err != nil {
+		if err = SendMessage(model.Order{TaskID: order.TaskId.Int64(), Issuer: order.Issuer.String(), Worker: order.Worker.String(), OrderId: orderID, Progress: order.Progress}); err != nil {
 			return err
 		}
 		return raw.Error

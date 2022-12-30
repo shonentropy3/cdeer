@@ -304,8 +304,6 @@ export default function OutputStageCard(params) {
         }
     },[updateAttachment.error])
 
-    
-
     // 确认交付成功
     useEffect(() => {
         if (confirmAttachment.isSuccess) {
@@ -337,7 +335,6 @@ export default function OutputStageCard(params) {
     },[getWithdraw])
     
     // 终止成功
-    
     useEffect(() => {
         if (abortOrder.isSuccess) {
             message.success("操作成功")

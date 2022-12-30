@@ -181,16 +181,6 @@ export default function OrderStageList(params) {
         })
     }
 
-    // 选择添加阶段展示
-    const switchAppend = () => {
-        if (order.sign_address === address) {
-            // 是我发起的添加阶段
-            
-        }else{
-            // 不是我发起的添加阶段
-        }
-    }
-
     useEffect(() => {
         if (chainStages.data && data.length === 0) {
             let deliveryDate = 0;
@@ -300,9 +290,6 @@ export default function OrderStageList(params) {
                     :
                     order.progress === 4 && order.status !== 'WaitAppendAgree' && 
                     <Button className="btn-add mb60" onClick={() => setIsAppend(true)}>Establish</Button>
-                }
-                {
-                    order.status === 'WaitAppendAgree' && switchAppend()
                 }
 
             </div>

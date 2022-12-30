@@ -25,13 +25,23 @@ export default function StageInner(params) {
         // 百分比
         if (defaultAmount !== 0) {
             inner[index].amount = defaultAmount * percent[i].value;
-            setInner(inner)
+            setInner({...inner})
+            amount = inner[index].amount;
+            setAmount(amount);
         }
     }
 
     const onChange = (key, value) => {
         inner[index][key] = value;
-        setInner(inner);
+        setInner({...inner});
+        if (key === 'amount') {
+            percent.map(e => {
+                e.active = false;
+            })
+            setPercent([...percent]);
+            amount = value;
+            setAmount(amount);
+        }
     }
 
     const confirm = () => {
@@ -49,6 +59,13 @@ export default function StageInner(params) {
         setViewModel(true);
         setDataViewModel(false);
     }
+
+    useEffect(() => {
+        if (inner[index]?.amount) {
+            amount = inner[index]?.amount;
+            setAmount(amount);
+        }
+    },[])
 
     return <div className="stageInner">
         <div className="inner">
@@ -82,7 +99,7 @@ export default function StageInner(params) {
                     <InputNumber 
                         className="amount" 
                         defaultValue={inner[index]?.amount} 
-                        value={inner[index].amount}
+                        value={amount}
                         onChange={(e) => onChange('amount', e)} 
                     /> 
                     {/* <p>currency</p> */}
