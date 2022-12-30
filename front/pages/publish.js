@@ -210,7 +210,7 @@ export default function Publish() {
                     return
                 }
                 return <div className="item-num">
-                            <InputNumber controls={false} addonAfter={selectAfter} onChange={(e)=>{params.budget = e}} />
+                            <InputNumber min={0} controls={false} addonAfter={selectAfter} onChange={(e)=>{params.budget = e}} />
                         </div>
             case 'select': 
                 return <div className="item-select">

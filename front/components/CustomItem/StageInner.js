@@ -75,7 +75,7 @@ export default function StageInner(params) {
         <div className="inner">
             <p className="inner-title">Delivery duration</p>
             <div className="flex">
-                <InputNumber className="period" defaultValue={inner[index]?.period} onChange={(e) => onChange('period', e)} /> 
+                <InputNumber min={0} className="period" defaultValue={inner[index]?.period} onChange={(e) => onChange('period', e)} /> 
                 <p>Day</p>
             </div>
         </div>
@@ -97,6 +97,7 @@ export default function StageInner(params) {
                 </div>
                 <div className="flex">
                     <InputNumber 
+                        min={0}
                         className="amount" 
                         defaultValue={inner[index]?.amount} 
                         value={amount}

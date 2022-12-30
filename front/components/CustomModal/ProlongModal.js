@@ -28,7 +28,7 @@ export default function ProlongModal(params) {
         <div className="inner">
             <p className="inner-title">Select extension time</p>
             <div className="flex">
-                <InputNumber className="input" controls={false}  value={period} onChange={e => setPeriod(e)} />
+                <InputNumber min={0} className="input" controls={false}  value={period} onChange={e => setPeriod(e)} />
                 <p>Day</p>
             </div>
         </div>

@@ -122,6 +122,10 @@ export default function OutputStageCard(params) {
 
     // 发起阶段延长
     const updateProlong = (period) => {
+        if (order.status === 'WaitAppendAgree') {
+            message.warning('请先确认「新增申请」')
+            return
+        }
         setIsLoading(true);
 
         let now = parseInt(new Date().getTime()/1000);
