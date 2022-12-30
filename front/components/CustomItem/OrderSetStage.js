@@ -374,6 +374,7 @@ export default function OrderSetStage(params) {
                         stage.orderModel && 
                         <div className="prepay">
                             <InputNumber
+                                min={0}
                                 value={stage.value} 
                                 onChange={ e => changeAdvance(e)}
                             /><span>{order.currency}</span>
@@ -443,6 +444,7 @@ export default function OrderSetStage(params) {
                                     <div className="prepay">
                                         
                                         <InputNumber
+                                            min={0}
                                             defaultValue={ dataStages[0].period === 0 ? dataStages[0].amount : null}
                                             onChange={ e => changeAdvance(e)}
                                         /><span>{order.currency}</span>

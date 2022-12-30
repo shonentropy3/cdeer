@@ -98,7 +98,7 @@ function ApplyTaskModal (props) {
             <div className="apply-task-applyInfo-priceAndtime">
                 <div className="apply-task-applyInfo-price">
                     <p>Give your quotation</p>
-                    <InputNumber className="applyPrice" onChange={e => onchange(e, 'valuation')} value={inner.valuation}  keyboard={false} />
+                    <InputNumber min={0} className="applyPrice" onChange={e => onchange(e, 'valuation')} value={inner.valuation}  keyboard={false} />
                     <Select className="applyCurrency" defaultValue="ETH" disabled >
                         <Option value="ETH">ETH</Option>
                     </Select>

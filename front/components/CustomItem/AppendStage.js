@@ -58,7 +58,7 @@ export default function AppendStage(params) {
         <div className="inner">
             <p className="inner-title">Delivery duration</p>
             <div className="flex">
-                <InputNumber className="period" onChange={(e) => onChange('period', e)} /> 
+                <InputNumber min={0} className="period" onChange={(e) => onChange('period', e)} /> 
                 <p>Day</p>
             </div>
         </div>
@@ -79,7 +79,7 @@ export default function AppendStage(params) {
                     }
                 </div>
                 <div className="flex">
-                    <InputNumber className="amount" onChange={(e) => onChange('amount', e)} /> <p>currency</p>
+                    <InputNumber min={0} className="amount" onChange={(e) => onChange('amount', e)} /> <p>currency</p>
                 </div>
             </div>
         </div>
