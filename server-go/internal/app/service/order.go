@@ -260,13 +260,11 @@ func saveFlow(tx *gorm.DB, stage request.UpdatedStageRequest, address string) (e
 	if stage.Obj != "" {
 		orderFlow.Obj = stage.Obj
 	} else {
-		// 获取Obj
-		err, hashJSON := UploadJSON(stage.Obj)
+		url := fmt.Sprintf("%s/%s", global.CONFIG.IPFS.API, order.Attachment)
+		orderFlow.Obj, err = utils.GetRequest(url)
 		if err != nil {
-			fmt.Println("err here")
 			return err
 		}
-		orderFlow.Obj = hashJSON
 	}
 	// 阶段划分JSON
 	if stage.Stages != "" {
