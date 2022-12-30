@@ -103,7 +103,7 @@ func CreateOrder(orderReq request.CreateOrderRequest, address string) (err error
 func UpdatedStage(stage request.UpdatedStageRequest, address string) (err error) {
 	// TODO: 权限控制
 	// 保存交易Hash
-	runBool, err := storeHash(stage.Hash, stage.Status, address)
+	runBool, err := storeHash(stage, address)
 	if err != nil || runBool {
 		return err
 	}
@@ -263,7 +263,7 @@ func saveFlow(tx *gorm.DB, stage request.UpdatedStageRequest, address string) (e
 		// 获取Obj
 		err, hashJSON := UploadJSON(stage.Obj)
 		if err != nil {
-			fmt.Println("err here1")
+			fmt.Println("err here")
 			return err
 		}
 		orderFlow.Obj = hashJSON
@@ -348,7 +348,7 @@ func statusValid(old string, new string, stage request.UpdatedStageRequest) (err
 		"WorkerAgreeStage":       {"IssuerAgreeStage", "WaitWorkerConfirmStage"},
 		"IssuerAgreeStage":       {"WaitProlongAgree", "WaitAppendAgree", "AbortOrder"},
 		"WaitProlongAgree":       {"AgreeProlong", "DisagreeProlong"},
-		"WaitAppendAgree":        {"AgreeAppend", "DisagreeAppend", "WaitProlongAgree"},
+		"WaitAppendAgree":        {"AgreeAppend", "DisagreeAppend"},
 	}
 	status, ok := statusMap[old]
 	if !ok {
@@ -361,31 +361,34 @@ func statusValid(old string, new string, stage request.UpdatedStageRequest) (err
 }
 
 // storeHash 保存Hash
-func storeHash(hash string, status string, address string) (runBool bool, err error) {
-	if hash == "" {
+func storeHash(stage request.UpdatedStageRequest, address string) (runBool bool, err error) {
+	if stage.Hash == "" {
 		return runBool, nil
 	}
-	if status == "AgreeProlong" {
+	if stage.Status == "AgreeProlong" {
 		runBool = true
-		transHash := model.TransHash{SendAddr: address, EventName: "ProlongStage", Hash: hash}
+		transHash := model.TransHash{SendAddr: address, EventName: "ProlongStage", Hash: stage.Hash}
 		if err = SaveHash(transHash); err != nil {
 			return runBool, errors.New("操作失败")
 		}
-	} else if status == "AgreeAppend" {
+	} else if stage.Status == "AgreeAppend" {
 		runBool = true
-		transHash := model.TransHash{SendAddr: address, EventName: "AppendStage", Hash: hash}
+		transHash := model.TransHash{SendAddr: address, EventName: "AppendStage", Hash: stage.Hash}
 		if err = SaveHash(transHash); err != nil {
 			return runBool, errors.New("操作失败")
 		}
+	} else {
+		//runBool = true
+		// TODO: 交付物
+		//blockchain.UpdatedProgress(orderID)
+		// 查询当前记录
+		//return runBool, nil
 	}
 	return runBool, nil
 }
 
 // sendMessage 发送消息
 func sendMessage(order model.Order, stage request.UpdatedStageRequest, orderFlowTop model.OrderFlow, sender string) (err error) {
-	if stage.Status == "" {
-		return nil
-	}
 	// 查询task
 	var task model.Task
 	if err = global.DB.Model(&model.Task{}).Where("task_id =?", order.TaskID).First(&task).Error; err != nil {
@@ -471,6 +474,8 @@ func sendMessage(order model.Order, stage request.UpdatedStageRequest, orderFlow
 	}
 	// 申请添加阶段
 	if status == "WaitAppendAgree" {
+		fmt.Println(gjson.Get(order.Stages, "period").String())
+		fmt.Println(gjson.Get(stage.Stages, "period").String())
 		if gjson.Get(order.Stages, "period").String() != gjson.Get(stage.Stages, "period").String() {
 			stagesNew := gjson.Get(stage.Obj, "stages.#.milestone.title")
 			mapStr := utils.StructToMap([]any{order, task})
@@ -479,7 +484,7 @@ func sendMessage(order model.Order, stage request.UpdatedStageRequest, orderFlow
 			if err = message.Template(status, mapStr, order.Issuer, order.Worker, sender); err != nil {
 				return err
 			}
-		} else if order.Status == stage.Status && stage.SignAddress != order.SignAddress && stage.SignAddress != "" && order.SignAddress != "" {
+		} else {
 			stagesNew := gjson.Get(stage.Obj, "stages.#.milestone.title")
 			mapStr := utils.StructToMap([]any{order, task})
 			mapStr["stage_name"] = stagesNew.Array()[len(stagesNew.Array())-1].String()
@@ -491,8 +496,9 @@ func sendMessage(order model.Order, stage request.UpdatedStageRequest, orderFlow
 	// 阶段提交交付
 	if stage.Obj != "" && gjson.Get(orderFlowTop.Obj, "stages").String() != gjson.Get(stage.Obj, "stages").String() {
 		// 判断是否有新交付物
-		attachmentNew := gjson.Get(stage.Obj, "stages.#.delivery.attachment")
-		attachmentOld := gjson.Get(orderFlowTop.Obj, "stages.#.delivery.attachment")
+		attachmentNew := gjson.Get(stage.Obj, "stages.#.delivery")
+		attachmentOld := gjson.Get(orderFlowTop.Obj, "stages.#.delivery")
+		stagesNew := gjson.Get(order.Stages, "period")
 		// 不是阶段交付
 		if len(attachmentNew.Array()) != len(attachmentOld.Array()) {
 			return nil
@@ -500,9 +506,13 @@ func sendMessage(order model.Order, stage request.UpdatedStageRequest, orderFlow
 		// 遍历得到哪个阶段交付
 		for i := 0; i < len(attachmentNew.Array()); i++ {
 			if attachmentNew.Array()[i].String() != attachmentOld.Array()[i].String() && attachmentNew.Array()[i].String() != "" {
+				// 如果有预付款
+				if stagesNew.Array()[0].Int() == 0 {
+					i -= 1
+				}
 				mapStr := utils.StructToMap([]any{order, task})
 				mapStr["stage"] = "P" + strconv.Itoa(i+1)
-				if err = message.Template(status, mapStr, order.Issuer, order.Worker, ""); err != nil {
+				if err = message.Template("WorkerDelivery", mapStr, order.Issuer, order.Worker, ""); err != nil {
 					return err
 				}
 				break
