@@ -102,6 +102,7 @@ export default function Publish() {
         if (res.code !== 7) {
             params.attachment = res.data.hash;
         }
+        setFileList([...fileList])
     }
 
     const comfirm = async() => {
