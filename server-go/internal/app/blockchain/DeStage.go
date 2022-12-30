@@ -167,7 +167,7 @@ func parseProlongStage(transHash model.TransHash, Logs []*types.Log) (err error)
 			type StageData struct {
 				Stage string `json:"stage"`
 			}
-			if err = sendMessage(orderID, "AgreeProlong", transHash.SendAddr, StageData{Stage: prolongStage.StageIndex.String()}); err != nil {
+			if err = sendMessage(orderID, "AgreeProlong", transHash.SendAddr, StageData{Stage: "P" + prolongStage.StageIndex.String()}); err != nil {
 				tx.Rollback()
 				return err
 			}
