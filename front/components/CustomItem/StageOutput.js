@@ -116,7 +116,7 @@ export default function StageOutput(params) {
                         <Button loading={loading} className="abort" onClick={() => abort()}>Abort</Button>
                         <Button className="permit" onClick={() => checkDelivery()}>
                             {
-                                Order.stage_json.stages[index].delivery.attachment ? "Resubmit" : "Submit"
+                                Order.stage_json.stages[index].delivery.content ? "Resubmit" : "Submit"
                             }
                         </Button>
                     </div>
