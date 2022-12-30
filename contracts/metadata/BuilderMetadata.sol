@@ -240,21 +240,11 @@ contract BuilderMetadata is IMetadata {
         pure
         returns (string memory)
     {
-        return
-            string(
-                abi.encodePacked(
-                    "data:application/json;base64,",
-                    Base64.encode(
-                        bytes(
-                            abi.encodePacked(
-                                '{"image": "',
-                                "data:image/svg+xml;base64,",
-                                Base64.encode(svgFormat),
-                                '"}'
-                            )
-                        )
-                    )
-                )
-            );
+        return string(
+            abi.encodePacked(
+                "data:image/svg+xml;base64,",
+                Base64.encode(svgFormat)
+            )    
+        );
     }
 }
