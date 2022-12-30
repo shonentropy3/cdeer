@@ -3,11 +3,14 @@ package blockchain
 import (
 	ABI "code-market-admin/abi"
 	"code-market-admin/internal/app/global"
+	"code-market-admin/internal/app/message"
 	"code-market-admin/internal/app/model"
+	"code-market-admin/internal/app/utils"
 	"errors"
 	"fmt"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/tidwall/gjson"
 	"strings"
 )
 
@@ -20,10 +23,10 @@ func DeStage(transHash model.TransHash, Logs []*types.Log) (haveBool bool, err e
 		err = parseSetStage(Logs)
 		return true, err
 	case "AppendStage":
-		err = parseAppendStage(Logs)
+		err = parseAppendStage(transHash, Logs)
 		return true, err
 	case "ProlongStage":
-		err = parseProlongStage(Logs)
+		err = parseProlongStage(transHash, Logs)
 		return true, err
 
 	}
@@ -86,7 +89,7 @@ func parseSetStage(Logs []*types.Log) (err error) {
 }
 
 // parseAppendStage 解析AppendStage事件
-func parseAppendStage(Logs []*types.Log) (err error) {
+func parseAppendStage(transHash model.TransHash, Logs []*types.Log) (err error) {
 	contractAbi, err := abi.JSON(strings.NewReader(ABI.DeStageMetaData.ABI))
 	if err != nil {
 		return err
@@ -100,10 +103,6 @@ func parseAppendStage(Logs []*types.Log) (err error) {
 				continue
 			}
 			orderID := vLog.Topics[1].Big().Uint64()
-			// 保存order日志
-			if err = issuerAgreeOperation(int64(orderID)); err != nil {
-				return err
-			}
 			// 开始事务
 			tx := global.DB.Begin()
 			// 更新数据
@@ -112,10 +111,12 @@ func parseAppendStage(Logs []*types.Log) (err error) {
 				tx.Rollback()
 				return err
 			}
-			// 任务状态改变
-			err = tx.Model(&model.Order{}).Where("order_id = ?", orderID).Update("status", "IssuerAgreeStage").Error
-			if err != nil {
-				tx.Rollback()
+			// 保存order日志 && 将Order状态改变
+			if err = issuerAgreeOperation(int64(orderID)); err != nil {
+				return err
+			}
+			// 发送消息
+			if err = sendMessage(orderID, "AgreeAppend", transHash.SendAddr, nil); err != nil {
 				return err
 			}
 			// 删除任务
@@ -130,7 +131,7 @@ func parseAppendStage(Logs []*types.Log) (err error) {
 }
 
 // parseProlongStage 解析ProlongStage事件
-func parseProlongStage(Logs []*types.Log) (err error) {
+func parseProlongStage(transHash model.TransHash, Logs []*types.Log) (err error) {
 	contractAbi, err := abi.JSON(strings.NewReader(ABI.DeStageMetaData.ABI))
 	if err != nil {
 		return err
@@ -162,6 +163,14 @@ func parseProlongStage(Logs []*types.Log) (err error) {
 				tx.Rollback()
 				return err
 			}
+			// 发送消息
+			type StageData struct {
+				Stage string `json:"stage"`
+			}
+			if err = sendMessage(orderID, "AgreeProlong", transHash.SendAddr, StageData{Stage: prolongStage.StageIndex.String()}); err != nil {
+				tx.Rollback()
+				return err
+			}
 			// 删除任务
 			if err = tx.Model(&model.TransHash{}).Where("hash = ?", vLog.TxHash.String()).Delete(&model.TransHash{}).Error; err != nil {
 				tx.Rollback()
@@ -171,4 +180,35 @@ func parseProlongStage(Logs []*types.Log) (err error) {
 		}
 	}
 	return errors.New("事件解析失败")
+}
+
+// sendMessage 发送消息
+func sendMessage(orderID uint64, status string, sender string, inter any) (err error) {
+	// Order信息
+	var order model.Order
+	if err = global.DB.Model(&model.Order{}).Where("order_id = ?", orderID).First(&order).Error; err != nil {
+		return err
+	}
+	if status == "AgreeAppend" {
+		// 查询日志记录
+		var orderFlowTop model.OrderFlow
+		if err = global.DB.Model(&model.OrderFlow{}).Where("order_id = ? AND del = 0", orderID).Order("level desc").First(&orderFlowTop).Error; err != nil {
+			return err
+		}
+		stagesNew := gjson.Get(orderFlowTop.Obj, "stages.#.milestone.title")
+		type StageData struct {
+			StageName string `json:"stage_name"`
+		}
+		stageName := stagesNew.Array()[len(stagesNew.Array())-1].String()
+		inter = StageData{StageName: stageName}
+	}
+	// Task信息
+	var task model.Task
+	if err = global.DB.Model(&model.Task{}).Where("task_id = ?", order.TaskID).First(&task).Error; err != nil {
+		return err
+	}
+	if err = message.Template(status, utils.StructToMap([]any{order, task, inter}), order.Issuer, order.Worker, sender); err != nil {
+		return err
+	}
+	return nil
 }
