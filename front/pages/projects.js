@@ -54,8 +54,10 @@ export default function Projects() {
                         e.role = deform_Skills(e?.role || []);
                     })
                     projects = data;
-                    setProjects([...projects]);
+                }else{
+                    projects = [];
                 }
+                setProjects([...projects]);
                 pageConfig.total = res.data.total;
                 setPageConfig({...pageConfig});
             }
