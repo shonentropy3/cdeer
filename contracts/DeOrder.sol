@@ -6,6 +6,8 @@ import "./interface/IOrder.sol";
 import "./interface/IOrderSBT.sol";
 import "./interface/IStage.sol";
 import './interface/IWETH9.sol';
+import './interface/IPermit2.sol';
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/draft-IERC20Permit.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import './libs/TransferHelper.sol';
@@ -14,13 +16,14 @@ import './Multicall.sol';
 
 
 
-contract DeOrder is IOrder, Multicall, Ownable {
+contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
     error PermissionsError();
     error ProgressError();
     error AmountError(uint reason); // 0: mismatch , 1: need pay
     error ParamError();
     error NonceError();
     error Expired();
+    error UnSupportToken();
 
     uint public constant FEE_BASE = 10000;
     uint public fee = 500;
@@ -30,7 +33,8 @@ contract DeOrder is IOrder, Multicall, Ownable {
     address public builderSBT;
     address public issuerSBT;
 
-    IWETH9 public weth;
+    IWETH9 public immutable WETH;
+    IPermit2 public immutable PERMIT2;
     
 
     uint public currOrderId;
@@ -38,6 +42,8 @@ contract DeOrder is IOrder, Multicall, Ownable {
     // orderId  = > 
     mapping(uint => Order) private orders;
     mapping(address => uint) public nonces;
+
+    mapping(address => bool) public supportTokens;
 
     bytes32 public DOMAIN_SEPARATOR;
     bytes32 public constant PERMITSTAGE_TYPEHASH = keccak256("PermitStage(uint256 orderId,uint256[] amounts,uint256[] periods,uint256 nonce,uint256 deadline)");
@@ -52,10 +58,15 @@ contract DeOrder is IOrder, Multicall, Ownable {
     event AttachmentUpdated(uint indexed orderId, string attachment);
     event FeeUpdated(uint fee, address feeTo);
     event StageUpdated(address stage);
+    event SupportToken(address token, bool enabled);
 
-    constructor(address _weth) {
-        weth = IWETH9(_weth);
+    constructor(address _weth, address _permit2) {
+        WETH = IWETH9(_weth);
+        PERMIT2 = IPermit2(_permit2);
         feeTo = msg.sender;
+
+        supportTokens[_weth] = true;
+        supportTokens[address(0)] = true;
 
         DOMAIN_SEPARATOR = keccak256(
         abi.encode(
@@ -69,14 +80,17 @@ contract DeOrder is IOrder, Multicall, Ownable {
                 address(this)
             )
         );
+
+        
     }
 
     receive() external payable {
-        assert(msg.sender == address(weth)); // only accept ETH via fallback from the WETH contract
+        assert(msg.sender == address(WETH)); // only accept ETH via fallback from the WETH contract
     }
 
     function createOrder(uint _taskId, address _issuer, address _worker, address _token, uint _amount) external payable {
         if(address(0) == _worker || address(0) == _issuer || _worker == _issuer) revert ParamError();
+        if(!supportTokens[_token]) revert UnSupportToken();
 
         currOrderId += 1;
         orders[currOrderId] = Order({
@@ -101,7 +115,9 @@ contract DeOrder is IOrder, Multicall, Ownable {
     function modifyOrder(uint orderId, address token, uint amount) external payable {
         Order storage order = orders[orderId];
         if(order.progress >= OrderProgess.Ongoing) revert ProgressError();
-        if(msg.sender != order.issuer) revert PermissionsError(); 
+        if(msg.sender != order.issuer) revert PermissionsError();
+        if(!supportTokens[token]) revert UnSupportToken();
+        
 
         // if change token , must refund
         if (orders[orderId].token != token && order.payed > 0) {
@@ -212,25 +228,58 @@ contract DeOrder is IOrder, Multicall, Ownable {
     }
 
 
+
     function payOrderWithPermit(uint orderId, uint amount, uint deadline, uint8 v, bytes32 r, bytes32 s) external {
         IERC20Permit(orders[orderId].token).permit(msg.sender, address(this), amount, deadline, v, r, s);
         payOrder(orderId, amount);
     }
 
     // anyone can pay for this order
-    function payOrder(uint orderId, uint amount) public payable {
+    function payOrder(uint orderId, uint amount) public payable nonReentrant {
         Order storage order = orders[orderId];
         address token = order.token;
 
         if (token == address(0)) {
             uint b = address(this).balance;
-            IWETH9(weth).deposit{value: b}();
+            IWETH9(WETH).deposit{value: b}();
             order.payed += b;
         } else {
             TransferHelper.safeTransferFrom(token, msg.sender, address(this), amount);
             order.payed += amount;
         }
     }
+
+    function payOrderWithPermit2(
+        uint orderId,
+        uint256 amount,
+        IPermit2.PermitTransferFrom calldata permit,
+        bytes calldata signature
+    ) external nonReentrant {
+
+        Order storage order = orders[orderId];
+        address token = order.token;
+        require(token != address(0), "not token");
+        
+        // Transfer tokens from the caller to this contract.
+        PERMIT2.permitTransferFrom(
+            permit, // The permit message.
+            // The transfer recipient and amount.
+            IPermit2.SignatureTransferDetails({
+                to: address(this),
+                requestedAmount: amount
+            }),
+            // The owner of the tokens, which must also be
+            // the signer of the message, otherwise this call
+            // will fail.
+            msg.sender,
+            // The packed signature that was the result of signing
+            // the EIP712 hash of `permit`.
+            signature
+        );
+
+        order.payed += amount;
+    }
+
 
     // 提交交付
     function updateAttachment(uint _orderId, string calldata _attachment) external {
@@ -347,7 +396,7 @@ contract DeOrder is IOrder, Multicall, Ownable {
         if (_amount == 0) return;
 
         if (address(0) == _token) {
-            IWETH9(weth).withdraw(_amount);
+            IWETH9(WETH).withdraw(_amount);
             TransferHelper.safeTransferETH(_to, _amount);
         } else {
             TransferHelper.safeTransfer(_token, _to, _amount);
@@ -372,6 +421,11 @@ contract DeOrder is IOrder, Multicall, Ownable {
     function setSBT(address _builder, address _issuer) external onlyOwner {
         builderSBT = _builder;
         issuerSBT = _issuer;
+    }
+
+    function setSupportToken(address _token, bool enable) external onlyOwner {
+        supportTokens[_token] = enable;
+        emit SupportToken(_token, enable);
     }
 
 }
