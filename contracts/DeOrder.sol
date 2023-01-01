@@ -7,11 +7,12 @@ import "./interface/IOrderSBT.sol";
 import "./interface/IStage.sol";
 import './interface/IWETH9.sol';
 import './interface/IPermit2.sol';
+import './interface/IOrderVerifier.sol';
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/draft-IERC20Permit.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import './libs/TransferHelper.sol';
-import "./libs/ECDSA.sol";
+
 import './Multicall.sol';
 
 
@@ -21,11 +22,9 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
     error ProgressError();
     error AmountError(uint reason); // 0: mismatch , 1: need pay
     error ParamError();
-    error NonceError();
-    error Expired();
     error UnSupportToken();
 
-    uint public constant FEE_BASE = 10000;
+    uint private constant FEE_BASE = 10000;
     uint public fee = 500;
     address public feeTo;
 
@@ -35,20 +34,15 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
 
     IWETH9 public immutable WETH;
     IPermit2 public immutable PERMIT2;
+    IOrderVerifier public immutable verifier;
     
 
     uint public currOrderId;
 
     // orderId  = > 
     mapping(uint => Order) private orders;
-    mapping(address => uint) public nonces;
 
     mapping(address => bool) public supportTokens;
-
-    bytes32 public DOMAIN_SEPARATOR;
-    bytes32 public constant PERMITSTAGE_TYPEHASH = keccak256("PermitStage(uint256 orderId,uint256[] amounts,uint256[] periods,uint256 nonce,uint256 deadline)");
-    bytes32 public constant PERMITPROSTAGE_TYPEHASH = keccak256("PermitProStage(uint256 orderId,uint256 stageIndex,uint256 period,uint256 nonce,uint256 deadline)");
-    bytes32 public constant PERMITAPPENDSTAGE_TYPEHASH = keccak256("PermitAppendStage(uint256 orderId,uint256 amount,uint256 period,uint256 nonce,uint256 deadline)");
 
     event OrderCreated(uint indexed taskId, uint indexed orderId,  address issuer, address worker, address token, uint amount);
     event OrderModified(uint indexed orderId, address token, uint amount);
@@ -60,28 +54,15 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
     event StageUpdated(address stage);
     event SupportToken(address token, bool enabled);
 
-    constructor(address _weth, address _permit2) {
+    constructor(address _weth, address _permit2, address _verifier) {
         WETH = IWETH9(_weth);
         PERMIT2 = IPermit2(_permit2);
+        verifier = IOrderVerifier(_verifier);
+
         feeTo = msg.sender;
 
         supportTokens[_weth] = true;
         supportTokens[address(0)] = true;
-
-        DOMAIN_SEPARATOR = keccak256(
-        abi.encode(
-                keccak256(
-                    "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
-                ),
-                // This should match the domain you set in your client side signing.
-                keccak256(bytes("DetaskOrder")),
-                keccak256(bytes("1")),
-                block.chainid,
-                address(this)
-            )
-        );
-
-        
     }
 
     receive() external payable {
@@ -158,9 +139,8 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
         Order storage order = orders[_orderId];
         if(order.progress >= OrderProgess.Ongoing) revert ProgressError();
 
-        bytes32 structHash  = keccak256(abi.encode(PERMITSTAGE_TYPEHASH, _orderId,
-                keccak256(abi.encodePacked(_amounts)), keccak256(abi.encodePacked(_periods)), nonce, deadline));
-        address signAddr = recoverVerify(structHash, nonce, deadline, v , r, s);
+        address signAddr = verifier.recoverPermitStage(_orderId, _amounts, _periods,
+            nonce, deadline, v, r, s);
 
         if(order.worker == signAddr && msg.sender == order.issuer || 
             order.issuer == signAddr && msg.sender == order.worker) {
@@ -185,9 +165,7 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
         if(order.progress != OrderProgess.Ongoing) revert ProgressError();
 
 
-        bytes32 structHash = keccak256(abi.encode(PERMITPROSTAGE_TYPEHASH, _orderId,
-            _stageIndex, _appendPeriod, nonce, deadline));
-        address signAddr = recoverVerify(structHash, nonce, deadline, v , r, s);
+        address signAddr = verifier.recoverProlongStage(_orderId, _stageIndex, _appendPeriod, nonce, deadline, v, r,  s );
 
         if((order.worker == msg.sender && signAddr == order.issuer) ||
             (order.issuer == msg.sender && signAddr == order.worker)) {
@@ -201,9 +179,7 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
         Order storage order = orders[_orderId];
         if(order.progress != OrderProgess.Ongoing) revert ProgressError();
 
-        bytes32 structHash = keccak256(abi.encode(PERMITAPPENDSTAGE_TYPEHASH, _orderId,
-            amount, period, nonce, deadline));
-        address signAddr = recoverVerify(structHash, nonce, deadline, v , r, s);
+        address signAddr = verifier.recoverAppendStage(_orderId, amount, period, nonce, deadline, v, r, s);
 
         if((order.worker == msg.sender && signAddr == order.issuer) ||
             (order.issuer == msg.sender && signAddr == order.worker)) {
@@ -213,21 +189,9 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
 
         order.amount += amount;
         if(order.payed < order.amount) revert AmountError(1);
-        
 
         IStage(stage).appendStage(_orderId, amount, period);
     }
-
-    function recoverVerify(bytes32 structHash, uint nonce, uint deadline, uint8 v, bytes32 r, bytes32 s) internal returns (address signAddr){
-        bytes32 digest = ECDSA.toTypedDataHash(DOMAIN_SEPARATOR, structHash);
-        signAddr = ECDSA.recover(digest, v, r, s);
-
-        if(nonces[signAddr] != nonce) revert NonceError();
-        if(deadline < block.timestamp) revert Expired();
-        nonces[signAddr] += 1;
-    }
-
-
 
     function payOrderWithPermit(uint orderId, uint amount, uint deadline, uint8 v, bytes32 r, bytes32 s) external {
         IERC20Permit(orders[orderId].token).permit(msg.sender, address(this), amount, deadline, v, r, s);
