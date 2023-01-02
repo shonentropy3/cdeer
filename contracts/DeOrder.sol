@@ -113,12 +113,13 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
     function setStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods) external {
         Order storage order = orders[_orderId];
         if(order.progress >= OrderProgess.Ongoing) revert ProgressError();
-        if(order.worker != msg.sender && order.issuer != msg.sender) revert PermissionsError();
 
         if (order.worker == msg.sender) {
             order.progress = OrderProgess.StagingByWoker;
-        } else {
+        } else if (order.issuer == msg.sender) {
             order.progress = OrderProgess.StagingByIssuer;
+        } else {
+            revert PermissionsError();
         }
         
         IStage(stage).setStage(_orderId, _amounts, _periods);
@@ -206,7 +207,9 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
         if (token == address(0)) {
             uint b = address(this).balance;
             IWETH9(WETH).deposit{value: b}();
-            order.payed += b;
+            unchecked {
+                order.payed += b;
+            }
         } else {
             TransferHelper.safeTransferFrom(token, msg.sender, address(this), amount);
             order.payed += amount;
@@ -247,7 +250,8 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
 
     // 提交交付
     function updateAttachment(uint _orderId, string calldata _attachment) external {
-        if(orders[_orderId].worker != msg.sender && orders[_orderId].issuer != msg.sender) revert PermissionsError();
+        Order storage order = orders[_orderId];
+        if(order.worker != msg.sender &&order.issuer != msg.sender) revert PermissionsError();
         emit AttachmentUpdated(_orderId, _attachment);
     }
 
@@ -271,11 +275,13 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
     }
 
     function confirmDelivery(uint _orderId, uint[] memory _stageIndexs) external {
-        if(orders[_orderId].progress != OrderProgess.Ongoing) revert ProgressError();
-        if(msg.sender != orders[_orderId].issuer) revert PermissionsError();
+        Order storage order = orders[_orderId];
+        if(order.progress != OrderProgess.Ongoing) revert ProgressError();
+        if(msg.sender != order.issuer) revert PermissionsError();
 
-        for (uint i = 0; i < _stageIndexs.length; i++) {
+        for (uint i = 0; i < _stageIndexs.length;) {
             IStage(stage).confirmDelivery(_orderId, _stageIndexs[i]);
+            unchecked{ i++; }
         }
     }
 
@@ -328,9 +334,13 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
         (uint pending, uint nextStage) = IStage(stage).pendingWithdraw(_orderId);
         if (pending > 0) {
             if (fee > 0) {
-                uint feeAmount = pending * fee / FEE_BASE;
+                uint feeAmount;
+                unchecked {
+                      feeAmount = pending * fee / FEE_BASE;
+                }
                 doTransfer(order.token, feeTo, feeAmount);
                 doTransfer(order.token, to, pending - feeAmount);
+                
             } else {
                 doTransfer(order.token, to, pending);
             }
@@ -367,11 +377,7 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
         }
     }
 
-    function setFeeTo(uint _fee, address _feeTo) external {
-        if(msg.sender != feeTo && msg.sender != owner()) {
-            revert PermissionsError(); 
-        }
-
+    function setFeeTo(uint _fee, address _feeTo) external onlyOwner {
         fee = _fee;
         feeTo = _feeTo;
         emit FeeUpdated(_fee, _feeTo);
