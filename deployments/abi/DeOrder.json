@@ -7,6 +7,16 @@
           "internalType": "address",
           "name": "_weth",
           "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_permit2",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_verifier",
+          "type": "address"
         }
       ],
       "stateMutability": "nonpayable",
@@ -25,16 +35,6 @@
     },
     {
       "inputs": [],
-      "name": "Expired",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "NonceError",
-      "type": "error"
-    },
-    {
-      "inputs": [],
       "name": "ParamError",
       "type": "error"
     },
@@ -49,14 +49,8 @@
       "type": "error"
     },
     {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "season",
-          "type": "uint256"
-        }
-      ],
-      "name": "RecoverError",
+      "inputs": [],
+      "name": "UnSupportToken",
       "type": "error"
     },
     {
@@ -245,6 +239,25 @@
       "anonymous": false,
       "inputs": [
         {
+          "indexed": false,
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "enabled",
+          "type": "bool"
+        }
+      ],
+      "name": "SupportToken",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
           "indexed": true,
           "internalType": "uint256",
           "name": "orderId",
@@ -268,12 +281,12 @@
     },
     {
       "inputs": [],
-      "name": "DOMAIN_SEPARATOR",
+      "name": "PERMIT2",
       "outputs": [
         {
-          "internalType": "bytes32",
+          "internalType": "contract IPermit2",
           "name": "",
-          "type": "bytes32"
+          "type": "address"
         }
       ],
       "stateMutability": "view",
@@ -281,51 +294,12 @@
     },
     {
       "inputs": [],
-      "name": "FEE_BASE",
+      "name": "WETH",
       "outputs": [
         {
-          "internalType": "uint256",
+          "internalType": "contract IWETH9",
           "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "PERMITAPPENDSTAGE_TYPEHASH",
-      "outputs": [
-        {
-          "internalType": "bytes32",
-          "name": "",
-          "type": "bytes32"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "PERMITPROSTAGE_TYPEHASH",
-      "outputs": [
-        {
-          "internalType": "bytes32",
-          "name": "",
-          "type": "bytes32"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "PERMITSTAGE_TYPEHASH",
-      "outputs": [
-        {
-          "internalType": "bytes32",
-          "name": "",
-          "type": "bytes32"
+          "type": "address"
         }
       ],
       "stateMutability": "view",
@@ -518,24 +492,24 @@
               "type": "address"
             },
             {
+              "internalType": "uint96",
+              "name": "amount",
+              "type": "uint96"
+            },
+            {
               "internalType": "address",
               "name": "worker",
               "type": "address"
             },
             {
+              "internalType": "uint96",
+              "name": "payed",
+              "type": "uint96"
+            },
+            {
               "internalType": "address",
               "name": "token",
               "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "amount",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "payed",
-              "type": "uint256"
             },
             {
               "internalType": "enum OrderProgess",
@@ -548,9 +522,9 @@
               "type": "uint8"
             },
             {
-              "internalType": "uint256",
+              "internalType": "uint32",
               "name": "startDate",
-              "type": "uint256"
+              "type": "uint32"
             }
           ],
           "internalType": "struct Order",
@@ -617,25 +591,6 @@
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "name": "nonces",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
       "inputs": [],
       "name": "owner",
       "outputs": [
@@ -679,27 +634,46 @@
           "type": "uint256"
         },
         {
-          "internalType": "uint256",
-          "name": "deadline",
-          "type": "uint256"
+          "components": [
+            {
+              "components": [
+                {
+                  "internalType": "address",
+                  "name": "token",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "amount",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct IPermit2.TokenPermissions",
+              "name": "permitted",
+              "type": "tuple"
+            },
+            {
+              "internalType": "uint256",
+              "name": "nonce",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "deadline",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct IPermit2.PermitTransferFrom",
+          "name": "permit",
+          "type": "tuple"
         },
         {
-          "internalType": "uint8",
-          "name": "v",
-          "type": "uint8"
-        },
-        {
-          "internalType": "bytes32",
-          "name": "r",
-          "type": "bytes32"
-        },
-        {
-          "internalType": "bytes32",
-          "name": "s",
-          "type": "bytes32"
+          "internalType": "bytes",
+          "name": "signature",
+          "type": "bytes"
         }
       ],
-      "name": "payOrderWithPermit",
+      "name": "payOrderWithPermit2",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -903,6 +877,24 @@
       "type": "function"
     },
     {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_token",
+          "type": "address"
+        },
+        {
+          "internalType": "bool",
+          "name": "enable",
+          "type": "bool"
+        }
+      ],
+      "name": "setSupportToken",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
       "inputs": [],
       "name": "stage",
       "outputs": [
@@ -926,6 +918,25 @@
       "name": "startOrder",
       "outputs": [],
       "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "supportTokens",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -961,10 +972,10 @@
     },
     {
       "inputs": [],
-      "name": "weth",
+      "name": "verifier",
       "outputs": [
         {
-          "internalType": "contract IWETH9",
+          "internalType": "contract IOrderVerifier",
           "name": "",
           "type": "address"
         }

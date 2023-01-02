@@ -97,7 +97,6 @@ contract BuilderMetadata is IMetadata {
         string memory svg = generateSVGBase64(generateSVG(taskId));
         (
             string memory title,
-            ,
             string memory attachment,
             ,
             ,
@@ -185,7 +184,6 @@ contract BuilderMetadata is IMetadata {
         uint256 taskId = order.taskId;
         (
             string memory title,
-            ,
             string memory attachment,
             ,
             ,

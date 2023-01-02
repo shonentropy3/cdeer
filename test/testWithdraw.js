@@ -72,10 +72,10 @@ describe("testWithdraw", function () {
 
   it("SBT", async function () {
     let tokenURI = await BuilderSBT.tokenURI(orderId);
-    console.log("Builder tokenURI:", tokenURI);
+    // console.log("Builder tokenURI:", tokenURI);
 
     tokenURI = await IssuerSBT.tokenURI(orderId)
-    console.log("IssuerSBT tokenURI:", tokenURI);
+    // console.log("IssuerSBT tokenURI:", tokenURI);
 
   });
 

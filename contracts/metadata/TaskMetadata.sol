@@ -28,7 +28,7 @@ contract TaskMetadata is IMetadata {
     // refer: https://docs.opensea.io/docs/metadata-standards
     function generateTokenUri(uint taskId) internal view returns (string memory) {
         string memory svg = generateSVGBase64(generateSVG(taskId));
-        (string memory title, , string memory attachment, 
+        (string memory title, string memory attachment, 
             uint8 currency, uint128 budget, ,uint48 taskskills, uint32 timestamp, )= taskAddr.getTaskInfo(taskId);
 
         string memory valueStr = metaComm.amountApprox(budget, currency, false);
@@ -99,7 +99,7 @@ contract TaskMetadata is IMetadata {
     }
 
     function generateSVG(uint taskId) internal view returns (bytes memory svg) {
-        (string memory title, , ,uint8 currency, uint128 budget, ,uint48 taskskills, uint32 timestamp,)= taskAddr.getTaskInfo(taskId);
+        (string memory title, ,uint8 currency, uint128 budget, ,uint48 taskskills, uint32 timestamp,)= taskAddr.getTaskInfo(taskId);
 
         string memory dateStr = metaComm.dateTime(timestamp);
         string memory valueStr = metaComm.amountApprox(budget, currency, true);

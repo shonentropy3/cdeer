@@ -71,6 +71,7 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
 
     function createOrder(uint _taskId, address _issuer, address _worker, address _token, uint _amount) external payable {
         if(address(0) == _worker || address(0) == _issuer || _worker == _issuer) revert ParamError();
+        safe96(_amount);
         if(!supportTokens[_token]) revert UnSupportToken();
 
         unchecked {
@@ -82,7 +83,7 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
             issuer: _issuer,
             worker: _worker,
             token: _token,  
-            amount: _amount,
+            amount: uint96(_amount),
             progress: OrderProgess.Init,
             payType: PaymentType.Unknown,
             startDate: 0,
@@ -97,6 +98,7 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
     }
 
     function modifyOrder(uint orderId, address token, uint amount) external payable {
+        safe96(amount);
         Order storage order = orders[orderId];
         if(order.progress >= OrderProgess.Ongoing) revert ProgressError();
         if(msg.sender != order.issuer) revert PermissionsError();
@@ -108,29 +110,9 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
             refund(orderId, msg.sender, order.payed);
         }
         orders[orderId].token = token;
-        orders[orderId].amount = amount;
+        orders[orderId].amount = uint96(amount);
 
         emit OrderModified(orderId, token, amount);
-    }
-
-    function setStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods) external {
-        Order storage order = orders[_orderId];
-        if(order.progress >= OrderProgess.Ongoing) revert ProgressError();
-
-        if (order.worker == msg.sender) {
-            order.progress = OrderProgess.StagingByWoker;
-        } else if (order.issuer == msg.sender) {
-            order.progress = OrderProgess.StagingByIssuer;
-        } else {
-            revert PermissionsError();
-        }
-        
-        IStage(stage).setStage(_orderId, _amounts, _periods);
-        if(_periods[0] == 0) { //  
-            order.payType = PaymentType.Confirm;
-        } else {
-            order.payType = PaymentType.Due;
-        }
     }
 
     function permitStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods,
@@ -170,13 +152,14 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
     }
 
     function appendStage(uint _orderId, uint amount, uint period, uint nonce, uint deadline, uint8 v, bytes32 r, bytes32 s) external payable {
+        safe96(amount);
         Order storage order = orders[_orderId];
         if(order.progress != OrderProgess.Ongoing) revert ProgressError();
 
         address signAddr = verifier.recoverAppendStage(_orderId, amount, period, nonce, deadline, v, r, s);
         roleCheck(order, signAddr);
 
-        order.amount += amount;
+        order.amount += uint96(amount);
         if(order.payed < order.amount) revert AmountError(1);
 
         IStage(stage).appendStage(_orderId, amount, period);
@@ -199,16 +182,17 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
     function payOrder(uint orderId, uint amount) public payable nonReentrant {
         Order storage order = orders[orderId];
         address token = order.token;
+        safe96(amount);
 
         if (token == address(0)) {
             uint b = address(this).balance;
             IWETH9(WETH).deposit{value: b}();
             unchecked {
-                order.payed += b;
+                order.payed += uint96(b);
             }
         } else {
             TransferHelper.safeTransferFrom(token, msg.sender, address(this), amount);
-            order.payed += amount;
+            order.payed += uint96(amount);
         }
     }
 
@@ -218,7 +202,7 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
         IPermit2.PermitTransferFrom calldata permit,
         bytes calldata signature
     ) external nonReentrant {
-
+        safe96(amount);
         Order storage order = orders[orderId];
         if (permit.permitted.token != order.token) {
             revert UnSupportToken(); 
@@ -241,7 +225,7 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
             signature
         );
 
-        order.payed += amount;
+        order.payed += uint96(amount);
     }
 
 
@@ -254,10 +238,7 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
 
     function startOrder(uint _orderId) external payable {
         Order storage order = orders[_orderId];
-        if(order.progress == OrderProgess.Staged ||
-            (msg.sender == order.issuer && order.progress == OrderProgess.StagingByWoker) || 
-            msg.sender == order.worker && order.progress == OrderProgess.StagingByIssuer) {
-        } else {
+        if(order.progress != OrderProgess.Staged) {
             revert PermissionsError();
         }
         
@@ -265,7 +246,7 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
         if(order.payed < order.amount) revert AmountError(1);
 
         order.progress = OrderProgess.Ongoing;
-        order.startDate = block.timestamp;
+        order.startDate = uint32(block.timestamp);
         emit OrderStarted(_orderId, msg.sender);
         
         IStage(stage).startOrder(_orderId);
@@ -313,8 +294,8 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
     function refund(uint _orderId, address _to, uint _amount) payable public {
         Order storage order = orders[_orderId];
         if(msg.sender != order.issuer) revert PermissionsError(); 
-
-        order.payed -= _amount;
+        safe96(_amount);
+        order.payed -= uint96(_amount);
         if(order.progress >= OrderProgess.Ongoing) {
             if(order.payed < order.amount) revert AmountError(1);
         }
@@ -374,6 +355,10 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
         } else {
             TransferHelper.safeTransfer(_token, _to, _amount);
         }
+    }
+
+    function safe96(uint n) internal {
+        if(n >= 2**96) revert AmountError(0);
     }
 
     function setFeeTo(uint _fee, address _feeTo) external onlyOwner {
