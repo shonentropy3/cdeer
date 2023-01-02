@@ -3,6 +3,7 @@ const { expect } = require("chai");
 const { signPermitStage, signPermitProlongStage } = require("./signPermitStage.js");
 
 const DeOrderAddr = require(`../deployments/${network.name}/DeOrder.json`)
+const DeOrderVerifierAddr = require(`../deployments/${hre.network.name}/DeOrderVerifier.json`)
 const WETHAddr = require(`../deployments/${network.name}/WETH.json`)
 /** 
  * 测试用例：
@@ -16,6 +17,7 @@ const WETHAddr = require(`../deployments/${network.name}/WETH.json`)
 // run testCreateOrder_Sign
 describe("testStartOrder", function () {
   let DeOrder;
+  let DeOrderVerifier;
   let account1;
   let account2;
   let orderId;
@@ -30,6 +32,7 @@ describe("testStartOrder", function () {
     console.log("account2:" + account2.address);
 
     DeOrder = await ethers.getContractAt("DeOrder", DeOrderAddr.address, account1);
+    DeOrderVerifier = await ethers.getContractAt("DeOrderVerifier", DeOrderVerifierAddr.address, account1);
 
     weth = await ethers.getContractAt("WETH", WETHAddr.address, account1);
 
@@ -63,7 +66,7 @@ describe("testStartOrder", function () {
 
   it("signPermitProlongStage", async function () {
     let { chainId } = await ethers.provider.getNetwork();
-    let nonce = await DeOrder.nonces(account2.address);  // get from  
+    let nonce = await DeOrderVerifier.nonces(account2.address);  // get from  
     console.log("nonce:" + nonce)
 
     let period = "36000" 
@@ -71,7 +74,7 @@ describe("testStartOrder", function () {
 
     const sig = await signPermitProlongStage(
       chainId,
-      DeOrderAddr.address,
+      DeOrderVerifierAddr.address,
       account2,
       orderId,
       1,
