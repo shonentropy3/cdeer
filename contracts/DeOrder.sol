@@ -73,7 +73,10 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
         if(address(0) == _worker || address(0) == _issuer || _worker == _issuer) revert ParamError();
         if(!supportTokens[_token]) revert UnSupportToken();
 
-        currOrderId += 1;
+        unchecked {
+            currOrderId += 1;    
+        }
+        
         orders[currOrderId] = Order({
             taskId: _taskId,
             issuer: _issuer,
@@ -142,19 +145,14 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
 
         address signAddr = verifier.recoverPermitStage(_orderId, _amounts, _periods,
             nonce, deadline, v, r, s);
+        
+        roleCheck(order, signAddr);
 
-        if(order.worker == signAddr && msg.sender == order.issuer || 
-            order.issuer == signAddr && msg.sender == order.worker) {
-            order.progress = OrderProgess.Staged;
-
-            if(_periods[0] == 0) { //  
-                order.payType = PaymentType.Confirm;
-            } else {
-                order.payType = PaymentType.Due;
-            }
-
+        order.progress = OrderProgess.Staged;
+        if(_periods[0] == 0) { //  
+            order.payType = PaymentType.Confirm;
         } else {
-            revert PermissionsError(); 
+            order.payType = PaymentType.Due;
         }
 
         IStage(stage).setStage(_orderId, _amounts, _periods);
@@ -167,13 +165,8 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
 
 
         address signAddr = verifier.recoverProlongStage(_orderId, _stageIndex, _appendPeriod, nonce, deadline, v, r,  s );
-
-        if((order.worker == msg.sender && signAddr == order.issuer) ||
-            (order.issuer == msg.sender && signAddr == order.worker)) {
-            IStage(stage).prolongStage(_orderId, _stageIndex, _appendPeriod);
-        } else {
-            revert PermissionsError();
-        } 
+        roleCheck(order, signAddr);
+        IStage(stage).prolongStage(_orderId, _stageIndex, _appendPeriod);
     }
 
     function appendStage(uint _orderId, uint amount, uint period, uint nonce, uint deadline, uint8 v, bytes32 r, bytes32 s) external payable {
@@ -181,17 +174,20 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
         if(order.progress != OrderProgess.Ongoing) revert ProgressError();
 
         address signAddr = verifier.recoverAppendStage(_orderId, amount, period, nonce, deadline, v, r, s);
-
-        if((order.worker == msg.sender && signAddr == order.issuer) ||
-            (order.issuer == msg.sender && signAddr == order.worker)) {
-        } else {
-            revert PermissionsError(); 
-        } 
+        roleCheck(order, signAddr);
 
         order.amount += amount;
         if(order.payed < order.amount) revert AmountError(1);
 
         IStage(stage).appendStage(_orderId, amount, period);
+    }
+
+    function roleCheck(Order storage order, address signAddr) internal {
+        if((order.worker == msg.sender && signAddr == order.issuer) ||
+            (order.issuer == msg.sender && signAddr == order.worker)) {
+        } else {
+            revert PermissionsError(); 
+        } 
     }
 
     function payOrderWithPermit(uint orderId, uint amount, uint deadline, uint8 v, bytes32 r, bytes32 s) external {
@@ -224,8 +220,9 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
     ) external nonReentrant {
 
         Order storage order = orders[orderId];
-        address token = order.token;
-        require(token != address(0), "not token");
+        if (permit.permitted.token != order.token) {
+            revert UnSupportToken(); 
+        }
         
         // Transfer tokens from the caller to this contract.
         PERMIT2.permitTransferFrom(
@@ -251,7 +248,7 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
     // 提交交付
     function updateAttachment(uint _orderId, string calldata _attachment) external {
         Order storage order = orders[_orderId];
-        if(order.worker != msg.sender &&order.issuer != msg.sender) revert PermissionsError();
+        if(order.worker != msg.sender && order.issuer != msg.sender) revert PermissionsError();
         emit AttachmentUpdated(_orderId, _attachment);
     }
 
@@ -349,7 +346,9 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
         }
         
         if (nextStage > 0) {
-            emit Withdraw(_orderId, pending, nextStage - 1);
+            unchecked {
+                emit Withdraw(_orderId, pending, nextStage - 1);
+            }
         }
         
         if (nextStage >= IStage(stage).stagesLength(_orderId)) {

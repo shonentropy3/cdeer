@@ -166,9 +166,12 @@ contract DeStage is Ownable {
         }
         stage.status = StageStatus.Aborted;
 
-        for (uint i = currStageIndex + 1; i < stages.length; i++) {
+        for (uint i = currStageIndex + 1; i < stages.length;) {
             issuerAmount += stages[i].amount;
             stages[i].status == StageStatus.Aborted;
+            unchecked {
+                i++;
+            }
         }
     }
 

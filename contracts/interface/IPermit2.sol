@@ -5,7 +5,7 @@ interface IPermit2 {
     // Token and amount in a permit message.
     struct TokenPermissions {
         // Token to transfer.
-        IERC20 token;
+        address token;
         // Amount to transfer.
         uint256 amount;
     }
@@ -35,8 +35,4 @@ interface IPermit2 {
         address owner,
         bytes calldata signature
     ) external;
-}
-
-interface IERC20 {
-    function transfer(address to, uint256 amount) external returns (bool);
 }
