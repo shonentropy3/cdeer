@@ -17,6 +17,7 @@ contract DeTaskTest is Test {
     address owner; // 合约拥有者
     address issuer; // 甲方
     address worker; // 乙方
+    address other; // 第三方
 
     function setUp() public {
         mock = new Mock();
@@ -24,6 +25,7 @@ contract DeTaskTest is Test {
         owner = msg.sender;
         issuer = vm.addr(1);
         worker = vm.addr(2);
+        other = vm.addr(3);
 
         vm.startPrank(owner); // 切换合约发起人
         _weth = new WETH();
@@ -35,6 +37,20 @@ contract DeTaskTest is Test {
         console.log(owner);
         console.log(issuer);
         console.log(worker);
+    }
+
+    // createOrder
+    // @Summary 创建Order
+    function createOrder() public {
+        vm.startPrank(issuer); // 甲方
+        deOrder.createOrder(
+            64,
+            issuer,
+            worker,
+            address(0x69BB456f9181C798f6B31149004a5A1ADfAd241B),
+            100
+        );
+        vm.stopPrank();
     }
 
     // testCannotCreateOrder
@@ -52,18 +68,10 @@ contract DeTaskTest is Test {
     }
 
     // testCreateOrder
-    // @Summary 创建Order
+    // @Summary 测试创建Order
     function testCreateOrder() public {
         // 甲方创建Task ，只能甲方创建此Task的Order
-        vm.startPrank(issuer); // 甲方
-        deOrder.createOrder(
-            64,
-            issuer,
-            worker,
-            address(0x69BB456f9181C798f6B31149004a5A1ADfAd241B),
-            100
-        );
-        vm.stopPrank();
+        createOrder(); // 创建Order
         Order memory order = deOrder.getOrder(1);
         assertEq(order.issuer, issuer);
         assertEq(order.worker, worker);
@@ -90,7 +98,7 @@ contract DeTaskTest is Test {
     // testModifyOrder
     // @Summary 修改Order
     function testModifyOrder() public {
-        testCreateOrder();
+        createOrder(); // 创建Order
         vm.startPrank(issuer); // 甲方
         deOrder.modifyOrder(1, address(0), 1);
         vm.stopPrank();
@@ -100,45 +108,45 @@ contract DeTaskTest is Test {
         // TODO: 更换token退款
     }
 
-    // testCannotSetStage
-    // @Summary 设置阶段失败情况
-    function testCannotSetStage() public {
+    // 设置阶段划分
+    function setStage(address who, bytes memory payType) public {
         uint256[] memory _amounts = new uint256[](1);
         uint256[] memory _periods = new uint256[](1);
         _amounts[0] = 1;
-        _periods[0] = 1;
+        if (keccak256(payType) == keccak256("Confirm")) {
+            _periods[0] = 0;
+        } else if (keccak256(payType) == keccak256("Due")) {
+            _periods[0] = 1;
+        }
+        vm.startPrank(who);
+        deOrder.setStage(1, _amounts, _periods);
+        vm.stopPrank();
+    }
+
+    // testCannotSetStage
+    // @Summary 设置阶段失败情况
+    function testCannotSetStage() public {
         // 非甲方或乙方修改
         vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
-        deOrder.setStage(1, _amounts, _periods);
+        setStage(other, "Due");
         // TODO: 任务已经开始修改
     }
 
     // testSetStage
     // @Summary 设置阶段
     function testSetStage() public {
-        testCreateOrder();
-        uint256[] memory _amounts = new uint256[](1);
-        uint256[] memory _periods = new uint256[](1);
-        _amounts[0] = 1;
-        _periods[0] = 1;
+        createOrder(); // 创建Order
         // 甲方修改
-        vm.startPrank(issuer); // 甲方
-        deOrder.setStage(1, _amounts, _periods);
-        vm.stopPrank();
+        setStage(issuer, "Due");
         Order memory order = deOrder.getOrder(1);
         assertTrue(order.progress == OrderProgess.StagingByIssuer);
         // 乙方修改
-        vm.startPrank(worker); // 乙方
-        deOrder.setStage(1, _amounts, _periods);
-        vm.stopPrank();
+        setStage(worker, "Due");
         order = deOrder.getOrder(1);
         assertTrue(order.progress == OrderProgess.StagingByWoker);
         // 付款模式：到期自动付款 && 经过甲方确认
         assertTrue(order.payType == PaymentType.Due);
-        _periods[0] = 0;
-        vm.startPrank(issuer); // 甲方
-        deOrder.setStage(1, _amounts, _periods);
-        vm.stopPrank();
+        setStage(issuer, "Confirm");
         order = deOrder.getOrder(1);
         assertTrue(order.payType == PaymentType.Confirm);
     }
@@ -163,7 +171,7 @@ contract DeTaskTest is Test {
     // testCannotPermitStage
     // @Summary 许可阶段划分失败情况
     function testCannotPermitStage() public {
-        testCreateOrder();
+        createOrder(); // 创建Order
         uint256 _orderId = 1;
         uint256[] memory _amounts = new uint256[](1);
         uint256[] memory _periods = new uint256[](1);
@@ -234,15 +242,20 @@ contract DeTaskTest is Test {
         // TODO: 任务已经开始
     }
 
-    // testPermitStage
-    // @Summary 许可阶段划分
-    function testPermitStage() public {
-        testCreateOrder();
+    function permitStage(
+        address sign,
+        address submit,
+        bytes memory payType
+    ) public {
         uint256 _orderId = 1;
         uint256[] memory _amounts = new uint256[](1);
         uint256[] memory _periods = new uint256[](1);
-        _amounts[0] = 69;
-        _periods[0] = 1889;
+        _amounts[0] = 100;
+        if (keccak256(payType) == keccak256("Confirm")) {
+            _periods[0] = 0;
+        } else if (keccak256(payType) == keccak256("Due")) {
+            _periods[0] = 1;
+        }
         uint256 nonce = 0;
         uint256 deadline = 200;
         bytes32 structHash = keccak256(
@@ -259,10 +272,19 @@ contract DeTaskTest is Test {
             deOrder.DOMAIN_SEPARATOR(),
             structHash
         );
-        // 甲方签名
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(1, digest);
-        // 乙方提交
-        vm.startPrank(worker);
+        // 签名
+        uint8 v;
+        bytes32 r;
+        bytes32 s;
+        if (sign == issuer) {
+            (v, r, s) = vm.sign(1, digest);
+        } else if (sign == worker) {
+            (v, r, s) = vm.sign(2, digest);
+        } else {
+            (v, r, s) = vm.sign(3, digest);
+        }
+        // 提交
+        vm.startPrank(submit);
         deOrder.permitStage(
             _orderId,
             _amounts,
@@ -274,46 +296,27 @@ contract DeTaskTest is Test {
             s
         );
         vm.stopPrank();
+    }
+
+    // testPermitStage
+    // @Summary 许可阶段划分
+    function testPermitStage() public {
+        createOrder(); // 创建Order
+        // 乙方签名 甲方提交
+        permitStage(issuer, worker, "Due");
         Order memory order = deOrder.getOrder(1);
         DeStage.Stage[] memory stages = deStage.getStages(1);
         assertTrue(order.progress == OrderProgess.Staged);
-        assertEq(stages[0].amount, _amounts[0]);
-        assertEq(stages[0].period, _periods[0]);
+        assertEq(stages[0].amount, 100);
+        assertEq(stages[0].period, 1);
         assertTrue(order.payType == PaymentType.Due); // 付款模式
-        // 乙方签名
-        _amounts[0] = 100;
-        _periods[0] = 0;
-        nonce = 0; // 乙方Nonce
-        structHash = keccak256(
-            abi.encode(
-                deOrder.PERMITSTAGE_TYPEHASH(),
-                _orderId,
-                keccak256(abi.encodePacked(_amounts)),
-                keccak256(abi.encodePacked(_periods)),
-                nonce,
-                deadline
-            )
-        );
-        digest = ECDSA.toTypedDataHash(deOrder.DOMAIN_SEPARATOR(), structHash);
-        (v, r, s) = vm.sign(2, digest);
-        // 甲方提交
-        vm.startPrank(issuer);
-        deOrder.permitStage(
-            _orderId,
-            _amounts,
-            _periods,
-            nonce,
-            deadline,
-            v,
-            r,
-            s
-        );
-        vm.stopPrank();
+        // 乙方签名 甲方提交
+        permitStage(worker, issuer, "Confirm");
         order = deOrder.getOrder(1);
         stages = deStage.getStages(1);
         assertTrue(order.progress == OrderProgess.Staged);
-        assertEq(stages[0].amount, _amounts[0]);
-        assertEq(stages[0].period, _periods[0]);
+        assertEq(stages[0].amount, 100);
+        assertEq(stages[0].period, 0);
         assertTrue(order.payType == PaymentType.Confirm); // 付款模式
     }
 
@@ -322,8 +325,8 @@ contract DeTaskTest is Test {
     function testCannotProlongStage() public {
         testPermitStage();
         uint256 _orderId = 1;
-        uint _stageIndex = 0;
-        uint _appendPeriod = 10;
+        uint256 _stageIndex = 0;
+        uint256 _appendPeriod = 10;
         uint256 nonce = 0;
         uint256 deadline = 200;
         bytes32 structHash = keccak256(
@@ -365,8 +368,8 @@ contract DeTaskTest is Test {
     function testProlongStage() public {
         testPermitStage();
         uint256 _orderId = 1;
-        uint _stageIndex = 0;
-        uint _appendPeriod = 10;
+        uint256 _stageIndex = 0;
+        uint256 _appendPeriod = 10;
         uint256 nonce = 0;
         uint256 deadline = 200;
         bytes32 structHash = keccak256(
@@ -398,15 +401,13 @@ contract DeTaskTest is Test {
         );
     }
 
-    // testStartOrder
+    // testCannotStartOrder
     // @Summary 开始任务
     function testCannotStartOrder() public {
-        // testPermitStage();
-        // testModifyOrder();
-        testSetStage();
         testPermitStage();
         // 乙方调用
         vm.startPrank(worker);
+        vm.expectRevert(abi.encodeWithSignature("AmountError(uint256)", 1));
         deOrder.startOrder(1);
         vm.stopPrank();
     }
@@ -414,13 +415,23 @@ contract DeTaskTest is Test {
     // testStartOrder
     // @Summary 开始任务
     function testStartOrder() public {
-        // testPermitStage();
-        // testModifyOrder();
         testSetStage();
         testPermitStage();
+        testPayOrder();
         // 乙方调用
         vm.startPrank(issuer);
         deOrder.startOrder(1);
         vm.stopPrank();
+    }
+
+    //
+    function testPayOrder() public {
+        // 甲方付款
+        vm.startPrank(issuer);
+        vm.deal(issuer, 20);
+        deOrder.payOrder{value: 1}(1, 1);
+        vm.stopPrank();
+        Order memory order = deOrder.getOrder(1);
+        console.log(order.payed);
     }
 }
