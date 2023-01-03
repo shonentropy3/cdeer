@@ -5,6 +5,9 @@ const order = require(`../../deployments/abi/DeOrder.json`);
 const orderAddr = require(`../../deployments/${process.env.NEXT_PUBLIC_DEVELOPMENT_CHAIN}/DeOrder.json`);
 const stage = require(`../../deployments/abi/DeStage.json`);
 const stageAddr = require(`../../deployments/${process.env.NEXT_PUBLIC_DEVELOPMENT_CHAIN}/DeStage.json`);
+const orderVerifier = require(`../../deployments/abi/DeOrderVerifier.json`);
+const orderVerifierAddr = require(`../../deployments/${process.env.NEXT_PUBLIC_DEVELOPMENT_CHAIN}/DeOrderVerifier.json`);
+
 
 var Web3 = require('web3');
 var web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:8545");
@@ -25,6 +28,16 @@ export function ConfigOrder(functionName) {
   const orderConfig = {
     addressOrName: orderAddr.address,
     contractInterface: order.abi,
+    functionName: functionName,
+  }
+  return orderConfig
+}
+
+export function ConfigOrderVerifier(functionName) { 
+
+  const orderConfig = {
+    addressOrName: orderVerifierAddr.address,
+    contractInterface: orderVerifier.abi,
     functionName: functionName,
   }
   return orderConfig
@@ -68,7 +81,7 @@ export function useRead(functionName,args) {
     args: args
   };
   let objD = {
-    ...ConfigStage(functionName),
+    ...ConfigOrderVerifier(functionName),
     args: args
   };
   const useTaskRead = useContractRead(objA)

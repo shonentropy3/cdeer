@@ -7,6 +7,7 @@ let dotenv = require('dotenv')
 dotenv.config({ path: "./.env" })
 
 const mnemonic = process.env.MNEMONIC
+const privateKey = process.env.PRIVATEKEY
 const infurakey = process.env.INFURA_API_KEY
 const scankey = process.env.ETHERSCAN_API_KEY
 
@@ -43,9 +44,13 @@ module.exports = {
       // gas: 12000000,
     },
     dev: {
-      url: "https://rpc.buildbear.io/Lengthy_Corde_3d0361ee",
-      accounts: ["42fcbcb9196e00f7e9b7e0cf0fb7cb1d1889b1d4c052fb6dbc2f3ff3a8944d44"],
-      chainId: 8148
+      url: "https://rpc.buildbear.io/Old_Mas_Amedda_06697a31",
+      accounts: [privateKey],
+      chainId: 8151,
+      // forking: {
+      //   url: 'https://matic-mumbai.chainstacklabs.com',
+      //   blockNumber: 30479136
+      // }
     },
     ropsten: {
       url: `https://ropsten.infura.io/v3/${infurakey}`,

@@ -268,6 +268,7 @@ export default function OrderSetStage(params) {
                 // 交易失败
                 setIsLoading(false);
                 message.warning('交易已终止')
+                console.log('res ==>',res);
             }
         })
         .catch(err => {

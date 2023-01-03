@@ -18,6 +18,10 @@ async function main() {
 
     const contractFactory = await hre.ethers.getContractFactory("DeOrder");
 
+    // polygon
+    // const order = await contractFactory.deploy(WETHAddr.address, "0x000000000022D473030F116dDEE9F6B43aC78BA3", VerifierAddr.address);
+
+    // buildBear
     const order = await contractFactory.deploy(WETHAddr.address, "0x000000000022D473030F116dDEE9F6B43aC78BA3", VerifierAddr.address);
 
     await order.deployed();
