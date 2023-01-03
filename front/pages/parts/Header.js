@@ -1,5 +1,6 @@
 import { Button, Dropdown, Menu, } from 'antd';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useDisconnect, useAccount } from 'wagmi';    // 切换链 
@@ -9,6 +10,7 @@ export default function Header(props) {
 
     const {isConnected, address} = useAccount()
     const {disconnect} = useDisconnect()
+    const router = useRouter();
 
     
     let [selectItem,setSelectItem] = useState('')
@@ -125,6 +127,16 @@ export default function Header(props) {
     useEffect(() => {
         isModalVisible && console.log('头部执行了 ==>');
     },[isModalVisible])
+
+    useEffect(() => {
+        if (router.pathname === "/") {
+            setSelectItem('home')
+        }else if (router.pathname === "projects") {
+            setSelectItem('task')
+        }else{
+            setSelectItem('')
+        }
+    },[router])
 
     return <div className="Header">
         <div className={`content ${isScroll ? 'scroll':''}`}>

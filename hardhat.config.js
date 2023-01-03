@@ -43,9 +43,9 @@ module.exports = {
       // gas: 12000000,
     },
     dev: {
-      url: "https://backend.buildbear.io/node/charming-bohr-99d0de",
+      url: "https://rpc.buildbear.io/Lengthy_Corde_3d0361ee",
       accounts: ["42fcbcb9196e00f7e9b7e0cf0fb7cb1d1889b1d4c052fb6dbc2f3ff3a8944d44"],
-      chainId: 8478
+      chainId: 8148
     },
     ropsten: {
       url: `https://ropsten.infura.io/v3/${infurakey}`,

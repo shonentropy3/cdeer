@@ -29,17 +29,15 @@ import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { detectZoom } from '../utils/DetectZoom.js';
 import { useEffect } from 'react'
-import Web3 from 'web3'
-
 
 const {chains, provider} = configureChains([chain.mainnet,chain.goerli,chain.hardhat,chain.polygonMumbai,
   {
-    id: 8478,
+    id: 8148,
     name: 'BuildBear',
     network: 'buildBear',
     rpcUrls: {
       // default: 'https://backend.buildbear.io/node/charming-bohr-99d0de',
-      default: 'https://backend.buildbear.io/node/charming-bohr-99d0de'
+      default: 'https://rpc.buildbear.io/Lengthy_Corde_3d0361ee'
     }
   }],
   [
