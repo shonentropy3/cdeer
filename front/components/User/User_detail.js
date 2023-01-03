@@ -6,7 +6,8 @@ import {
     Modal,
     Input,
     message,
-    Upload
+    Upload,
+    Image
  } from 'antd';
 import {
     WechatOutlined,
@@ -27,7 +28,8 @@ export default function User_detail () {
 
     let [skills,setSkills] = useState([])
     let [wagmi,setWagmi] = useState({});
-    let [avatar,setAvatar] = useState()
+    let [avatar,setAvatar] = useState();
+    let [activeLabel,setActiveLabel] = useState('allNFTs');
 
     const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -156,6 +158,11 @@ export default function User_detail () {
         }
     }
 
+    const checkLabel = (ele) => {
+        activeLabel = ele;
+        setActiveLabel(activeLabel);
+    }
+
 
     useEffect(()=>{
         initSkills()
@@ -212,8 +219,11 @@ export default function User_detail () {
                 <div className="info">
                     <p>{info.username?info.username:"未设置用户昵称"}</p>
                     <div className="li">
-                        {info.skype ? <SkypeOutlined /> : ''}
-                        {info.wechat ? <WechatOutlined /> : ''}
+                        {info.telegram ? <img src='/icon/telegram.png' width={20} height={20} /> : ''}
+                        {info.skype ? <img src='/icon/skype.png' width={20} height={20} /> : ''}
+                        {info.wechat ? <img src='/icon/wechat.png' width={20} height={20} /> : ''}
+                        {info.discord ? <img src='icon/discord.png' width={20} height={20} /> : ''}
+                        {info.phone ? <img src='icon/phone.png' width={20} height={20} /> : ''}
                     </div>
                 </div>
             </div>
@@ -228,17 +238,45 @@ export default function User_detail () {
             <Button className="btn" onClick={showModal}>编辑个人资料</Button>
         </div>
         <div className='myInfo-NFTs'>
-            <div className='myInfo-NFTs-all'>
-                <p>
-                    <span className='NFTs-all-text'>ALL NFTs</span>
-                </p>
+            <div className={`myInfo-NFTs-all ${activeLabel === 'allNFTs' ? 'active' : ''}`} onClick={()=>checkLabel('allNFTs')}>
+                <div className='allNFTs-title'> 
+                    <div className='allNFTs-icon'></div>
+                    <span className='NFTs-all-text NFTs-text'>ALL NFTs</span>
+                </div>
             </div>
             <div className='myInfo-NFTs-detask'>
-                <p className='NFTs-detask-title'>Detask NFT</p>
+                <p className='NFTs-detask-title NFTs-title'>Detask NFT</p>
                 <div className='NFTs-detask-list'>
-                    <p>
-                        <span>YugaLabs</span>
-                    </p>
+                    <div className={`NFTs-detask ${activeLabel == 'YugaLabs' ? 'active' : ''}`} onClick={()=>checkLabel('YugaLabs')}>
+                        <div className='detask-icon'>
+
+                        </div>
+                        <span className='detask-text NFTs-text'>YugaLabs</span>
+
+                    </div>
+                </div>
+            </div>
+            <div className='NFTs-collections'>
+                <p className='NFTs-collections-title NFTs-title'>My Collections</p>
+                <div className='NFTs-collections-list'>
+                    <div className={`collections-item ${activeLabel == 'collectionsYu' ? 'active' : ''}`} onClick={()=>checkLabel('collectionsYu')}>
+                        <div className='item-icon'>
+
+                        </div>
+                        <span className='item-text NFTs-text'>YugaLabs</span>
+                    </div>
+                    <div className={`collections-item ${activeLabel == 'collectionsLooki' ? 'active' : ''}`} onClick={()=>checkLabel('collectionsLooki')}>
+                        <div className='item-icon'>
+
+                        </div>
+                        <span className='item-text NFTs-text'>Looki</span>
+                    </div>
+                    <div className={`collections-item ${activeLabel == 'collectionsENS' ? 'active' : ''}`} onClick={()=>checkLabel('collectionsENS')}>
+                        <div className='item-icon'>
+
+                        </div>
+                        <span className='item-text NFTs-text'>ENS：Ethereum N…</span>
+                    </div>
                 </div>
             </div>
         </div>
