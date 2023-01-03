@@ -111,6 +111,7 @@ export default function Publish() {
         skills.list.map(e => {
             arr.push(e.index);
         })
+        delete obj.desc;
         obj.skills = BitOperation(arr)
         obj.currency = obj.currency === 'ETH' ? 1 : 1;
         obj.period = obj.period * 24 * 60 * 60;
@@ -133,6 +134,7 @@ export default function Publish() {
         console.log(
             [address, obj, fee]
         );
+        // return
         Task.write({
             recklesslySetUnpreparedArgs: [address, obj, fee]
         })
@@ -142,6 +144,7 @@ export default function Publish() {
         var obj = {};
         obj.hash = Task.data.hash;
         obj.suffix = params.suffix ? params.suffix : '';
+        obj.desc = params.desc;
         await createTask(obj)
         .then(res => {
             if (res.code === 0) {
