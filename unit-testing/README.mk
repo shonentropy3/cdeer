@@ -26,6 +26,8 @@ forge test --via-ir
 forge test -vvvvv
 # 指定函数测试
 forge test --match-test testCannotApplyYourself
+#
+forge test --via-ir -vvvvv --match-test testProlongStage
 ```
 ### 5、覆盖率
 ```bash
