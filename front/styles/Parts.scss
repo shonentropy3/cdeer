@@ -282,6 +282,10 @@ $font-pingfangR: PingFangSC-Regular, PingFang SC;
                     // width: 116px;
                     display: flex;
                     justify-content: center;
+                    margin-top: 4px;
+                    img{
+                        margin-right: 21px;
+                    }
                 }
             }
         }

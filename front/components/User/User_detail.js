@@ -6,7 +6,8 @@ import {
     Modal,
     Input,
     message,
-    Upload
+    Upload,
+    Image
  } from 'antd';
 import {
     WechatOutlined,
@@ -218,8 +219,11 @@ export default function User_detail () {
                 <div className="info">
                     <p>{info.username?info.username:"未设置用户昵称"}</p>
                     <div className="li">
-                        {info.skype ? <SkypeOutlined /> : ''}
-                        {info.wechat ? <WechatOutlined /> : ''}
+                        {info.telegram ? <img src='/icon/telegram.png' width={20} height={20} /> : ''}
+                        {info.skype ? <img src='/icon/skype.png' width={20} height={20} /> : ''}
+                        {info.wechat ? <img src='/icon/wechat.png' width={20} height={20} /> : ''}
+                        {info.discord ? <img src='icon/discord.png' width={20} height={20} /> : ''}
+                        {info.phone ? <img src='icon/phone.png' width={20} height={20} /> : ''}
                     </div>
                 </div>
             </div>
