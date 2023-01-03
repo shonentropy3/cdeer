@@ -7,6 +7,7 @@ contract DeStage is Ownable {
     error InvalidCaller();
     error ParamError(uint);
     error StatusError();
+    error AmountError();
 
     uint public maxStages = 12;
     address public deOrder;
@@ -20,8 +21,8 @@ contract DeStage is Ownable {
 
     //交付阶段
     struct Stage {
-        uint amount;        // pay amount
-        uint period;        // second
+        uint96 amount;        // pay amount
+        uint32 period;        // second
         StageStatus status;
     }
 
@@ -55,9 +56,12 @@ contract DeStage is Ownable {
         Stage[] storage stages = orderStages[_orderId];
 
         for ( uint i = 0; i < _periods.length; i++ ) {
+            safe96(_amounts[i]);
+            safe32(_periods[i]);
+
             Stage memory pro = Stage ({
-                amount: _amounts[i],
-                period: _periods[i],
+                amount: uint96(_amounts[i]),
+                period: uint32(_periods[i]),
                 status: StageStatus.Init
             });
             stages.push(pro);
@@ -66,18 +70,22 @@ contract DeStage is Ownable {
     }
 
     function prolongStage(uint _orderId, uint _stageIndex, uint _appendPeriod) external onlyDeorder {
+        safe32(_appendPeriod);
+
         Stage storage stage = orderStages[_orderId][_stageIndex];
         if(stage.status != StageStatus.Init) revert StatusError();
-        stage.period += _appendPeriod;
+        stage.period += uint32(_appendPeriod);
 
         emit ProlongStage(_orderId, _stageIndex, _appendPeriod);
     }
 
     function appendStage(uint _orderId, uint _amount, uint _period) external onlyDeorder {
+        safe32(_period);
+
         Stage[] storage stages = orderStages[_orderId];
         Stage memory pro = Stage ({
-            amount: _amount,
-            period: _period,
+            amount: uint96(_amount),
+            period: uint32(_period),
             status: StageStatus.Init
         });
 
@@ -166,9 +174,12 @@ contract DeStage is Ownable {
         }
         stage.status = StageStatus.Aborted;
 
-        for (uint i = currStageIndex + 1; i < stages.length; i++) {
+        for (uint i = currStageIndex + 1; i < stages.length;) {
             issuerAmount += stages[i].amount;
             stages[i].status == StageStatus.Aborted;
+            unchecked {
+                i++;
+            }
         }
     }
 
@@ -217,6 +228,15 @@ contract DeStage is Ownable {
         }
         
         revert StatusError();
+    }
+
+
+    function safe96(uint n) internal {
+        if(n >= 2**96) revert AmountError();
+    }
+
+    function safe32(uint n) internal {
+        if(n >= 2**32) revert AmountError();
     }
 
     function setMaxStages(uint8 _maxStages) external onlyOwner {

@@ -44,7 +44,8 @@ contract IssuerMetadata is IMetadata {
 
         string memory valueStr = metaComm.tokenAmountApprox(
             order.amount,
-            order.token
+            order.token,
+            false
         );
 
         return
@@ -86,7 +87,6 @@ contract IssuerMetadata is IMetadata {
         string memory svg = generateSVGBase64(generateSVG(taskId));
         (
             string memory title,
-            ,
             string memory attachment,
             ,
             ,
@@ -167,7 +167,6 @@ contract IssuerMetadata is IMetadata {
         uint taskId = order.taskId;
         (
             string memory title,
-            ,
             string memory attachment,
             ,
             ,
@@ -179,7 +178,8 @@ contract IssuerMetadata is IMetadata {
 
         string memory valueStr = metaComm.tokenAmountApprox(
             order.amount,
-            order.token
+            order.token,
+            true
         );
 
         return
@@ -216,24 +216,16 @@ contract IssuerMetadata is IMetadata {
             );
     }
 
-    function generateSVGBase64(
-        bytes memory svgFormat
-    ) internal pure returns (string memory) {
-        return
-            string(
-                abi.encodePacked(
-                    "data:application/json;base64,",
-                    Base64.encode(
-                        bytes(
-                            abi.encodePacked(
-                                '{"image": "',
-                                "data:image/svg+xml;base64,",
-                                Base64.encode(svgFormat),
-                                '"}'
-                            )
-                        )
-                    )
-                )
-            );
+    function generateSVGBase64(bytes memory svgFormat)
+        internal
+        pure
+        returns (string memory)
+    {
+        return string(
+            abi.encodePacked(
+                "data:image/svg+xml;base64,",
+                Base64.encode(svgFormat)
+            )    
+        );
     }
 }
