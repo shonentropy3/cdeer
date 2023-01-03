@@ -301,6 +301,7 @@ $font-pingfangR: PingFangSC-Regular, PingFang SC;
         //     margin-left: 380px;
         // }
         padding-bottom: 20px;
+        margin-top: 35px;
         .btn{
             width: 215px;
             background: #1F1E2E;
@@ -351,9 +352,9 @@ $font-pingfangR: PingFangSC-Regular, PingFang SC;
     .myInfo-NFTs{
         .myInfo-NFTs-all{
             margin: 30px 0;
+            cursor: pointer;
             .allNFTs-title{
                 height: 49px;
-                background: rgba($color: #D13B4E, $alpha: 0.05);
                 line-height: 49px;
                 font-family: $font-pingfangM;
                 border-radius: 25px;
@@ -382,15 +383,13 @@ $font-pingfangR: PingFangSC-Regular, PingFang SC;
         }
         .myInfo-NFTs-detask{
             margin-bottom: 47px;
-            .NFTs-detask-title{
-                
-            }
             .NFTs-detask-list{
                 .NFTs-detask{
                     height: 49px;
                     line-height: 49px;
                     display: flex;
                     padding-left: 21px;
+                    cursor: pointer;
                     .detask-icon{
                         width: 16px;
                         height: 16px;
@@ -399,6 +398,23 @@ $font-pingfangR: PingFangSC-Regular, PingFang SC;
                     }
                     .detask-text{
                         margin-left: 10px;
+                    }
+                }
+            }
+        }
+        .NFTs-collections{
+            .NFTs-collections-list{
+                .collections-item{
+                    padding-left: 21px;
+                    display: flex;
+                    height: 49px;
+                    line-height: 49px;
+                    cursor: pointer;
+                    .item-icon{
+                        width: 16px;
+                        height: 16px;
+                        margin-top: 15px;
+                        background-color: #979797;
                     }
                 }
             }
