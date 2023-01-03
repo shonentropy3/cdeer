@@ -125,7 +125,7 @@ export function useSignData(params) {
 
   let obj = {
       chainId: params.chainId,
-      contractAddress: orderAddr.address,
+      contractAddress: orderVerifierAddr.address,
       owner: params.address,
       orderId: params.oid,
       amounts: params.amounts,
@@ -172,7 +172,7 @@ export function useSignProData(params) {
 
   let obj = {
     chainId: params.chainId,
-    contractAddress: orderAddr.address,
+    contractAddress: orderVerifierAddr.address,
     owner: params.address,
     orderId: params.orderId,
     stageIndex: params.stageIndex,
@@ -218,7 +218,7 @@ export function useSignAppendData(params) {
 
   let obj = {
     chainId: params.chainId,
-    contractAddress: orderAddr.address,
+    contractAddress: orderVerifierAddr.address,
     orderId: params.orderId,
     amount: params.amount,
     period: params.period,
@@ -261,11 +261,11 @@ export function useSignAppendData(params) {
 
 export async function multicallWrite(arr,address,total) {
   const contract = new web3.eth.Contract(order.abi,orderAddr.address,)
+  console.log(contract);
   try {
     return await contract.methods.multicall(arr).send({from: address, gas: 1000000, value: total})
       .then(res => {
         return res.transactionHash
-        console.log('index ===>',res);
       })
   } catch(err) {
         console.log(err);
@@ -274,6 +274,7 @@ export async function multicallWrite(arr,address,total) {
 
 export function muticallEncode(params) {
   const contract = new web3.eth.Contract(order.abi,orderAddr.address,)
+  const contractVerifier = new web3.eth.Contract(orderVerifier.abi,orderVerifierAddr.address,)
   let arr = [];
   params.map(e => {
     switch (e.params.length) {
@@ -310,6 +311,7 @@ export function muticallEncode(params) {
         arr.push(code)
         break;
       case 8:
+        console.log(contract.methods);
         var code = contract.methods[e.functionName](e.params[0],e.params[1],e.params[2],e.params[3],e.params[4],e.params[5],e.params[6],e.params[7]).encodeABI()
         arr.push(code)
         break;

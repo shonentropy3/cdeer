@@ -30,7 +30,7 @@ export default function TaskDetail(params) {
                     <p className="li-title">Task Description：</p>
                     <div className="li-box">
                         <p className="detail content">
-                            {task.desc}
+                            {JSON.parse(task.attachment).desc}
                         </p>
                     </div>
                 </div>
@@ -38,7 +38,7 @@ export default function TaskDetail(params) {
                     <p className="li-title">Task document：</p>
                     <div className="li-box">
                         <div className="upload">
-                            <p className="upload-title">{task.suffix}</p>
+                            <p className="upload-title">{JSON.parse(task.attachment).suffix}</p>
                             {/* <p>下载</p> */}
                         </div>
                     </div>
