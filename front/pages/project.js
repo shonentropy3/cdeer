@@ -166,10 +166,13 @@ export default function Project() {
         if (Task.isSuccess) {
             writeSuccess()
         }
+    },[Task.isSuccess])
+
+    useEffect(() => {
         if (Task.error) {
             setApplyLoading(false)
         }
-    },[Task])
+    },[Task.error])
 
 
     useEffect(() => {
