@@ -29,7 +29,7 @@ export default function OrderStageList(params) {
 
     const { useStageRead: chainStages } = useRead('getStages',order.order_id);
     const { useStageRead: chainOngoing } = useRead('ongoingStage',order.order_id);
-    const { useOrderRead: nonces } = useRead('nonces', address);
+    const { useDeOrderVerifierRead: nonces } = useRead('nonces', address);
     // 领钱
     const { useOrderContractWrite: getWithdraw } = useContracts('withdraw');
 

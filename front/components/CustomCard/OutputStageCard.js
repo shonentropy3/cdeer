@@ -31,7 +31,7 @@ export default function OutputStageCard(params) {
     let [going, setGoing] = useState(false);
     
 
-    const { useOrderRead: nonces } = useRead('nonces', address);
+    const { useDeOrderVerifierRead: nonces } = useRead('nonces', address);
     // 交付
     const { useOrderContractWrite: updateAttachment } = useContracts('updateAttachment');
     // 确认交付

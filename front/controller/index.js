@@ -67,11 +67,16 @@ export function useRead(functionName,args) {
     ...ConfigStage(functionName),
     args: args
   };
+  let objD = {
+    ...ConfigStage(functionName),
+    args: args
+  };
   const useTaskRead = useContractRead(objA)
   const useOrderRead = useContractRead(objB)
   const useStageRead = useContractRead(objC)
+  const useDeOrderVerifierRead = useContractRead(objD)
 
-  return { useTaskRead, useOrderRead, useStageRead }
+  return { useTaskRead, useOrderRead, useStageRead, useDeOrderVerifierRead }
 }
 
 export function useReads(functionName,list) {

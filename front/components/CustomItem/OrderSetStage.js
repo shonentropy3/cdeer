@@ -29,7 +29,7 @@ export default function OrderSetStage(params) {
     const { address } = useAccount();
 
     // 链上数据
-    const { useOrderRead: nonces } = useRead('nonces', address);
+    const { useDeOrderVerifierRead: nonces } = useRead('nonces', address);
 
     // 状态
     let [status, setStatus] = useState('WaitWorkerStage');
