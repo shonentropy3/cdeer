@@ -229,17 +229,26 @@ export default function User_detail () {
         </div>
         <div className='myInfo-NFTs'>
             <div className='myInfo-NFTs-all'>
-                <p>
-                    <span className='NFTs-all-text'>ALL NFTs</span>
-                </p>
+                <div className='allNFTs-title'> 
+                    <div className='allNFTs-icon'></div>
+                    <span className='NFTs-all-text NFTs-text'>ALL NFTs</span>
+                </div>
             </div>
             <div className='myInfo-NFTs-detask'>
-                <p className='NFTs-detask-title'>Detask NFT</p>
+                <p className='NFTs-detask-title NFTs-title'>Detask NFT</p>
                 <div className='NFTs-detask-list'>
-                    <p>
-                        <span>YugaLabs</span>
-                    </p>
+                    <div className='NFTs-detask'>
+                        <div className='detask-icon'>
+
+                        </div>
+                        <span className='detask-text NFTs-text'>YugaLabs</span>
+
+                    </div>
                 </div>
+            </div>
+            <div className='NFTs-collections'>
+                <p className='NFTs-collections-title NFTs-title'>My Collections</p>
+
             </div>
         </div>
     </div>
