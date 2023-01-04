@@ -35,7 +35,8 @@ func main() {
 	// 初始化合约地址
 	initialize.InitContract()
 	// 初始化缓存
-	global.Cache = initialize.Cache()
+	global.JsonCache = initialize.JsonCache()
+	global.TokenCache = initialize.TokenCache()
 	// 启动扫块任务
 	go blockchain.HandleTransaction()
 	core.RunWindowsServer()

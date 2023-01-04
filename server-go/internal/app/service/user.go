@@ -121,7 +121,7 @@ func MsgList(searchInfo request.MsgListRequest, userID uint) (list []response.Ms
 		return list, total, err
 	}
 	db = db.Limit(limit).Offset(offset)
-	err = db.Select("message.*,\"user\".avatar as avatar").Order("created_at desc").Joins("LEFT JOIN \"user\" ON \"user\".id=message.send_id").Find(&list).Error
+	err = db.Select("message.*,\"user\".avatar as avatar,\"user\".address as send_addr").Order("created_at desc").Joins("LEFT JOIN \"user\" ON \"user\".id=message.send_id").Find(&list).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return list, total, err
 	}
