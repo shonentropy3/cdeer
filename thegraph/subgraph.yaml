@@ -1,0 +1,24 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: DeTask
+    network: mumbai
+    source:
+      address: "0xa049916c1C8a419fD4C364CC88984926006bD6a1"
+      abi: DeTask
+      startBlock: 29175031
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - TaskCreated
+      abis:
+        - name: DeTask
+          file: ./abis/DeTask.json
+      eventHandlers:
+        - event: TaskCreated(indexed uint256,address,(string,string,string,uint8,uint112,uint32,uint48,bool))
+          handler: handleTaskCreated
+      file: ./src/DeTask.ts
