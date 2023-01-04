@@ -1,0 +1,224 @@
+.myinfo{
+    padding-top: 95px;
+    padding-bottom: 70px;
+    background-color: white;
+
+    .myinfo-content{
+        width: 1200px;
+        height: 1063px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+    }
+    .userInfo, .userNfts{
+        background: #FFFFFF;
+        box-shadow: 0px 0px 44px -24px #7C7879;
+        border-radius: 4px;
+    }
+    .userInfo{
+        width: 345px;
+        .userInfo-detail{
+            padding-bottom: 35px;
+            .detail-avatar{
+                width: 160px;
+                height: 160px;
+                margin: 50px auto 0;
+                border-radius: 50%;
+                position: relative;
+                background-color: white;
+                overflow: hidden;
+                img{
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+            .detail-name{
+                margin-top: 13px;
+                text-align: center;
+
+                font-size: 24px;
+                font-family: PingFangSC-Medium, PingFang SC;
+                font-weight: 500;
+                color: #1F1E2E;
+                line-height: 33px;
+                letter-spacing: 0.5px;
+            }
+            .detail-sociality{
+                margin-top: 4px;
+                font-size: 18px;
+                font-family: PingFangSC-Regular, PingFang SC;
+                color: #C7C7C7;
+                line-height: 25px;
+                letter-spacing: 0.4px;
+                .socialAccount{
+                    margin: 0 auto;
+                    justify-content: center;
+                    .box .icon{
+                        width: 20px;
+                        height: 20px;
+                    }
+                }
+            }
+        }
+        .userInfo-role{
+            padding-left: 33px;
+            padding-bottom: 110px;
+            .title{
+                font-size: 20px;
+                font-family: PingFangSC-Medium, PingFang SC;
+                font-weight: 500;
+                color: #1F1E2E;
+                line-height: 28px;
+                letter-spacing: 0.42px;
+            }
+            .roles{
+                margin-bottom: 36px;
+                span{
+                    margin-bottom: 7px;
+                    display: inline-block;
+                    padding: 3px 20px;
+                    border-radius: 4px;
+
+                    &:nth-child(1){
+                        background-color: rgba($color: #E02020, $alpha: 0.15);
+                        color: #E02020;
+                    }
+                }
+            }
+            button{
+                width: 215px;
+                height: 45px;
+                margin-left: 32px;
+                background-color: #1F1E2E;
+                border-radius: 4px;
+                border: none;
+                .ml20{
+                    margin-left: 20px;
+
+                    font-family: PingFangSC-Regular, PingFang SC;
+                    line-height: 22px;
+                    letter-spacing: 0.33px;
+                }
+            }
+        }
+        .nft{
+            padding: 0 18px 0 33px;
+            .nft-items{
+                margin-top: 47px;
+            }
+            .items-title{
+                padding-left: 21px;
+                margin-bottom: 5px;
+                font-size: 18px;
+                font-family: PingFangSC-Regular, PingFang SC;
+                color: #C7C7C7;
+                line-height: 25px;
+                letter-spacing: 0.38px;
+                position: relative;
+                .add{
+                    width: 16px;
+                    height: 16px;
+                    position: absolute;
+                    right: 21px;
+                    top: 5px;
+                    background-color: yellowgreen;
+                    cursor: pointer;
+                }
+            }
+            .nft-item{
+                padding: 11px 21px 13px;
+
+                display: flex;
+                align-items: center;
+                border-radius: 25px;
+                position: relative;
+                cursor: pointer;
+                font-size: 18px;
+                font-family: PingFangSC-Medium, PingFang SC;
+                font-weight: 500;
+                color: #1F1E2E;
+                line-height: 25px;
+                letter-spacing: 0.38px;
+                .item-icon{
+                    width: 16px;
+                    height: 16px;
+                    margin-right: 10px;
+                    background-color: yellowgreen;
+                }
+                .count{
+                    font-size: 16px;
+                    color: #D13B4E;
+                    position: absolute;
+                    right: 18px;
+                }
+            }
+            .active{
+                background-color: rgba($color: #D13B4E, $alpha: 0.05);
+            }
+        }
+    }
+    .userNfts{
+        width: 818px;
+    }
+}
+
+.addNft{
+    width: 528px !important;
+    padding-bottom: 0;
+    border-radius: 30px;
+    overflow: hidden;
+    .ant-modal-confirm-btns{
+        margin-top: 52px;
+        display: flex;
+        justify-content: space-between;
+        button{
+            width: 206px;
+            height: 46px;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            &:nth-child(1){
+                background-color: #ACACAC;
+            }
+            &:nth-child(2){
+                background-color: #1F1E2E;
+            }
+        }
+    }
+    .ant-modal-body{
+        padding-bottom: 32px;
+        padding-top: 40px;
+    }
+}
+.addNft-Modal{
+    .img{
+        width: 87px;
+        height: 83px;
+        margin: 0 auto;
+        background-color: yellowgreen;
+    }
+    .title{
+        margin-top: 10px;
+        margin-bottom: 15px;
+        text-align: center;
+
+        font-size: 24px;
+        font-family: PingFang SC;
+        font-weight: 500;
+        color: #1F1E2E;
+        line-height: 33px;
+        letter-spacing: 0.86px;
+    }
+    .inner{
+        input{
+            height: 40px;
+            margin-top: 10px;
+            border-radius: 10px;
+            border: 1px solid #979797;
+
+        }
+    }
+}

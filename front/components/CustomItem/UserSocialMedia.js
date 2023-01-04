@@ -24,7 +24,7 @@ export default function UserSocialMedia(params) {
     },[])
 
     return ( userInfo &&
-        <div className="boxs">
+        <div className="socialAccount">
             {
                 list.map((e,i) => {
                     if (e.value) {

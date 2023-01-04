@@ -11,6 +11,7 @@ import '../styles/Order/StageCard.scss'
 import '../styles/Modal.scss'
 import '../iconfont/iconfont.css'
 import '../styles/Message.scss'
+import '../styles/Myinfo.scss'
 import Header from './parts/Header'
 import Footer from './parts/Footer'
 
