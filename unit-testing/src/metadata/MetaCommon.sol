@@ -82,7 +82,7 @@ contract MetaCommon is Ownable {
     function setSkillLabels(uint[] memory indexs,  string[] memory labels) external onlyOwner {
         require(indexs.length == labels.length, "mismatch");
         for (uint i=0; i < indexs.length; i++ ) {
-          skills[i] = labels[i];
+            skills[i] = labels[i];
         }
     }
 
@@ -132,74 +132,79 @@ contract MetaCommon is Ownable {
             "Z"));
     }
 
-    function amountConvert(uint amount, uint dec) internal pure returns (string memory budget) {
-          uint base = 1 * 10 ** dec;
-          uint base_d10 = base / 10;
-          uint base_d100 = base / 100;
-          uint base_d1000 = base / 1000;
-          uint base_d10000 = base / 10000;
+    function amountConvert(uint amount, uint dec, bool escape) internal pure returns (string memory budget) {
+        uint base = 1 * 10 ** dec;
+        uint base_d10 = base / 10;
+        uint base_d100 = base / 100;
+        uint base_d1000 = base / 1000;
+        uint base_d10000 = base / 10000;
 
-          if (amount / base > 0) {
-                if(amount / base < 10) {
-                    uint digit = amount / base;
-                    uint b = (amount - (digit * base)) / base_d10;
-                    budget = string(abi.encodePacked(unicode"≈", Strings.toString(digit),
-                    ".",
-                        Strings.toString(b)));
-                } else {
-                    budget = string(abi.encodePacked(unicode"≈", Strings.toString(amount / base))); 
-                }
-
-            } else if (amount / base_d10 > 0) {
-                uint b = amount / base_d10;
-                uint b2 = (amount - (b * base_d10)) / base_d100;
-                budget = string(abi.encodePacked(unicode"≈", "0.", Strings.toString(b), Strings.toString(b2)));
-            } else if (amount / base_d100 > 0) {
-                uint b = amount / base_d100;
-                uint b2 = (amount - (b * base_d100)) / base_d1000;
-                budget = string(abi.encodePacked(unicode"≈", "0.0", Strings.toString(b), Strings.toString(b2)));
-            } else if (amount / base_d1000 > 0) {
-                uint b = amount / base_d1000;
-                uint b2 = (amount - (b * base_d1000)) / base_d10000;
-                budget = string(abi.encodePacked(unicode"≈", "0.00", Strings.toString(b), Strings.toString(b2)));
+        if (amount / base > 0) {
+            if(amount / base < 10) {
+                uint digit = amount / base;
+                uint b = (amount - (digit * base)) / base_d10;
+                budget = string(abi.encodePacked(unicode"≈", Strings.toString(digit),
+                ".",
+                    Strings.toString(b)));
             } else {
-                budget = "&lt;0.001";
+                budget = string(abi.encodePacked(unicode"≈", Strings.toString(amount / base))); 
             }
+
+        } else if (amount / base_d10 > 0) {
+            uint b = amount / base_d10;
+            uint b2 = (amount - (b * base_d10)) / base_d100;
+            budget = string(abi.encodePacked(unicode"≈", "0.", Strings.toString(b), Strings.toString(b2)));
+        } else if (amount / base_d100 > 0) {
+            uint b = amount / base_d100;
+            uint b2 = (amount - (b * base_d100)) / base_d1000;
+            budget = string(abi.encodePacked(unicode"≈", "0.0", Strings.toString(b), Strings.toString(b2)));
+        } else if (amount / base_d1000 > 0) {
+            uint b = amount / base_d1000;
+            uint b2 = (amount - (b * base_d1000)) / base_d10000;
+            budget = string(abi.encodePacked(unicode"≈", "0.00", Strings.toString(b), Strings.toString(b2)));
+        } else {
+            if (escape) {
+                budget = "&lt;0.001";
+            } else {
+                budget = "<0.001";
+            }
+            
+        }
     }
 
-    function tokenAmountApprox(uint amount, address token) external view returns (string memory budget) {
-      uint dec = 18;
-      string memory symbol;
-      if (token == address(0)) {
-          if (block.chainid == 56 || block.chainid == 97) {
-            symbol = "BNB";
-          } else if (block.chainid == 137 || block.chainid == 80001) {
-            symbol = "MATIC";
-          } else {
-            symbol = "ETH";
-          }
-      } else {
-        dec = IERC20(token).decimals();
-        symbol = IERC20(token).symbol();
-      }
-      
-      if(amount == 0) {
-        return "Negotiable";
-      }
-      
-      budget = amountConvert(amount, 18);
-      return string(
-                    abi.encodePacked(budget, " ",
-            symbol));
+    function tokenAmountApprox(uint amount, address token, bool escape) external view returns (string memory budget) {
+        uint dec = 18;
+        string memory symbol;
+        if (token == address(0)) {
+            if (block.chainid == 56 || block.chainid == 97) {
+                symbol = "BNB";
+            } else if (block.chainid == 137 || block.chainid == 80001) {
+                symbol = "MATIC";
+            } else {
+                symbol = "ETH";
+            }
+        } else {
+            dec = IERC20(token).decimals();
+            symbol = IERC20(token).symbol();
+        }
+        
+        if(amount == 0) {
+            return "Negotiable";
+        }
+        
+        budget = amountConvert(amount, 18, escape);
+        return string(
+                        abi.encodePacked(budget, " ",
+                symbol));
     }
 
     // 
-    function amountApprox(uint amount, uint8 currency) external view returns (string memory budget) {
+    function amountApprox(uint amount, uint8 currency, bool escape) external view returns (string memory budget) {
         if(amount == 0) {
             return "Negotiable";
         } 
 
-        budget = amountConvert(amount, 18);
+        budget = amountConvert(amount, 18, escape);
         return string(
                     abi.encodePacked(budget, " ",
             currencyNames[currency]));

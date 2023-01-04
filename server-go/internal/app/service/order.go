@@ -10,6 +10,7 @@ import (
 	"code-market-admin/internal/app/utils"
 	"errors"
 	"fmt"
+	"github.com/allegro/bigcache/v3"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
 	"gorm.io/gorm"
@@ -23,6 +24,7 @@ import (
 // @param: searchInfo request.GetOrderListRequest
 // @return: err error, list interface{}, total int64
 func GetOrderList(searchInfo request.GetOrderListRequest) (err error, list interface{}, total int64) {
+	var responses []response.GetOrderListResponse
 	var orderList []response.GetOrderListResponse
 	limit := searchInfo.PageSize
 	offset := searchInfo.PageSize * (searchInfo.Page - 1)
@@ -58,27 +60,56 @@ func GetOrderList(searchInfo request.GetOrderListRequest) (err error, list inter
 
 	// 根据订单ID过滤 需要获取IPFS 具体内容
 	if searchInfo.OrderId != 0 && len(orderList) == 1 && orderList[0].Attachment != "" {
-		url := fmt.Sprintf("%s/%s", global.CONFIG.IPFS.API, orderList[0].Attachment)
-		orderList[0].StageJson, err = utils.GetRequest(url)
-		if err != nil {
-			return err, orderList, total
+		// 从缓存获取
+		att, cacheErr := global.Cache.Get(orderList[0].Attachment)
+		if cacheErr == bigcache.ErrEntryNotFound {
+			url := fmt.Sprintf("%s/%s", global.CONFIG.IPFS.API, orderList[0].Attachment)
+			orderList[0].StageJson, err = utils.GetRequest(url)
+			if err != nil || !gjson.Valid(orderList[0].StageJson) {
+				return err, orderList, total
+			}
+			global.Cache.Set(orderList[0].Attachment, []byte(orderList[0].StageJson))
+		} else {
+			orderList[0].StageJson = string(att)
 		}
-		// WaitProlongAgree 状态需要 返回原始数据
+		// WaitProlongAgree || WaitAppendAgree 状态需要 返回原始数据（上次数据）
 		if orderList[0].Status == "WaitProlongAgree" || orderList[0].Status == "WaitAppendAgree" {
 			global.DB.Model(&model.OrderFlow{}).Select("stages").Where("order_id = ? AND status = 'IssuerAgreeStage' AND del = 0", orderList[0].OrderId).Order("level desc").First(&orderList[0].LastStages)
-		}
-		// WaitAppendAgree 状态需要 返回原始数据
-		if orderList[0].Status == "WaitProlongAgree" || orderList[0].Status == "WaitAppendAgree" {
 			var attachment string
 			global.DB.Model(&model.OrderFlow{}).Select("attachment").Where("order_id = ? AND status = 'IssuerAgreeStage' AND del = 0", orderList[0].OrderId).Order("level desc").First(&attachment)
-			url := fmt.Sprintf("%s/%s", global.CONFIG.IPFS.API, attachment)
-			orderList[0].LastStageJson, err = utils.GetRequest(url)
-			if err != nil {
-				return err, orderList, total
+			// 从缓存获取
+			att, cacheErr := global.Cache.Get(attachment)
+			if cacheErr == bigcache.ErrEntryNotFound {
+				url := fmt.Sprintf("%s/%s", global.CONFIG.IPFS.API, attachment)
+				orderList[0].LastStageJson, err = utils.GetRequest(url)
+				if err != nil || !gjson.Valid(orderList[0].LastStageJson) {
+					return err, orderList, total
+				}
+				global.Cache.Set(attachment, []byte(orderList[0].LastStageJson))
+			} else {
+				orderList[0].LastStageJson = string(att)
 			}
 		}
 	}
-	return err, orderList, total
+	// IPFS
+	for _, item := range orderList {
+		// 获取IPFS
+		// 从缓存获取
+		hash := item.Task.Attachment
+		att, cacheErr := global.Cache.Get(hash)
+		if cacheErr == bigcache.ErrEntryNotFound {
+			url := fmt.Sprintf("%s/%s", global.CONFIG.IPFS.API, hash)
+			item.Task.Attachment, err = utils.GetRequest(url)
+			if err != nil || !gjson.Valid(item.Task.Attachment) {
+				continue
+			}
+			global.Cache.Set(hash, []byte(item.Task.Attachment))
+		} else {
+			item.Task.Attachment = string(att)
+		}
+		responses = append(responses, item)
+	}
+	return err, responses, total
 }
 
 // CreateOrder

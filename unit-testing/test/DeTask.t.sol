@@ -42,7 +42,6 @@ contract DeTaskTest is Test {
         // 获取getTaskInfo
         (
             string memory title,
-            string memory desc,
             string memory attachment,
             uint8 currency,
             uint128 budget,
@@ -52,7 +51,6 @@ contract DeTaskTest is Test {
             bool disabled
         ) = deTask.getTaskInfo(1);
         assertEq(task.title, title);
-        assertEq(task.desc, desc);
         assertEq(task.attachment, attachment);
         assertEq(task.currency, currency);
         assertEq(task.budget, budget);
@@ -85,7 +83,6 @@ contract DeTaskTest is Test {
         // 获取getTaskInfo
         (
             string memory title,
-            string memory desc,
             string memory attachment,
             uint8 currency,
             uint128 budget,
@@ -95,7 +92,6 @@ contract DeTaskTest is Test {
             bool disabled
         ) = deTask.getTaskInfo(1);
         assertEq(task.title, title);
-        assertEq(task.desc, desc);
         assertEq(task.attachment, attachment);
         assertEq(task.currency, currency);
         assertEq(task.budget, budget);
@@ -238,7 +234,7 @@ contract DeTaskTest is Test {
         vm.startPrank(issuer); // 甲方
         deTask.disableTask(1, true);
         vm.stopPrank();
-        (, , , , , , , , bool disabled) = deTask.getTaskInfo(1);
+        (, , , , , , , bool disabled) = deTask.getTaskInfo(1);
         assertEq(disabled, true);
     }
 

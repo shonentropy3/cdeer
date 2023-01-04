@@ -4,8 +4,6 @@ pragma solidity ^0.8.0;
 
 enum OrderProgess {
     Init,
-    StagingByIssuer,   // Issuer Stage
-    StagingByWoker,    // Worker Stage
     Staged,
     Ongoing,
     IssuerAbort,
@@ -19,18 +17,20 @@ enum PaymentType {
     Confirm // by Confirm , if has pre pay
 }
 
-// TODO: padding space
+
 
 struct Order {
     uint taskId;
     address issuer;
+    uint96 amount;
+    
     address worker;
+    uint96 payed;
+
     address token;
-    uint amount;
-    uint payed;
     OrderProgess progress;   // PROG_*
     PaymentType payType;
-    uint startDate;
+    uint32 startDate;
 }
 
 interface IOrder {

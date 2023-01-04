@@ -53,14 +53,12 @@ func ParseTaskCreated(transHash model.TransHash, Logs []*types.Log) (err error) 
 			// 开始事务
 			tx := global.DB.Begin()
 			// 更新数据
-			task := model.Task{TaskID: vLog.Topics[1].Big().Uint64(), Title: taskCreated.Task.Title, Desc: taskCreated.Task.Desc, Period: taskCreated.Task.Period}
+			task := model.Task{TaskID: vLog.Topics[1].Big().Uint64(), Title: taskCreated.Task.Title, Period: taskCreated.Task.Period, Attachment: taskCreated.Task.Attachment}
 			task.Issuer = taskCreated.Issuer.String()
 			task.Budget = taskCreated.Task.Budget.String()
 			task.Attachment = taskCreated.Task.Attachment
 			task.Currency = currencyNames[taskCreated.Task.Currency]
 			task.Role = ParseSkills(taskCreated.Task.Skills.Int64())
-			// 解析Raw数据
-			task.Suffix = gjson.Get(transHash.Raw, "suffix").String()
 			// 更新||插入数据
 			err = tx.Model(&model.Task{}).Clauses(clause.OnConflict{
 				Columns:   []clause.Column{{Name: "task_id"}},
@@ -100,14 +98,12 @@ func ParseTaskModified(transHash model.TransHash, Logs []*types.Log) (err error)
 			// 开始事务
 			tx := global.DB.Begin()
 			// 更新数据
-			task := model.Task{TaskID: vLog.Topics[1].Big().Uint64(), Title: taskModified.Task.Title, Desc: taskModified.Task.Desc, Period: taskModified.Task.Period}
+			task := model.Task{TaskID: vLog.Topics[1].Big().Uint64(), Title: taskModified.Task.Title, Period: taskModified.Task.Period, Attachment: taskModified.Task.Attachment}
 			task.Issuer = taskModified.Issuer.String()
 			task.Budget = taskModified.Task.Budget.String()
 			task.Attachment = taskModified.Task.Attachment
 			task.Currency = currencyNames[taskModified.Task.Currency]
 			task.Role = ParseSkills(taskModified.Task.Skills.Int64())
-			// 解析Raw数据
-			task.Suffix = gjson.Get(transHash.Raw, "suffix").String()
 			// 更新||插入数据
 			err = tx.Model(&model.Task{}).Clauses(clause.OnConflict{
 				Columns:   []clause.Column{{Name: "task_id"}},

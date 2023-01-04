@@ -15,7 +15,7 @@ func Cache() *bigcache.BigCache {
 		MaxEntrySize:       500,
 		StatsEnabled:       false,
 		Verbose:            true,
-		HardMaxCacheSize:   0,
+		HardMaxCacheSize:   1024, // memory limit, value in MB
 		Logger:             bigcache.DefaultLogger(),
 	}
 	cache, err := bigcache.New(context.Background(), config)

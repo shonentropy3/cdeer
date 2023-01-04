@@ -31,7 +31,6 @@ var (
 // TaskInfo is an auto generated low-level Go binding around an user-defined struct.
 type TaskInfo struct {
 	Title      string
-	Desc       string
 	Attachment string
 	Currency   uint8
 	Budget     *big.Int
@@ -43,7 +42,7 @@ type TaskInfo struct {
 
 // DeTaskMetaData contains all meta data concerning the DeTask contract.
 var DeTaskMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"taskId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"worker\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"cost\",\"type\":\"uint256\"}],\"name\":\"ApplyFor\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"approved\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\"}],\"name\":\"ApprovalForAll\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"taskId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"worker\",\"type\":\"address\"}],\"name\":\"CancelApply\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"Locked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"taskFee\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"applyFee\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"feeReceiver\",\"type\":\"address\"}],\"name\":\"ModifyFee\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"taskId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"issuer\",\"type\":\"address\"},{\"components\":[{\"internalType\":\"string\",\"name\":\"title\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"desc\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"attachment\",\"type\":\"string\"},{\"internalType\":\"uint8\",\"name\":\"currency\",\"type\":\"uint8\"},{\"internalType\":\"uint128\",\"name\":\"budget\",\"type\":\"uint128\"},{\"internalType\":\"uint32\",\"name\":\"period\",\"type\":\"uint32\"},{\"internalType\":\"uint48\",\"name\":\"skills\",\"type\":\"uint48\"},{\"internalType\":\"uint32\",\"name\":\"timestamp\",\"type\":\"uint32\"},{\"internalType\":\"bool\",\"name\":\"disabled\",\"type\":\"bool\"}],\"indexed\":false,\"internalType\":\"structTaskInfo\",\"name\":\"task\",\"type\":\"tuple\"}],\"name\":\"TaskCreated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"taskId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"disabled\",\"type\":\"bool\"}],\"name\":\"TaskDisabled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"taskId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"issuer\",\"type\":\"address\"},{\"components\":[{\"internalType\":\"string\",\"name\":\"title\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"desc\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"attachment\",\"type\":\"string\"},{\"internalType\":\"uint8\",\"name\":\"currency\",\"type\":\"uint8\"},{\"internalType\":\"uint128\",\"name\":\"budget\",\"type\":\"uint128\"},{\"internalType\":\"uint32\",\"name\":\"period\",\"type\":\"uint32\"},{\"internalType\":\"uint48\",\"name\":\"skills\",\"type\":\"uint48\"},{\"internalType\":\"uint32\",\"name\":\"timestamp\",\"type\":\"uint32\"},{\"internalType\":\"bool\",\"name\":\"disabled\",\"type\":\"bool\"}],\"indexed\":false,\"internalType\":\"structTaskInfo\",\"name\":\"task\",\"type\":\"tuple\"}],\"name\":\"TaskModified\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"Unlocked\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"who\",\"type\":\"address\"},{\"internalType\":\"uint256[]\",\"name\":\"_taskIds\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[]\",\"name\":\"costs\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[]\",\"name\":\"cancelIds\",\"type\":\"uint256[]\"}],\"name\":\"applyAndCancel\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"who\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"taskId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_cost\",\"type\":\"uint256\"}],\"name\":\"applyFor\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"taskId\",\"type\":\"uint256\"}],\"name\":\"cancelApply\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"who\",\"type\":\"address\"},{\"components\":[{\"internalType\":\"string\",\"name\":\"title\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"desc\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"attachment\",\"type\":\"string\"},{\"internalType\":\"uint8\",\"name\":\"currency\",\"type\":\"uint8\"},{\"internalType\":\"uint128\",\"name\":\"budget\",\"type\":\"uint128\"},{\"internalType\":\"uint32\",\"name\":\"period\",\"type\":\"uint32\"},{\"internalType\":\"uint48\",\"name\":\"skills\",\"type\":\"uint48\"},{\"internalType\":\"uint32\",\"name\":\"timestamp\",\"type\":\"uint32\"},{\"internalType\":\"bool\",\"name\":\"disabled\",\"type\":\"bool\"}],\"internalType\":\"structTaskInfo\",\"name\":\"task\",\"type\":\"tuple\"}],\"name\":\"createTask\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"taskId\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"_disabled\",\"type\":\"bool\"}],\"name\":\"disableTask\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"getApproved\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"taskId\",\"type\":\"uint256\"}],\"name\":\"getTaskInfo\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"title\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"desc\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"attachment\",\"type\":\"string\"},{\"internalType\":\"uint8\",\"name\":\"currency\",\"type\":\"uint8\"},{\"internalType\":\"uint128\",\"name\":\"budget\",\"type\":\"uint128\"},{\"internalType\":\"uint32\",\"name\":\"period\",\"type\":\"uint32\"},{\"internalType\":\"uint48\",\"name\":\"skills\",\"type\":\"uint48\"},{\"internalType\":\"uint32\",\"name\":\"timestamp\",\"type\":\"uint32\"},{\"internalType\":\"bool\",\"name\":\"disabled\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"isApprovedForAll\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"locked\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"meta\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"taskId\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"string\",\"name\":\"title\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"desc\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"attachment\",\"type\":\"string\"},{\"internalType\":\"uint8\",\"name\":\"currency\",\"type\":\"uint8\"},{\"internalType\":\"uint128\",\"name\":\"budget\",\"type\":\"uint128\"},{\"internalType\":\"uint32\",\"name\":\"period\",\"type\":\"uint32\"},{\"internalType\":\"uint48\",\"name\":\"skills\",\"type\":\"uint48\"},{\"internalType\":\"uint32\",\"name\":\"timestamp\",\"type\":\"uint32\"},{\"internalType\":\"bool\",\"name\":\"disabled\",\"type\":\"bool\"}],\"internalType\":\"structTaskInfo\",\"name\":\"task\",\"type\":\"tuple\"}],\"name\":\"modifyTask\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"name\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"order\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"ownerOf\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"safeTransferFrom\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"name\":\"safeTransferFrom\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"name\":\"setApprovalForAll\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_meta\",\"type\":\"address\"}],\"name\":\"setMetaContract\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_order\",\"type\":\"address\"}],\"name\":\"setOrder\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"symbol\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"tasks\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"title\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"desc\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"attachment\",\"type\":\"string\"},{\"internalType\":\"uint8\",\"name\":\"currency\",\"type\":\"uint8\"},{\"internalType\":\"uint128\",\"name\":\"budget\",\"type\":\"uint128\"},{\"internalType\":\"uint32\",\"name\":\"period\",\"type\":\"uint32\"},{\"internalType\":\"uint48\",\"name\":\"skills\",\"type\":\"uint48\"},{\"internalType\":\"uint32\",\"name\":\"timestamp\",\"type\":\"uint32\"},{\"internalType\":\"bool\",\"name\":\"disabled\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"tokenURI\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transferFee\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_taskFee\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_applyFee\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_receiver\",\"type\":\"address\"}],\"name\":\"updateFeeReceiver\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
+	ABI: "[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"taskId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"worker\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"cost\",\"type\":\"uint256\"}],\"name\":\"ApplyFor\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"approved\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"approved\",\"type\":\"bool\"}],\"name\":\"ApprovalForAll\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"taskId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"worker\",\"type\":\"address\"}],\"name\":\"CancelApply\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"Locked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"taskFee\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"applyFee\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"feeReceiver\",\"type\":\"address\"}],\"name\":\"ModifyFee\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"taskId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"issuer\",\"type\":\"address\"},{\"components\":[{\"internalType\":\"string\",\"name\":\"title\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"attachment\",\"type\":\"string\"},{\"internalType\":\"uint8\",\"name\":\"currency\",\"type\":\"uint8\"},{\"internalType\":\"uint128\",\"name\":\"budget\",\"type\":\"uint128\"},{\"internalType\":\"uint32\",\"name\":\"period\",\"type\":\"uint32\"},{\"internalType\":\"uint48\",\"name\":\"skills\",\"type\":\"uint48\"},{\"internalType\":\"uint32\",\"name\":\"timestamp\",\"type\":\"uint32\"},{\"internalType\":\"bool\",\"name\":\"disabled\",\"type\":\"bool\"}],\"indexed\":false,\"internalType\":\"structTaskInfo\",\"name\":\"task\",\"type\":\"tuple\"}],\"name\":\"TaskCreated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"taskId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"disabled\",\"type\":\"bool\"}],\"name\":\"TaskDisabled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"taskId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"issuer\",\"type\":\"address\"},{\"components\":[{\"internalType\":\"string\",\"name\":\"title\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"attachment\",\"type\":\"string\"},{\"internalType\":\"uint8\",\"name\":\"currency\",\"type\":\"uint8\"},{\"internalType\":\"uint128\",\"name\":\"budget\",\"type\":\"uint128\"},{\"internalType\":\"uint32\",\"name\":\"period\",\"type\":\"uint32\"},{\"internalType\":\"uint48\",\"name\":\"skills\",\"type\":\"uint48\"},{\"internalType\":\"uint32\",\"name\":\"timestamp\",\"type\":\"uint32\"},{\"internalType\":\"bool\",\"name\":\"disabled\",\"type\":\"bool\"}],\"indexed\":false,\"internalType\":\"structTaskInfo\",\"name\":\"task\",\"type\":\"tuple\"}],\"name\":\"TaskModified\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"Unlocked\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"who\",\"type\":\"address\"},{\"internalType\":\"uint256[]\",\"name\":\"_taskIds\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[]\",\"name\":\"costs\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[]\",\"name\":\"cancelIds\",\"type\":\"uint256[]\"}],\"name\":\"applyAndCancel\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"who\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"taskId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_cost\",\"type\":\"uint256\"}],\"name\":\"applyFor\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"taskId\",\"type\":\"uint256\"}],\"name\":\"cancelApply\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"who\",\"type\":\"address\"},{\"components\":[{\"internalType\":\"string\",\"name\":\"title\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"attachment\",\"type\":\"string\"},{\"internalType\":\"uint8\",\"name\":\"currency\",\"type\":\"uint8\"},{\"internalType\":\"uint128\",\"name\":\"budget\",\"type\":\"uint128\"},{\"internalType\":\"uint32\",\"name\":\"period\",\"type\":\"uint32\"},{\"internalType\":\"uint48\",\"name\":\"skills\",\"type\":\"uint48\"},{\"internalType\":\"uint32\",\"name\":\"timestamp\",\"type\":\"uint32\"},{\"internalType\":\"bool\",\"name\":\"disabled\",\"type\":\"bool\"}],\"internalType\":\"structTaskInfo\",\"name\":\"task\",\"type\":\"tuple\"}],\"name\":\"createTask\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"taskId\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"_disabled\",\"type\":\"bool\"}],\"name\":\"disableTask\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"getApproved\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"taskId\",\"type\":\"uint256\"}],\"name\":\"getTaskInfo\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"title\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"attachment\",\"type\":\"string\"},{\"internalType\":\"uint8\",\"name\":\"currency\",\"type\":\"uint8\"},{\"internalType\":\"uint128\",\"name\":\"budget\",\"type\":\"uint128\"},{\"internalType\":\"uint32\",\"name\":\"period\",\"type\":\"uint32\"},{\"internalType\":\"uint48\",\"name\":\"skills\",\"type\":\"uint48\"},{\"internalType\":\"uint32\",\"name\":\"timestamp\",\"type\":\"uint32\"},{\"internalType\":\"bool\",\"name\":\"disabled\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"isApprovedForAll\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"locked\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"meta\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"taskId\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"string\",\"name\":\"title\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"attachment\",\"type\":\"string\"},{\"internalType\":\"uint8\",\"name\":\"currency\",\"type\":\"uint8\"},{\"internalType\":\"uint128\",\"name\":\"budget\",\"type\":\"uint128\"},{\"internalType\":\"uint32\",\"name\":\"period\",\"type\":\"uint32\"},{\"internalType\":\"uint48\",\"name\":\"skills\",\"type\":\"uint48\"},{\"internalType\":\"uint32\",\"name\":\"timestamp\",\"type\":\"uint32\"},{\"internalType\":\"bool\",\"name\":\"disabled\",\"type\":\"bool\"}],\"internalType\":\"structTaskInfo\",\"name\":\"task\",\"type\":\"tuple\"}],\"name\":\"modifyTask\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"name\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"order\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"ownerOf\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"safeTransferFrom\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"name\":\"safeTransferFrom\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"name\":\"setApprovalForAll\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_meta\",\"type\":\"address\"}],\"name\":\"setMetaContract\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_order\",\"type\":\"address\"}],\"name\":\"setOrder\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"symbol\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"tasks\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"title\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"attachment\",\"type\":\"string\"},{\"internalType\":\"uint8\",\"name\":\"currency\",\"type\":\"uint8\"},{\"internalType\":\"uint128\",\"name\":\"budget\",\"type\":\"uint128\"},{\"internalType\":\"uint32\",\"name\":\"period\",\"type\":\"uint32\"},{\"internalType\":\"uint48\",\"name\":\"skills\",\"type\":\"uint48\"},{\"internalType\":\"uint32\",\"name\":\"timestamp\",\"type\":\"uint32\"},{\"internalType\":\"bool\",\"name\":\"disabled\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"tokenURI\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"transferFee\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_taskFee\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_applyFee\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_receiver\",\"type\":\"address\"}],\"name\":\"updateFeeReceiver\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
 }
 
 // DeTaskABI is the input ABI used to generate the binding from.
@@ -256,10 +255,9 @@ func (_DeTask *DeTaskCallerSession) GetApproved(arg0 *big.Int) (common.Address, 
 
 // GetTaskInfo is a free data retrieval call binding the contract method 0xd1a1b999.
 //
-// Solidity: function getTaskInfo(uint256 taskId) view returns(string title, string desc, string attachment, uint8 currency, uint128 budget, uint32 period, uint48 skills, uint32 timestamp, bool disabled)
+// Solidity: function getTaskInfo(uint256 taskId) view returns(string title, string attachment, uint8 currency, uint128 budget, uint32 period, uint48 skills, uint32 timestamp, bool disabled)
 func (_DeTask *DeTaskCaller) GetTaskInfo(opts *bind.CallOpts, taskId *big.Int) (struct {
 	Title      string
-	Desc       string
 	Attachment string
 	Currency   uint8
 	Budget     *big.Int
@@ -273,7 +271,6 @@ func (_DeTask *DeTaskCaller) GetTaskInfo(opts *bind.CallOpts, taskId *big.Int) (
 
 	outstruct := new(struct {
 		Title      string
-		Desc       string
 		Attachment string
 		Currency   uint8
 		Budget     *big.Int
@@ -287,14 +284,13 @@ func (_DeTask *DeTaskCaller) GetTaskInfo(opts *bind.CallOpts, taskId *big.Int) (
 	}
 
 	outstruct.Title = *abi.ConvertType(out[0], new(string)).(*string)
-	outstruct.Desc = *abi.ConvertType(out[1], new(string)).(*string)
-	outstruct.Attachment = *abi.ConvertType(out[2], new(string)).(*string)
-	outstruct.Currency = *abi.ConvertType(out[3], new(uint8)).(*uint8)
-	outstruct.Budget = *abi.ConvertType(out[4], new(*big.Int)).(**big.Int)
-	outstruct.Period = *abi.ConvertType(out[5], new(uint32)).(*uint32)
-	outstruct.Skills = *abi.ConvertType(out[6], new(*big.Int)).(**big.Int)
-	outstruct.Timestamp = *abi.ConvertType(out[7], new(uint32)).(*uint32)
-	outstruct.Disabled = *abi.ConvertType(out[8], new(bool)).(*bool)
+	outstruct.Attachment = *abi.ConvertType(out[1], new(string)).(*string)
+	outstruct.Currency = *abi.ConvertType(out[2], new(uint8)).(*uint8)
+	outstruct.Budget = *abi.ConvertType(out[3], new(*big.Int)).(**big.Int)
+	outstruct.Period = *abi.ConvertType(out[4], new(uint32)).(*uint32)
+	outstruct.Skills = *abi.ConvertType(out[5], new(*big.Int)).(**big.Int)
+	outstruct.Timestamp = *abi.ConvertType(out[6], new(uint32)).(*uint32)
+	outstruct.Disabled = *abi.ConvertType(out[7], new(bool)).(*bool)
 
 	return *outstruct, err
 
@@ -302,10 +298,9 @@ func (_DeTask *DeTaskCaller) GetTaskInfo(opts *bind.CallOpts, taskId *big.Int) (
 
 // GetTaskInfo is a free data retrieval call binding the contract method 0xd1a1b999.
 //
-// Solidity: function getTaskInfo(uint256 taskId) view returns(string title, string desc, string attachment, uint8 currency, uint128 budget, uint32 period, uint48 skills, uint32 timestamp, bool disabled)
+// Solidity: function getTaskInfo(uint256 taskId) view returns(string title, string attachment, uint8 currency, uint128 budget, uint32 period, uint48 skills, uint32 timestamp, bool disabled)
 func (_DeTask *DeTaskSession) GetTaskInfo(taskId *big.Int) (struct {
 	Title      string
-	Desc       string
 	Attachment string
 	Currency   uint8
 	Budget     *big.Int
@@ -319,10 +314,9 @@ func (_DeTask *DeTaskSession) GetTaskInfo(taskId *big.Int) (struct {
 
 // GetTaskInfo is a free data retrieval call binding the contract method 0xd1a1b999.
 //
-// Solidity: function getTaskInfo(uint256 taskId) view returns(string title, string desc, string attachment, uint8 currency, uint128 budget, uint32 period, uint48 skills, uint32 timestamp, bool disabled)
+// Solidity: function getTaskInfo(uint256 taskId) view returns(string title, string attachment, uint8 currency, uint128 budget, uint32 period, uint48 skills, uint32 timestamp, bool disabled)
 func (_DeTask *DeTaskCallerSession) GetTaskInfo(taskId *big.Int) (struct {
 	Title      string
-	Desc       string
 	Attachment string
 	Currency   uint8
 	Budget     *big.Int
@@ -615,10 +609,9 @@ func (_DeTask *DeTaskCallerSession) Symbol() (string, error) {
 
 // Tasks is a free data retrieval call binding the contract method 0x8d977672.
 //
-// Solidity: function tasks(uint256 ) view returns(string title, string desc, string attachment, uint8 currency, uint128 budget, uint32 period, uint48 skills, uint32 timestamp, bool disabled)
+// Solidity: function tasks(uint256 ) view returns(string title, string attachment, uint8 currency, uint128 budget, uint32 period, uint48 skills, uint32 timestamp, bool disabled)
 func (_DeTask *DeTaskCaller) Tasks(opts *bind.CallOpts, arg0 *big.Int) (struct {
 	Title      string
-	Desc       string
 	Attachment string
 	Currency   uint8
 	Budget     *big.Int
@@ -632,7 +625,6 @@ func (_DeTask *DeTaskCaller) Tasks(opts *bind.CallOpts, arg0 *big.Int) (struct {
 
 	outstruct := new(struct {
 		Title      string
-		Desc       string
 		Attachment string
 		Currency   uint8
 		Budget     *big.Int
@@ -646,14 +638,13 @@ func (_DeTask *DeTaskCaller) Tasks(opts *bind.CallOpts, arg0 *big.Int) (struct {
 	}
 
 	outstruct.Title = *abi.ConvertType(out[0], new(string)).(*string)
-	outstruct.Desc = *abi.ConvertType(out[1], new(string)).(*string)
-	outstruct.Attachment = *abi.ConvertType(out[2], new(string)).(*string)
-	outstruct.Currency = *abi.ConvertType(out[3], new(uint8)).(*uint8)
-	outstruct.Budget = *abi.ConvertType(out[4], new(*big.Int)).(**big.Int)
-	outstruct.Period = *abi.ConvertType(out[5], new(uint32)).(*uint32)
-	outstruct.Skills = *abi.ConvertType(out[6], new(*big.Int)).(**big.Int)
-	outstruct.Timestamp = *abi.ConvertType(out[7], new(uint32)).(*uint32)
-	outstruct.Disabled = *abi.ConvertType(out[8], new(bool)).(*bool)
+	outstruct.Attachment = *abi.ConvertType(out[1], new(string)).(*string)
+	outstruct.Currency = *abi.ConvertType(out[2], new(uint8)).(*uint8)
+	outstruct.Budget = *abi.ConvertType(out[3], new(*big.Int)).(**big.Int)
+	outstruct.Period = *abi.ConvertType(out[4], new(uint32)).(*uint32)
+	outstruct.Skills = *abi.ConvertType(out[5], new(*big.Int)).(**big.Int)
+	outstruct.Timestamp = *abi.ConvertType(out[6], new(uint32)).(*uint32)
+	outstruct.Disabled = *abi.ConvertType(out[7], new(bool)).(*bool)
 
 	return *outstruct, err
 
@@ -661,10 +652,9 @@ func (_DeTask *DeTaskCaller) Tasks(opts *bind.CallOpts, arg0 *big.Int) (struct {
 
 // Tasks is a free data retrieval call binding the contract method 0x8d977672.
 //
-// Solidity: function tasks(uint256 ) view returns(string title, string desc, string attachment, uint8 currency, uint128 budget, uint32 period, uint48 skills, uint32 timestamp, bool disabled)
+// Solidity: function tasks(uint256 ) view returns(string title, string attachment, uint8 currency, uint128 budget, uint32 period, uint48 skills, uint32 timestamp, bool disabled)
 func (_DeTask *DeTaskSession) Tasks(arg0 *big.Int) (struct {
 	Title      string
-	Desc       string
 	Attachment string
 	Currency   uint8
 	Budget     *big.Int
@@ -678,10 +668,9 @@ func (_DeTask *DeTaskSession) Tasks(arg0 *big.Int) (struct {
 
 // Tasks is a free data retrieval call binding the contract method 0x8d977672.
 //
-// Solidity: function tasks(uint256 ) view returns(string title, string desc, string attachment, uint8 currency, uint128 budget, uint32 period, uint48 skills, uint32 timestamp, bool disabled)
+// Solidity: function tasks(uint256 ) view returns(string title, string attachment, uint8 currency, uint128 budget, uint32 period, uint48 skills, uint32 timestamp, bool disabled)
 func (_DeTask *DeTaskCallerSession) Tasks(arg0 *big.Int) (struct {
 	Title      string
-	Desc       string
 	Attachment string
 	Currency   uint8
 	Budget     *big.Int
@@ -808,23 +797,23 @@ func (_DeTask *DeTaskTransactorSession) CancelApply(taskId *big.Int) (*types.Tra
 	return _DeTask.Contract.CancelApply(&_DeTask.TransactOpts, taskId)
 }
 
-// CreateTask is a paid mutator transaction binding the contract method 0xc9503caf.
+// CreateTask is a paid mutator transaction binding the contract method 0x46122ad3.
 //
-// Solidity: function createTask(address who, (string,string,string,uint8,uint128,uint32,uint48,uint32,bool) task) payable returns()
+// Solidity: function createTask(address who, (string,string,uint8,uint128,uint32,uint48,uint32,bool) task) payable returns()
 func (_DeTask *DeTaskTransactor) CreateTask(opts *bind.TransactOpts, who common.Address, task TaskInfo) (*types.Transaction, error) {
 	return _DeTask.contract.Transact(opts, "createTask", who, task)
 }
 
-// CreateTask is a paid mutator transaction binding the contract method 0xc9503caf.
+// CreateTask is a paid mutator transaction binding the contract method 0x46122ad3.
 //
-// Solidity: function createTask(address who, (string,string,string,uint8,uint128,uint32,uint48,uint32,bool) task) payable returns()
+// Solidity: function createTask(address who, (string,string,uint8,uint128,uint32,uint48,uint32,bool) task) payable returns()
 func (_DeTask *DeTaskSession) CreateTask(who common.Address, task TaskInfo) (*types.Transaction, error) {
 	return _DeTask.Contract.CreateTask(&_DeTask.TransactOpts, who, task)
 }
 
-// CreateTask is a paid mutator transaction binding the contract method 0xc9503caf.
+// CreateTask is a paid mutator transaction binding the contract method 0x46122ad3.
 //
-// Solidity: function createTask(address who, (string,string,string,uint8,uint128,uint32,uint48,uint32,bool) task) payable returns()
+// Solidity: function createTask(address who, (string,string,uint8,uint128,uint32,uint48,uint32,bool) task) payable returns()
 func (_DeTask *DeTaskTransactorSession) CreateTask(who common.Address, task TaskInfo) (*types.Transaction, error) {
 	return _DeTask.Contract.CreateTask(&_DeTask.TransactOpts, who, task)
 }
@@ -850,23 +839,23 @@ func (_DeTask *DeTaskTransactorSession) DisableTask(taskId *big.Int, _disabled b
 	return _DeTask.Contract.DisableTask(&_DeTask.TransactOpts, taskId, _disabled)
 }
 
-// ModifyTask is a paid mutator transaction binding the contract method 0xc786fdce.
+// ModifyTask is a paid mutator transaction binding the contract method 0xcdfbeae8.
 //
-// Solidity: function modifyTask(uint256 taskId, (string,string,string,uint8,uint128,uint32,uint48,uint32,bool) task) payable returns()
+// Solidity: function modifyTask(uint256 taskId, (string,string,uint8,uint128,uint32,uint48,uint32,bool) task) payable returns()
 func (_DeTask *DeTaskTransactor) ModifyTask(opts *bind.TransactOpts, taskId *big.Int, task TaskInfo) (*types.Transaction, error) {
 	return _DeTask.contract.Transact(opts, "modifyTask", taskId, task)
 }
 
-// ModifyTask is a paid mutator transaction binding the contract method 0xc786fdce.
+// ModifyTask is a paid mutator transaction binding the contract method 0xcdfbeae8.
 //
-// Solidity: function modifyTask(uint256 taskId, (string,string,string,uint8,uint128,uint32,uint48,uint32,bool) task) payable returns()
+// Solidity: function modifyTask(uint256 taskId, (string,string,uint8,uint128,uint32,uint48,uint32,bool) task) payable returns()
 func (_DeTask *DeTaskSession) ModifyTask(taskId *big.Int, task TaskInfo) (*types.Transaction, error) {
 	return _DeTask.Contract.ModifyTask(&_DeTask.TransactOpts, taskId, task)
 }
 
-// ModifyTask is a paid mutator transaction binding the contract method 0xc786fdce.
+// ModifyTask is a paid mutator transaction binding the contract method 0xcdfbeae8.
 //
-// Solidity: function modifyTask(uint256 taskId, (string,string,string,uint8,uint128,uint32,uint48,uint32,bool) task) payable returns()
+// Solidity: function modifyTask(uint256 taskId, (string,string,uint8,uint128,uint32,uint48,uint32,bool) task) payable returns()
 func (_DeTask *DeTaskTransactorSession) ModifyTask(taskId *big.Int, task TaskInfo) (*types.Transaction, error) {
 	return _DeTask.Contract.ModifyTask(&_DeTask.TransactOpts, taskId, task)
 }
@@ -2194,9 +2183,9 @@ type DeTaskTaskCreated struct {
 	Raw    types.Log // Blockchain specific contextual infos
 }
 
-// FilterTaskCreated is a free log retrieval operation binding the contract event 0x2c11cbcbb9eaaf6db76cc5f177c9e3881b23d5f859137d9c1313bbd5c660ac46.
+// FilterTaskCreated is a free log retrieval operation binding the contract event 0x45f1cc1a989d77dc62a268f7b78cb7d1a6902654181d912c836e78c9501b4352.
 //
-// Solidity: event TaskCreated(uint256 indexed taskId, address issuer, (string,string,string,uint8,uint128,uint32,uint48,uint32,bool) task)
+// Solidity: event TaskCreated(uint256 indexed taskId, address issuer, (string,string,uint8,uint128,uint32,uint48,uint32,bool) task)
 func (_DeTask *DeTaskFilterer) FilterTaskCreated(opts *bind.FilterOpts, taskId []*big.Int) (*DeTaskTaskCreatedIterator, error) {
 
 	var taskIdRule []interface{}
@@ -2211,9 +2200,9 @@ func (_DeTask *DeTaskFilterer) FilterTaskCreated(opts *bind.FilterOpts, taskId [
 	return &DeTaskTaskCreatedIterator{contract: _DeTask.contract, event: "TaskCreated", logs: logs, sub: sub}, nil
 }
 
-// WatchTaskCreated is a free log subscription operation binding the contract event 0x2c11cbcbb9eaaf6db76cc5f177c9e3881b23d5f859137d9c1313bbd5c660ac46.
+// WatchTaskCreated is a free log subscription operation binding the contract event 0x45f1cc1a989d77dc62a268f7b78cb7d1a6902654181d912c836e78c9501b4352.
 //
-// Solidity: event TaskCreated(uint256 indexed taskId, address issuer, (string,string,string,uint8,uint128,uint32,uint48,uint32,bool) task)
+// Solidity: event TaskCreated(uint256 indexed taskId, address issuer, (string,string,uint8,uint128,uint32,uint48,uint32,bool) task)
 func (_DeTask *DeTaskFilterer) WatchTaskCreated(opts *bind.WatchOpts, sink chan<- *DeTaskTaskCreated, taskId []*big.Int) (event.Subscription, error) {
 
 	var taskIdRule []interface{}
@@ -2253,9 +2242,9 @@ func (_DeTask *DeTaskFilterer) WatchTaskCreated(opts *bind.WatchOpts, sink chan<
 	}), nil
 }
 
-// ParseTaskCreated is a log parse operation binding the contract event 0x2c11cbcbb9eaaf6db76cc5f177c9e3881b23d5f859137d9c1313bbd5c660ac46.
+// ParseTaskCreated is a log parse operation binding the contract event 0x45f1cc1a989d77dc62a268f7b78cb7d1a6902654181d912c836e78c9501b4352.
 //
-// Solidity: event TaskCreated(uint256 indexed taskId, address issuer, (string,string,string,uint8,uint128,uint32,uint48,uint32,bool) task)
+// Solidity: event TaskCreated(uint256 indexed taskId, address issuer, (string,string,uint8,uint128,uint32,uint48,uint32,bool) task)
 func (_DeTask *DeTaskFilterer) ParseTaskCreated(log types.Log) (*DeTaskTaskCreated, error) {
 	event := new(DeTaskTaskCreated)
 	if err := _DeTask.contract.UnpackLog(event, "TaskCreated", log); err != nil {
@@ -2485,9 +2474,9 @@ type DeTaskTaskModified struct {
 	Raw    types.Log // Blockchain specific contextual infos
 }
 
-// FilterTaskModified is a free log retrieval operation binding the contract event 0x66f2c5158b4629f81a53fb503f6436720fce7efc1b4999bb18b2c0460b01530b.
+// FilterTaskModified is a free log retrieval operation binding the contract event 0x6652fa099c3ff37982ee76806daa1f2d4b8850648dd18369b88948500bd33965.
 //
-// Solidity: event TaskModified(uint256 indexed taskId, address issuer, (string,string,string,uint8,uint128,uint32,uint48,uint32,bool) task)
+// Solidity: event TaskModified(uint256 indexed taskId, address issuer, (string,string,uint8,uint128,uint32,uint48,uint32,bool) task)
 func (_DeTask *DeTaskFilterer) FilterTaskModified(opts *bind.FilterOpts, taskId []*big.Int) (*DeTaskTaskModifiedIterator, error) {
 
 	var taskIdRule []interface{}
@@ -2502,9 +2491,9 @@ func (_DeTask *DeTaskFilterer) FilterTaskModified(opts *bind.FilterOpts, taskId 
 	return &DeTaskTaskModifiedIterator{contract: _DeTask.contract, event: "TaskModified", logs: logs, sub: sub}, nil
 }
 
-// WatchTaskModified is a free log subscription operation binding the contract event 0x66f2c5158b4629f81a53fb503f6436720fce7efc1b4999bb18b2c0460b01530b.
+// WatchTaskModified is a free log subscription operation binding the contract event 0x6652fa099c3ff37982ee76806daa1f2d4b8850648dd18369b88948500bd33965.
 //
-// Solidity: event TaskModified(uint256 indexed taskId, address issuer, (string,string,string,uint8,uint128,uint32,uint48,uint32,bool) task)
+// Solidity: event TaskModified(uint256 indexed taskId, address issuer, (string,string,uint8,uint128,uint32,uint48,uint32,bool) task)
 func (_DeTask *DeTaskFilterer) WatchTaskModified(opts *bind.WatchOpts, sink chan<- *DeTaskTaskModified, taskId []*big.Int) (event.Subscription, error) {
 
 	var taskIdRule []interface{}
@@ -2544,9 +2533,9 @@ func (_DeTask *DeTaskFilterer) WatchTaskModified(opts *bind.WatchOpts, sink chan
 	}), nil
 }
 
-// ParseTaskModified is a log parse operation binding the contract event 0x66f2c5158b4629f81a53fb503f6436720fce7efc1b4999bb18b2c0460b01530b.
+// ParseTaskModified is a log parse operation binding the contract event 0x6652fa099c3ff37982ee76806daa1f2d4b8850648dd18369b88948500bd33965.
 //
-// Solidity: event TaskModified(uint256 indexed taskId, address issuer, (string,string,string,uint8,uint128,uint32,uint48,uint32,bool) task)
+// Solidity: event TaskModified(uint256 indexed taskId, address issuer, (string,string,uint8,uint128,uint32,uint48,uint32,bool) task)
 func (_DeTask *DeTaskFilterer) ParseTaskModified(log types.Log) (*DeTaskTaskModified, error) {
 	event := new(DeTaskTaskModified)
 	if err := _DeTask.contract.UnpackLog(event, "TaskModified", log); err != nil {
