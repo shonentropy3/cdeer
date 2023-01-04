@@ -311,7 +311,7 @@ export function useSignPermit2Data(params) {
   const useSign = useSignTypedData({
     domain: {
       name: 'Permit2',
-      version: '1',
+      // version: '1',
       chainId: obj.chainId,
       verifyingContract: "0x000000000022D473030F116dDEE9F6B43aC78BA3",
     },

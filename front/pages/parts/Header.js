@@ -169,13 +169,16 @@ export default function Header(props) {
                 {
                     wagmi.isActive ? 
                         <>
+                            <div className="message" onClick={() => router.push(`/messageCenter`)}>
+
+                            </div>
                             <Dropdown overlay={menu} placement="bottom">
                                 <div>
                                     <img className="img" src={hashAvt()} alt="" />
                                 </div>
                             </Dropdown>
                             <Dropdown overlay={menu1} placement="bottom" trigger={['click']}>
-                                <p className="btn" style={{cursor: "pointer"}}>{account}</p>
+                                <div className="btn" style={{cursor: "pointer"}}>{account}</div>
                             </Dropdown>
                         </>
                         :

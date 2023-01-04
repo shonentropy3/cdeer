@@ -10,6 +10,7 @@ import '../styles/Components.scss'
 import '../styles/Order/StageCard.scss'
 import '../styles/Modal.scss'
 import '../iconfont/iconfont.css'
+import '../styles/Message.scss'
 import Header from './parts/Header'
 import Footer from './parts/Footer'
 
