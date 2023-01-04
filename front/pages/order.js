@@ -22,7 +22,6 @@ export default function Order(props) {
     let [stages, setStages] = useState();       // 阶段详情
     let [progress, setProgress] = useState(0);       // 阶段详情
     
-    
     const switchStages = () => {
         switch (order.progress) {
             case 0:

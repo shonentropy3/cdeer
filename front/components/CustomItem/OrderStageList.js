@@ -3,11 +3,11 @@ import { Button, Checkbox, InputNumber, message, Tabs } from "antd";
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import { useAccount, useNetwork } from "wagmi";
-import { multicallWrite, muticallEncode, useContracts, useRead, useSignAppendData } from "../../controller";
+import { multicallWrite, muticallEncode, useContracts, useRead, useSignAppendData, useSignPermit2Data } from "../../controller";
 import { startOrder, updatedStage } from "../../http/_api/order";
 import OutputStageCard from "../CustomCard/OutputStageCard";
 import AppendStage from "./AppendStage";
-
+import { BigNumber } from '@ethersproject/bignumber'
 
 
 export default function OrderStageList(params) {
@@ -32,6 +32,77 @@ export default function OrderStageList(params) {
     const { useDeOrderVerifierRead: nonces } = useRead('nonces', address);
     // 领钱
     const { useOrderContractWrite: getWithdraw } = useContracts('withdraw');
+
+
+    let [signature,setSignature] = useState();
+    let [permit2, setPermit2] = useState({});  //  permit2
+    const { useSign, obj } = useSignPermit2Data(permit2);  //  permit2
+    const { useOrderContractWrite: permit2Write } = useContracts('payOrderWithPermit2');  //  permit2
+    let [permit2Ready, setPermit2Ready] = useState(false);
+
+    const testPermit2 = () => {
+        let now = parseInt(new Date().getTime()/1000);
+        let setTime = 2 * 24 * 60 * 60;
+        setDeadline(now+setTime)
+        console.log('nonce ==>',BigNumber.from('0xffffffffffff').toString());
+        permit2 = {
+            chainId: chain.id,
+            token: "0x522981BEF10d0906935FB7747d9aE3bC1189e3A4",        //  dUSDT
+            amount: ethers.utils.parseEther(`${0.0001}`),
+            spender: "0x517b0cAE834407F993C8d3b49858A2C55D245b2A",
+            // nonce: BigNumber.from('0xffffffffffff').toString(),
+            nonce: '0',
+            deadline: deadline
+        }
+        setPermit2({...permit2});
+        setPermit2Ready(true);
+    }
+
+    const writePermit2 = () => {
+        console.log(permit2Write);
+        permit2Write.write({
+            recklesslySetUnpreparedArgs: [
+                order.order_id,
+                ethers.utils.parseEther(`${0.0001}`),
+                // [
+                    {
+                        permitted: {
+                            // token: ethers.constants.AddressZero,
+                            token: "0x522981BEF10d0906935FB7747d9aE3bC1189e3A4",        //  dUSDT
+                            amount: ethers.utils.parseEther(`${0.0001}`)
+                        },
+                        // nonce: BigNumber.from('0xffffffffffff').toString(),
+                        nonce: '0',
+                        deadline: deadline
+                    },
+                    // {
+                    //     to: "0x517b0cAE834407F993C8d3b49858A2C55D245b2A",
+                    //     requestedAmount: ethers.utils.parseEther(`${0.0001}`)
+                    // },
+                    // address,
+                    // signature
+                // ],
+                signature
+            ]
+        })
+    }
+
+    useEffect(() => {
+        if (permit2.chainId && permit2Ready) {
+            useSign.signTypedDataAsync()
+            .then(res => {
+                console.log('res ==> ', res);
+                setSignature(res);
+                // update(res, 'WaitAppendAgree')
+                // 修改data ==> 上传后端更新
+            })
+            .catch(err => {
+                // setIsLoading(false)
+            })
+        }
+    },[permit2])
+
+
 
     // 领钱
     const withdraw = () => {
@@ -193,9 +264,6 @@ export default function OrderStageList(params) {
                 e.deliveryDate = deliveryDate;
             })
             data = dataStages;
-
-            
-
             chainStages.data.map((e,i) => {
                 data[i].amount = e.amount.toString() / Math.pow(10,18);
                 data[i].period = e.period.toString() / (24 * 60 * 60);
@@ -249,6 +317,9 @@ export default function OrderStageList(params) {
 
     return (
         <div className="stageCard">
+            <Button onClick={() => testPermit2()}>Test Permit2</Button>
+            <Button onClick={() => writePermit2()}>Test Permit2 Write</Button>
+            
             <p className="title">Task stage division</p>
             {
                 // 预付款

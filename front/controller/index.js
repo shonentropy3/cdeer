@@ -7,7 +7,8 @@ const stage = require(`../../deployments/abi/DeStage.json`);
 const stageAddr = require(`../../deployments/${process.env.NEXT_PUBLIC_DEVELOPMENT_CHAIN}/DeStage.json`);
 const orderVerifier = require(`../../deployments/abi/DeOrderVerifier.json`);
 const orderVerifierAddr = require(`../../deployments/${process.env.NEXT_PUBLIC_DEVELOPMENT_CHAIN}/DeOrderVerifier.json`);
-
+const weth = require(`../../deployments/abi/WETH.json`);
+const wethAddr = require(`../../deployments/${process.env.NEXT_PUBLIC_DEVELOPMENT_CHAIN}/WETH.json`);
 
 var Web3 = require('web3');
 var web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:8545");
@@ -43,6 +44,16 @@ export function ConfigOrderVerifier(functionName) {
   return orderConfig
 }
 
+export function ConfigWeth(functionName) { 
+
+  const wethConfig = {
+    addressOrName: wethAddr.address,
+    contractInterface: weth.abi,
+    functionName: functionName,
+  }
+  return wethConfig
+}
+
 export function ConfigStage(functionName) { 
 
   const stageConfig = {
@@ -61,9 +72,11 @@ export function useContracts(functionName) {
 
   const useStageContractWrite = useContractWrite(ConfigStage(functionName))
 
+  const useWethContractWrite = useContractWrite(ConfigWeth(functionName))
+
   const test = ConfigOrder(functionName);
 
-  return { useTaskContractWrite, useOrderContractWrite, test, useStageContractWrite }
+  return { useTaskContractWrite, useOrderContractWrite, test, useStageContractWrite, useWethContractWrite }
 }
 
 export function useRead(functionName,args) {
@@ -84,12 +97,17 @@ export function useRead(functionName,args) {
     ...ConfigOrderVerifier(functionName),
     args: args
   };
+  let objE = {
+    ...ConfigWeth(functionName),
+    args: args
+  };
   const useTaskRead = useContractRead(objA)
   const useOrderRead = useContractRead(objB)
   const useStageRead = useContractRead(objC)
   const useDeOrderVerifierRead = useContractRead(objD)
+  const useWethRead = useContractRead(objE)
 
-  return { useTaskRead, useOrderRead, useStageRead, useDeOrderVerifierRead }
+  return { useTaskRead, useOrderRead, useStageRead, useDeOrderVerifierRead, useWethRead }
 }
 
 export function useReads(functionName,list) {
@@ -247,6 +265,76 @@ export function useSignAppendData(params) {
       period: obj.period,
       nonce: obj.nonce,
       deadline: obj.deadline,
+    },
+    onError(error) {
+      // console.log('Error', error)
+    },
+    onSuccess(data) {
+      // console.log('Success', data)
+    },
+  })
+
+  return { obj, params, useSign }
+}
+
+export function signParams(params) {
+  if (isPermitTransferFrom(permit)) {
+    validateTokenPermissions(permit.permitted)
+    const types = witness ? permitTransferFromWithWitnessType(witness) : PERMIT_TRANSFER_FROM_TYPES
+    const values = witness ? Object.assign(permit, { witness: witness.witness }) : permit
+    return {
+      types,
+      values,
+    }
+  } else {
+    permit.permitted.forEach(validateTokenPermissions)
+    const types = witness ? permitBatchTransferFromWithWitnessType(witness) : PERMIT_BATCH_TRANSFER_FROM_TYPES
+    const values = witness ? Object.assign(permit, { witness: witness.witness }) : permit
+    return {
+      types,
+      values,
+    }
+}
+}
+
+export function useSignPermit2Data(params) {
+
+  let obj = {
+    chainId: params.chainId,
+    token: params.token,
+    amount: params.amount,
+    spender: params.spender,
+    nonce: params.nonce,
+    deadline: params.deadline
+  }
+  
+  const useSign = useSignTypedData({
+    domain: {
+      name: 'Permit2',
+      version: '1',
+      chainId: obj.chainId,
+      verifyingContract: "0x000000000022D473030F116dDEE9F6B43aC78BA3",
+    },
+    types: {
+      PermitTransferFrom: [
+        { name: 'permitted', type: 'TokenPermissions' },
+        { name: 'spender', type: 'address' },
+        { name: 'nonce', type: 'uint256' },
+        { name: 'deadline', type: 'uint256' },
+      ],
+      TokenPermissions: [
+        { name: 'token', type: 'address' },
+        { name: 'amount', type: 'uint256' },
+      ],
+    },
+    value: {
+      permitted: {
+        token: obj.token,
+        amount: obj.amount
+      },
+      spender: obj.spender,
+      nonce: obj.nonce,
+      deadline: obj.deadline
     },
     onError(error) {
       // console.log('Error', error)
