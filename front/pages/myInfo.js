@@ -6,6 +6,7 @@ import Identicon from "identicon.js";
 import UserSocialMedia from '../components/CustomItem/UserSocialMedia';
 import { FormOutlined } from '@ant-design/icons';
 import { Button, Input, Modal } from 'antd';
+import ModifyUserModal from '../components/CustomModal/ModifyUserModal';
 const { confirm } = Modal;
 
 export default function MyInfo() {
@@ -15,6 +16,8 @@ export default function MyInfo() {
 
     let [userInfo, setUserInfo] = useState();
     let [nftAddress, setNftAddress] = useState();
+    let [isModify, setIsModify] = useState(false);
+    let [roles, setRoles] = useState([]);
 
     const changeNftAddress = (value) => {
         nftAddress = value;
@@ -57,10 +60,20 @@ export default function MyInfo() {
         }
         getUserInfo({address: address})
         .then(res => {
-            console.log(res);
             if (res.code === 0) {
+                roles = [..._data.skills];
                 userInfo = res.data;
-                // console.log(_data.skills);
+                userInfo.newRole = [...userInfo.role];
+                userInfo.role.map((e,index) => {
+                    for (let i = 0; i < roles.length; i++) {
+                        if (e == roles[i].value) {
+                            userInfo.newRole[index] = roles[i].name;
+                            roles[i].status = true;
+                            return
+                        }
+                    }
+                })
+                setRoles([...roles]);
                 setUserInfo({...userInfo});
             }
         })
@@ -71,6 +84,9 @@ export default function MyInfo() {
     },[address])
     
     return <div className='myinfo'>
+        {
+            isModify && <ModifyUserModal status={isModify} setStatus={setIsModify} info={userInfo} roles={roles} setRoles={setRoles} />
+        }
         <div className="myinfo-content">
             <div className="userInfo">
                 {
@@ -80,7 +96,7 @@ export default function MyInfo() {
                         <div className="detail-avatar">
                             {
                                 userInfo.avatar ? 
-                                <img src={userInfo.avatar} alt="" />
+                                <img src={process.env.NEXT_PUBLIC_DEVELOPMENT_API + "/" + userInfo.avatar} alt="" />
                                 :
                                 <img src={hashAvt(userInfo.address)} alt="" />
                             }
@@ -106,14 +122,18 @@ export default function MyInfo() {
                         <p className="title">技能</p>
                         <div className="roles">
                             {
-                                userInfo.role.map((e,i) => 
+                                userInfo.newRole.map((e,i) => 
                                     <span className='role' key={i}>
                                         {e}
                                     </span>
                                 )
                             }
+                            {
+                                userInfo.role.length === 0 &&
+                                <p className="roleNone">暂无</p>
+                            }
                         </div>
-                        <Button type="primary" icon={<FormOutlined />}>
+                        <Button type="primary" icon={<FormOutlined />} onClick={() => setIsModify(true)}>
                             <span className="ml20">编辑个人资料</span>
                         </Button>
                     </div>

@@ -10,6 +10,16 @@ export const upload = (data) => {
     });
 }
 
+// 上传头像
+export const uploadImage = (data) => {
+    return serviceAxios({
+        url: "/common/uploadImage",
+        method: "post",
+        data,
+    });
+}
+
+
 
 // 获取Task列表
 export const searchTask = (data) => {

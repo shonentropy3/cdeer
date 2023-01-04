@@ -260,7 +260,8 @@ export default function Publish() {
                     <div className="img" >
                     <UploadOutlined />
                     </div>
-                    <p>Upload Task requirement document（Word、Excel、PPT、PDF、image、video）<br/>maximum file size：20MB</p></Button>
+                    <p>Upload Task requirement document（Word、Excel、PPT、PDF、image、video）<br/>maximum file size：20MB</p>
+                </Button>
               </Upload>
         }
     }

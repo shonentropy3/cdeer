@@ -74,10 +74,22 @@
                 line-height: 28px;
                 letter-spacing: 0.42px;
             }
+            .roleNone{
+                width: 215px;
+                margin-left: 32px;
+                text-align: center;
+
+                font-size: 18px;
+                font-family: PingFangSC-Regular, PingFang SC;
+                color: #C7C7C7;
+                line-height: 25px;
+                letter-spacing: 0.38px;
+            }
             .roles{
                 margin-bottom: 36px;
                 span{
                     margin-bottom: 7px;
+                    margin-right: 15px;
                     display: inline-block;
                     padding: 3px 20px;
                     border-radius: 4px;
@@ -85,6 +97,18 @@
                     &:nth-child(1){
                         background-color: rgba($color: #E02020, $alpha: 0.15);
                         color: #E02020;
+                    }
+                    &:nth-child(2){
+                        background-color: rgba($color: #00BA52, $alpha: 0.15);
+                        color: #00BA52;
+                    }
+                    &:nth-child(3){
+                        background-color: rgba($color: #5424FF, $alpha: 0.15);
+                        color: #5424FF;
+                    }
+                    &:nth-child(4){
+                        background-color: rgba($color: #F7B500, $alpha: 0.15);
+                        color: #F7B500;
                     }
                 }
             }

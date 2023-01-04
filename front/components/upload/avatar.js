@@ -1,6 +1,6 @@
-import { upload } from "../../http/_api/public";
+import { uploadImage } from "../../http/_api/public";
 
-export const uploadProps = {
+export const uploadImageProps = {
     multiple: false,
     maxCount: 1,
     onStart(file) {
@@ -24,7 +24,7 @@ export const uploadProps = {
         });
       }
       formData.append(filename, file);
-      upload(formData)
+      uploadImage(formData)
       .then(res => {
         onSuccess(res, file);
       })
