@@ -1,0 +1,131 @@
+type ApplyFor @entity(immutable: true) {
+  id: Bytes!
+  taskId: BigInt! # uint256
+  worker: Bytes! # address
+  cost: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Approval @entity(immutable: true) {
+  id: Bytes!
+  owner: Bytes! # address
+  approved: Bytes! # address
+  tokenId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type ApprovalForAll @entity(immutable: true) {
+  id: Bytes!
+  owner: Bytes! # address
+  operator: Bytes! # address
+  approved: Boolean! # bool
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type CancelApply @entity(immutable: true) {
+  id: Bytes!
+  taskId: BigInt! # uint256
+  worker: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Locked @entity(immutable: true) {
+  id: Bytes!
+  tokenId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type ModifyFee @entity(immutable: true) {
+  id: Bytes!
+  taskFee: BigInt! # uint256
+  applyFee: BigInt! # uint256
+  feeReceiver: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type OwnershipTransferred @entity(immutable: true) {
+  id: Bytes!
+  previousOwner: Bytes! # address
+  newOwner: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type TaskCreated @entity(immutable: true) {
+  id: Bytes!
+  taskId: BigInt! # uint256
+  issuer: Bytes! # address
+  task_title: String! # string
+  task_desc: String! # string
+  task_attachment: String! # string
+  task_currency: Int! # uint8
+  task_budget: BigInt! # uint112
+  task_period: BigInt! # uint32
+  task_skills: BigInt! # uint48
+  task_disabled: Boolean! # bool
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type TaskDisabled @entity(immutable: true) {
+  id: Bytes!
+  taskId: BigInt! # uint256
+  disabled: Boolean! # bool
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type TaskModified @entity(immutable: true) {
+  id: Bytes!
+  taskId: BigInt! # uint256
+  issuer: Bytes! # address
+  task_title: String! # string
+  task_desc: String! # string
+  task_attachment: String! # string
+  task_currency: Int! # uint8
+  task_budget: BigInt! # uint112
+  task_period: BigInt! # uint32
+  task_skills: BigInt! # uint48
+  task_disabled: Boolean! # bool
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Transfer @entity(immutable: true) {
+  id: Bytes!
+  from: Bytes! # address
+  to: Bytes! # address
+  tokenId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Unlocked @entity(immutable: true) {
+  id: Bytes!
+  tokenId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type TaskCounter @entity {
+  id: ID!
+  TaskCreatedCount: BigInt!
+}

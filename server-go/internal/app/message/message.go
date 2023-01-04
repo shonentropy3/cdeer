@@ -83,6 +83,9 @@ func getUserInfo(form string, to string) (sendInfo model.User, recInfo model.Use
 			}
 		}
 	}
+	if sendInfo.Username == nil {
+		*sendInfo.Username = sendInfo.Address[:3] + "...." + sendInfo.Address[len(sendInfo.Address)-4:]
+	}
 
 	// 获取用户2
 	if to != "" {
@@ -97,6 +100,9 @@ func getUserInfo(form string, to string) (sendInfo model.User, recInfo model.Use
 				return sendInfo, recInfo, err
 			}
 		}
+	}
+	if recInfo.Username == nil {
+		*recInfo.Username = recInfo.Address[:3] + "...." + recInfo.Address[len(recInfo.Address)-4:]
 	}
 	return sendInfo, recInfo, nil
 }

@@ -10,5 +10,6 @@ type UserAvatarRespond struct {
 
 type MsgListRespond struct {
 	model.Message
-	Avatar string `gorm:"avatar" json:"avatar" form:"avatar"` // 头像
+	SendAddr string `gorm:"column:send_addr" json:"send_addr"`  // 发送者头像
+	Avatar   string `gorm:"avatar" json:"avatar" form:"avatar"` // 头像
 }

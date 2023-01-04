@@ -67,14 +67,14 @@ func GetTaskList(searchInfo request.GetTaskListRequest) (err error, list interfa
 		// 获取IPFS
 		// 从缓存获取
 		hash := res.Attachment
-		att, cacheErr := global.Cache.Get(hash)
+		att, cacheErr := global.JsonCache.Get(hash)
 		if cacheErr == bigcache.ErrEntryNotFound {
 			url := fmt.Sprintf("%s/%s", global.CONFIG.IPFS.API, hash)
 			res.Attachment, err = utils.GetRequest(url)
 			if err != nil || !gjson.Valid(res.Attachment) {
 				continue
 			}
-			global.Cache.Set(hash, []byte(res.Attachment))
+			global.JsonCache.Set(hash, []byte(res.Attachment))
 		} else {
 			res.Attachment = string(att)
 		}

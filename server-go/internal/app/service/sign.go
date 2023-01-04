@@ -20,7 +20,7 @@ func GetLoginMessage(address string) (err error, loginMessage string) {
 	UUID := uuid.NewV4() // 生成UUID
 	fmt.Println(UUID.String())
 	// 存到Local Cache里
-	if err = global.Cache.Set(UUID.String(), []byte{}); err != nil {
+	if err = global.TokenCache.Set(UUID.String(), []byte{}); err != nil {
 		return err, loginMessage
 	}
 	loginMessage = fmt.Sprintf(loginMessage+"Nonce:\n%s", UUID)
@@ -37,12 +37,12 @@ func AuthLoginSignRequest(req request.AuthLoginSignRequest) (token string, err e
 		return token, errors.New("nonce获取失败")
 	}
 	// 校验Nonce
-	_, cacheErr := global.Cache.Get(req.Message[index+7:])
+	_, cacheErr := global.TokenCache.Get(req.Message[index+7:])
 	if cacheErr == bigcache.ErrEntryNotFound {
 		return token, errors.New("签名已失效")
 	}
 	// 删除Nonce
-	_ = global.Cache.Delete(req.Message[index+7:])
+	_ = global.TokenCache.Delete(req.Message[index+7:])
 	// 获取用户名--不存在则新增
 	var user model.User
 	if errUser := global.DB.Model(&model.User{}).Where("address = ?", req.Address).First(&user).Error; errUser != nil {
@@ -71,7 +71,7 @@ func AuthLoginSignRequest(req request.AuthLoginSignRequest) (token string, err e
 		return token, errors.New("获取token失败")
 	}
 	//  存入local cache
-	if err = global.Cache.Set(req.Address, []byte(token)); err != nil {
+	if err = global.TokenCache.Set(req.Address, []byte(token)); err != nil {
 		return token, errors.New("保存token失败")
 	}
 	return token, nil
