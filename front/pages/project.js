@@ -166,10 +166,13 @@ export default function Project() {
         if (Task.isSuccess) {
             writeSuccess()
         }
+    },[Task.isSuccess])
+
+    useEffect(() => {
         if (Task.error) {
             setApplyLoading(false)
         }
-    },[Task])
+    },[Task.error])
 
 
     useEffect(() => {
@@ -206,6 +209,9 @@ export default function Project() {
                 detail = res.data.list[0];
                 detail.role = deform_Skills(detail.role);
                 detail.budget = deform_Count(detail.budget,detail.currency);
+                detail.desc = JSON.parse(detail.attachment).desc;
+                detail.suffix = JSON.parse(detail.attachment).suffix;
+                detail.attachment = JSON.parse(detail.attachment).attachment;
                 setDetail(detail);
             }
         })

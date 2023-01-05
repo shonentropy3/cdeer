@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func Cache() *bigcache.BigCache {
+func TokenCache() *bigcache.BigCache {
 	config := bigcache.Config{
 		Shards:             1024,
 		LifeWindow:         time.Hour * 24,
@@ -15,7 +15,26 @@ func Cache() *bigcache.BigCache {
 		MaxEntrySize:       500,
 		StatsEnabled:       false,
 		Verbose:            true,
-		HardMaxCacheSize:   0,
+		HardMaxCacheSize:   1024, // memory limit, value in MB
+		Logger:             bigcache.DefaultLogger(),
+	}
+	cache, err := bigcache.New(context.Background(), config)
+	if err != nil {
+		panic(err)
+	}
+	return cache
+}
+
+func JsonCache() *bigcache.BigCache {
+	config := bigcache.Config{
+		Shards:             1024,
+		LifeWindow:         time.Hour * 24,
+		CleanWindow:        5 * time.Minute,
+		MaxEntriesInWindow: 10000,
+		MaxEntrySize:       500,
+		StatsEnabled:       false,
+		Verbose:            true,
+		HardMaxCacheSize:   1024, // memory limit, value in MB
 		Logger:             bigcache.DefaultLogger(),
 	}
 	cache, err := bigcache.New(context.Background(), config)

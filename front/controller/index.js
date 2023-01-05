@@ -5,6 +5,10 @@ const order = require(`../../deployments/abi/DeOrder.json`);
 const orderAddr = require(`../../deployments/${process.env.NEXT_PUBLIC_DEVELOPMENT_CHAIN}/DeOrder.json`);
 const stage = require(`../../deployments/abi/DeStage.json`);
 const stageAddr = require(`../../deployments/${process.env.NEXT_PUBLIC_DEVELOPMENT_CHAIN}/DeStage.json`);
+const orderVerifier = require(`../../deployments/abi/DeOrderVerifier.json`);
+const orderVerifierAddr = require(`../../deployments/${process.env.NEXT_PUBLIC_DEVELOPMENT_CHAIN}/DeOrderVerifier.json`);
+const weth = require(`../../deployments/abi/WETH.json`);
+const wethAddr = require(`../../deployments/${process.env.NEXT_PUBLIC_DEVELOPMENT_CHAIN}/WETH.json`);
 
 var Web3 = require('web3');
 var web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:8545");
@@ -30,6 +34,26 @@ export function ConfigOrder(functionName) {
   return orderConfig
 }
 
+export function ConfigOrderVerifier(functionName) { 
+
+  const orderConfig = {
+    addressOrName: orderVerifierAddr.address,
+    contractInterface: orderVerifier.abi,
+    functionName: functionName,
+  }
+  return orderConfig
+}
+
+export function ConfigWeth(functionName) { 
+
+  const wethConfig = {
+    addressOrName: wethAddr.address,
+    contractInterface: weth.abi,
+    functionName: functionName,
+  }
+  return wethConfig
+}
+
 export function ConfigStage(functionName) { 
 
   const stageConfig = {
@@ -48,9 +72,11 @@ export function useContracts(functionName) {
 
   const useStageContractWrite = useContractWrite(ConfigStage(functionName))
 
+  const useWethContractWrite = useContractWrite(ConfigWeth(functionName))
+
   const test = ConfigOrder(functionName);
 
-  return { useTaskContractWrite, useOrderContractWrite, test, useStageContractWrite }
+  return { useTaskContractWrite, useOrderContractWrite, test, useStageContractWrite, useWethContractWrite }
 }
 
 export function useRead(functionName,args) {
@@ -67,11 +93,21 @@ export function useRead(functionName,args) {
     ...ConfigStage(functionName),
     args: args
   };
+  let objD = {
+    ...ConfigOrderVerifier(functionName),
+    args: args
+  };
+  let objE = {
+    ...ConfigWeth(functionName),
+    args: args
+  };
   const useTaskRead = useContractRead(objA)
   const useOrderRead = useContractRead(objB)
   const useStageRead = useContractRead(objC)
+  const useDeOrderVerifierRead = useContractRead(objD)
+  const useWethRead = useContractRead(objE)
 
-  return { useTaskRead, useOrderRead, useStageRead }
+  return { useTaskRead, useOrderRead, useStageRead, useDeOrderVerifierRead, useWethRead }
 }
 
 export function useReads(functionName,list) {
@@ -107,7 +143,7 @@ export function useSignData(params) {
 
   let obj = {
       chainId: params.chainId,
-      contractAddress: orderAddr.address,
+      contractAddress: orderVerifierAddr.address,
       owner: params.address,
       orderId: params.oid,
       amounts: params.amounts,
@@ -154,7 +190,7 @@ export function useSignProData(params) {
 
   let obj = {
     chainId: params.chainId,
-    contractAddress: orderAddr.address,
+    contractAddress: orderVerifierAddr.address,
     owner: params.address,
     orderId: params.orderId,
     stageIndex: params.stageIndex,
@@ -200,7 +236,7 @@ export function useSignAppendData(params) {
 
   let obj = {
     chainId: params.chainId,
-    contractAddress: orderAddr.address,
+    contractAddress: orderVerifierAddr.address,
     orderId: params.orderId,
     amount: params.amount,
     period: params.period,
@@ -241,13 +277,62 @@ export function useSignAppendData(params) {
   return { obj, params, useSign }
 }
 
+export function useSignPermit2Data(params) {
+
+  let obj = {
+    chainId: params.chainId,
+    token: params.token,
+    amount: params.amount,
+    spender: params.spender,
+    nonce: params.nonce,
+    deadline: params.deadline
+  }
+  
+  const useSign = useSignTypedData({
+    domain: {
+      name: 'Permit2',
+      chainId: obj.chainId,
+      verifyingContract: "0x000000000022D473030F116dDEE9F6B43aC78BA3",
+    },
+    types: {
+      PermitTransferFrom: [
+        { name: 'permitted', type: 'TokenPermissions' },
+        { name: 'spender', type: 'address' },
+        { name: 'nonce', type: 'uint256' },
+        { name: 'deadline', type: 'uint256' },
+      ],
+      TokenPermissions: [
+        { name: 'token', type: 'address' },
+        { name: 'amount', type: 'uint256' },
+      ]
+    },
+    value: {
+      permitted: {
+        token: obj.token,
+        amount: obj.amount
+      },
+      spender: obj.spender,
+      nonce: obj.nonce,
+      deadline: obj.deadline
+    },
+    onError(error) {
+      // console.log('Error', error)
+    },
+    onSuccess(data) {
+      // console.log('Success', data)
+    },
+  })
+
+  return { obj, params, useSign }
+}
+
 export async function multicallWrite(arr,address,total) {
   const contract = new web3.eth.Contract(order.abi,orderAddr.address,)
+  console.log(contract);
   try {
     return await contract.methods.multicall(arr).send({from: address, gas: 1000000, value: total})
       .then(res => {
         return res.transactionHash
-        console.log('index ===>',res);
       })
   } catch(err) {
         console.log(err);
@@ -256,6 +341,7 @@ export async function multicallWrite(arr,address,total) {
 
 export function muticallEncode(params) {
   const contract = new web3.eth.Contract(order.abi,orderAddr.address,)
+  const contractVerifier = new web3.eth.Contract(orderVerifier.abi,orderVerifierAddr.address,)
   let arr = [];
   params.map(e => {
     switch (e.params.length) {
@@ -292,6 +378,7 @@ export function muticallEncode(params) {
         arr.push(code)
         break;
       case 8:
+        console.log(contract.methods);
         var code = contract.methods[e.functionName](e.params[0],e.params[1],e.params[2],e.params[3],e.params[4],e.params[5],e.params[6],e.params[7]).encodeABI()
         arr.push(code)
         break;

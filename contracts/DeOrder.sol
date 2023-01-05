@@ -6,23 +6,25 @@ import "./interface/IOrder.sol";
 import "./interface/IOrderSBT.sol";
 import "./interface/IStage.sol";
 import './interface/IWETH9.sol';
+import './interface/IPermit2.sol';
+import './interface/IOrderVerifier.sol';
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/draft-IERC20Permit.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import './libs/TransferHelper.sol';
-import "./libs/ECDSA.sol";
+
 import './Multicall.sol';
 
 
 
-contract DeOrder is IOrder, Multicall, Ownable {
+contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
     error PermissionsError();
     error ProgressError();
     error AmountError(uint reason); // 0: mismatch , 1: need pay
     error ParamError();
-    error NonceError();
-    error Expired();
+    error UnSupportToken();
 
-    uint public constant FEE_BASE = 10000;
+    uint private constant FEE_BASE = 10000;
     uint public fee = 500;
     address public feeTo;
 
@@ -30,19 +32,17 @@ contract DeOrder is IOrder, Multicall, Ownable {
     address public builderSBT;
     address public issuerSBT;
 
-    IWETH9 public weth;
+    IWETH9 public immutable WETH;
+    IPermit2 public immutable PERMIT2;
+    IOrderVerifier public immutable verifier;
     
 
     uint public currOrderId;
 
     // orderId  = > 
     mapping(uint => Order) private orders;
-    mapping(address => uint) public nonces;
 
-    bytes32 public DOMAIN_SEPARATOR;
-    bytes32 public constant PERMITSTAGE_TYPEHASH = keccak256("PermitStage(uint256 orderId,uint256[] amounts,uint256[] periods,uint256 nonce,uint256 deadline)");
-    bytes32 public constant PERMITPROSTAGE_TYPEHASH = keccak256("PermitProStage(uint256 orderId,uint256 stageIndex,uint256 period,uint256 nonce,uint256 deadline)");
-    bytes32 public constant PERMITAPPENDSTAGE_TYPEHASH = keccak256("PermitAppendStage(uint256 orderId,uint256 amount,uint256 period,uint256 nonce,uint256 deadline)");
+    mapping(address => bool) public supportTokens;
 
     event OrderCreated(uint indexed taskId, uint indexed orderId,  address issuer, address worker, address token, uint amount);
     event OrderModified(uint indexed orderId, address token, uint amount);
@@ -52,39 +52,38 @@ contract DeOrder is IOrder, Multicall, Ownable {
     event AttachmentUpdated(uint indexed orderId, string attachment);
     event FeeUpdated(uint fee, address feeTo);
     event StageUpdated(address stage);
+    event SupportToken(address token, bool enabled);
 
-    constructor(address _weth) {
-        weth = IWETH9(_weth);
+    constructor(address _weth, address _permit2, address _verifier) {
+        WETH = IWETH9(_weth);
+        PERMIT2 = IPermit2(_permit2);
+        verifier = IOrderVerifier(_verifier);
+
         feeTo = msg.sender;
 
-        DOMAIN_SEPARATOR = keccak256(
-        abi.encode(
-                keccak256(
-                    "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
-                ),
-                // This should match the domain you set in your client side signing.
-                keccak256(bytes("DetaskOrder")),
-                keccak256(bytes("1")),
-                block.chainid,
-                address(this)
-            )
-        );
+        supportTokens[_weth] = true;
+        supportTokens[address(0)] = true;
     }
 
     receive() external payable {
-        assert(msg.sender == address(weth)); // only accept ETH via fallback from the WETH contract
+        assert(msg.sender == address(WETH)); // only accept ETH via fallback from the WETH contract
     }
 
     function createOrder(uint _taskId, address _issuer, address _worker, address _token, uint _amount) external payable {
         if(address(0) == _worker || address(0) == _issuer || _worker == _issuer) revert ParamError();
+        safe96(_amount);
+        if(!supportTokens[_token]) revert UnSupportToken();
 
-        currOrderId += 1;
+        unchecked {
+            currOrderId += 1;    
+        }
+        
         orders[currOrderId] = Order({
             taskId: _taskId,
             issuer: _issuer,
             worker: _worker,
             token: _token,  
-            amount: _amount,
+            amount: uint96(_amount),
             progress: OrderProgess.Init,
             payType: PaymentType.Unknown,
             startDate: 0,
@@ -99,37 +98,21 @@ contract DeOrder is IOrder, Multicall, Ownable {
     }
 
     function modifyOrder(uint orderId, address token, uint amount) external payable {
+        safe96(amount);
         Order storage order = orders[orderId];
         if(order.progress >= OrderProgess.Ongoing) revert ProgressError();
-        if(msg.sender != order.issuer) revert PermissionsError(); 
+        if(msg.sender != order.issuer) revert PermissionsError();
+        if(!supportTokens[token]) revert UnSupportToken();
+        
 
         // if change token , must refund
         if (orders[orderId].token != token && order.payed > 0) {
             refund(orderId, msg.sender, order.payed);
         }
         orders[orderId].token = token;
-        orders[orderId].amount = amount;
+        orders[orderId].amount = uint96(amount);
 
         emit OrderModified(orderId, token, amount);
-    }
-
-    function setStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods) external {
-        Order storage order = orders[_orderId];
-        if(order.progress >= OrderProgess.Ongoing) revert ProgressError();
-        if(order.worker != msg.sender && order.issuer != msg.sender) revert PermissionsError();
-
-        if (order.worker == msg.sender) {
-            order.progress = OrderProgess.StagingByWoker;
-        } else {
-            order.progress = OrderProgess.StagingByIssuer;
-        }
-        
-        IStage(stage).setStage(_orderId, _amounts, _periods);
-        if(_periods[0] == 0) { //  
-            order.payType = PaymentType.Confirm;
-        } else {
-            order.payType = PaymentType.Due;
-        }
     }
 
     function permitStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods,
@@ -142,22 +125,16 @@ contract DeOrder is IOrder, Multicall, Ownable {
         Order storage order = orders[_orderId];
         if(order.progress >= OrderProgess.Ongoing) revert ProgressError();
 
-        bytes32 structHash  = keccak256(abi.encode(PERMITSTAGE_TYPEHASH, _orderId,
-                keccak256(abi.encodePacked(_amounts)), keccak256(abi.encodePacked(_periods)), nonce, deadline));
-        address signAddr = recoverVerify(structHash, nonce, deadline, v , r, s);
+        address signAddr = verifier.recoverPermitStage(_orderId, _amounts, _periods,
+            nonce, deadline, v, r, s);
+        
+        roleCheck(order, signAddr);
 
-        if(order.worker == signAddr && msg.sender == order.issuer || 
-            order.issuer == signAddr && msg.sender == order.worker) {
-            order.progress = OrderProgess.Staged;
-
-            if(_periods[0] == 0) { //  
-                order.payType = PaymentType.Confirm;
-            } else {
-                order.payType = PaymentType.Due;
-            }
-
+        order.progress = OrderProgess.Staged;
+        if(_periods[0] == 0) { //  
+            order.payType = PaymentType.Confirm;
         } else {
-            revert PermissionsError(); 
+            order.payType = PaymentType.Due;
         }
 
         IStage(stage).setStage(_orderId, _amounts, _periods);
@@ -169,48 +146,32 @@ contract DeOrder is IOrder, Multicall, Ownable {
         if(order.progress != OrderProgess.Ongoing) revert ProgressError();
 
 
-        bytes32 structHash = keccak256(abi.encode(PERMITPROSTAGE_TYPEHASH, _orderId,
-            _stageIndex, _appendPeriod, nonce, deadline));
-        address signAddr = recoverVerify(structHash, nonce, deadline, v , r, s);
-
-        if((order.worker == msg.sender && signAddr == order.issuer) ||
-            (order.issuer == msg.sender && signAddr == order.worker)) {
-            IStage(stage).prolongStage(_orderId, _stageIndex, _appendPeriod);
-        } else {
-            revert PermissionsError();
-        } 
+        address signAddr = verifier.recoverProlongStage(_orderId, _stageIndex, _appendPeriod, nonce, deadline, v, r,  s );
+        roleCheck(order, signAddr);
+        IStage(stage).prolongStage(_orderId, _stageIndex, _appendPeriod);
     }
 
     function appendStage(uint _orderId, uint amount, uint period, uint nonce, uint deadline, uint8 v, bytes32 r, bytes32 s) external payable {
+        safe96(amount);
         Order storage order = orders[_orderId];
         if(order.progress != OrderProgess.Ongoing) revert ProgressError();
 
-        bytes32 structHash = keccak256(abi.encode(PERMITAPPENDSTAGE_TYPEHASH, _orderId,
-            amount, period, nonce, deadline));
-        address signAddr = recoverVerify(structHash, nonce, deadline, v , r, s);
+        address signAddr = verifier.recoverAppendStage(_orderId, amount, period, nonce, deadline, v, r, s);
+        roleCheck(order, signAddr);
 
+        order.amount += uint96(amount);
+        if(order.payed < order.amount) revert AmountError(1);
+
+        IStage(stage).appendStage(_orderId, amount, period);
+    }
+
+    function roleCheck(Order storage order, address signAddr) internal {
         if((order.worker == msg.sender && signAddr == order.issuer) ||
             (order.issuer == msg.sender && signAddr == order.worker)) {
         } else {
             revert PermissionsError(); 
         } 
-
-        order.amount += amount;
-        if(order.payed < order.amount) revert AmountError(1);
-        
-
-        IStage(stage).appendStage(_orderId, amount, period);
     }
-
-    function recoverVerify(bytes32 structHash, uint nonce, uint deadline, uint8 v, bytes32 r, bytes32 s) internal returns (address signAddr){
-        bytes32 digest = ECDSA.toTypedDataHash(DOMAIN_SEPARATOR, structHash);
-        signAddr = ECDSA.recover(digest, v, r, s);
-
-        if(nonces[signAddr] != nonce) revert NonceError();
-        if(deadline < block.timestamp) revert Expired();
-        nonces[signAddr] += 1;
-    }
-
 
     function payOrderWithPermit(uint orderId, uint amount, uint deadline, uint8 v, bytes32 r, bytes32 s) external {
         IERC20Permit(orders[orderId].token).permit(msg.sender, address(this), amount, deadline, v, r, s);
@@ -218,32 +179,66 @@ contract DeOrder is IOrder, Multicall, Ownable {
     }
 
     // anyone can pay for this order
-    function payOrder(uint orderId, uint amount) public payable {
+    function payOrder(uint orderId, uint amount) public payable nonReentrant {
         Order storage order = orders[orderId];
         address token = order.token;
+        safe96(amount);
 
         if (token == address(0)) {
             uint b = address(this).balance;
-            IWETH9(weth).deposit{value: b}();
-            order.payed += b;
+            IWETH9(WETH).deposit{value: b}();
+            unchecked {
+                order.payed += uint96(b);
+            }
         } else {
             TransferHelper.safeTransferFrom(token, msg.sender, address(this), amount);
-            order.payed += amount;
+            order.payed += uint96(amount);
         }
     }
 
+    function payOrderWithPermit2(
+        uint orderId,
+        uint256 amount,
+        IPermit2.PermitTransferFrom calldata permit,
+        bytes calldata signature
+    ) external nonReentrant {
+        safe96(amount);
+        Order storage order = orders[orderId];
+        if (permit.permitted.token != order.token) {
+            revert UnSupportToken(); 
+        }
+        
+        // Transfer tokens from the caller to this contract.
+        PERMIT2.permitTransferFrom(
+            permit, // The permit message.
+            // The transfer recipient and amount.
+            IPermit2.SignatureTransferDetails({
+                to: address(this),
+                requestedAmount: amount
+            }),
+            // The owner of the tokens, which must also be
+            // the signer of the message, otherwise this call
+            // will fail.
+            msg.sender,
+            // The packed signature that was the result of signing
+            // the EIP712 hash of `permit`.
+            signature
+        );
+
+        order.payed += uint96(amount);
+    }
+
+
     // 提交交付
     function updateAttachment(uint _orderId, string calldata _attachment) external {
-        if(orders[_orderId].worker != msg.sender && orders[_orderId].issuer != msg.sender) revert PermissionsError();
+        Order storage order = orders[_orderId];
+        if(order.worker != msg.sender && order.issuer != msg.sender) revert PermissionsError();
         emit AttachmentUpdated(_orderId, _attachment);
     }
 
     function startOrder(uint _orderId) external payable {
         Order storage order = orders[_orderId];
-        if(order.progress == OrderProgess.Staged ||
-            (msg.sender == order.issuer && order.progress == OrderProgess.StagingByWoker) || 
-            msg.sender == order.worker && order.progress == OrderProgess.StagingByIssuer) {
-        } else {
+        if(order.progress != OrderProgess.Staged) {
             revert PermissionsError();
         }
         
@@ -251,18 +246,20 @@ contract DeOrder is IOrder, Multicall, Ownable {
         if(order.payed < order.amount) revert AmountError(1);
 
         order.progress = OrderProgess.Ongoing;
-        order.startDate = block.timestamp;
+        order.startDate = uint32(block.timestamp);
         emit OrderStarted(_orderId, msg.sender);
         
         IStage(stage).startOrder(_orderId);
     }
 
     function confirmDelivery(uint _orderId, uint[] memory _stageIndexs) external {
-        if(orders[_orderId].progress != OrderProgess.Ongoing) revert ProgressError();
-        if(msg.sender != orders[_orderId].issuer) revert PermissionsError();
+        Order storage order = orders[_orderId];
+        if(order.progress != OrderProgess.Ongoing) revert ProgressError();
+        if(msg.sender != order.issuer) revert PermissionsError();
 
-        for (uint i = 0; i < _stageIndexs.length; i++) {
+        for (uint i = 0; i < _stageIndexs.length;) {
             IStage(stage).confirmDelivery(_orderId, _stageIndexs[i]);
+            unchecked{ i++; }
         }
     }
 
@@ -297,8 +294,8 @@ contract DeOrder is IOrder, Multicall, Ownable {
     function refund(uint _orderId, address _to, uint _amount) payable public {
         Order storage order = orders[_orderId];
         if(msg.sender != order.issuer) revert PermissionsError(); 
-
-        order.payed -= _amount;
+        safe96(_amount);
+        order.payed -= uint96(_amount);
         if(order.progress >= OrderProgess.Ongoing) {
             if(order.payed < order.amount) revert AmountError(1);
         }
@@ -315,9 +312,13 @@ contract DeOrder is IOrder, Multicall, Ownable {
         (uint pending, uint nextStage) = IStage(stage).pendingWithdraw(_orderId);
         if (pending > 0) {
             if (fee > 0) {
-                uint feeAmount = pending * fee / FEE_BASE;
+                uint feeAmount;
+                unchecked {
+                      feeAmount = pending * fee / FEE_BASE;
+                }
                 doTransfer(order.token, feeTo, feeAmount);
                 doTransfer(order.token, to, pending - feeAmount);
+                
             } else {
                 doTransfer(order.token, to, pending);
             }
@@ -326,7 +327,9 @@ contract DeOrder is IOrder, Multicall, Ownable {
         }
         
         if (nextStage > 0) {
-            emit Withdraw(_orderId, pending, nextStage - 1);
+            unchecked {
+                emit Withdraw(_orderId, pending, nextStage - 1);
+            }
         }
         
         if (nextStage >= IStage(stage).stagesLength(_orderId)) {
@@ -347,18 +350,18 @@ contract DeOrder is IOrder, Multicall, Ownable {
         if (_amount == 0) return;
 
         if (address(0) == _token) {
-            IWETH9(weth).withdraw(_amount);
+            IWETH9(WETH).withdraw(_amount);
             TransferHelper.safeTransferETH(_to, _amount);
         } else {
             TransferHelper.safeTransfer(_token, _to, _amount);
         }
     }
 
-    function setFeeTo(uint _fee, address _feeTo) external {
-        if(msg.sender != feeTo && msg.sender != owner()) {
-            revert PermissionsError(); 
-        }
+    function safe96(uint n) internal {
+        if(n >= 2**96) revert AmountError(0);
+    }
 
+    function setFeeTo(uint _fee, address _feeTo) external onlyOwner {
         fee = _fee;
         feeTo = _feeTo;
         emit FeeUpdated(_fee, _feeTo);
@@ -372,6 +375,11 @@ contract DeOrder is IOrder, Multicall, Ownable {
     function setSBT(address _builder, address _issuer) external onlyOwner {
         builderSBT = _builder;
         issuerSBT = _issuer;
+    }
+
+    function setSupportToken(address _token, bool enable) external onlyOwner {
+        supportTokens[_token] = enable;
+        emit SupportToken(_token, enable);
     }
 
 }

@@ -181,11 +181,6 @@
             },
             {
               "internalType": "string",
-              "name": "desc",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
               "name": "attachment",
               "type": "string"
             },
@@ -268,11 +263,6 @@
             {
               "internalType": "string",
               "name": "title",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "desc",
               "type": "string"
             },
             {
@@ -475,11 +465,6 @@
             },
             {
               "internalType": "string",
-              "name": "desc",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
               "name": "attachment",
               "type": "string"
             },
@@ -574,11 +559,6 @@
         {
           "internalType": "string",
           "name": "title",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "desc",
           "type": "string"
         },
         {
@@ -688,11 +668,6 @@
             {
               "internalType": "string",
               "name": "title",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "desc",
               "type": "string"
             },
             {
@@ -946,11 +921,6 @@
         {
           "internalType": "string",
           "name": "title",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "desc",
           "type": "string"
         },
         {

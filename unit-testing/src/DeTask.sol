@@ -51,7 +51,6 @@ contract DeTask is SBTBase, Ownable {
         uint taskId = taskIds.current();        
         tasks[taskId] = TaskInfo({
             title: task.title,
-            desc: task.desc,
             attachment: task.attachment,
             currency: task.currency,
             budget: task.budget,
@@ -72,7 +71,6 @@ contract DeTask is SBTBase, Ownable {
         TaskInfo storage taskInfo = tasks[taskId];
 
         taskInfo.title = task.title;
-        taskInfo.desc = task.desc;
         taskInfo.attachment = task.attachment;
         taskInfo.currency = task.currency;
         taskInfo.budget = task.budget;
@@ -84,7 +82,6 @@ contract DeTask is SBTBase, Ownable {
     }
 
     function getTaskInfo(uint256 taskId)  external view returns (string memory title,
-        string memory desc,
         string memory attachment,
         uint8 currency,
         uint128 budget,
@@ -94,7 +91,6 @@ contract DeTask is SBTBase, Ownable {
         bool disabled) {
             TaskInfo memory task = tasks[taskId];
             title = task.title;
-            desc = task.desc;
             attachment = task.attachment;
             currency = task.currency;
             budget = task.budget; 

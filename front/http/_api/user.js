@@ -28,3 +28,22 @@ export const updateUserInfo = (data) => {
         data
     })
 }
+
+// 获取个人消息
+export const msgList = (data) => {
+    return serviceAxios({
+        url: `/user/msgList?page=${data.page}&pageSize=${data.pageSize}`,
+        method: "get",
+        data
+    })
+}
+
+// 阅读消息
+export const readMsg = (data) => {
+    return serviceAxios({
+        url: "/user/readMsg",
+        method: "post",
+        data
+    })
+}
+

@@ -6,8 +6,12 @@ import (
 	"code-market-admin/internal/app/model/request"
 	"code-market-admin/internal/app/model/response"
 	_ "code-market-admin/internal/app/model/response"
+	"code-market-admin/internal/app/utils"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"github.com/allegro/bigcache/v3"
+	"github.com/tidwall/gjson"
 	"go.uber.org/zap"
 	"reflect"
 )
@@ -53,15 +57,31 @@ func GetTaskList(searchInfo request.GetTaskListRequest) (err error, list interfa
 		db = db.Limit(limit).Offset(offset)
 		err = db.Order("created_at desc").Find(&taskList).Error
 	}
-	// 获取报名人数
+	// 获取报名人数 && IPFS
 	for _, task := range taskList {
 		res := response.GetTaskListRespond{Task: task}
 		if err = global.DB.Model(&model.Apply{}).Where("task_id = ? AND status = 0", task.TaskID).Count(&res.ApplyCount).Error; err != nil {
 			global.LOG.Error("", zap.Error(err))
 			return err, responses, total
 		}
+		// 获取IPFS
+		// 从缓存获取
+		hash := res.Attachment
+		att, cacheErr := global.JsonCache.Get(hash)
+		if cacheErr == bigcache.ErrEntryNotFound {
+			url := fmt.Sprintf("%s/%s", global.CONFIG.IPFS.API, hash)
+			res.Attachment, err = utils.GetRequest(url)
+			if err != nil || !gjson.Valid(res.Attachment) {
+				continue
+			}
+			global.JsonCache.Set(hash, []byte(res.Attachment))
+		} else {
+			res.Attachment = string(att)
+		}
 		responses = append(responses, res)
 	}
+	// 获取IPFS
+
 	return err, responses, total
 }
 

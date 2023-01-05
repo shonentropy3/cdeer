@@ -172,8 +172,8 @@ func InitDisk() (d Disk, err error) {
 }
 
 func InitCache() (cache Cache, err error) {
-	cache.Stats = global.Cache.Stats()
-	cache.Len = global.Cache.Len()
-	cache.Capacity = global.Cache.Capacity()
+	cache.Stats = global.JsonCache.Stats()
+	cache.Len = global.JsonCache.Len()
+	cache.Capacity = global.JsonCache.Capacity()
 	return cache, err
 }

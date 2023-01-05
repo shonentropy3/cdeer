@@ -299,7 +299,8 @@ export default function StageOutput(params) {
             }
             {
                 // 判断当前阶段是否已经完成
-                stageIndex > index && who === "worker" &&
+                // 1 ==> StageStatus.Accepted
+                data.status === 1 && who === "worker" &&
                 <div className="event">
                     <div className="content">
                         <div className="icon"></div>

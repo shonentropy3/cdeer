@@ -2,7 +2,8 @@ const { ethers } = require("hardhat");
 const hre = require("hardhat");
 const taskJson = require('../deployments/mumbai/DeTask.json');
 const orderJson = require('../deployments/mumbai/DeOrder.json');
-const { abi } = require('../deployments/abi/DeTask.json');
+const DeOrderSBTABI = require('../deployments/abi/DeOrderSBT.json');
+const { abi: DetaskAbi } = require('../deployments/abi/DeTask.json');
 const orderAbi = require('../deployments/abi/Order.json');
 const rpcProvider = new ethers.providers.JsonRpcProvider("https://matic-mumbai.chainstacklabs.com");
 
@@ -14,7 +15,11 @@ async function main() {
     accounts = await ethers.getSigners();
     owner = accounts[0];
     // console.log(owner,"owner")
-    const task = new ethers.Contract(taskJson.address, abi, owner);
+    // 0x6d48589ac36584d1862f06c1974eebffb1aa5d75 SVG OK
+    const task = new ethers.Contract(taskJson.address, DetaskAbi, owner);
+
+
+
     
     // console.log('rpcProvider ==>', rpcProvider);
     // console.log(task.methods.tokenURI(1).encodeABI());
@@ -24,18 +29,18 @@ async function main() {
     // const log = await rpcProvider.waitForTransaction('0xf137a6ff05c115fa607a4251eb6ad5d7063c076bf69415715207be5ac892b5e1')
     // console.log('log ==> ', log);
     // console.log(owner.address,'============>');
-    // //创建需求
+    //创建需求
     await task.createTask(
       '0xada57585A768830a4c06D9A6e2314DF716426BB5',
       {
-        title: "Test Task",
+        title: "Create a new test task2",
         desc: "Task Desc",
         attachment: "QmSsw6EcnwEiTT9c4rnAGeSENvsJMepNHmbrgi2S9bXNJr",
-        currency: 1,  //  
-        budget: ethers.utils.parseEther("1"),
+        currency: 2,  //  
+        budget: ethers.utils.parseEther("12.3"),
         period: 123213,
-        skills: 197121,  //  Skill 为1,2,3...整数型
-        timestamp: 0,
+        skills: "50331650",  //  Skill 为1,2,3...整数型
+        timestamp: 123213,
         disabled: false
       }
       ,
@@ -47,6 +52,9 @@ async function main() {
       }).catch(err => {
         console.log('=====>>>>>>>>>>>',err);
       })
+
+    const uri = await task.tokenURI(1);
+    console.log('URI:' + uri);
 
 
     // // 订单模块

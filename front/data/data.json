@@ -61,5 +61,8 @@
     {"title": "attachment", "name": "相关文档", "value": ""},
     {"title": "role", "name": "选择具体角色", "value": [], "list": []},
     {"title": "task_type", "name": "选择您的项目类型（可多选）", "value": [], "list": []}
+  ],
+  "symbol": [
+    {"title": "BTC"}
   ]
 }

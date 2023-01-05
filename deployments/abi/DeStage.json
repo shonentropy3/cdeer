@@ -14,6 +14,11 @@
     },
     {
       "inputs": [],
+      "name": "AmountError",
+      "type": "error"
+    },
+    {
+      "inputs": [],
       "name": "InvalidCaller",
       "type": "error"
     },
@@ -273,14 +278,14 @@
         {
           "components": [
             {
-              "internalType": "uint256",
+              "internalType": "uint96",
               "name": "amount",
-              "type": "uint256"
+              "type": "uint96"
             },
             {
-              "internalType": "uint256",
+              "internalType": "uint32",
               "name": "period",
-              "type": "uint256"
+              "type": "uint32"
             },
             {
               "internalType": "enum DeStage.StageStatus",

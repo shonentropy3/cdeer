@@ -19,6 +19,7 @@ import SkillsCard from "../components/CustomCard/SkillsCard";
 import {
     UploadOutlined
   } from '@ant-design/icons';
+import { getHash } from "../http/api/task";
 
 export default function Publish() {
     
@@ -111,11 +112,11 @@ export default function Publish() {
         skills.list.map(e => {
             arr.push(e.index);
         })
+        delete obj.desc;
         obj.skills = BitOperation(arr)
         obj.currency = obj.currency === 'ETH' ? 1 : 1;
         obj.period = obj.period * 24 * 60 * 60;
         obj.budget = obj.budget === 0 ? obj.budget : ethers.utils.parseEther(`${obj.budget}`);
-        obj.attachment = obj.attachment ? obj.attachment : '';
         obj.timestamp = 0;
         obj.disabled = false;
         let fee = { value: ethers.utils.parseEther("0") };
@@ -128,11 +129,33 @@ export default function Publish() {
             period: task.period,
          *  skills: task.skills,
          */
+
+        // 上传ipfs
+        let data = new FormData();
+        let flag = true;
+        data.append('json',JSON.stringify({
+            title: params.title,
+            desc: params.desc,
+            attachment: params.attachment ? params.attachment : '',
+            suffix: params.suffix ? params.suffix : ''
+        }))
+        await getHash(data)
+        .then(res => {
+            if(res.code === 0){
+                obj.attachment = res.data.hash;
+            }else{
+                message.warning(res.msg);
+                flag = false;
+            }
+        })
+
+        if (!flag) {
+            return
+        }
+
         setIsModalVisibleC(false); 
         setIsLoading(true)
-        console.log(
-            [address, obj, fee]
-        );
+
         Task.write({
             recklesslySetUnpreparedArgs: [address, obj, fee]
         })
@@ -141,7 +164,7 @@ export default function Publish() {
     const writeSuccess = async() => {
         var obj = {};
         obj.hash = Task.data.hash;
-        obj.suffix = params.suffix ? params.suffix : '';
+
         await createTask(obj)
         .then(res => {
             if (res.code === 0) {
@@ -237,7 +260,8 @@ export default function Publish() {
                     <div className="img" >
                     <UploadOutlined />
                     </div>
-                    <p>Upload Task requirement document（Word、Excel、PPT、PDF、image、video）<br/>maximum file size：20MB</p></Button>
+                    <p>Upload Task requirement document（Word、Excel、PPT、PDF、image、video）<br/>maximum file size：20MB</p>
+                </Button>
               </Upload>
         }
     }

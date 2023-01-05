@@ -2,7 +2,7 @@
   "name": "DeTask #1",
   "title": "新任务",
   "description": "Task details on: https://detask.xyz/task/1",
-  "image": "data:application/json;base64,...",
+  "image": "data:image/svg+xml;base64,PHN2",
   "attributes": [
     {
       "trait_type": "Skill",

@@ -112,10 +112,10 @@ func UpdatedApply(c *gin.Context) {
 	}
 	address := c.GetString("address") // 操作人
 	if err := service.UpdatedApply(apply, address); err != nil {
-		global.LOG.Error("更新失败!", zap.Error(err))
-		response.FailWithMessage(err.Error(), c)
+		global.LOG.Error("操作失败!", zap.Error(err))
+		response.FailWithMessage("操作失败!", c)
 	} else {
-		response.OkWithMessage("更新成功", c)
+		response.OkWithMessage("操作成功", c)
 	}
 }
 

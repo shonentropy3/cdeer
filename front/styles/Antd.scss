@@ -1,61 +1,76 @@
 .Modify_personal_information{
     width: 950px !important;
+    padding-bottom: 0;
+    border-radius: 30px;
+    overflow: hidden;
     .ant-modal-close-x{
         font-size: 30px;
     }
     .ant-modal-header{
-        height: 80px;
+        height: 100px;
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: #F8F8F8;
+        background-color: #1F1E2E;
         .ant-modal-title{
-            font-size: 26px;
+            color: white;
+            font-size: 38px;
         }
+    }
+    .ant-modal-close{
+        width: 41px;
+        height: 41px;
+        border-radius: 50%;
+        background-color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #1F1E2E;
+        top: 30px;
+        right: 45px;
     }
 
     .ant-modal-body{
+        padding: 70px 60px 50px ;
         .avatar{
-            width: 128px;
-            height: 128px;
-            border-radius: 50%;
-            background-color: #c4c4c4;
-            margin-bottom: 51px;
-            line-height: 128px;
-            text-align: center;
-            color: white;
-            position: relative;
-            cursor: pointer;
-            .camera{
-                font-size: 30px;
-                color: #666666;
-                position: absolute;
-                right: 20px;
-                bottom: 10px;
-                background-color: #F7F7F7;
-                border-radius: 50%;
-                width: 40px;
-                height: 40px;
-                line-height: 50px;
+            .upload-rule{
+                font-size: 12px;
+                font-family: PingFangSC-Regular, PingFang SC;
+                color: #6C6C6C;
+                line-height: 17px;
+                letter-spacing: 1.14px;
             }
-            .ant-upload-picture-card-wrapper{
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 128px;
-                height: 128px;
-                .ant-upload-list-picture-card{
-
-                    .ant-upload-select-picture-card{
-                        width: 128px;
-                        height: 128px;
-                        border-radius: 50%;
-                    }
+            .ant-btn-primary{
+                width: 118px;
+                height: 33px;
+                background-color: #1F1E2E;
+                border: none;
+            }
+            .ant-upload-list-picture .ant-upload-list-item, .ant-upload-list-picture-card .ant-upload-list-item{
+                border: none;
+                border-radius: 50%;
+                overflow: hidden;
+            }
+            .ant-upload.ant-upload-select-picture-card{
+                width: 233px;
+                margin-left: 24px;
+                background-color: #fff;
+                border: none;
+            }
+            .ant-upload-list-picture .ant-upload-list-item, .ant-upload-list-picture-card .ant-upload-list-item{
+                padding: 0;
+            }
+            .ant-upload.ant-upload-select-picture-card > .ant-upload{
+                flex-direction: column;
+                align-items: flex-start;
+                text-align: left;
+                button{
+                    margin-top: 10px;
                 }
             }
-            
         }
         .box{
+            margin-top: 60px;
             display: flex;
             flex-direction: column;
             .title{
@@ -88,6 +103,7 @@
                 .li{
                     box-sizing: content-box;
                     padding: 15px 20px;
+                    margin-bottom: 17px;
                     border-radius: 4px;
                     background-color: #F7F7F7;
                     margin-right: 20px;
@@ -100,12 +116,20 @@
             }
         }
         .btn{
-            width: 100%;
-            background-color: #2256FF;
+            width: 280px;
+            height: 45px;
+            margin-top: calc(80px - 17px);
+            background-color: #1F1E2E;
             color: white;
-            height: 60px;
-            border-radius: 4px;
-            margin-top: 73px;
+            border-radius: 45px;
+            position: relative;
+            left: calc((100% - 280px) / 2);
+
+            font-size: 20px;
+            font-family: PingFangSC-Regular, PingFang SC;
+            color: #FFFFFF;
+            line-height: 28px;
+            letter-spacing: 0.71px;
         }
     }
 }

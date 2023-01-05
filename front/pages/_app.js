@@ -10,6 +10,8 @@ import '../styles/Components.scss'
 import '../styles/Order/StageCard.scss'
 import '../styles/Modal.scss'
 import '../iconfont/iconfont.css'
+import '../styles/Message.scss'
+import '../styles/Myinfo.scss'
 import Header from './parts/Header'
 import Footer from './parts/Footer'
 
@@ -29,17 +31,15 @@ import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { detectZoom } from '../utils/DetectZoom.js';
 import { useEffect } from 'react'
-import Web3 from 'web3'
-
 
 const {chains, provider} = configureChains([chain.mainnet,chain.goerli,chain.hardhat,chain.polygonMumbai,
   {
-    id: 8478,
+    id: 8148,
     name: 'BuildBear',
     network: 'buildBear',
     rpcUrls: {
       // default: 'https://backend.buildbear.io/node/charming-bohr-99d0de',
-      default: 'https://backend.buildbear.io/node/charming-bohr-99d0de'
+      default: 'https://rpc.buildbear.io/Lengthy_Corde_3d0361ee'
     }
   }],
   [

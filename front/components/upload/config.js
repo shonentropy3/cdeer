@@ -1,5 +1,3 @@
-import { message } from "antd";
-import axios from "axios";
 import { upload } from "../../http/_api/public";
 
 export const uploadProps = {

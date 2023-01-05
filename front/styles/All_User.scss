@@ -887,22 +887,6 @@
                         }
                     }
                 }
-                .boxs{
-                    width: 230px;
-                    display: flex;
-                    .box{
-                        display: flex;
-                        align-items: center;
-                        .icon{
-                            margin-right: 5px;
-                            width: 29px;
-                            height: 29px;
-                            position: relative;
-                            border-radius: 50%;
-                            margin-right: 21px;
-                        }
-                    }
-                }
             }
 
         }
@@ -1024,5 +1008,27 @@
     }
     .ant-form-item{
         margin: 0;
+    }
+}
+
+.socialAccount{
+    width: 230px;
+    display: flex;
+    .box{
+        display: flex;
+        align-items: center;
+        &:last-child{
+            .icon{
+                margin: 0;
+            }
+        }
+        .icon{
+            margin-right: 5px;
+            width: 29px;
+            height: 29px;
+            position: relative;
+            border-radius: 50%;
+            margin-right: 21px;
+        }
     }
 }

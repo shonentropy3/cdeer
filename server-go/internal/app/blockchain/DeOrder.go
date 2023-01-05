@@ -163,8 +163,6 @@ func ParseOrderAbort(transHash model.TransHash, Logs []*types.Log) (err error) {
 		if ParseErr == nil {
 			// 开始事务
 			tx := global.DB.Begin()
-			// 更新数据
-			fmt.Println("Transaction")
 			// 更新任务状态
 			orderID := vLog.Topics[1].Big().Int64()
 			if err = UpdatedProgress(orderID); err != nil {
@@ -198,9 +196,14 @@ func SendMessage(order model.Order) (err error) {
 		if err = message.Template("OrderStarted", utils.StructToMap([]any{order, task}), order.Issuer, order.Worker, ""); err != nil {
 			return err
 		}
+	} else if order.Progress == 5 {
+		// 甲方中止任务
+		if err = message.Template("OrderAbort", utils.StructToMap([]any{order, task}), order.Issuer, order.Worker, order.Issuer); err != nil {
+			return err
+		}
 	} else if order.Progress == 6 {
-		// 任务中止
-		if err = message.Template("OrderAbort", utils.StructToMap([]any{order, task}), order.Issuer, order.Worker, ""); err != nil {
+		// 乙方中止任务
+		if err = message.Template("OrderAbort", utils.StructToMap([]any{order, task}), order.Issuer, order.Worker, order.Worker); err != nil {
 			return err
 		}
 	}

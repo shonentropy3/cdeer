@@ -29,7 +29,7 @@ export default function OrderSetStage(params) {
     const { address } = useAccount();
 
     // 链上数据
-    const { useOrderRead: nonces } = useRead('nonces', address);
+    const { useDeOrderVerifierRead: nonces } = useRead('nonces', address);
 
     // 状态
     let [status, setStatus] = useState('WaitWorkerStage');
@@ -229,7 +229,6 @@ export default function OrderSetStage(params) {
         })
         funcList.push({
             functionName: 'permitStage',
-            // params: [order.order_id, _amount, _period, 0, order.stages.deadline, v, r, s]
             params: [order.order_id, _amount, _period, order.sign_nonce, order.stages.deadline, v, r, s]
         })
         funcList.push({
@@ -268,6 +267,7 @@ export default function OrderSetStage(params) {
                 // 交易失败
                 setIsLoading(false);
                 message.warning('交易已终止')
+                console.log('res ==>',res);
             }
         })
         .catch(err => {
@@ -434,13 +434,13 @@ export default function OrderSetStage(params) {
                             <p className="title">Task stage division</p>
                             <div className="payModel">
                                 <Checkbox 
-                                    defaultChecked={dataStages[0].period === 0 ? true : false}
+                                    defaultChecked={ dataStages && dataStages[0].period === 0 ? true : false}
                                     onChange={toggleModel}
                                 >
                                     Increase advance payment
                                 </Checkbox>
                                 { 
-                                    (dataStages[0].period === 0 || stage.orderModel) &&
+                                    dataStages && (dataStages[0].period === 0 || stage.orderModel) &&
                                     <div className="prepay">
                                         
                                         <InputNumber
@@ -454,7 +454,7 @@ export default function OrderSetStage(params) {
                             <InnerStageCard defaultAmount={amount} getInner={getInner} dataStages={dataStages} edit="block" setIsChange={setIsChange} />
                             <div className="total">
                                 {
-                                    dataStages[0].period === 0 && 
+                                    dataStages && dataStages[0].period === 0 && 
                                     <p>Advance charge: <span>{stage.value}</span></p>
                                 }
                                 {printStageTotal()}

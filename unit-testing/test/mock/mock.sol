@@ -24,7 +24,6 @@ contract Mock is Test {
             }
             task[i] = TaskInfo({
                 title: string.concat("title\u6807\u9898", Strings.toString(i)),
-                desc: string.concat("desc\u63cf\u8ff0", Strings.toString(i)),
                 attachment: string.concat(
                     "attachment\u9644\u4ef6",
                     Strings.toString(i)

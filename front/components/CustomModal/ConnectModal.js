@@ -1,9 +1,11 @@
 import { CloseOutlined } from "@ant-design/icons"
 import { useRequest } from "ahooks";
 import { Button, Modal } from "antd"
+import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import { useAccount, useConnect, useNetwork, useSigner, useSwitchNetwork } from "wagmi";
 import Web3 from 'web3'
+import { useContracts, useRead } from "../../controller";
 import { authLoginSign, getLoginMessage } from "../../http/_api/sign";
 import { getJwt } from "../../utils/GetJwt";
 import { GetSignature } from "../../utils/GetSignature";
@@ -14,7 +16,11 @@ export default function ConnectModal(params) {
     const { setStatus, status, propsInit } = params;
     const { connect, connectors } = useConnect();
     const { address, isConnecting } = useAccount();
+    const permit2Address = "0x000000000022D473030F116dDEE9F6B43aC78BA3";
     
+    // 是否调用过 approve
+    const { useWethRead } = useRead('allowance',[address, permit2Address]);
+    const { useWethContractWrite: approve } = useContracts('approve');
     // 签名
     const { data: signer } = useSigner();
     const [message, setMessage] = useState();
@@ -31,15 +37,15 @@ export default function ConnectModal(params) {
               method: 'wallet_addEthereumChain',
               params: [
                   {
-                      chainId: Web3.utils.numberToHex(8478),
+                      chainId: Web3.utils.numberToHex(8151),
                       chainName: 'BuildBear Charming Bohr 99d0de',
                       nativeCurrency: {
                       name: 'BuildBear',
                       symbol: 'BB ETH', // 2-6 characters long
                       decimals: 18
                       },
-                      rpcUrls: ['https://backend.buildbear.io/node/charming-bohr-99d0de'],
-                      blockExplorerUrls: ['https://explorer.buildbear.io/node/charming-bohr-99d0de']
+                      rpcUrls: ['https://rpc.buildbear.io/Old_Mas_Amedda_06697a31'],
+                      blockExplorerUrls: ['https://explorer.buildbear.io/node/Old_Mas_Amedda_06697a31']
                   }
               ]
             }).then(() => {
@@ -72,6 +78,15 @@ export default function ConnectModal(params) {
                 getToken();
             }
         }
+        if (useWethRead.data.toString() == 0) {
+            console.log('useWethRead ==>',useWethRead.data.toString());
+            // console.log( Math.pow(2,256)-1);
+            console.log(approve);
+            // unApprove
+            approve.write({
+                recklesslySetUnpreparedArgs: [permit2Address, (Math.pow(2,32)-1).toString()]
+            })
+        }
     }
     async function isRun() {
         if (signer && signer.signMessage) {
@@ -86,7 +101,6 @@ export default function ConnectModal(params) {
 
     useEffect(() => {
         runAsync()
-
         // 本地是否存储token ? 
         // 是否是新用户
         // 签名
@@ -95,7 +109,7 @@ export default function ConnectModal(params) {
     useEffect(() => {
         connectors.map((e,i) => {
             if(e.name == "MetaMask" || e.name == "WalletConnect") {
-                    needConnector.push(e)
+                needConnector.push(e)
             }
         })
         setNeedConnector([...new Set(needConnector)]) 
@@ -104,6 +118,17 @@ export default function ConnectModal(params) {
     useEffect(() => {
         chain && network()
     },[chain])
+
+    useEffect(() => {
+        if (useWethRead.isSuccess) {
+            if (useWethRead.data.toString() == 0) {
+                // unApprove
+                approve.write({
+                    recklesslySetUnpreparedArgs: [permit2Address, ethers.constants.MaxUint256]
+                })
+            }
+        }
+    },[useWethRead.isSuccess])
 
     return <Modal
             title={<p>Link Wallet <CloseOutlined onClick={() => setStatus(false)} /></p>} 

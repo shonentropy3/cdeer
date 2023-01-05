@@ -28,22 +28,35 @@ var (
 	_ = event.NewSubscription
 )
 
+// IPermit2PermitTransferFrom is an auto generated low-level Go binding around an user-defined struct.
+type IPermit2PermitTransferFrom struct {
+	Permitted IPermit2TokenPermissions
+	Nonce     *big.Int
+	Deadline  *big.Int
+}
+
+// IPermit2TokenPermissions is an auto generated low-level Go binding around an user-defined struct.
+type IPermit2TokenPermissions struct {
+	Token  common.Address
+	Amount *big.Int
+}
+
 // Order is an auto generated low-level Go binding around an user-defined struct.
 type Order struct {
 	TaskId    *big.Int
 	Issuer    common.Address
-	Worker    common.Address
-	Token     common.Address
 	Amount    *big.Int
+	Worker    common.Address
 	Payed     *big.Int
+	Token     common.Address
 	Progress  uint8
 	PayType   uint8
-	StartDate *big.Int
+	StartDate uint32
 }
 
 // DeOrderMetaData contains all meta data concerning the DeOrder contract.
 var DeOrderMetaData = &bind.MetaData{
-	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_weth\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"reason\",\"type\":\"uint256\"}],\"name\":\"AmountError\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"Expired\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"NonceError\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ParamError\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"PermissionsError\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ProgressError\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"season\",\"type\":\"uint256\"}],\"name\":\"RecoverError\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"orderId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"attachment\",\"type\":\"string\"}],\"name\":\"AttachmentUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"fee\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"feeTo\",\"type\":\"address\"}],\"name\":\"FeeUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"orderId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"who\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"stageIndex\",\"type\":\"uint256\"}],\"name\":\"OrderAbort\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"taskId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"orderId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"issuer\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"worker\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"OrderCreated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"orderId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"OrderModified\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"orderId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"who\",\"type\":\"address\"}],\"name\":\"OrderStarted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"stage\",\"type\":\"address\"}],\"name\":\"StageUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"orderId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"stageIndex\",\"type\":\"uint256\"}],\"name\":\"Withdraw\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"DOMAIN_SEPARATOR\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"FEE_BASE\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"PERMITAPPENDSTAGE_TYPEHASH\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"PERMITPROSTAGE_TYPEHASH\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"PERMITSTAGE_TYPEHASH\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_orderId\",\"type\":\"uint256\"}],\"name\":\"abortOrder\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_orderId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"period\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"nonce\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"deadline\",\"type\":\"uint256\"},{\"internalType\":\"uint8\",\"name\":\"v\",\"type\":\"uint8\"},{\"internalType\":\"bytes32\",\"name\":\"r\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"s\",\"type\":\"bytes32\"}],\"name\":\"appendStage\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"builderSBT\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_orderId\",\"type\":\"uint256\"},{\"internalType\":\"uint256[]\",\"name\":\"_stageIndexs\",\"type\":\"uint256[]\"}],\"name\":\"confirmDelivery\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_taskId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_issuer\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_worker\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"createOrder\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"currOrderId\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"fee\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"feeTo\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"orderId\",\"type\":\"uint256\"}],\"name\":\"getOrder\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"taskId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"issuer\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"worker\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"payed\",\"type\":\"uint256\"},{\"internalType\":\"enumOrderProgess\",\"name\":\"progress\",\"type\":\"uint8\"},{\"internalType\":\"enumPaymentType\",\"name\":\"payType\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"startDate\",\"type\":\"uint256\"}],\"internalType\":\"structOrder\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"issuerSBT\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"orderId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"modifyOrder\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes[]\",\"name\":\"data\",\"type\":\"bytes[]\"}],\"name\":\"multicall\",\"outputs\":[{\"internalType\":\"bytes[]\",\"name\":\"results\",\"type\":\"bytes[]\"}],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"nonces\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"orderId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"payOrder\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"orderId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"deadline\",\"type\":\"uint256\"},{\"internalType\":\"uint8\",\"name\":\"v\",\"type\":\"uint8\"},{\"internalType\":\"bytes32\",\"name\":\"r\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"s\",\"type\":\"bytes32\"}],\"name\":\"payOrderWithPermit\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_orderId\",\"type\":\"uint256\"},{\"internalType\":\"uint256[]\",\"name\":\"_amounts\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[]\",\"name\":\"_periods\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256\",\"name\":\"nonce\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"deadline\",\"type\":\"uint256\"},{\"internalType\":\"uint8\",\"name\":\"v\",\"type\":\"uint8\"},{\"internalType\":\"bytes32\",\"name\":\"r\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"s\",\"type\":\"bytes32\"}],\"name\":\"permitStage\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_orderId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_stageIndex\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_appendPeriod\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"nonce\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"deadline\",\"type\":\"uint256\"},{\"internalType\":\"uint8\",\"name\":\"v\",\"type\":\"uint8\"},{\"internalType\":\"bytes32\",\"name\":\"r\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"s\",\"type\":\"bytes32\"}],\"name\":\"prolongStage\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_orderId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"refund\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_stage\",\"type\":\"address\"}],\"name\":\"setDeStage\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_fee\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_feeTo\",\"type\":\"address\"}],\"name\":\"setFeeTo\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_builder\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_issuer\",\"type\":\"address\"}],\"name\":\"setSBT\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_orderId\",\"type\":\"uint256\"},{\"internalType\":\"uint256[]\",\"name\":\"_amounts\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[]\",\"name\":\"_periods\",\"type\":\"uint256[]\"}],\"name\":\"setStage\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"stage\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_orderId\",\"type\":\"uint256\"}],\"name\":\"startOrder\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_orderId\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"_attachment\",\"type\":\"string\"}],\"name\":\"updateAttachment\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"weth\",\"outputs\":[{\"internalType\":\"contractIWETH9\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_orderId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"}],\"name\":\"withdraw\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"stateMutability\":\"payable\",\"type\":\"receive\"}]",
+	ABI: "[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_weth\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_permit2\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_verifier\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"reason\",\"type\":\"uint256\"}],\"name\":\"AmountError\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ParamError\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"PermissionsError\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ProgressError\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"UnSupportToken\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"orderId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"attachment\",\"type\":\"string\"}],\"name\":\"AttachmentUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"fee\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"feeTo\",\"type\":\"address\"}],\"name\":\"FeeUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"orderId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"who\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"stageIndex\",\"type\":\"uint256\"}],\"name\":\"OrderAbort\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"taskId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"orderId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"issuer\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"worker\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"OrderCreated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"orderId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"OrderModified\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"orderId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"who\",\"type\":\"address\"}],\"name\":\"OrderStarted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"stage\",\"type\":\"address\"}],\"name\":\"StageUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"enabled\",\"type\":\"bool\"}],\"name\":\"SupportToken\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"orderId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"stageIndex\",\"type\":\"uint256\"}],\"name\":\"Withdraw\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"PERMIT2\",\"outputs\":[{\"internalType\":\"contractIPermit2\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"WETH\",\"outputs\":[{\"internalType\":\"contractIWETH9\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_orderId\",\"type\":\"uint256\"}],\"name\":\"abortOrder\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_orderId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"period\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"nonce\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"deadline\",\"type\":\"uint256\"},{\"internalType\":\"uint8\",\"name\":\"v\",\"type\":\"uint8\"},{\"internalType\":\"bytes32\",\"name\":\"r\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"s\",\"type\":\"bytes32\"}],\"name\":\"appendStage\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"builderSBT\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_orderId\",\"type\":\"uint256\"},{\"internalType\":\"uint256[]\",\"name\":\"_stageIndexs\",\"type\":\"uint256[]\"}],\"name\":\"confirmDelivery\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_taskId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_issuer\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_worker\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"createOrder\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"currOrderId\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"fee\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"feeTo\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"orderId\",\"type\":\"uint256\"}],\"name\":\"getOrder\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"taskId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"issuer\",\"type\":\"address\"},{\"internalType\":\"uint96\",\"name\":\"amount\",\"type\":\"uint96\"},{\"internalType\":\"address\",\"name\":\"worker\",\"type\":\"address\"},{\"internalType\":\"uint96\",\"name\":\"payed\",\"type\":\"uint96\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"enumOrderProgess\",\"name\":\"progress\",\"type\":\"uint8\"},{\"internalType\":\"enumPaymentType\",\"name\":\"payType\",\"type\":\"uint8\"},{\"internalType\":\"uint32\",\"name\":\"startDate\",\"type\":\"uint32\"}],\"internalType\":\"structOrder\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"issuerSBT\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"orderId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"modifyOrder\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes[]\",\"name\":\"data\",\"type\":\"bytes[]\"}],\"name\":\"multicall\",\"outputs\":[{\"internalType\":\"bytes[]\",\"name\":\"results\",\"type\":\"bytes[]\"}],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"orderId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"payOrder\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"orderId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"deadline\",\"type\":\"uint256\"},{\"internalType\":\"uint8\",\"name\":\"v\",\"type\":\"uint8\"},{\"internalType\":\"bytes32\",\"name\":\"r\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"s\",\"type\":\"bytes32\"}],\"name\":\"payOrderWithPermit\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"orderId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"components\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"internalType\":\"structIPermit2.TokenPermissions\",\"name\":\"permitted\",\"type\":\"tuple\"},{\"internalType\":\"uint256\",\"name\":\"nonce\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"deadline\",\"type\":\"uint256\"}],\"internalType\":\"structIPermit2.PermitTransferFrom\",\"name\":\"permit\",\"type\":\"tuple\"},{\"internalType\":\"bytes\",\"name\":\"signature\",\"type\":\"bytes\"}],\"name\":\"payOrderWithPermit2\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_orderId\",\"type\":\"uint256\"},{\"internalType\":\"uint256[]\",\"name\":\"_amounts\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[]\",\"name\":\"_periods\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256\",\"name\":\"nonce\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"deadline\",\"type\":\"uint256\"},{\"internalType\":\"uint8\",\"name\":\"v\",\"type\":\"uint8\"},{\"internalType\":\"bytes32\",\"name\":\"r\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"s\",\"type\":\"bytes32\"}],\"name\":\"permitStage\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_orderId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_stageIndex\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_appendPeriod\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"nonce\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"deadline\",\"type\":\"uint256\"},{\"internalType\":\"uint8\",\"name\":\"v\",\"type\":\"uint8\"},{\"internalType\":\"bytes32\",\"name\":\"r\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"s\",\"type\":\"bytes32\"}],\"name\":\"prolongStage\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_orderId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"refund\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_stage\",\"type\":\"address\"}],\"name\":\"setDeStage\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_fee\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_feeTo\",\"type\":\"address\"}],\"name\":\"setFeeTo\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_builder\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_issuer\",\"type\":\"address\"}],\"name\":\"setSBT\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_token\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"enable\",\"type\":\"bool\"}],\"name\":\"setSupportToken\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"stage\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_orderId\",\"type\":\"uint256\"}],\"name\":\"startOrder\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"supportTokens\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_orderId\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"_attachment\",\"type\":\"string\"}],\"name\":\"updateAttachment\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"verifier\",\"outputs\":[{\"internalType\":\"contractIOrderVerifier\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_orderId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"}],\"name\":\"withdraw\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"stateMutability\":\"payable\",\"type\":\"receive\"}]",
 }
 
 // DeOrderABI is the input ABI used to generate the binding from.
@@ -192,159 +205,66 @@ func (_DeOrder *DeOrderTransactorRaw) Transact(opts *bind.TransactOpts, method s
 	return _DeOrder.Contract.contract.Transact(opts, method, params...)
 }
 
-// DOMAINSEPARATOR is a free data retrieval call binding the contract method 0x3644e515.
+// PERMIT2 is a free data retrieval call binding the contract method 0x6afdd850.
 //
-// Solidity: function DOMAIN_SEPARATOR() view returns(bytes32)
-func (_DeOrder *DeOrderCaller) DOMAINSEPARATOR(opts *bind.CallOpts) ([32]byte, error) {
+// Solidity: function PERMIT2() view returns(address)
+func (_DeOrder *DeOrderCaller) PERMIT2(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
-	err := _DeOrder.contract.Call(opts, &out, "DOMAIN_SEPARATOR")
+	err := _DeOrder.contract.Call(opts, &out, "PERMIT2")
 
 	if err != nil {
-		return *new([32]byte), err
+		return *new(common.Address), err
 	}
 
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
 
 	return out0, err
 
 }
 
-// DOMAINSEPARATOR is a free data retrieval call binding the contract method 0x3644e515.
+// PERMIT2 is a free data retrieval call binding the contract method 0x6afdd850.
 //
-// Solidity: function DOMAIN_SEPARATOR() view returns(bytes32)
-func (_DeOrder *DeOrderSession) DOMAINSEPARATOR() ([32]byte, error) {
-	return _DeOrder.Contract.DOMAINSEPARATOR(&_DeOrder.CallOpts)
+// Solidity: function PERMIT2() view returns(address)
+func (_DeOrder *DeOrderSession) PERMIT2() (common.Address, error) {
+	return _DeOrder.Contract.PERMIT2(&_DeOrder.CallOpts)
 }
 
-// DOMAINSEPARATOR is a free data retrieval call binding the contract method 0x3644e515.
+// PERMIT2 is a free data retrieval call binding the contract method 0x6afdd850.
 //
-// Solidity: function DOMAIN_SEPARATOR() view returns(bytes32)
-func (_DeOrder *DeOrderCallerSession) DOMAINSEPARATOR() ([32]byte, error) {
-	return _DeOrder.Contract.DOMAINSEPARATOR(&_DeOrder.CallOpts)
+// Solidity: function PERMIT2() view returns(address)
+func (_DeOrder *DeOrderCallerSession) PERMIT2() (common.Address, error) {
+	return _DeOrder.Contract.PERMIT2(&_DeOrder.CallOpts)
 }
 
-// FEEBASE is a free data retrieval call binding the contract method 0xecefc705.
+// WETH is a free data retrieval call binding the contract method 0xad5c4648.
 //
-// Solidity: function FEE_BASE() view returns(uint256)
-func (_DeOrder *DeOrderCaller) FEEBASE(opts *bind.CallOpts) (*big.Int, error) {
+// Solidity: function WETH() view returns(address)
+func (_DeOrder *DeOrderCaller) WETH(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
-	err := _DeOrder.contract.Call(opts, &out, "FEE_BASE")
+	err := _DeOrder.contract.Call(opts, &out, "WETH")
 
 	if err != nil {
-		return *new(*big.Int), err
+		return *new(common.Address), err
 	}
 
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
+	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
 
 	return out0, err
 
 }
 
-// FEEBASE is a free data retrieval call binding the contract method 0xecefc705.
+// WETH is a free data retrieval call binding the contract method 0xad5c4648.
 //
-// Solidity: function FEE_BASE() view returns(uint256)
-func (_DeOrder *DeOrderSession) FEEBASE() (*big.Int, error) {
-	return _DeOrder.Contract.FEEBASE(&_DeOrder.CallOpts)
+// Solidity: function WETH() view returns(address)
+func (_DeOrder *DeOrderSession) WETH() (common.Address, error) {
+	return _DeOrder.Contract.WETH(&_DeOrder.CallOpts)
 }
 
-// FEEBASE is a free data retrieval call binding the contract method 0xecefc705.
+// WETH is a free data retrieval call binding the contract method 0xad5c4648.
 //
-// Solidity: function FEE_BASE() view returns(uint256)
-func (_DeOrder *DeOrderCallerSession) FEEBASE() (*big.Int, error) {
-	return _DeOrder.Contract.FEEBASE(&_DeOrder.CallOpts)
-}
-
-// PERMITAPPENDSTAGETYPEHASH is a free data retrieval call binding the contract method 0x235bb0ca.
-//
-// Solidity: function PERMITAPPENDSTAGE_TYPEHASH() view returns(bytes32)
-func (_DeOrder *DeOrderCaller) PERMITAPPENDSTAGETYPEHASH(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _DeOrder.contract.Call(opts, &out, "PERMITAPPENDSTAGE_TYPEHASH")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
-}
-
-// PERMITAPPENDSTAGETYPEHASH is a free data retrieval call binding the contract method 0x235bb0ca.
-//
-// Solidity: function PERMITAPPENDSTAGE_TYPEHASH() view returns(bytes32)
-func (_DeOrder *DeOrderSession) PERMITAPPENDSTAGETYPEHASH() ([32]byte, error) {
-	return _DeOrder.Contract.PERMITAPPENDSTAGETYPEHASH(&_DeOrder.CallOpts)
-}
-
-// PERMITAPPENDSTAGETYPEHASH is a free data retrieval call binding the contract method 0x235bb0ca.
-//
-// Solidity: function PERMITAPPENDSTAGE_TYPEHASH() view returns(bytes32)
-func (_DeOrder *DeOrderCallerSession) PERMITAPPENDSTAGETYPEHASH() ([32]byte, error) {
-	return _DeOrder.Contract.PERMITAPPENDSTAGETYPEHASH(&_DeOrder.CallOpts)
-}
-
-// PERMITPROSTAGETYPEHASH is a free data retrieval call binding the contract method 0x31f3a62c.
-//
-// Solidity: function PERMITPROSTAGE_TYPEHASH() view returns(bytes32)
-func (_DeOrder *DeOrderCaller) PERMITPROSTAGETYPEHASH(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _DeOrder.contract.Call(opts, &out, "PERMITPROSTAGE_TYPEHASH")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
-}
-
-// PERMITPROSTAGETYPEHASH is a free data retrieval call binding the contract method 0x31f3a62c.
-//
-// Solidity: function PERMITPROSTAGE_TYPEHASH() view returns(bytes32)
-func (_DeOrder *DeOrderSession) PERMITPROSTAGETYPEHASH() ([32]byte, error) {
-	return _DeOrder.Contract.PERMITPROSTAGETYPEHASH(&_DeOrder.CallOpts)
-}
-
-// PERMITPROSTAGETYPEHASH is a free data retrieval call binding the contract method 0x31f3a62c.
-//
-// Solidity: function PERMITPROSTAGE_TYPEHASH() view returns(bytes32)
-func (_DeOrder *DeOrderCallerSession) PERMITPROSTAGETYPEHASH() ([32]byte, error) {
-	return _DeOrder.Contract.PERMITPROSTAGETYPEHASH(&_DeOrder.CallOpts)
-}
-
-// PERMITSTAGETYPEHASH is a free data retrieval call binding the contract method 0xbc4491c2.
-//
-// Solidity: function PERMITSTAGE_TYPEHASH() view returns(bytes32)
-func (_DeOrder *DeOrderCaller) PERMITSTAGETYPEHASH(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _DeOrder.contract.Call(opts, &out, "PERMITSTAGE_TYPEHASH")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
-}
-
-// PERMITSTAGETYPEHASH is a free data retrieval call binding the contract method 0xbc4491c2.
-//
-// Solidity: function PERMITSTAGE_TYPEHASH() view returns(bytes32)
-func (_DeOrder *DeOrderSession) PERMITSTAGETYPEHASH() ([32]byte, error) {
-	return _DeOrder.Contract.PERMITSTAGETYPEHASH(&_DeOrder.CallOpts)
-}
-
-// PERMITSTAGETYPEHASH is a free data retrieval call binding the contract method 0xbc4491c2.
-//
-// Solidity: function PERMITSTAGE_TYPEHASH() view returns(bytes32)
-func (_DeOrder *DeOrderCallerSession) PERMITSTAGETYPEHASH() ([32]byte, error) {
-	return _DeOrder.Contract.PERMITSTAGETYPEHASH(&_DeOrder.CallOpts)
+// Solidity: function WETH() view returns(address)
+func (_DeOrder *DeOrderCallerSession) WETH() (common.Address, error) {
+	return _DeOrder.Contract.WETH(&_DeOrder.CallOpts)
 }
 
 // BuilderSBT is a free data retrieval call binding the contract method 0x7c1b112c.
@@ -473,7 +393,7 @@ func (_DeOrder *DeOrderCallerSession) FeeTo() (common.Address, error) {
 
 // GetOrder is a free data retrieval call binding the contract method 0xd09ef241.
 //
-// Solidity: function getOrder(uint256 orderId) view returns((uint256,address,address,address,uint256,uint256,uint8,uint8,uint256))
+// Solidity: function getOrder(uint256 orderId) view returns((uint256,address,uint96,address,uint96,address,uint8,uint8,uint32))
 func (_DeOrder *DeOrderCaller) GetOrder(opts *bind.CallOpts, orderId *big.Int) (Order, error) {
 	var out []interface{}
 	err := _DeOrder.contract.Call(opts, &out, "getOrder", orderId)
@@ -490,14 +410,14 @@ func (_DeOrder *DeOrderCaller) GetOrder(opts *bind.CallOpts, orderId *big.Int) (
 
 // GetOrder is a free data retrieval call binding the contract method 0xd09ef241.
 //
-// Solidity: function getOrder(uint256 orderId) view returns((uint256,address,address,address,uint256,uint256,uint8,uint8,uint256))
+// Solidity: function getOrder(uint256 orderId) view returns((uint256,address,uint96,address,uint96,address,uint8,uint8,uint32))
 func (_DeOrder *DeOrderSession) GetOrder(orderId *big.Int) (Order, error) {
 	return _DeOrder.Contract.GetOrder(&_DeOrder.CallOpts, orderId)
 }
 
 // GetOrder is a free data retrieval call binding the contract method 0xd09ef241.
 //
-// Solidity: function getOrder(uint256 orderId) view returns((uint256,address,address,address,uint256,uint256,uint8,uint8,uint256))
+// Solidity: function getOrder(uint256 orderId) view returns((uint256,address,uint96,address,uint96,address,uint8,uint8,uint32))
 func (_DeOrder *DeOrderCallerSession) GetOrder(orderId *big.Int) (Order, error) {
 	return _DeOrder.Contract.GetOrder(&_DeOrder.CallOpts, orderId)
 }
@@ -531,37 +451,6 @@ func (_DeOrder *DeOrderSession) IssuerSBT() (common.Address, error) {
 // Solidity: function issuerSBT() view returns(address)
 func (_DeOrder *DeOrderCallerSession) IssuerSBT() (common.Address, error) {
 	return _DeOrder.Contract.IssuerSBT(&_DeOrder.CallOpts)
-}
-
-// Nonces is a free data retrieval call binding the contract method 0x7ecebe00.
-//
-// Solidity: function nonces(address ) view returns(uint256)
-func (_DeOrder *DeOrderCaller) Nonces(opts *bind.CallOpts, arg0 common.Address) (*big.Int, error) {
-	var out []interface{}
-	err := _DeOrder.contract.Call(opts, &out, "nonces", arg0)
-
-	if err != nil {
-		return *new(*big.Int), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new(*big.Int)).(**big.Int)
-
-	return out0, err
-
-}
-
-// Nonces is a free data retrieval call binding the contract method 0x7ecebe00.
-//
-// Solidity: function nonces(address ) view returns(uint256)
-func (_DeOrder *DeOrderSession) Nonces(arg0 common.Address) (*big.Int, error) {
-	return _DeOrder.Contract.Nonces(&_DeOrder.CallOpts, arg0)
-}
-
-// Nonces is a free data retrieval call binding the contract method 0x7ecebe00.
-//
-// Solidity: function nonces(address ) view returns(uint256)
-func (_DeOrder *DeOrderCallerSession) Nonces(arg0 common.Address) (*big.Int, error) {
-	return _DeOrder.Contract.Nonces(&_DeOrder.CallOpts, arg0)
 }
 
 // Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
@@ -626,12 +515,43 @@ func (_DeOrder *DeOrderCallerSession) Stage() (common.Address, error) {
 	return _DeOrder.Contract.Stage(&_DeOrder.CallOpts)
 }
 
-// Weth is a free data retrieval call binding the contract method 0x3fc8cef3.
+// SupportTokens is a free data retrieval call binding the contract method 0x8a0737a0.
 //
-// Solidity: function weth() view returns(address)
-func (_DeOrder *DeOrderCaller) Weth(opts *bind.CallOpts) (common.Address, error) {
+// Solidity: function supportTokens(address ) view returns(bool)
+func (_DeOrder *DeOrderCaller) SupportTokens(opts *bind.CallOpts, arg0 common.Address) (bool, error) {
 	var out []interface{}
-	err := _DeOrder.contract.Call(opts, &out, "weth")
+	err := _DeOrder.contract.Call(opts, &out, "supportTokens", arg0)
+
+	if err != nil {
+		return *new(bool), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
+
+	return out0, err
+
+}
+
+// SupportTokens is a free data retrieval call binding the contract method 0x8a0737a0.
+//
+// Solidity: function supportTokens(address ) view returns(bool)
+func (_DeOrder *DeOrderSession) SupportTokens(arg0 common.Address) (bool, error) {
+	return _DeOrder.Contract.SupportTokens(&_DeOrder.CallOpts, arg0)
+}
+
+// SupportTokens is a free data retrieval call binding the contract method 0x8a0737a0.
+//
+// Solidity: function supportTokens(address ) view returns(bool)
+func (_DeOrder *DeOrderCallerSession) SupportTokens(arg0 common.Address) (bool, error) {
+	return _DeOrder.Contract.SupportTokens(&_DeOrder.CallOpts, arg0)
+}
+
+// Verifier is a free data retrieval call binding the contract method 0x2b7ac3f3.
+//
+// Solidity: function verifier() view returns(address)
+func (_DeOrder *DeOrderCaller) Verifier(opts *bind.CallOpts) (common.Address, error) {
+	var out []interface{}
+	err := _DeOrder.contract.Call(opts, &out, "verifier")
 
 	if err != nil {
 		return *new(common.Address), err
@@ -643,18 +563,18 @@ func (_DeOrder *DeOrderCaller) Weth(opts *bind.CallOpts) (common.Address, error)
 
 }
 
-// Weth is a free data retrieval call binding the contract method 0x3fc8cef3.
+// Verifier is a free data retrieval call binding the contract method 0x2b7ac3f3.
 //
-// Solidity: function weth() view returns(address)
-func (_DeOrder *DeOrderSession) Weth() (common.Address, error) {
-	return _DeOrder.Contract.Weth(&_DeOrder.CallOpts)
+// Solidity: function verifier() view returns(address)
+func (_DeOrder *DeOrderSession) Verifier() (common.Address, error) {
+	return _DeOrder.Contract.Verifier(&_DeOrder.CallOpts)
 }
 
-// Weth is a free data retrieval call binding the contract method 0x3fc8cef3.
+// Verifier is a free data retrieval call binding the contract method 0x2b7ac3f3.
 //
-// Solidity: function weth() view returns(address)
-func (_DeOrder *DeOrderCallerSession) Weth() (common.Address, error) {
-	return _DeOrder.Contract.Weth(&_DeOrder.CallOpts)
+// Solidity: function verifier() view returns(address)
+func (_DeOrder *DeOrderCallerSession) Verifier() (common.Address, error) {
+	return _DeOrder.Contract.Verifier(&_DeOrder.CallOpts)
 }
 
 // AbortOrder is a paid mutator transaction binding the contract method 0x4122a29e.
@@ -825,6 +745,27 @@ func (_DeOrder *DeOrderTransactorSession) PayOrderWithPermit(orderId *big.Int, a
 	return _DeOrder.Contract.PayOrderWithPermit(&_DeOrder.TransactOpts, orderId, amount, deadline, v, r, s)
 }
 
+// PayOrderWithPermit2 is a paid mutator transaction binding the contract method 0xedb86978.
+//
+// Solidity: function payOrderWithPermit2(uint256 orderId, uint256 amount, ((address,uint256),uint256,uint256) permit, bytes signature) returns()
+func (_DeOrder *DeOrderTransactor) PayOrderWithPermit2(opts *bind.TransactOpts, orderId *big.Int, amount *big.Int, permit IPermit2PermitTransferFrom, signature []byte) (*types.Transaction, error) {
+	return _DeOrder.contract.Transact(opts, "payOrderWithPermit2", orderId, amount, permit, signature)
+}
+
+// PayOrderWithPermit2 is a paid mutator transaction binding the contract method 0xedb86978.
+//
+// Solidity: function payOrderWithPermit2(uint256 orderId, uint256 amount, ((address,uint256),uint256,uint256) permit, bytes signature) returns()
+func (_DeOrder *DeOrderSession) PayOrderWithPermit2(orderId *big.Int, amount *big.Int, permit IPermit2PermitTransferFrom, signature []byte) (*types.Transaction, error) {
+	return _DeOrder.Contract.PayOrderWithPermit2(&_DeOrder.TransactOpts, orderId, amount, permit, signature)
+}
+
+// PayOrderWithPermit2 is a paid mutator transaction binding the contract method 0xedb86978.
+//
+// Solidity: function payOrderWithPermit2(uint256 orderId, uint256 amount, ((address,uint256),uint256,uint256) permit, bytes signature) returns()
+func (_DeOrder *DeOrderTransactorSession) PayOrderWithPermit2(orderId *big.Int, amount *big.Int, permit IPermit2PermitTransferFrom, signature []byte) (*types.Transaction, error) {
+	return _DeOrder.Contract.PayOrderWithPermit2(&_DeOrder.TransactOpts, orderId, amount, permit, signature)
+}
+
 // PermitStage is a paid mutator transaction binding the contract method 0x24d33594.
 //
 // Solidity: function permitStage(uint256 _orderId, uint256[] _amounts, uint256[] _periods, uint256 nonce, uint256 deadline, uint8 v, bytes32 r, bytes32 s) payable returns()
@@ -972,25 +913,25 @@ func (_DeOrder *DeOrderTransactorSession) SetSBT(_builder common.Address, _issue
 	return _DeOrder.Contract.SetSBT(&_DeOrder.TransactOpts, _builder, _issuer)
 }
 
-// SetStage is a paid mutator transaction binding the contract method 0x362231e1.
+// SetSupportToken is a paid mutator transaction binding the contract method 0x204daa93.
 //
-// Solidity: function setStage(uint256 _orderId, uint256[] _amounts, uint256[] _periods) returns()
-func (_DeOrder *DeOrderTransactor) SetStage(opts *bind.TransactOpts, _orderId *big.Int, _amounts []*big.Int, _periods []*big.Int) (*types.Transaction, error) {
-	return _DeOrder.contract.Transact(opts, "setStage", _orderId, _amounts, _periods)
+// Solidity: function setSupportToken(address _token, bool enable) returns()
+func (_DeOrder *DeOrderTransactor) SetSupportToken(opts *bind.TransactOpts, _token common.Address, enable bool) (*types.Transaction, error) {
+	return _DeOrder.contract.Transact(opts, "setSupportToken", _token, enable)
 }
 
-// SetStage is a paid mutator transaction binding the contract method 0x362231e1.
+// SetSupportToken is a paid mutator transaction binding the contract method 0x204daa93.
 //
-// Solidity: function setStage(uint256 _orderId, uint256[] _amounts, uint256[] _periods) returns()
-func (_DeOrder *DeOrderSession) SetStage(_orderId *big.Int, _amounts []*big.Int, _periods []*big.Int) (*types.Transaction, error) {
-	return _DeOrder.Contract.SetStage(&_DeOrder.TransactOpts, _orderId, _amounts, _periods)
+// Solidity: function setSupportToken(address _token, bool enable) returns()
+func (_DeOrder *DeOrderSession) SetSupportToken(_token common.Address, enable bool) (*types.Transaction, error) {
+	return _DeOrder.Contract.SetSupportToken(&_DeOrder.TransactOpts, _token, enable)
 }
 
-// SetStage is a paid mutator transaction binding the contract method 0x362231e1.
+// SetSupportToken is a paid mutator transaction binding the contract method 0x204daa93.
 //
-// Solidity: function setStage(uint256 _orderId, uint256[] _amounts, uint256[] _periods) returns()
-func (_DeOrder *DeOrderTransactorSession) SetStage(_orderId *big.Int, _amounts []*big.Int, _periods []*big.Int) (*types.Transaction, error) {
-	return _DeOrder.Contract.SetStage(&_DeOrder.TransactOpts, _orderId, _amounts, _periods)
+// Solidity: function setSupportToken(address _token, bool enable) returns()
+func (_DeOrder *DeOrderTransactorSession) SetSupportToken(_token common.Address, enable bool) (*types.Transaction, error) {
+	return _DeOrder.Contract.SetSupportToken(&_DeOrder.TransactOpts, _token, enable)
 }
 
 // StartOrder is a paid mutator transaction binding the contract method 0x7d41fdd9.
@@ -2253,6 +2194,141 @@ func (_DeOrder *DeOrderFilterer) WatchStageUpdated(opts *bind.WatchOpts, sink ch
 func (_DeOrder *DeOrderFilterer) ParseStageUpdated(log types.Log) (*DeOrderStageUpdated, error) {
 	event := new(DeOrderStageUpdated)
 	if err := _DeOrder.contract.UnpackLog(event, "StageUpdated", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
+}
+
+// DeOrderSupportTokenIterator is returned from FilterSupportToken and is used to iterate over the raw logs and unpacked data for SupportToken events raised by the DeOrder contract.
+type DeOrderSupportTokenIterator struct {
+	Event *DeOrderSupportToken // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *DeOrderSupportTokenIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(DeOrderSupportToken)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(DeOrderSupportToken)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *DeOrderSupportTokenIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *DeOrderSupportTokenIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// DeOrderSupportToken represents a SupportToken event raised by the DeOrder contract.
+type DeOrderSupportToken struct {
+	Token   common.Address
+	Enabled bool
+	Raw     types.Log // Blockchain specific contextual infos
+}
+
+// FilterSupportToken is a free log retrieval operation binding the contract event 0x5e2b4e0b770b15ed507e19f9f3b164f07087641b80ca21ef0052f6e8611daaa7.
+//
+// Solidity: event SupportToken(address token, bool enabled)
+func (_DeOrder *DeOrderFilterer) FilterSupportToken(opts *bind.FilterOpts) (*DeOrderSupportTokenIterator, error) {
+
+	logs, sub, err := _DeOrder.contract.FilterLogs(opts, "SupportToken")
+	if err != nil {
+		return nil, err
+	}
+	return &DeOrderSupportTokenIterator{contract: _DeOrder.contract, event: "SupportToken", logs: logs, sub: sub}, nil
+}
+
+// WatchSupportToken is a free log subscription operation binding the contract event 0x5e2b4e0b770b15ed507e19f9f3b164f07087641b80ca21ef0052f6e8611daaa7.
+//
+// Solidity: event SupportToken(address token, bool enabled)
+func (_DeOrder *DeOrderFilterer) WatchSupportToken(opts *bind.WatchOpts, sink chan<- *DeOrderSupportToken) (event.Subscription, error) {
+
+	logs, sub, err := _DeOrder.contract.WatchLogs(opts, "SupportToken")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(DeOrderSupportToken)
+				if err := _DeOrder.contract.UnpackLog(event, "SupportToken", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseSupportToken is a log parse operation binding the contract event 0x5e2b4e0b770b15ed507e19f9f3b164f07087641b80ca21ef0052f6e8611daaa7.
+//
+// Solidity: event SupportToken(address token, bool enabled)
+func (_DeOrder *DeOrderFilterer) ParseSupportToken(log types.Log) (*DeOrderSupportToken, error) {
+	event := new(DeOrderSupportToken)
+	if err := _DeOrder.contract.UnpackLog(event, "SupportToken", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
