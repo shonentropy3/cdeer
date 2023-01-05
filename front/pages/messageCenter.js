@@ -89,7 +89,7 @@ export default function MessageCenter(params) {
                                             <Image src="/icon/message.png" layout="fill" />
                                         :
                                             e.avatar ? 
-                                                process.env.NEXT_PUBLIC_DEVELOPMENT_FILE + e.avatar
+                                                <img src={process.env.NEXT_PUBLIC_DEVELOPMENT_API + "/" + e.avatar} alt="" />
                                             :
                                                 <img src={hashAvt(e?.send_addr)} alt="" />
                                     }
