@@ -29,8 +29,7 @@ export default function OrderStageList(params) {
 
     const { useStageRead: chainStages } = useRead('getStages',order.order_id);
     const { useStageRead: chainOngoing } = useRead('ongoingStage',order.order_id);
-    const { useDeOrderVerifierRead: nonces } = useRead('nonces', order.order_id);
-    const { useDeOrderVerifierRead: workerNonces } = useRead('nonces', order?.worker);
+    const { useDeOrderVerifierRead: nonces } = useRead('nonces', [address, Number(order.order_id)]);
     // 领钱
     const { useOrderContractWrite: getWithdraw } = useContracts('withdraw');
 
@@ -130,7 +129,7 @@ export default function OrderStageList(params) {
     // 判断nonce是否为最新 || signature 是否过期
     const inspection = () => {
         const now = parseInt(new Date().getTime()/1000);
-        if (workerNonces !== order.sign_nonce || order.stages.deadline < now) {
+        if (order.stages.deadline < now) {
             updatedStage({order_id: order.order_id, status: 'InvalidSign'})
             .then(res => {
                 if (res.code === 0) {

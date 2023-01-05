@@ -29,8 +29,7 @@ export default function OrderSetStage(params) {
     const { address } = useAccount();
 
     // 链上数据
-    const { useDeOrderVerifierRead: nonces } = useRead('nonces', address);
-    const { useDeOrderVerifierRead: workerNonces } = useRead('nonces', order?.worker);
+    const { useDeOrderVerifierRead: nonces } = useRead('nonces', [address, Number(order.order_id)]);
 
     // 状态
     let [status, setStatus] = useState('WaitWorkerStage');
@@ -45,7 +44,7 @@ export default function OrderSetStage(params) {
     // 设置阶段按钮
     let [btnDisabled,setBtnDisabled] = useState(true);
     let [isLoading,setIsLoading] = useState(false);
-    
+
     //  切换order模式 ==> 预付款
     const toggleModel = (e) => {
         setStage({orderModel: e.target.checked})
@@ -195,7 +194,7 @@ export default function OrderSetStage(params) {
         }
         // 判断nonce是否为最新 || signature 是否过期
         const now = parseInt(new Date().getTime()/1000);
-        if (workerNonces !== order.sign_nonce || order.stages.deadline < now) {
+        if (order.stages.deadline < now) {
             updatedStage({order_id: order.order_id, status: 'InvalidSign'})
             .then(res => {
                 if (res.code === 0) {
