@@ -46,6 +46,11 @@ export default function ModifyUserModal(params) {
         setFileList([...fileList])
     }
 
+    const changeUserInfo = (name,value) => {
+        userInfo[name] = value;
+        setUserInfo({...userInfo});
+    }
+
     const saveHanler = ()=>{
         console.log('userInfo ==> ', userInfo);
         if(info){
@@ -165,7 +170,7 @@ export default function ModifyUserModal(params) {
                         type="text" 
                         placeholder="name"
                         defaultValue={info.username}
-                        onChange={(e)=>setInfo({...info,username:e.target.value})} 
+                        onChange={(e)=> changeUserInfo('username',e.target.value)} 
                     />
                 </div>
             </div>
@@ -178,7 +183,7 @@ export default function ModifyUserModal(params) {
                         type="text" 
                         placeholder='Telegram'
                         defaultValue={info.telegram}
-                        onChange={(e)=>setInfo({...info,telegram:e.target.value})}
+                        onChange={(e) => changeUserInfo('telegram',e.target.value)}
                     />
                 </div>
                 <div className="inner">
@@ -186,7 +191,7 @@ export default function ModifyUserModal(params) {
                         type="text" 
                         placeholder='WeChat' 
                         defaultValue={info.wechat}
-                        onChange={(e)=>setInfo({...info,wechat:e.target.value})}
+                        onChange={(e) => changeUserInfo('wechat',e.target.value)}
                     />
                 </div>
                 
@@ -195,7 +200,7 @@ export default function ModifyUserModal(params) {
                         type="text" 
                         placeholder='Skype' 
                         defaultValue={info.skype}
-                        onChange={(e)=>setInfo({...info,skype:e.target.value})}
+                        onChange={(e) => changeUserInfo('skype',e.target.value)}
                     />
                 </div>
 
@@ -204,7 +209,7 @@ export default function ModifyUserModal(params) {
                         type="text" 
                         placeholder='discord' 
                         defaultValue={info.discord}
-                        onChange={(e)=>setInfo({...info,discord:e.target.value})}
+                        onChange={(e) => changeUserInfo('discord',e.target.value)}
                     />
                 </div>
 
@@ -213,7 +218,7 @@ export default function ModifyUserModal(params) {
                         type="text" 
                         placeholder='phone' 
                         defaultValue={info.phone}
-                        onChange={(e)=>setInfo({...info,phone:e.target.value})}
+                        onChange={(e) => changeUserInfo('phone',e.target.value)}
                     />
                 </div>
             </div>
