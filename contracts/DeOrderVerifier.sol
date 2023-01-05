@@ -14,7 +14,7 @@ contract DeOrderVerifier {
     bytes32 public constant PERMITPROSTAGE_TYPEHASH = keccak256("PermitProStage(uint256 orderId,uint256 stageIndex,uint256 period,uint256 nonce,uint256 deadline)");
     bytes32 public constant PERMITAPPENDSTAGE_TYPEHASH = keccak256("PermitAppendStage(uint256 orderId,uint256 amount,uint256 period,uint256 nonce,uint256 deadline)");
 
-    mapping(address => uint) public nonces;
+    mapping(address => mapping(uint => uint)) public nonces;
 
     constructor() {
 
@@ -42,7 +42,7 @@ contract DeOrderVerifier {
             
             bytes32 structHash  = keccak256(abi.encode(PERMITSTAGE_TYPEHASH, _orderId,
                 keccak256(abi.encodePacked(_amounts)), keccak256(abi.encodePacked(_periods)), nonce, deadline));
-            return recoverVerify(structHash, nonce, deadline, v , r, s);
+            return recoverVerify(structHash, _orderId, nonce, deadline, v , r, s);
     }
 
     function recoverProlongStage(uint _orderId, uint _stageIndex, uint _appendPeriod,
@@ -50,24 +50,24 @@ contract DeOrderVerifier {
 
         bytes32 structHash = keccak256(abi.encode(PERMITPROSTAGE_TYPEHASH, _orderId,
             _stageIndex, _appendPeriod, nonce, deadline));
-        return recoverVerify(structHash, nonce, deadline, v , r, s);
+        return recoverVerify(structHash, _orderId, nonce, deadline, v , r, s);
     }
 
     function recoverAppendStage(uint _orderId, uint amount, uint period, uint nonce, uint deadline, uint8 v, bytes32 r, bytes32 s) external returns (address signAddr) {
     
             bytes32 structHash = keccak256(abi.encode(PERMITAPPENDSTAGE_TYPEHASH, _orderId,
             amount, period, nonce, deadline));
-        return recoverVerify(structHash, nonce, deadline, v , r, s);
+        return recoverVerify(structHash, _orderId, nonce, deadline, v , r, s);
 
     }
 
-    function recoverVerify(bytes32 structHash, uint nonce, uint deadline, uint8 v, bytes32 r, bytes32 s) internal returns (address signAddr){
+    function recoverVerify(bytes32 structHash, uint _orderId, uint nonce, uint deadline, uint8 v, bytes32 r, bytes32 s) internal returns (address signAddr){
         bytes32 digest = ECDSA.toTypedDataHash(DOMAIN_SEPARATOR, structHash);
         signAddr = ECDSA.recover(digest, v, r, s);
 
-        if(nonces[signAddr] != nonce) revert NonceError();
+        if(nonces[signAddr][_orderId] != nonce) revert NonceError();
         if(deadline < block.timestamp) revert Expired();
-        nonces[signAddr] += 1;
+        nonces[signAddr][_orderId] += 1;
     }
 
 
