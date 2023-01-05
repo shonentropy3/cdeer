@@ -19,6 +19,8 @@
     "react-admin": "^4.6.2",
     "react-dom": "18.2.0",
     "react-intl-universal": "^2.6.6",
+    "react-redux": "^8.0.5",
+    "redux": "^4.2.0",
     "sass": "^1.54.8",
     "wagmi": "^0.6.4",
     "web3": "^1.8.0"

@@ -47,3 +47,11 @@ export const readMsg = (data) => {
     })
 }
 
+// 获取个人未读消息
+export const unReadMsgList = (data) => {
+    return serviceAxios({
+        url: `/user/unReadMsgList`,
+        method: "get",
+        data
+    })
+}
