@@ -14,7 +14,7 @@ import { Modal_ModifyTask } from "../../components/Modal_modifyTask.js";
 import { getApplyList } from "../../http/_api/task";
 import { getOrderFinish, getOrderList } from "../../http/_api/order";
 
-function Task() {
+function Userprojects() {
 
     const {TextArea} = Input
     const {Option} = Select
@@ -55,7 +55,6 @@ function Task() {
     const changeItem = value => {
         router.push(`/user/projects?w=${who}&bar=${value}`)
     }
-
 
     const changeModal = (type,e) => {
         modalInfo[type] = e
@@ -188,7 +187,6 @@ function Task() {
                     e.task.budget = deform_Count(e.task.budget, e.task.currency)
                 })
                 setSelectData([...selectData]);
-                console.log(selectData);
             }
         })
     }
@@ -208,8 +206,6 @@ function Task() {
                     e.task.budget = deform_Count(e.task.budget, e.task.currency)
                 })
                 setSelectData([...selectData]);
-                console.log(selectData);
-                console.log(pageConfig);
             }
         })
     }
@@ -315,4 +311,4 @@ function Task() {
     )
 }
 
-export default Task;
+export default Userprojects;
