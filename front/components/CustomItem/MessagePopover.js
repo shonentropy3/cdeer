@@ -1,5 +1,6 @@
 import { Empty, message } from "antd";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { readMsg } from "../../http/_api/user";
 
 
@@ -22,6 +23,10 @@ export default function MessagePopover(params) {
             }
         })
     }
+
+    useEffect(() => {
+        console.log(messageList);
+    },[messageList])
 
     return <div className="messagePopover">
         <div className="nav">

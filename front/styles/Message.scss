@@ -120,6 +120,7 @@
 
 .messagePopover{
     width: 332px;
+    overflow: hidden;
     box-sizing: border-box;
     .nav{
         margin: 0 21px;
@@ -153,6 +154,9 @@
         }
     }
     .message-list{
+        height: 400px;
+        overflow-y: scroll;
+        overflow-x: hidden;
         .message-item{
             margin: 0 21px;
             padding: 12px 0;
