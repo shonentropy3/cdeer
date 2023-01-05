@@ -90,7 +90,7 @@ export default function ApplyList(params) {
         .then(res => {
           message.success('操作成功');
           setTimeout(() => {
-              router.push(`/task?w=issuer&bar=developping`)    //  跳转链接
+              router.push(`/user/projects?w=issuer&bar=developping`)    //  跳转链接
           }, 500);
         })
         .catch(err => {
