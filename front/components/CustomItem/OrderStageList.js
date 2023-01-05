@@ -30,6 +30,7 @@ export default function OrderStageList(params) {
     const { useStageRead: chainStages } = useRead('getStages',order.order_id);
     const { useStageRead: chainOngoing } = useRead('ongoingStage',order.order_id);
     const { useDeOrderVerifierRead: nonces } = useRead('nonces', address);
+    const { useDeOrderVerifierRead: workerNonces } = useRead('nonces', order?.worker);
     // 领钱
     const { useOrderContractWrite: getWithdraw } = useContracts('withdraw');
 
@@ -118,6 +119,18 @@ export default function OrderStageList(params) {
         }
     }
 
+    // 判断nonce是否为最新 || signature 是否过期
+    const inspection = () => {
+        const now = parseInt(new Date().getTime()/1000);
+        if (workerNonces !== order.sign_nonce || order.stages.deadline < now) {
+            updatedStage({order_id: order.order_id, status: 'InvalidSign'})
+            message.warning("对方签名已失效!")
+            return false
+        }else{
+            return true
+        }
+    }
+
     // 发起新增
     const updateAppend = () => {
         if (order.status === 'WaitProlongAgree') {
@@ -166,6 +179,9 @@ export default function OrderStageList(params) {
 
     // 甲方同意新增
     const payAppend = () => {
+        if (!inspection()) {
+            return
+        }
         let data = dataStages[dataStages.length-1];
         let amount = ethers.utils.parseEther(`${data.amount}`);
         let arr = [];
@@ -342,6 +358,7 @@ export default function OrderStageList(params) {
                     order={order}
                     agreeAppend={agreeAppend}
                     payAppend={payAppend}
+                    inspection={inspection}
                 />
                 {
                     isAppend ? 
