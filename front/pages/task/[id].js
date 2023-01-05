@@ -199,7 +199,8 @@ export default function Task() {
     }
 
     const init = async() => {
-        const { task_id, id, issuer } = qs.parse(location.search.slice(1));
+        const { id, issuer } = qs.parse(location.search.slice(1));
+        const task_id = location.pathname.split('/')[2];
         // 获取task详情
         await searchTaskDetail({
             task_id: task_id, id: id, issuer: issuer
