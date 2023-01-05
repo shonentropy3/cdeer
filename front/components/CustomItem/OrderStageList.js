@@ -29,7 +29,7 @@ export default function OrderStageList(params) {
 
     const { useStageRead: chainStages } = useRead('getStages',order.order_id);
     const { useStageRead: chainOngoing } = useRead('ongoingStage',order.order_id);
-    const { useDeOrderVerifierRead: nonces } = useRead('nonces', address);
+    const { useDeOrderVerifierRead: nonces } = useRead('nonces', order.order_id);
     const { useDeOrderVerifierRead: workerNonces } = useRead('nonces', order?.worker);
     // 领钱
     const { useOrderContractWrite: getWithdraw } = useContracts('withdraw');
@@ -95,6 +95,14 @@ export default function OrderStageList(params) {
     //         })
     //     }
     // },[permit2])
+
+    useEffect(() => {
+        if (nonces.data) {
+            console.log(nonces);
+        }else{
+            console.log(nonces);
+        }
+    },[nonces])
 
 
 
