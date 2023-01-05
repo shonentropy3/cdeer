@@ -335,11 +335,14 @@ export default function OutputStageCard(params) {
                 handelRes(res)
             })
         }
+    },[getWithdraw.isSuccess])
+    // 领钱失败
+    useEffect(() => {
         if (getWithdraw.error) {
             message.error('error')
             setIsLoading(false);
         }
-    },[getWithdraw])
+    },[getWithdraw.error])
     
     // 终止成功
     useEffect(() => {
@@ -353,11 +356,15 @@ export default function OutputStageCard(params) {
                 handelRes(res)
             })
         }
+    },[abortOrder.isSuccess])
+
+    // 终止失败
+    useEffect(() => {
         if (abortOrder.error) {
             message.error('error')
             setIsLoading(false);
         }
-    },[abortOrder])
+    },[abortOrder.error])
 
     return <>
     {

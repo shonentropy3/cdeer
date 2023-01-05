@@ -17,9 +17,9 @@ export default function MessagePopover(params) {
             if (res.code === 0) {
                 messageList[i].status = 1;
                 setMessageList([...messageList])
-                message.success(res.msg)
+                // message.success(res.msg)
             }else{
-                message.warning(res.msg)
+                // message.warning(res.msg)
             }
         })
     }
