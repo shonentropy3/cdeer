@@ -1,4 +1,4 @@
-import { Button, Dropdown, Menu, } from 'antd';
+import { Button, Dropdown, Menu, message, Popover, } from 'antd';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -6,6 +6,9 @@ import { useEffect, useState } from 'react';
 import { useDisconnect, useAccount } from 'wagmi';    // 切换链 
 import Identicon from "identicon.js";
 import ConnectModal from '../../components/CustomModal/ConnectModal';
+import MessagePopover from '../../components/CustomItem/MessagePopover';
+import { unReadMsgList } from '../../http/_api/user';
+import store from '../../redux/store';
 export default function Header(props) {
 
     const {isConnected, address} = useAccount()
@@ -23,6 +26,8 @@ export default function Header(props) {
     let [wagmi,setWagmi] = useState({});
     let [account,setAccount] = useState('');
     let [isScroll,setIsScroll] = useState(false);
+    let [messageList,setMessageList] = useState([]);
+    let [isUnread, setIsUnread] = useState();
 
     const menu = (
         <Menu
@@ -46,6 +51,26 @@ export default function Header(props) {
           }]}
         />
     );
+
+    const content = (
+        <MessagePopover messageList={messageList} setMessageList={setMessageList} />
+    );
+
+    store.subscribe(() => {
+        setIsUnread(store.getState())
+    })
+
+    const getUnReadMsgList = () => {
+        unReadMsgList()
+        .then(res => {
+            if (res.code === 0) {
+                messageList = res.data.list;
+                setMessageList([...messageList]);
+            }else{
+                message.warning(res.mesg);
+            }
+        })
+    }
 
     const signOut = () => {
         disconnect();
@@ -154,7 +179,6 @@ export default function Header(props) {
                         </Link>
                     )
                 }
-
             </div>
             <div className="header-info">
                 {/* TODO: 中英文切换入口 ==> img or font */}
@@ -169,9 +193,13 @@ export default function Header(props) {
                 {
                     wagmi.isActive ? 
                         <>
-                            <div className="message" onClick={() => router.push(`/messageCenter`)}>
-
-                            </div>
+                            <Popover content={content} trigger="click">
+                                {/*  onClick={() => router.push(`/messageCenter`)} */}
+                                <div className="message" onClick={() => getUnReadMsgList()}>
+                                    <div className={isUnread === 'unread' ? 'unread' : ''}></div>
+                                </div>
+                            </Popover>
+                            
                             <Dropdown overlay={menu} placement="bottom">
                                 <div>
                                     <img className="img" src={hashAvt()} alt="" />

@@ -20,6 +20,7 @@ import {
   createClient,
   chain,
   configureChains,
+  useAccount,
 } from 'wagmi'
 
 import { infuraProvider } from 'wagmi/providers/infura'
@@ -31,6 +32,10 @@ import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { detectZoom } from '../utils/DetectZoom.js';
 import { useEffect } from 'react'
+import { useRouter } from 'next/router'
+import { getJwt } from '../utils/GetJwt'
+import { unReadMsgList } from '../http/_api/user'
+import store from '../redux/store'
 
 const {chains, provider} = configureChains([chain.mainnet,chain.goerli,chain.hardhat,chain.polygonMumbai,
   {
@@ -80,6 +85,9 @@ const client = createClient({
 
 
 function MyApp({ Component, pageProps }) {
+
+
+  const router = useRouter();
   
   const zoom = (m) => {
     if (window.screen.width * window.devicePixelRatio >=3840) {
@@ -125,9 +133,46 @@ function MyApp({ Component, pageProps }) {
     }
   }
 
+  const getUnreadMsg = async() => {
+    const accounts = await window.ethereum.request({ method: 'eth_accounts' })
+    const token = localStorage.getItem(`session.${accounts[0]}`);
+    if (!token) {
+        return
+    }else{
+        // 判断token有效期
+        const status = getJwt(token);
+        if (!status) {
+            return
+        }
+    }
+    // console.log('执行搜索未读');
+    unReadMsgList()
+      .then(res => {
+          if (res.code === 0 && res.data.list.length > 0) {
+            // redux修改
+            store.dispatch({
+              type: 'change',
+              payload: 'unread'
+            })
+            // console.log('有未读信息');
+          }
+          else{
+            store.dispatch({
+              type: 'change',
+              payload: 'read'
+            })
+          }
+      })
+  }
+
   useEffect(() => {
     zoom(detectZoom());
   },[])
+
+  useEffect(() => {
+    // console.log(router);
+    getUnreadMsg()
+  },[router])
 
   return (
     // initDone &&

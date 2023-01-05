@@ -117,3 +117,87 @@
         }
     }
 }
+
+.messagePopover{
+    width: 332px;
+    box-sizing: border-box;
+    .nav{
+        margin: 0 21px;
+        padding: 16px 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        border-bottom: 1px solid rgba($color: #E2E2E2, $alpha: 0.5);
+        font-family: PingFang SC;
+        color: #1F1E2E;
+        line-height: 20px;
+        letter-spacing: 0.5px;
+        .nav-title{
+            font-size: 18px;
+            font-weight: 600;
+            line-height: 25px;
+            letter-spacing: 0.64px;
+        }
+        p:last-child{
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            span{
+                width: 16px;
+                height: 16px;
+                margin-left: 5px;
+                display: inline-block;
+                background-color: yellowgreen;
+            }
+        }
+    }
+    .message-list{
+        .message-item{
+            margin: 0 21px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba($color: #E2E2E2, $alpha: 0.5);
+            &:last-child{
+                border: none;
+            }
+            .content{
+                width: 332px;
+                margin-left: -21px;
+                padding: 4px 21px;
+                position: relative;
+                background-color: white;
+                transition: background-color 0.2s;
+                &:hover{
+                    background-color: rgba($color: #FFF0F2, $alpha: 0.7);
+                }
+                .point{
+                    width: 6px;
+                    height: 6px;
+                    border-radius: 50%;
+
+                    position: absolute;
+                    left: 9px;
+                    top: 11px;
+                }
+                .unread{
+                    background-color: #D13B4E;
+                }
+                .read{
+                    background-color: #D8D8D8;
+                }
+                .item-content{
+                    color: #1F1E2E;
+                    a{
+                        &:first-child{
+                            color: #201E2F;
+                            font-weight: 500;
+                        }
+                        &:last-child{
+                            color: #0049EA;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
