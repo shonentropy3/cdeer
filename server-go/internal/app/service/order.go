@@ -158,7 +158,7 @@ func UpdatedStage(stage request.UpdatedStageRequest, address string) (err error)
 	if err = sendMessage(order, stage, orderFlowTop, address); err != nil {
 		return err
 	}
-	// rollback操作
+	// rollback 操作
 	err, okRun := rollbackStatus(order.Status, stage.Status, stage)
 	if err != nil || okRun {
 		return err
@@ -318,15 +318,14 @@ func saveFlow(tx *gorm.DB, stage request.UpdatedStageRequest, address string) (e
 
 // rollbackStatus 回滚操作
 func rollbackStatus(old string, new string, stage request.UpdatedStageRequest) (err error, okRun bool) {
-	statusMap := map[string][]string{"WaitProlongAgree": {"DisagreeProlong"},
-		"WaitAppendAgree": {"DisagreeAppend"}}
+	statusMap := map[string][]string{"WaitProlongAgree": {"DisagreeProlong", "InvalidSign"}, "WaitAppendAgree": {"DisagreeAppend", "InvalidSign"}}
 	// 校验阶段状态流转
 	status, ok := statusMap[old]
 	if !ok {
 		return nil, okRun
 	}
 	if utils.SliceIsExist(status, new) {
-		rollMap := map[string]string{"DisagreeProlong": "IssuerAgreeStage", "DisagreeAppend": "IssuerAgreeStage"}
+		rollMap := map[string]string{"DisagreeProlong": "IssuerAgreeStage", "DisagreeAppend": "IssuerAgreeStage", "InvalidSign": "IssuerAgreeStage"}
 		rollStatus, ok := rollMap[new]
 		if !ok {
 			return nil, okRun
@@ -356,6 +355,13 @@ func rollbackStatus(old string, new string, stage request.UpdatedStageRequest) (
 		}
 		return nil, true
 	}
+	if old == "WaitIssuerAgree" && new == "InvalidSign" {
+		updates := map[string]interface{}{"signature": "", "sign_address": "", "sign_nonce": 0, "status": "WaitWorkerStage"}
+		if err = global.DB.Model(&model.Order{}).Where("order_id = ?", stage.OrderId).Updates(updates).Error; err != nil {
+			return err, true
+		}
+		return err, true
+	}
 	return nil, okRun
 }
 
@@ -363,7 +369,7 @@ func rollbackStatus(old string, new string, stage request.UpdatedStageRequest) (
 func statusValid(old string, new string, stage request.UpdatedStageRequest) (err error) {
 	// 状态正确性
 	if !utils.SliceIsExist([]string{"WaitWorkerStage", "WaitIssuerAgree", "IssuerAgreeStage", "WaitWorkerConfirmStage",
-		"WorkerAgreeStage", "WaitProlongAgree", "AgreeProlong", "DisagreeProlong", "WaitAppendAgree", "AgreeAppend", "DisagreeAppend"}, new) {
+		"WorkerAgreeStage", "WaitProlongAgree", "AgreeProlong", "DisagreeProlong", "WaitAppendAgree", "AgreeAppend", "DisagreeAppend", "InvalidSign"}, new) {
 		return errors.New("状态错误")
 	}
 	// 需要验证链上状态
@@ -372,12 +378,12 @@ func statusValid(old string, new string, stage request.UpdatedStageRequest) (err
 	}
 	// 校验阶段状态流转
 	statusMap := map[string][]string{"WaitWorkerStage": {"WaitIssuerAgree"},
-		"WaitIssuerAgree":        {"IssuerAgreeStage", "WaitWorkerConfirmStage"},
+		"WaitIssuerAgree":        {"IssuerAgreeStage", "WaitWorkerConfirmStage", "InvalidSign"},
 		"WaitWorkerConfirmStage": {"WorkerAgreeStage", "WaitIssuerAgree"},
 		"WorkerAgreeStage":       {"IssuerAgreeStage", "WaitWorkerConfirmStage"},
 		"IssuerAgreeStage":       {"WaitProlongAgree", "WaitAppendAgree", "AbortOrder"},
-		"WaitProlongAgree":       {"AgreeProlong", "DisagreeProlong"},
-		"WaitAppendAgree":        {"AgreeAppend", "DisagreeAppend"},
+		"WaitProlongAgree":       {"AgreeProlong", "DisagreeProlong", "InvalidSign"},
+		"WaitAppendAgree":        {"AgreeAppend", "DisagreeAppend", "InvalidSign"},
 	}
 	status, ok := statusMap[old]
 	if !ok {
@@ -425,7 +431,7 @@ func sendMessage(order model.Order, stage request.UpdatedStageRequest, orderFlow
 	}
 	status := stage.Status
 	// 状态改变发送消息
-	if status == "WaitIssuerAgree" || status == "WorkerAgreeStage" || status == "WorkerDelivery" {
+	if status == "WaitIssuerAgree" || status == "WorkerAgreeStage" || status == "WorkerDelivery" || status == "InvalidSign" {
 		// 发送消息
 		if err = message.Template(status, utils.StructToMap([]any{order, task}), order.Issuer, order.Worker, ""); err != nil {
 			return err

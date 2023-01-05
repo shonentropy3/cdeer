@@ -79,7 +79,7 @@ func UnReadMsgList(userID uint) (list []response.MsgListRespond, total int64, er
 	if err != nil {
 		return list, total, err
 	}
-	err = db.Select("message.*,\"user\".avatar as avatar").Order("created_at desc").Joins("LEFT JOIN \"user\" ON \"user\".id=message.send_id").Find(&list).Error
+	err = db.Select("message.*,\"user\".avatar as avatar").Order("created_at desc").Joins("LEFT JOIN \"user\" ON \"user\".id=message.send_id").Limit(10).Find(&list).Error
 	return list, total, err
 }
 
