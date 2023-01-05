@@ -35,66 +35,66 @@ export default function OrderStageList(params) {
     const { useOrderContractWrite: getWithdraw } = useContracts('withdraw');
 
 
-    let [signature,setSignature] = useState();
-    let [permit2, setPermit2] = useState({});  //  permit2
-    const { useSign, obj } = useSignPermit2Data(permit2);  //  permit2
-    const { useOrderContractWrite: permit2Write } = useContracts('payOrderWithPermit2');  //  permit2
-    let [permit2Ready, setPermit2Ready] = useState(false);
+    // let [signature,setSignature] = useState();
+    // let [permit2, setPermit2] = useState({});  //  permit2
+    // const { useSign, obj } = useSignPermit2Data(permit2);  //  permit2
+    // const { useOrderContractWrite: permit2Write } = useContracts('payOrderWithPermit2');  //  permit2
+    // let [permit2Ready, setPermit2Ready] = useState(false);
 
-    const testPermit2 = () => {
-        let now = parseInt(new Date().getTime()/1000);
-        let setTime = 2 * 24 * 60 * 60;
-        setDeadline(now+setTime)
-        // console.log('nonce ==>',BigNumber.from('0xffffffffffff').toString());
-        permit2 = {
-            chainId: chain.id,
-            token: "0x522981BEF10d0906935FB7747d9aE3bC1189e3A4",        //  dUSDT
-            amount: ethers.utils.parseEther(`${0.0001}`),
-            spender: "0x517b0cAE834407F993C8d3b49858A2C55D245b2A",
-            // nonce: BigNumber.from('0xffffffffffff').toString(),
-            nonce: '0',
-            deadline: '1672999039'
-        }
-        setPermit2({...permit2});
-        setPermit2Ready(true);
-    }
+    // const testPermit2 = () => {
+    //     let now = parseInt(new Date().getTime()/1000);
+    //     let setTime = 2 * 24 * 60 * 60;
+    //     setDeadline(now+setTime)
+    //     // console.log('nonce ==>',BigNumber.from('0xffffffffffff').toString());
+    //     permit2 = {
+    //         chainId: chain.id,
+    //         token: "0x522981BEF10d0906935FB7747d9aE3bC1189e3A4",        //  dUSDT
+    //         amount: ethers.utils.parseEther(`${0.0001}`),
+    //         spender: "0x517b0cAE834407F993C8d3b49858A2C55D245b2A",
+    //         // nonce: BigNumber.from('0xffffffffffff').toString(),
+    //         nonce: '0',
+    //         deadline: '1672999039'
+    //     }
+    //     setPermit2({...permit2});
+    //     setPermit2Ready(true);
+    // }
 
-    const writePermit2 = () => {
-        console.log(permit2Write);
-        console.log(permit2);
+    // const writePermit2 = () => {
+    //     console.log(permit2Write);
+    //     console.log(permit2);
 
-        permit2Write.write({
-            recklesslySetUnpreparedArgs: [
-                order.order_id,
-                ethers.utils.parseEther(`${0.0001}`),
-                {
-                    permitted: {
-                        token: "0x522981BEF10d0906935FB7747d9aE3bC1189e3A4",        //  dUSDT
-                        amount: ethers.utils.parseEther(`${0.0001}`)
-                    },
-                    // nonce: BigNumber.from('0xffffffffffff').toString(),
-                    nonce: '0',
-                    deadline: '1672999039'
-                },
-                signature
-            ]
-        })
-    }
+    //     permit2Write.write({
+    //         recklesslySetUnpreparedArgs: [
+    //             order.order_id,
+    //             ethers.utils.parseEther(`${0.0001}`),
+    //             {
+    //                 permitted: {
+    //                     token: "0x522981BEF10d0906935FB7747d9aE3bC1189e3A4",        //  dUSDT
+    //                     amount: ethers.utils.parseEther(`${0.0001}`)
+    //                 },
+    //                 // nonce: BigNumber.from('0xffffffffffff').toString(),
+    //                 nonce: '0',
+    //                 deadline: '1672999039'
+    //             },
+    //             signature
+    //         ]
+    //     })
+    // }
 
-    useEffect(() => {
-        if (permit2.chainId && permit2Ready) {
-            useSign.signTypedDataAsync()
-            .then(res => {
-                console.log('res ==> ', res);
-                setSignature(res);
-                // update(res, 'WaitAppendAgree')
-                // 修改data ==> 上传后端更新
-            })
-            .catch(err => {
-                // setIsLoading(false)
-            })
-        }
-    },[permit2])
+    // useEffect(() => {
+    //     if (permit2.chainId && permit2Ready) {
+    //         useSign.signTypedDataAsync()
+    //         .then(res => {
+    //             console.log('res ==> ', res);
+    //             setSignature(res);
+    //             // update(res, 'WaitAppendAgree')
+    //             // 修改data ==> 上传后端更新
+    //         })
+    //         .catch(err => {
+    //             // setIsLoading(false)
+    //         })
+    //     }
+    // },[permit2])
 
 
 
@@ -334,8 +334,8 @@ export default function OrderStageList(params) {
 
     return (
         <div className="stageCard">
-            <Button onClick={() => testPermit2()}>Test Permit2</Button>
-            <Button onClick={() => writePermit2()}>Test Permit2 Write</Button>
+            {/* <Button onClick={() => testPermit2()}>Test Permit2</Button> */}
+            {/* <Button onClick={() => writePermit2()}>Test Permit2 Write</Button> */}
             
             <p className="title">Task stage division</p>
             {
