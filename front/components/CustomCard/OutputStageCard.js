@@ -11,7 +11,7 @@ import ProlongModal from "../CustomModal/ProlongModal";
 
 export default function OutputStageCard(params) {
     
-    const { edit, remove, cache, isEdit, data, stageIndex, who, oid, task, order, agreeAppend, payAppend } = params;
+    const { edit, remove, cache, isEdit, data, stageIndex, who, oid, task, order, agreeAppend, payAppend, inspection } = params;
     const { chain } = useNetwork();
     const { address } = useAccount();
 
@@ -146,6 +146,9 @@ export default function OutputStageCard(params) {
 
     // 确认阶段延长
     const confirmProlong = () => {
+        if (!inspection()) {
+            return
+        }
         setIsLoading(true)
         const prolongValue = (order.last_stages.period[stageIndex] - order.stages.period[stageIndex]) * 24 * 60 * 60
         const r = '0x' + order.signature.substring(2).substring(0, 64);

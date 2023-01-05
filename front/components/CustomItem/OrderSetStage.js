@@ -30,6 +30,7 @@ export default function OrderSetStage(params) {
 
     // 链上数据
     const { useDeOrderVerifierRead: nonces } = useRead('nonces', address);
+    const { useDeOrderVerifierRead: workerNonces } = useRead('nonces', order?.worker);
 
     // 状态
     let [status, setStatus] = useState('WaitWorkerStage');
@@ -187,8 +188,16 @@ export default function OrderSetStage(params) {
 
     // 同意阶段划分 
     const permitStage = () => {
+        // 乙方同意
         if (order.worker === address) {
             sendSignature()
+            return
+        }
+        // 判断nonce是否为最新 || signature 是否过期
+        const now = parseInt(new Date().getTime()/1000);
+        if (workerNonces !== order.sign_nonce || order.stages.deadline < now) {
+            updatedStage({order_id: order.order_id, status: 'InvalidSign'})
+            message.warning("对方签名已失效!")
             return
         }
 
