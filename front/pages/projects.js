@@ -35,7 +35,7 @@ export default function Projects() {
         if (flag) {
             return
         }
-        router.push(`/project?task_id=${id}`)
+        router.push(`/task/${id}`)
     }
 
     // 获取Tasklist

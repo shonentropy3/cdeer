@@ -33,8 +33,8 @@ export default function Header(props) {
         <Menu
           items={[
             { key: '1', label: ( <Link href={{pathname: '/myInfo'}}>我的资料</Link> ) },
-            { key: '2', label: ( <Link href={`/task?w=issuer&bar=tasks`}>发布的项目</Link>) },
-            { key: '3', label: ( <Link href={`/task?w=worker&bar=apply`}>参与的项目</Link>) },
+            { key: '2', label: ( <Link href={`/user/projects?w=issuer&bar=tasks`}>发布的项目</Link>) },
+            { key: '3', label: ( <Link href={`/user/projects?w=worker&bar=apply`}>参与的项目</Link>) },
             { key: '4', label: ( <Link href={{pathname: '/'}}>我的NFT</Link>) }
           ]}
         />

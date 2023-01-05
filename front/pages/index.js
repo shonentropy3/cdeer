@@ -79,7 +79,7 @@ export default function Home() {
                     <p>Here, through the developer&apos;s NFT, evaluate the developer&apos;s ability。</p>
                     <p>Get project NFT and improve your credibility</p>
                   </div>
-                  <Button className="btn">Learn more</Button>
+                  {/* <Button className="btn">Learn more</Button> */}
                 </div>
               </div>
               <div className="list-li">
@@ -91,7 +91,7 @@ export default function Home() {
                     <p>Here, through the developer&apos;s NFT, evaluate the developer&apos;s ability。</p>
                     <p>Get project NFT and improve your credibility</p>
                   </div>
-                  <Button className="btn">Learn more</Button>
+                  {/* <Button className="btn">Learn more</Button> */}
                 </div>
               </div>
             </div>

@@ -2,19 +2,19 @@ import { Button, Empty, Input, message, Modal, Pagination, Select } from "antd";
 import { useEffect, useState } from "react";
 import { useAccount } from 'wagmi'
 import { useRouter } from 'next/router'
-import { deform_Count, deform_Skills } from "../utils/Deform";
-import { useContracts } from "../controller";
+import { deform_Count, deform_Skills } from "../../utils/Deform";
+import { useContracts } from "../../controller";
 import { ethers } from "ethers";
-import { applyFor,cancelApply } from "../http/api/apply";
-import TaskItem from "../components/CustomItem/TaskItem";
+import { applyFor,cancelApply } from "../../http/api/apply";
+import TaskItem from "../../components/CustomItem/TaskItem";
 
 import qs from 'querystring';
-import { searchTask } from "../http/_api/public";
-import { Modal_ModifyTask } from "../components/Modal_modifyTask.js";
-import { getApplyList } from "../http/_api/task";
-import { getOrderFinish, getOrderList } from "../http/_api/order";
+import { searchTask } from "../../http/_api/public";
+import { Modal_ModifyTask } from "../../components/Modal_modifyTask.js";
+import { getApplyList } from "../../http/_api/task";
+import { getOrderFinish, getOrderList } from "../../http/_api/order";
 
-function Task() {
+function Userprojects() {
 
     const {TextArea} = Input
     const {Option} = Select
@@ -53,9 +53,8 @@ function Task() {
     const { address } = useAccount();
 
     const changeItem = value => {
-        router.push(`/task/?w=${who}&bar=${value}`)
+        router.push(`/user/projects?w=${who}&bar=${value}`)
     }
-
 
     const changeModal = (type,e) => {
         modalInfo[type] = e
@@ -188,7 +187,6 @@ function Task() {
                     e.task.budget = deform_Count(e.task.budget, e.task.currency)
                 })
                 setSelectData([...selectData]);
-                console.log(selectData);
             }
         })
     }
@@ -208,8 +206,6 @@ function Task() {
                     e.task.budget = deform_Count(e.task.budget, e.task.currency)
                 })
                 setSelectData([...selectData]);
-                console.log(selectData);
-                console.log(pageConfig);
             }
         })
     }
@@ -315,4 +311,4 @@ function Task() {
     )
 }
 
-export default Task;
+export default Userprojects;

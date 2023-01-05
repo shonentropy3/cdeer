@@ -6,19 +6,19 @@ import { useAccount, useSigner } from 'wagmi';
 import { useRouter } from 'next/router';
 import { ethers } from "ethers";
 
-import { useContracts } from '../controller';
+import { useContracts } from '../../controller';
 
-import { deform_Count, deform_Skills } from '../utils/Deform';
-import ApplyTaskModal from '../components/CustomModal/ApplyTaskModal';
-import Computing_time from '../components/Computing_time';
-import { getUserInfo, searchTaskDetail, updateUserInfo } from '../http/_api/public';
+import { deform_Count, deform_Skills } from '../../utils/Deform';
+import ApplyTaskModal from '../../components/CustomModal/ApplyTaskModal';
+import Computing_time from '../../components/Computing_time';
+import { getUserInfo, searchTaskDetail, updateUserInfo } from '../../http/_api/public';
 import qs from 'querystring';
-import { createApply, getApplyStatus, deleteApply, updateApplyInfo } from '../http/_api/task';
-import { getJwt } from '../utils/GetJwt';
-import { GetSignature } from '../utils/GetSignature';
-import ConnectModal from '../components/CustomModal/ConnectModal';
+import { createApply, getApplyStatus, deleteApply, updateApplyInfo } from '../../http/_api/task';
+import { getJwt } from '../../utils/GetJwt';
+import { GetSignature } from '../../utils/GetSignature';
+import ConnectModal from '../../components/CustomModal/ConnectModal';
 
-export default function Project() {
+export default function Task() {
     
     const router = useRouter();
     const { address } = useAccount();
