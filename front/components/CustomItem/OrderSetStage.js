@@ -197,7 +197,14 @@ export default function OrderSetStage(params) {
         const now = parseInt(new Date().getTime()/1000);
         if (workerNonces !== order.sign_nonce || order.stages.deadline < now) {
             updatedStage({order_id: order.order_id, status: 'InvalidSign'})
-            message.warning("对方签名已失效!")
+            .then(res => {
+                if (res.code === 0) {
+                    message.warning("对方签名已失效!")
+                    setTimeout(() => {
+                        history.go(0)
+                    }, 500);
+                }
+            })
             return
         }
 
