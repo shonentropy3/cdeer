@@ -83,7 +83,7 @@ func getUserInfo(form string, to string) (sendInfo model.User, recInfo model.Use
 			}
 		}
 	}
-	if sendInfo.Username == nil && len(sendInfo.Address) > 5 {
+	if (sendInfo.Username == nil || *sendInfo.Username == "") && len(sendInfo.Address) > 5 {
 		username := sendInfo.Address[:4] + "...." + sendInfo.Address[len(sendInfo.Address)-4:]
 		sendInfo.Username = &username
 	}
@@ -102,7 +102,7 @@ func getUserInfo(form string, to string) (sendInfo model.User, recInfo model.Use
 			}
 		}
 	}
-	if recInfo.Username == nil && len(recInfo.Address) > 5 {
+	if (recInfo.Username == nil || *recInfo.Username == "") && len(recInfo.Address) > 5 {
 		username := recInfo.Address[:4] + "...." + recInfo.Address[len(recInfo.Address)-4:]
 		recInfo.Username = &username
 	}
