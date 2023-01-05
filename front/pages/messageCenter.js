@@ -5,6 +5,7 @@ import { msgList, readMsg } from "../http/_api/user";
 import { getDate } from "../utils/GetDate";
 import Identicon from "identicon.js";
 import { message, Pagination } from "antd";
+import { getJwt } from "../utils/GetJwt";
 
 
 
@@ -44,6 +45,16 @@ export default function MessageCenter(params) {
     }
 
     const init = () => {
+        const token = localStorage.getItem(`session.${address.toLowerCase()}`);
+        if (!token) {
+            return
+        }else{
+            // 判断token有效期
+            const status = getJwt(token);
+            if (!status) {
+                return
+            }
+        }
         msgList(pageConfig)
        .then(res => {
             if (res.code === 0) {

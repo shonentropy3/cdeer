@@ -78,15 +78,16 @@ export default function ConnectModal(params) {
                 getToken();
             }
         }
-        if (useWethRead.data.toString() == 0) {
-            console.log('useWethRead ==>',useWethRead.data.toString());
-            // console.log( Math.pow(2,256)-1);
-            console.log(approve);
-            // unApprove
-            approve.write({
-                recklesslySetUnpreparedArgs: [permit2Address, (Math.pow(2,32)-1).toString()]
-            })
-        }
+        // approve授权
+        // if (useWethRead.data.toString() == 0) {
+        //     console.log('useWethRead ==>',useWethRead.data.toString());
+        //     // console.log( Math.pow(2,256)-1);
+        //     console.log(approve);
+        //     // unApprove
+        //     approve.write({
+        //         recklesslySetUnpreparedArgs: [permit2Address, (Math.pow(2,32)-1).toString()]
+        //     })
+        // }
     }
     async function isRun() {
         if (signer && signer.signMessage) {
