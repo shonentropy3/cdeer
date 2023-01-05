@@ -23,26 +23,33 @@ contract Permit2Test is Test {
     MockERC20 token0;
 
     bytes32 public constant _PERMIT_DETAILS_TYPEHASH =
-        keccak256("PermitDetails(address token,uint160 amount,uint48 expiration,uint48 nonce)");
+        keccak256(
+            "PermitDetails(address token,uint160 amount,uint48 expiration,uint48 nonce)"
+        );
 
-    bytes32 public constant _PERMIT_SINGLE_TYPEHASH = keccak256(
-        "PermitSingle(PermitDetails details,address spender,uint256 sigDeadline)PermitDetails(address token,uint160 amount,uint48 expiration,uint48 nonce)"
-    );
+    bytes32 public constant _PERMIT_SINGLE_TYPEHASH =
+        keccak256(
+            "PermitSingle(PermitDetails details,address spender,uint256 sigDeadline)PermitDetails(address token,uint160 amount,uint48 expiration,uint48 nonce)"
+        );
 
-    bytes32 public constant _PERMIT_BATCH_TYPEHASH = keccak256(
-        "PermitBatch(PermitDetails[] details,address spender,uint256 sigDeadline)PermitDetails(address token,uint160 amount,uint48 expiration,uint48 nonce)"
-    );
+    bytes32 public constant _PERMIT_BATCH_TYPEHASH =
+        keccak256(
+            "PermitBatch(PermitDetails[] details,address spender,uint256 sigDeadline)PermitDetails(address token,uint160 amount,uint48 expiration,uint48 nonce)"
+        );
 
-    bytes32 public constant _TOKEN_PERMISSIONS_TYPEHASH = keccak256("TokenPermissions(address token,uint256 amount)");
+    bytes32 public constant _TOKEN_PERMISSIONS_TYPEHASH =
+        keccak256("TokenPermissions(address token,uint256 amount)");
 
-    bytes32 public constant _PERMIT_TRANSFER_FROM_TYPEHASH = keccak256(
-        "PermitTransferFrom(TokenPermissions permitted,address spender,uint256 nonce,uint256 deadline)TokenPermissions(address token,uint256 amount)"
-    );
+    bytes32 public constant _PERMIT_TRANSFER_FROM_TYPEHASH =
+        keccak256(
+            "PermitTransferFrom(TokenPermissions permitted,address spender,uint256 nonce,uint256 deadline)TokenPermissions(address token,uint256 amount)"
+        );
 
-    bytes32 public constant _PERMIT_BATCH_TRANSFER_FROM_TYPEHASH = keccak256(
-        "PermitBatchTransferFrom(TokenPermissions[] permitted,address spender,uint256 nonce,uint256 deadline)TokenPermissions(address token,uint256 amount)"
-    );
-    
+    bytes32 public constant _PERMIT_BATCH_TRANSFER_FROM_TYPEHASH =
+        keccak256(
+            "PermitBatchTransferFrom(TokenPermissions[] permitted,address spender,uint256 nonce,uint256 deadline)TokenPermissions(address token,uint256 amount)"
+        );
+
     function setUp() public {
         permit2 = new Permit2();
         DOMAIN_SEPARATOR = permit2.DOMAIN_SEPARATOR();
@@ -71,19 +78,12 @@ contract Permit2Test is Test {
                 requestedAmount: amount
             });
     }
-    event printSignature(
-        bytes32 domainSeparator,
-        bytes32 _PERMIT_TRANSFER_FROM_TYPEHASH,
-        bytes32 tokenPermissions,
-        address addr,
-        uint nonce,
-        uint deadline
-    );
+
     function getPermitTransferSignature(
         ISignatureTransfer.PermitTransferFrom memory permit,
         uint256 privateKey,
         bytes32 domainSeparator
-    ) internal returns (bytes memory sig) {
+    ) internal view returns (bytes memory sig) {
         bytes32 tokenPermissions = keccak256(
             abi.encode(_TOKEN_PERMISSIONS_TYPEHASH, permit.permitted)
         );
@@ -102,36 +102,32 @@ contract Permit2Test is Test {
                 )
             )
         );
-        emit printSignature(domainSeparator,
-         _PERMIT_TRANSFER_FROM_TYPEHASH,
-         tokenPermissions,
-         address(this),
-         permit.nonce,
-         permit.deadline);
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(privateKey, msgHash);
         return bytes.concat(r, s, bytes1(v));
     }
 
     function defaultERC20PermitTransfer(
-        address token0,
+        address tokenAddr,
         uint256 nonce
     ) internal view returns (ISignatureTransfer.PermitTransferFrom memory) {
         return
             ISignatureTransfer.PermitTransferFrom({
                 permitted: ISignatureTransfer.TokenPermissions({
-                    token: token0,
+                    token: tokenAddr,
                     amount: 10 ** 18
                 }),
                 nonce: nonce,
                 deadline: block.timestamp + 100
             });
     }
+
     event printDetail(
         ISignatureTransfer.PermitTransferFrom permit,
         ISignatureTransfer.SignatureTransferDetails transferDetails,
         address from,
         bytes sig
     );
+
     function testPermitTransferFrom() public {
         uint256 nonce = 0;
         ISignatureTransfer.PermitTransferFrom
@@ -153,6 +149,7 @@ contract Permit2Test is Test {
         emit printDetail(permit, transferDetails, from, sig);
         permit2.permitTransferFrom(permit, transferDetails, from, sig);
 
+        permit2.permitTransferFrom(permit, transferDetails, from, sig);
         assertEq(token0.balanceOf(from), startBalanceFrom - defaultAmount);
         assertEq(token0.balanceOf(address2), startBalanceTo + defaultAmount);
     }
