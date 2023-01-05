@@ -321,8 +321,8 @@ export default function OrderStageList(params) {
         }
     },[appendParams])
 
-      // 领钱成功
-      useEffect(() => {
+    // 领钱成功
+    useEffect(() => {
         if (getWithdraw.isSuccess) {
             message.success("操作成功")
             setIsLoading(false);
@@ -333,11 +333,16 @@ export default function OrderStageList(params) {
                 handelRes(res)
             })
         }
+    },[getWithdraw.isSuccess])
+
+    // 领钱失败
+    useEffect(() => {
         if (getWithdraw.error) {
             message.error('error')
             setIsLoading(false);
         }
-    },[getWithdraw])
+    },[getWithdraw.error])
+    
 
     return (
         <div className="stageCard">
