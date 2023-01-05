@@ -44,7 +44,7 @@ export default function OrderStageList(params) {
         let now = parseInt(new Date().getTime()/1000);
         let setTime = 2 * 24 * 60 * 60;
         setDeadline(now+setTime)
-        console.log('nonce ==>',BigNumber.from('0xffffffffffff').toString());
+        // console.log('nonce ==>',BigNumber.from('0xffffffffffff').toString());
         permit2 = {
             chainId: chain.id,
             token: "0x522981BEF10d0906935FB7747d9aE3bC1189e3A4",        //  dUSDT
@@ -52,7 +52,7 @@ export default function OrderStageList(params) {
             spender: "0x517b0cAE834407F993C8d3b49858A2C55D245b2A",
             // nonce: BigNumber.from('0xffffffffffff').toString(),
             nonce: '0',
-            deadline: deadline
+            deadline: '1672999039'
         }
         setPermit2({...permit2});
         setPermit2Ready(true);
@@ -60,28 +60,21 @@ export default function OrderStageList(params) {
 
     const writePermit2 = () => {
         console.log(permit2Write);
+        console.log(permit2);
+
         permit2Write.write({
             recklesslySetUnpreparedArgs: [
                 order.order_id,
                 ethers.utils.parseEther(`${0.0001}`),
-                // [
-                    {
-                        permitted: {
-                            // token: ethers.constants.AddressZero,
-                            token: "0x522981BEF10d0906935FB7747d9aE3bC1189e3A4",        //  dUSDT
-                            amount: ethers.utils.parseEther(`${0.0001}`)
-                        },
-                        // nonce: BigNumber.from('0xffffffffffff').toString(),
-                        nonce: '0',
-                        deadline: deadline
+                {
+                    permitted: {
+                        token: "0x522981BEF10d0906935FB7747d9aE3bC1189e3A4",        //  dUSDT
+                        amount: ethers.utils.parseEther(`${0.0001}`)
                     },
-                    // {
-                    //     to: "0x517b0cAE834407F993C8d3b49858A2C55D245b2A",
-                    //     requestedAmount: ethers.utils.parseEther(`${0.0001}`)
-                    // },
-                    // address,
-                    // signature
-                // ],
+                    // nonce: BigNumber.from('0xffffffffffff').toString(),
+                    nonce: '0',
+                    deadline: '1672999039'
+                },
                 signature
             ]
         })

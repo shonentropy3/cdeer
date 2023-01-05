@@ -277,26 +277,6 @@ export function useSignAppendData(params) {
   return { obj, params, useSign }
 }
 
-export function signParams(params) {
-  if (isPermitTransferFrom(permit)) {
-    validateTokenPermissions(permit.permitted)
-    const types = witness ? permitTransferFromWithWitnessType(witness) : PERMIT_TRANSFER_FROM_TYPES
-    const values = witness ? Object.assign(permit, { witness: witness.witness }) : permit
-    return {
-      types,
-      values,
-    }
-  } else {
-    permit.permitted.forEach(validateTokenPermissions)
-    const types = witness ? permitBatchTransferFromWithWitnessType(witness) : PERMIT_BATCH_TRANSFER_FROM_TYPES
-    const values = witness ? Object.assign(permit, { witness: witness.witness }) : permit
-    return {
-      types,
-      values,
-    }
-}
-}
-
 export function useSignPermit2Data(params) {
 
   let obj = {
@@ -311,7 +291,6 @@ export function useSignPermit2Data(params) {
   const useSign = useSignTypedData({
     domain: {
       name: 'Permit2',
-      // version: '1',
       chainId: obj.chainId,
       verifyingContract: "0x000000000022D473030F116dDEE9F6B43aC78BA3",
     },
@@ -325,7 +304,7 @@ export function useSignPermit2Data(params) {
       TokenPermissions: [
         { name: 'token', type: 'address' },
         { name: 'amount', type: 'uint256' },
-      ],
+      ]
     },
     value: {
       permitted: {
