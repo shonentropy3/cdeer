@@ -16,11 +16,11 @@ export default function ConnectModal(params) {
     const { setStatus, status, propsInit } = params;
     const { connect, connectors } = useConnect();
     const { address, isConnecting } = useAccount();
-    const permit2Address = "0x000000000022D473030F116dDEE9F6B43aC78BA3";
+    // const permit2Address = "0x000000000022D473030F116dDEE9F6B43aC78BA3";
     
     // 是否调用过 approve
-    const { useWethRead } = useRead('allowance',[address, permit2Address]);
-    const { useWethContractWrite: approve } = useContracts('approve');
+    // const { useWethRead } = useRead('allowance',[address, permit2Address]);
+    // const { useWethContractWrite: approve } = useContracts('approve');
     // 签名
     const { data: signer } = useSigner();
     const [message, setMessage] = useState();
@@ -37,15 +37,15 @@ export default function ConnectModal(params) {
               method: 'wallet_addEthereumChain',
               params: [
                   {
-                      chainId: Web3.utils.numberToHex(8151),
+                      chainId: Web3.utils.numberToHex(8164),
                       chainName: 'BuildBear Charming Bohr 99d0de',
                       nativeCurrency: {
                       name: 'BuildBear',
                       symbol: 'BB ETH', // 2-6 characters long
                       decimals: 18
                       },
-                      rpcUrls: ['https://rpc.buildbear.io/Old_Mas_Amedda_06697a31'],
-                      blockExplorerUrls: ['https://explorer.buildbear.io/node/Old_Mas_Amedda_06697a31']
+                      rpcUrls: ['https://rpc.buildbear.io/Inappropriate_Plo_Koon_10447fff'],
+                      blockExplorerUrls: ['https://explorer.buildbear.io/node/Inappropriate_Plo_Koon_10447fff']
                   }
               ]
             }).then(() => {
@@ -120,16 +120,16 @@ export default function ConnectModal(params) {
         chain && network()
     },[chain])
 
-    useEffect(() => {
-        if (useWethRead.isSuccess) {
-            if (useWethRead.data.toString() == 0) {
-                // unApprove
-                approve.write({
-                    recklesslySetUnpreparedArgs: [permit2Address, ethers.constants.MaxUint256]
-                })
-            }
-        }
-    },[useWethRead.isSuccess])
+    // useEffect(() => {
+    //     if (useWethRead.isSuccess) {
+    //         if (useWethRead.data.toString() == 0) {
+    //             // unApprove
+    //             approve.write({
+    //                 recklesslySetUnpreparedArgs: [permit2Address, ethers.constants.MaxUint256]
+    //             })
+    //         }
+    //     }
+    // },[useWethRead.isSuccess])
 
     return <Modal
             title={<p>Link Wallet <CloseOutlined onClick={() => setStatus(false)} /></p>} 

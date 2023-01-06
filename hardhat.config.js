@@ -44,9 +44,9 @@ module.exports = {
       // gas: 12000000,
     },
     dev: {
-      url: "https://rpc.buildbear.io/Old_Mas_Amedda_06697a31",
+      url: "https://rpc.buildbear.io/Inappropriate_Plo_Koon_10447fff",
       accounts: [privateKey],
-      chainId: 8151,
+      chainId: 8164,
       // forking: {
       //   url: 'https://matic-mumbai.chainstacklabs.com',
       //   blockNumber: 30479136

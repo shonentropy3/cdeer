@@ -6,14 +6,16 @@ import { ethers } from "ethers";
 import Image from "next/image";
 import { useEffect, useState } from "react"
 import { useAccount, useNetwork } from "wagmi";
-import { multicallWrite, muticallEncode, useRead, useSignData } from "../../controller";
+import { multicallWrite, muticallEncode, useContracts, useRead, useSignData } from "../../controller";
 import { startOrder, updatedStage } from "../../http/_api/order";
+import { Currency } from "../../utils/Currency";
 import { getDate } from "../../utils/GetDate";
+import { Sysmbol } from "../../utils/Sysmbol";
 import InnerStageCard from "../CustomCard/InnerStageCard";
 
 export default function OrderSetStage(params) {
     
-    const { search, order, amount, task, dataStages } = params;
+    const { search, order, amount, task, dataStages, approve, allowance } = params;
     const { confirm } = Modal;
     let [progressSet, setProgressSet] = useState();
     let [stage, setStage] = useSetState({
@@ -27,6 +29,9 @@ export default function OrderSetStage(params) {
     let [inner, setInner] = useState();     //  阶段划分
     const { chain } = useNetwork();
     const { address } = useAccount();
+
+    const { useOrderContractWrite: payOrder } = useContracts('permitStage')
+    
 
     // 链上数据
     const { useDeOrderVerifierRead: nonces } = useRead('nonces', [address, Number(order.order_id)]);
@@ -83,14 +88,16 @@ export default function OrderSetStage(params) {
         let arr = [];
         // 是否有预付款
         if (stage.orderModel) {
-            _amount.push(ethers.utils.parseEther(`${stage.value}`))
+            var amount = Currency(order.currency, e.amount)
+            _amount.push(amount);
             _period.push(`${0 * 24 * 60 * 60}`)
         }
         for (const i in inner) {
             arr.push(inner[i]);
         }
         arr.map(e => {
-            _amount.push(ethers.utils.parseEther(`${e.amount}`))
+            var amount = Currency(order.currency, e.amount)
+            _amount.push(amount);
             _period.push(`${e.period * 24 * 60 * 60}`)
         })
 
@@ -186,7 +193,7 @@ export default function OrderSetStage(params) {
     }
 
     // 同意阶段划分 
-    const permitStage = () => {
+    const permitStage = async() => {
         // 乙方同意
         if (order.worker === address) {
             sendSignature()
@@ -206,13 +213,12 @@ export default function OrderSetStage(params) {
             })
             return
         }
-
         setIsLoading(true);
         let sum = 0;
         dataStages.map(e => {
             sum += e.amount;
         })
-        if (sum > (task.budegt / Math.pow(10,18))) {
+        if (sum > Currency(order.currency,order.amount)) {
             confirm({
                 title: '你确认支付这笔订单吗?',
                 icon: <ExclamationCircleOutlined />,
@@ -226,22 +232,33 @@ export default function OrderSetStage(params) {
             permit(sum)
         }
     }
-
+    
     const permit = (sum) => {
         let r = '0x' + order.signature.substring(2).substring(0, 64);
         let s = '0x' + order.signature.substring(2).substring(64, 128);
         let v = '0x' + order.signature.substring(2).substring(128, 130);
-        let value = ethers.utils.parseEther(`${sum}`);
+        let value = Currency(order.currency, sum);
+        
         let _amount = [];
         let _period = [];
         let funcList = [];
 
+
+
         dataStages.map((e,i) => {
-            // _amount.push(ethers.utils.parseEther(`${e.amount}`));
-            _amount.push(ethers.utils.parseEther(`${e.amount}`));
+            var amount = Currency(order.currency, e.amount)
+            _amount.push(amount);
             _period.push(e.period * 24 * 60 * 60);
-            // _period.push(`${e.period * 24 * 60 * 60}`);
         })
+
+
+        // console.log(order.order_id, _amount, _period, order.sign_nonce, order.stages.deadline, v, r, s);
+        // payOrder.write({
+        //     recklesslySetUnpreparedArgs: [
+        //         order.order_id, _amount, _period, order.sign_nonce, order.stages.deadline, v, r, s
+        //     ]
+        // })
+        // return
         funcList.push({
             functionName: 'permitStage',
             params: [order.order_id, _amount, _period, order.sign_nonce, order.stages.deadline, v, r, s]
@@ -250,17 +267,19 @@ export default function OrderSetStage(params) {
             functionName: 'payOrder',
             params: [order.order_id, value]
         })
-        if ((task.budegt / Math.pow(10,18)) !== sum) {
+        if ((order.amount / Math.pow(10,18)) !== sum) {
             funcList.push({
                 functionName: 'modifyOrder',
-                params: [order.order_id, ethers.constants.AddressZero, value]
+                params: [order.order_id, order.currency, value]
             })
         }
         funcList.push({
             functionName: 'startOrder',
             params: [order.order_id]
         })
-        console.log(funcList);
+        if (order.currency !== ethers.constants.AddressZero) {
+            value = 0
+        }
         multicallWrite(muticallEncode(funcList),address,value)
         .then(res => {
             if (res) {
@@ -289,9 +308,20 @@ export default function OrderSetStage(params) {
             console.log(err);
             setIsLoading(false);
         })
-
-
     }
+
+    useEffect(() => {
+        if (payOrder.isSuccess) {
+            console.log(payOrder.data);
+        }
+    },[payOrder.isSuccess])
+
+    useEffect(() => {
+        if (payOrder.error) {
+            console.log(payOrder);
+            console.log(payOrder.error);
+        }
+    },[payOrder.error])
 
     // 总计各阶段
     const printStageTotal = () => {
@@ -346,11 +376,13 @@ export default function OrderSetStage(params) {
         }
         sendSignature()
     }
+
     const initStatus = () => {
         // 等待甲方确认阶段划分
         setStatus('WaitIssuerAgree')
         sendSignature()
     }
+
     const permitStatus = () => {
         if (order.sign_address === order.worker) {
             // 甲方同意阶段划分
@@ -359,7 +391,17 @@ export default function OrderSetStage(params) {
             // 乙方同意阶段划分
             setStatus('WorkerAgreeStage')
         }
-        permitStage()
+        if (order.currency !== ethers.constants.AddressZero && allowance.data.toString() == 0) {
+            // approve
+            // const orderAddress = require("../../../deployments/dev/DeOrder.json").address;  //  DeOrder
+            approve.writeAsync({
+                recklesslySetUnpreparedArgs: [
+                    Sysmbol().DeOrder, (Math.pow(2,32)-1).toString()
+                ]
+            })
+        }else{
+            permitStage()
+        }
     }
 
     const changeAdvance = (e) => {
@@ -499,6 +541,13 @@ export default function OrderSetStage(params) {
                 break;
         }
     }
+
+    // approve 成功
+    useEffect(() => {
+        if (approve.isSuccess) {
+            permitStage();
+        }
+    },[approve.isSuccess])
 
     useEffect(() => {
         // 判断是否设置过

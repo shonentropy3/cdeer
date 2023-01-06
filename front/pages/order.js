@@ -10,6 +10,8 @@ import TaskNav from "../components/nav/TaskNav";
 import UserDetail from "../components/CustomItem/UserDetail";
 import OrderSetStage from "../components/CustomItem/OrderSetStage";
 import OrderStageList from "../components/CustomItem/OrderStageList";
+import { useContracts, useRead } from "../controller";
+import { Sysmbol } from "../utils/Sysmbol";
 
 export default function Order(props) {
     
@@ -21,6 +23,18 @@ export default function Order(props) {
     let [order, setOrder] = useState();         // order详情
     let [stages, setStages] = useState();       // 阶段详情
     let [progress, setProgress] = useState(0);       // 阶段详情
+
+    // ERC20授权
+    const { usedUSDTContractWrite: approve, test } = useContracts('approve');
+    const { usedUSDTRead: allowance } = useRead('allowance', [address, Sysmbol().DeOrder])
+    // const { usedUSDTRead: allowance } = useRead('allowance', [address, "0xFeF82c000aa2e749c2A54e43814C2dA09C940381"])
+
+    
+    useEffect(() => {
+        if (test) {
+            console.log('test ==>',test);
+        }
+    },[test])
     
     const switchStages = () => {
         switch (order.progress) {
@@ -31,6 +45,8 @@ export default function Order(props) {
                     task={task} 
                     amount={task.budget}
                     dataStages={stages}
+                    approve={approve}
+                    allowance={allowance}
                  />     //   设置阶段
             default:
                 return <OrderStageList 
@@ -98,8 +114,8 @@ export default function Order(props) {
                 }
                 setOrder({...order});
 
-                if (order.progress !== 0) {
-                    progress = order.progress === 4 ? 1 : 2;
+                if (order.progress !== 0 && order.progress !== 1) {
+                    progress = order.progress === 2 ? 1 : 2;
                     setProgress(progress);
                 }
             }

@@ -8,22 +8,35 @@ import "../src/DeStage.sol";
 import "../src/mock/WETH.sol";
 import "../src/libs/ECDSA.sol";
 import "../src/DeOrderVerifier.sol";
+import {Permit2Sign} from "./utils/Permit2Sign.sol";
+import {Permit2} from "permit2/Permit2.sol";
+import {MockERC20} from "./mock/MockERC20.sol";
+import {IPermit2} from "../src/interface/IPermit2.sol";
 import {Mock} from "./mock/mock.sol";
 
-contract DeTaskTest is Test {
+contract DeTaskTest is Test, Permit2Sign {
     Mock internal mock;
+    MockERC20 token0;
+    Permit2 permit2;
+    IPermit2 internal PERMIT2;
     DeOrder internal deOrder;
     DeOrderVerifier internal _verifier;
     DeStage internal deStage;
     WETH internal _weth;
+    bytes32 DOMAIN_SEPARATOR;
     address owner; // 合约拥有者
     address issuer; // 甲方
     address worker; // 乙方
     address other; // 第三方
-    address _permit2 = 0x250182E0C0885e355E114f2FcCC03292aa6Ea2fC;
+
+    // address _permit2 = 0x250182E0C0885e355E114f2FcCC03292aa6Ea2fC;
 
     function setUp() public {
         mock = new Mock();
+        token0 = new MockERC20("Test0", "TEST0", 18);
+        permit2 = new Permit2{salt: 0x00}();
+        DOMAIN_SEPARATOR = permit2.DOMAIN_SEPARATOR();
+        PERMIT2 = IPermit2(address(permit2));
         // 初始化用户地址
         owner = msg.sender;
         issuer = vm.addr(1);
@@ -33,7 +46,11 @@ contract DeTaskTest is Test {
         vm.startPrank(owner); // 切换合约发起人
         _verifier = new DeOrderVerifier();
         _weth = new WETH();
-        deOrder = new DeOrder(address(_weth), _permit2, address(_verifier));
+        deOrder = new DeOrder(
+            address(_weth),
+            address(permit2),
+            address(_verifier)
+        );
         deStage = new DeStage(address(deOrder));
         vm.stopPrank();
         testSetDeStage(); // 设置DeStage地址
@@ -41,6 +58,10 @@ contract DeTaskTest is Test {
         console.log(owner);
         console.log(issuer);
         console.log(worker);
+        token0.mint(issuer, 100 ** 18);
+        vm.startPrank(issuer);
+        token0.approve(address(permit2), type(uint256).max);
+        vm.stopPrank();
     }
 
     // createOrder
@@ -93,10 +114,16 @@ contract DeTaskTest is Test {
     // testCannotModifyOrder
     // @Summary 修改Order失败情况
     function testCannotModifyOrder() public {
+        createOrder(); // 创建Order
+        permitStage(issuer, worker, "Due"); // 阶段划分
         // 非本人修改
         vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
         deOrder.modifyOrder(1, address(0), 1);
-        // TODO: 任务已经开始修改
+        payOrder(issuer, 100); // 付款
+        startOrder(issuer); // 开始任务
+        // 任务已经开始修改
+        vm.expectRevert(abi.encodeWithSignature("ProgressError()"));
+        deOrder.modifyOrder(1, issuer, 1);
     }
 
     // testModifyOrder
@@ -200,7 +227,21 @@ contract DeTaskTest is Test {
             r,
             s
         );
-        // TODO: 任务已经开始
+        // 任务已经开始 提交
+        payOrder(issuer, 100); // 付款
+        startOrder(issuer); // 开始任务
+        vm.startPrank(issuer);
+        deOrder.permitStage(
+            _orderId,
+            _amounts,
+            _periods,
+            nonce,
+            deadline,
+            v,
+            r,
+            s
+        );
+        vm.stopPrank();
     }
 
     // permitStage
@@ -303,7 +344,7 @@ contract DeTaskTest is Test {
             _verifier.DOMAIN_SEPARATOR(),
             structHash
         );
-      // 签名
+        // 签名
         uint8 v;
         bytes32 r;
         bytes32 s;
@@ -427,36 +468,119 @@ contract DeTaskTest is Test {
     // testCannotStartOrder
     // @Summary 开始任务
     function testCannotStartOrder() public {
-        testPermitStage();
-        // 乙方调用
-        vm.startPrank(worker);
+        createOrder(); // 创建Order
+        // 阶段划分未完成
+        vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
+        startOrder(issuer);
+        permitStage(issuer, worker, "Due"); // 阶段划分
+        // 订单没有付款
         vm.expectRevert(abi.encodeWithSignature("AmountError(uint256)", 1));
-        deOrder.startOrder(1);
+        startOrder(issuer);
+        // 订单Amount和阶段Amount不等
+        vm.startPrank(issuer);
+        deOrder.modifyOrder(1, address(0), 1);
         vm.stopPrank();
+        vm.expectRevert(abi.encodeWithSignature("AmountError(uint256)", 0));
+        startOrder(issuer);
     }
 
     // testStartOrder
     // @Summary 开始任务
     function testStartOrder() public {
         testPermitStage();
-        testPayOrder();
+        payOrder(issuer, 100); // 付款
         // 甲方调用
         startOrder(issuer);
+        Order memory order = deOrder.getOrder(1);
+        DeStage.Stage[] memory stages = deStage.getStages(1);
+        assert(order.progress == OrderProgess.Ongoing);
+        assert(stages[0].status == DeStage.StageStatus.Accepted);
     }
 
     // @Summary 付款
-    function payOrder(address who, uint amount) public {
-        // 甲方付款
+    function payOrder(address who, uint256 amount) public {
         vm.startPrank(who);
         vm.deal(who, amount);
         deOrder.payOrder{value: amount}(1, amount);
         vm.stopPrank();
     }
 
+    // testPayOrder
+    // @Summary 付款
     function testPayOrder() public {
         // 甲方付款
         payOrder(issuer, 1);
         Order memory order = deOrder.getOrder(1);
         console.log(order.payed);
+    }
+
+    // payOrderWithPermit2
+    // @Summary 使用Permit2付款
+    function payOrderWithPermit2(address who, uint256 amount) public {
+        uint256 nonce = 0;
+        IPermit2.PermitTransferFrom memory permit = defaultERC20PermitTransfer(
+            address(token0),
+            nonce
+        );
+        // 签名数据
+        bytes memory sig = getPermitTransferSignature(
+            permit,
+            DOMAIN_SEPARATOR,
+            address(deOrder)
+        );
+        vm.startPrank(who);
+        deOrder.payOrderWithPermit2(1, amount, permit, sig);
+        vm.stopPrank();
+    }
+
+    // testPayOrderWithPermit2
+    // @Summary 测试使用Permit2付款
+    function testPayOrderWithPermit2() public {
+        vm.startPrank(owner);
+        deOrder.setSupportToken(address(token0), true);
+        vm.stopPrank();
+        // 创建Order
+        vm.startPrank(issuer); // 甲方
+        deOrder.createOrder(64, issuer, worker, address(token0), 100);
+        vm.stopPrank();
+        console.log(deOrder.supportTokens(address(token0)));
+        // 甲方付款
+        payOrderWithPermit2(issuer, 1);
+        Order memory order = deOrder.getOrder(1);
+        assertEq(order.payed, 100);
+    }
+
+    // abortOrder
+    // @Summary 中止任务
+    function abortOrder(address who, uint _orderId) public {
+        vm.startPrank(who);
+        deOrder.abortOrder(_orderId);
+        vm.stopPrank();
+    }
+
+    // testCannotAbortOrder
+    // @Summary 中止任务失败情况
+    function testCannotAbortOrder() public {
+        createOrder(); // 创建Order
+        // 状态不在Ongoing
+        vm.expectRevert(abi.encodeWithSignature("ProgressError()"));
+        abortOrder(issuer, 1); // 中止任务
+        permitStage(issuer, worker, "Due"); // 阶段划分
+        payOrder(issuer, 100); // 付款
+        startOrder(issuer); // 开始任务
+        // 其它人调用合约中止
+        vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
+        abortOrder(other, 1);
+    }
+
+    // testCannotAbortOrder
+    // @Summary 中止任务失败情况
+    function testAbortOrder() public {
+        createOrder(); // 创建Order
+        permitStage(issuer, worker, "Due"); // 阶段划分
+        payOrder(issuer, 100); // 付款
+        startOrder(issuer); // 开始任务
+        // 中止任务 已经完成的阶段和预付款 付款给乙方
+        abortOrder(worker, 1);
     }
 }

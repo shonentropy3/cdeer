@@ -118,18 +118,19 @@ func UpdatedProgress(orderID int64) (err error) {
 	if err != nil {
 		return err
 	}
+	fmt.Println(order.Progress)
 	// 获取失败
 	if order.Progress == 0 && progress != 0 {
 		return errors.New("操作失败")
 	}
 	// 任务进行中
-	if order.Progress == 4 && progress != 4 {
+	if order.Progress == 2 && progress != 2 {
 		if err = issuerAgreeOperation(orderID); err != nil {
 			return err
 		}
 	}
 	// 任务完成 修改state
-	if (order.Progress == 7 && progress != 7) || (order.Progress == 6 && progress != 6) {
+	if (order.Progress == 3 && progress != 3) || (order.Progress == 4 && progress != 4) || (order.Progress == 5 && progress != 5) {
 		if err = orderDoneOperation(orderID); err != nil {
 			return err
 		}
@@ -186,22 +187,22 @@ func SendMessage(order model.Order) (err error) {
 	if err = global.DB.Model(&model.Task{}).Where("task_id = ?", order.TaskID).First(&task).Error; err != nil {
 		return err
 	}
-	if order.Progress == 7 {
+	if order.Progress == 5 {
 		// 任务完成
 		if err = message.Template("OrderDone", utils.StructToMap([]any{order, task}), order.Issuer, order.Worker, ""); err != nil {
 			return err
 		}
-	} else if order.Progress == 4 {
+	} else if order.Progress == 2 {
 		// 任务开始
 		if err = message.Template("OrderStarted", utils.StructToMap([]any{order, task}), order.Issuer, order.Worker, ""); err != nil {
 			return err
 		}
-	} else if order.Progress == 5 {
+	} else if order.Progress == 3 {
 		// 甲方中止任务
 		if err = message.Template("OrderAbort", utils.StructToMap([]any{order, task}), order.Issuer, order.Worker, order.Issuer); err != nil {
 			return err
 		}
-	} else if order.Progress == 6 {
+	} else if order.Progress == 4 {
 		// 乙方中止任务
 		if err = message.Template("OrderAbort", utils.StructToMap([]any{order, task}), order.Issuer, order.Worker, order.Worker); err != nil {
 			return err

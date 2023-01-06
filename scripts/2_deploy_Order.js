@@ -5,6 +5,7 @@ const { writeAbiAddr } = require('./artifact_log.js');
 
 const TaskAddr = require(`../deployments/${hre.network.name}/DeTask.json`);
 const WETHAddr = require(`../deployments/${hre.network.name}/WETH.json`);
+const dUSDTAddr = require(`../deployments/${hre.network.name}/dUSDT.json`);
 const MetaCommonAddr = require(`../deployments/${hre.network.name}/MetaCommon.json`);
 const VerifierAddr = require(`../deployments/${hre.network.name}/DeOrderVerifier.json`);
 
@@ -26,10 +27,13 @@ async function main() {
 
     await order.deployed();
     console.log("DeOrder deployed to:", order.address);
-
+    
     let artifact = await artifacts.readArtifact("DeOrder");
     await writeAbiAddr(artifact, order.address, "DeOrder", network.name);
 
+    
+    let tx = await order.setSupportToken(dUSDTAddr.address,true);
+    await tx.wait();
 }
 
 main()

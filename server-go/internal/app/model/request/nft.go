@@ -14,3 +14,7 @@ type UpdateNftCacheRequest struct {
 type HaveNftRequest struct {
 	model.Nft
 }
+
+type AddCollectionRequest struct {
+	model.NftContract
+}

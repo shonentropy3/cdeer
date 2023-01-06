@@ -83,8 +83,9 @@ func getUserInfo(form string, to string) (sendInfo model.User, recInfo model.Use
 			}
 		}
 	}
-	if sendInfo.Username == nil {
-		*sendInfo.Username = sendInfo.Address[:3] + "...." + sendInfo.Address[len(sendInfo.Address)-4:]
+	if (sendInfo.Username == nil || *sendInfo.Username == "") && len(sendInfo.Address) > 5 {
+		username := sendInfo.Address[:4] + "...." + sendInfo.Address[len(sendInfo.Address)-4:]
+		sendInfo.Username = &username
 	}
 
 	// 获取用户2
@@ -101,8 +102,9 @@ func getUserInfo(form string, to string) (sendInfo model.User, recInfo model.Use
 			}
 		}
 	}
-	if recInfo.Username == nil {
-		*recInfo.Username = recInfo.Address[:3] + "...." + recInfo.Address[len(recInfo.Address)-4:]
+	if (recInfo.Username == nil || *recInfo.Username == "") && len(recInfo.Address) > 5 {
+		username := recInfo.Address[:4] + "...." + recInfo.Address[len(recInfo.Address)-4:]
+		recInfo.Username = &username
 	}
 	return sendInfo, recInfo, nil
 }

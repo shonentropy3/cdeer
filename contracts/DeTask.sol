@@ -8,7 +8,7 @@ import "./SBTBase.sol";
 
 import "./interface/ITask.sol";
 import "./interface/IMetadata.sol";
-import './libs/TransferHelper.sol';
+
 
 
 contract DeTask is SBTBase, Ownable {
@@ -141,7 +141,8 @@ contract DeTask is SBTBase, Ownable {
     }
 
     function transferFee(uint amount) external {
-        TransferHelper.safeTransferETH(feeReceiver, amount);
+        (bool success, ) = feeReceiver.call{value: amount}(new bytes(0));
+        require(success, 'ETH transfer failed');
     }
 
     function setOrder(address _order) external onlyOwner {

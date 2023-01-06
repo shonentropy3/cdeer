@@ -95,15 +95,6 @@ export default function OrderStageList(params) {
     //     }
     // },[permit2])
 
-    useEffect(() => {
-        if (nonces.data) {
-            console.log(nonces);
-        }else{
-            console.log(nonces);
-        }
-    },[nonces])
-
-
 
     // 领钱
     const withdraw = () => {

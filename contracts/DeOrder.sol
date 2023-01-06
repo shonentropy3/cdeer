@@ -11,7 +11,7 @@ import './interface/IOrderVerifier.sol';
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/draft-IERC20Permit.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import './libs/TransferHelper.sol';
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 import './Multicall.sol';
 
@@ -191,7 +191,11 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
                 order.payed += uint96(b);
             }
         } else {
-            TransferHelper.safeTransferFrom(token, msg.sender, address(this), amount);
+            if(msg.value > 0) {
+                revert AmountError(0);
+            }
+            
+            SafeERC20.safeTransferFrom(IERC20(token), msg.sender, address(this), amount);
             order.payed += uint96(amount);
         }
     }
@@ -351,9 +355,10 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
 
         if (address(0) == _token) {
             IWETH9(WETH).withdraw(_amount);
-            TransferHelper.safeTransferETH(_to, _amount);
+            (bool success, ) = _to.call{value: _amount}(new bytes(0));
+            require(success, 'ETH transfer failed');
         } else {
-            TransferHelper.safeTransfer(_token, _to, _amount);
+            SafeERC20.safeTransfer(IERC20(_token), _to, _amount);
         }
     }
 

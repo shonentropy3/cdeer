@@ -13,5 +13,7 @@ func InitNftRouter(Router *gin.RouterGroup) {
 		nftRouterWithAuth.POST("setnftcache", api.SetNftCache)       // 创建NFTCache
 		nftRouterWithAuth.POST("updatenftcache", api.UpdateNftCache) // 修改NFTCache
 		nftRouterWithAuth.GET("havenft", api.HaveNft)                // 数据库中是否有该账户nft缓存
+
+		nftRouterWithAuth.POST("addCollection", api.AddCollection) // 添加NFT
 	}
 }

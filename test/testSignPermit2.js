@@ -20,6 +20,7 @@ describe("testStartOrder", function () {
   let account1;
   let account2;
   let Permi2;
+  let mToken;
 
   beforeEach(async function () {
     const accounts = await ethers.getSigners();
@@ -30,6 +31,11 @@ describe("testStartOrder", function () {
     console.log("account2:" + account2.address);
 
     Permi2 = await ethers.getContractAt("IPermit2", permit2Addr, account1);
+    mToken = await ethers.getContractAt("dUSDT", "0x1b003f330614e5a94d1c1ea4cd30db4a88169641", account1);
+
+
+    // let tx = await mToken.approve(permit2Addr, ethers.constants.MaxUint256);
+    // await tx.wait();
 
     console.log("Permi2:" + Permi2)
 
@@ -38,11 +44,11 @@ describe("testStartOrder", function () {
   it("signPermit2", async function () {
     let { chainId } = await ethers.provider.getNetwork();
     let nonce = 0;  // get from  
-    console.log("nonce:" + nonce)
+    console.log("nonce:" + nonce + ", chainId: " + chainId);
 
-    let deadline = "99999999999"
-    let spender = "0xffffffffffffffffffffffffffffffffffffffff"
-    let token = "0x522981BEF10d0906935FB7747d9aE3bC1189e3A4"
+    let deadline = "2672910607"
+    let spender = account2.address
+    let token = "0x1b003f330614e5a94d1c1ea4cd30db4a88169641"
 
 
     const sig = await signPermit2(
@@ -50,10 +56,11 @@ describe("testStartOrder", function () {
         "0x000000000022D473030F116dDEE9F6B43aC78BA3",
         account1,
         token,
-        0,
+        1,
         spender,
         nonce,
         deadline,
+        { gas_limit: 9000000}
     );
 
       //  椭圆曲线签名签名的值:
@@ -70,14 +77,14 @@ describe("testStartOrder", function () {
         {
             permitted: {
                 token: token,
-                amount: 0
+                amount: 1
             },
             nonce: nonce,
             deadline: deadline
         },
         {
-            to: account2.address,
-            requestedAmount: 0
+            to: spender,
+            requestedAmount: 1
         },
         account1.address,
         sig

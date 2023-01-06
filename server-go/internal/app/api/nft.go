@@ -9,6 +9,23 @@ import (
 	"go.uber.org/zap"
 )
 
+func AddCollection(c *gin.Context) {
+	var nftContract request.AddCollectionRequest
+	_ = c.ShouldBindJSON(&nftContract)
+	// 检验字段
+	//if err := utils.Verify(setnftcache.Nft, utils.SetNftCacheVerify); err != nil {
+	//	response.FailWithMessage(err.Error(), c)
+	//	return
+	//}
+	address := c.GetString("address") // 操作人
+	if err := service.AddCollection(nftContract.NftContract, address); err != nil {
+		global.LOG.Error("添加失败!", zap.Error(err))
+		response.FailWithMessage("添加失败", c)
+	} else {
+		response.OkWithMessage("添加成功", c)
+	}
+}
+
 // HaveNft
 // @Summary psql中是否有该账户nft缓存
 // @accept application/json

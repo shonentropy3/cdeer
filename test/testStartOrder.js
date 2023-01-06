@@ -5,6 +5,9 @@ const { signPermitStage, signPermitProlongStage } = require("./signPermitStage.j
 const DeOrderAddr = require(`../deployments/${network.name}/DeOrder.json`)
 const DeOrderVerifierAddr = require(`../deployments/${hre.network.name}/DeOrderVerifier.json`)
 const WETHAddr = require(`../deployments/${network.name}/WETH.json`)
+const dUSDTAddr = require(`../deployments/${hre.network.name}/dUSDT.json`)
+
+
 /** 
  * 测试用例：
  * 0 测试阶段金额与付款金额不匹配 （已验证）
@@ -35,6 +38,7 @@ describe("testStartOrder", function () {
     DeOrderVerifier = await ethers.getContractAt("DeOrderVerifier", DeOrderVerifierAddr.address, account1);
 
     weth = await ethers.getContractAt("WETH", WETHAddr.address, account1);
+    dUSDT = await ethers.getContractAt("dUSDT", dUSDTAddr.address, account1);
 
     orderId = await DeOrder.currOrderId()
     console.log("orderId:" + orderId)
@@ -47,15 +51,34 @@ describe("testStartOrder", function () {
   });
 
   it("测试付款，开始订单", async function () {
-    let amount = ethers.utils.parseEther("1")
+    let amount = ethers.utils.parseUnits("1", 6)
 
-    let tx = await DeOrder.payOrder(orderId, amount, {value: amount});
+    // let ab = await dUSDT.balanceOf(account1.address)
+    // console.log("dUSDT balance:", ab.toString())
+
+    let tx
+    tx = await dUSDT.approve(DeOrder.address, amount);
     await tx.wait();
+
+    let allowanced  = await dUSDT.allowance(account1.address, DeOrder.address);
+    console.log("dUSDT allowanced:", allowanced.toString())
+
+    try {
+      let tx = await DeOrder.payOrder(orderId, amount, {value: amount});
+      await tx.wait();
+    } catch (error) {
+      console.log("payOrder error", error)
+    }
+
 
     let b = await weth.balanceOf(DeOrder.address);
     console.log("weth balance:", b.toString())
 
+    b = await dUSDT.balanceOf(DeOrder.address)
+    console.log("dUSDT balance:", b.toString())
+
     let order = await DeOrder.getOrder(orderId);
+    console.log("order.token", order.token)
     console.log("order.amount", order.amount.toString())
     console.log("order.payed", order.payed.toString())
 
@@ -66,7 +89,7 @@ describe("testStartOrder", function () {
 
   it("signPermitProlongStage", async function () {
     let { chainId } = await ethers.provider.getNetwork();
-    let nonce = await DeOrderVerifier.nonces(account2.address);  // get from  
+    let nonce = await DeOrderVerifier.nonces(account2.address, orderId);  // get from  
     console.log("nonce:" + nonce)
 
     let period = "36000" 
