@@ -1,5 +1,0 @@
-[submodule "unit-testing/lib/base64"]
-	path = unit-testing/lib/base64
-	url = https://github.com/Brechtpd/base64
-[submodule "lib/base64"]
-	branch = v1.1.0

@@ -28,6 +28,7 @@ func RegisterTables(db *gorm.DB) {
 		model.Message{},
 		model.OrderFlow{},
 		model.MessageTmpl{},
+		model.NftContract{},
 	)
 	if err != nil {
 		global.LOG.Error("register table failed", zap.Error(err))
