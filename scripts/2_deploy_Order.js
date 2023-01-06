@@ -26,10 +26,13 @@ async function main() {
 
     await order.deployed();
     console.log("DeOrder deployed to:", order.address);
-    order.setSupportToken("0x522981BEF10d0906935FB7747d9aE3bC1189e3A4",true)
+    
     let artifact = await artifacts.readArtifact("DeOrder");
     await writeAbiAddr(artifact, order.address, "DeOrder", network.name);
 
+
+    let tx = await order.setSupportToken("0x522981BEF10d0906935FB7747d9aE3bC1189e3A4",true);
+    await tx.wait();
 }
 
 main()
