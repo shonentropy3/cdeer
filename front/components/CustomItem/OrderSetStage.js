@@ -244,29 +244,35 @@ export default function OrderSetStage(params) {
             _period.push(e.period * 24 * 60 * 60);
             // _period.push(`${e.period * 24 * 60 * 60}`);
         })
-        payOrder.write({
-            recklesslySetUnpreparedArgs: [order.order_id, value]
+        // payOrder.write({
+        //     recklesslySetUnpreparedArgs: [order.order_id, value]
+        // })
+        // return
+        funcList.push({
+            functionName: 'permitStage',
+            params: [order.order_id, _amount, _period, order.sign_nonce, order.stages.deadline, v, r, s]
         })
-        return
-        // funcList.push({
-        //     functionName: 'permitStage',
-        //     params: [order.order_id, _amount, _period, order.sign_nonce, order.stages.deadline, v, r, s]
-        // })
-        // funcList.push({
-        //     functionName: 'payOrder',
-        //     params: [order.order_id, value]
-        // })
-        // if ((order.amount / Math.pow(10,18)) !== sum) {
-        //     funcList.push({
-        //         functionName: 'modifyOrder',
-        //         params: [order.order_id, order.currency, value]
-        //     })
-        // }
-        // funcList.push({
-        //     functionName: 'startOrder',
-        //     params: [order.order_id]
-        // })
-        console.log(funcList);
+        funcList.push({
+            functionName: 'payOrder',
+            params: [order.order_id, value]
+        })
+        if ((order.amount / Math.pow(10,18)) !== sum) {
+            funcList.push({
+                functionName: 'modifyOrder',
+                params: [order.order_id, order.currency, value]
+            })
+        }
+        funcList.push({
+            functionName: 'startOrder',
+            params: [order.order_id]
+        })
+        // console.log(funcList);
+        console.log('Beforevalue ==>',address,value);
+
+        if (order.currency !== ethers.constants.AddressZero) {
+            value = 0
+        }
+        console.log('value ==>',address,value);
         multicallWrite(muticallEncode(funcList),address,value)
         .then(res => {
             if (res) {
@@ -380,7 +386,7 @@ export default function OrderSetStage(params) {
         }
         if (order.currency !== ethers.constants.AddressZero && allowance.data.toString() == 0) {
             // approve
-            const orderAddress = require("../../../deployments/mumbai/DeOrder.json").address;  //  DeOrder
+            const orderAddress = require("../../../deployments/dev/DeOrder.json").address;  //  DeOrder
             approve.writeAsync({
                 recklesslySetUnpreparedArgs: [
                     orderAddress, (Math.pow(2,32)-1).toString()
