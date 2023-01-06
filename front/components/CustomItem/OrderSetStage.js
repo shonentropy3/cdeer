@@ -13,7 +13,7 @@ import InnerStageCard from "../CustomCard/InnerStageCard";
 
 export default function OrderSetStage(params) {
     
-    const { search, order, amount, task, dataStages } = params;
+    const { search, order, amount, task, dataStages, approve } = params;
     const { confirm } = Modal;
     let [progressSet, setProgressSet] = useState();
     let [stage, setStage] = useSetState({
@@ -27,6 +27,7 @@ export default function OrderSetStage(params) {
     let [inner, setInner] = useState();     //  阶段划分
     const { chain } = useNetwork();
     const { address } = useAccount();
+    
 
     // 链上数据
     const { useDeOrderVerifierRead: nonces } = useRead('nonces', [address, Number(order.order_id)]);
@@ -186,7 +187,7 @@ export default function OrderSetStage(params) {
     }
 
     // 同意阶段划分 
-    const permitStage = () => {
+    const permitStage = async() => {
         // 乙方同意
         if (order.worker === address) {
             sendSignature()
@@ -207,12 +208,23 @@ export default function OrderSetStage(params) {
             return
         }
 
+        // approve
+        const orderAddress = "0x660e7d2B401B09Be338C715c95859B235fa0edD3";  //  DeOrder
+        await approve.writeAsync({
+            recklesslySetUnpreparedArgs: [
+                orderAddress, (Math.pow(2,32)-1).toString()
+            ]
+        })
+        .then(res => {
+            console.log(res);
+        })
+        
         setIsLoading(true);
         let sum = 0;
         dataStages.map(e => {
             sum += e.amount;
         })
-        if (sum > (task.budegt / Math.pow(10,18))) {
+        if (sum > (order.amount / Math.pow(10,18))) {
             confirm({
                 title: '你确认支付这笔订单吗?',
                 icon: <ExclamationCircleOutlined />,
@@ -227,6 +239,12 @@ export default function OrderSetStage(params) {
         }
     }
 
+    useEffect(() => {
+        if (approve.data) {
+            console.log(approve);
+        }
+    },[approve])
+    
     const permit = (sum) => {
         let r = '0x' + order.signature.substring(2).substring(0, 64);
         let s = '0x' + order.signature.substring(2).substring(64, 128);
@@ -242,24 +260,31 @@ export default function OrderSetStage(params) {
             _period.push(e.period * 24 * 60 * 60);
             // _period.push(`${e.period * 24 * 60 * 60}`);
         })
-        funcList.push({
-            functionName: 'permitStage',
-            params: [order.order_id, _amount, _period, order.sign_nonce, order.stages.deadline, v, r, s]
-        })
-        funcList.push({
-            functionName: 'payOrder',
-            params: [order.order_id, value]
-        })
-        if ((task.budegt / Math.pow(10,18)) !== sum) {
+        // funcList.push({
+        //     functionName: 'permitStage',
+        //     params: [order.order_id, _amount, _period, order.sign_nonce, order.stages.deadline, v, r, s]
+        // })
+        // if (order.currency === ethers.constants.AddressZero) {
             funcList.push({
-                functionName: 'modifyOrder',
-                params: [order.order_id, ethers.constants.AddressZero, value]
+                functionName: 'payOrder',
+                params: [order.order_id, value]
             })
-        }
-        funcList.push({
-            functionName: 'startOrder',
-            params: [order.order_id]
-        })
+        // }else{
+            // funcList.push({
+                // functionName: 'payOrderWithPermit',
+                // params: [order.order_id, ethers.utils.parseEther(`${order.amount}`), order.stages.deadline, v, r, s]
+            // })
+        // }
+        // if ((order.amount / Math.pow(10,18)) !== sum) {
+        //     funcList.push({
+        //         functionName: 'modifyOrder',
+        //         params: [order.order_id, order.currency, value]
+        //     })
+        // }
+        // funcList.push({
+        //     functionName: 'startOrder',
+        //     params: [order.order_id]
+        // })
         console.log(funcList);
         multicallWrite(muticallEncode(funcList),address,value)
         .then(res => {
