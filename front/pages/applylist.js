@@ -63,14 +63,21 @@ export default function ApplyList(params) {
         setIsModalOpen(true);
     }
 
-    const invitation = (amount) => {
+    const invitation = (amount,token) => {
         contractParams.amount = ethers.utils.parseEther(`${amount}`);
+        console.log("createOrder ==>",[
+            contractParams.task_id,
+            address,
+            contractParams.worker,
+            token,
+            contractParams.amount
+        ]);
         useOrderContractWrite.write({
             recklesslySetUnpreparedArgs: [
                 contractParams.task_id,
                 address,
                 contractParams.worker,
-                contractParams.token,
+                token,
                 contractParams.amount
             ]
         })

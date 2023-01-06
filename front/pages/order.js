@@ -10,6 +10,7 @@ import TaskNav from "../components/nav/TaskNav";
 import UserDetail from "../components/CustomItem/UserDetail";
 import OrderSetStage from "../components/CustomItem/OrderSetStage";
 import OrderStageList from "../components/CustomItem/OrderStageList";
+import { useContracts } from "../controller";
 
 export default function Order(props) {
     
@@ -21,6 +22,9 @@ export default function Order(props) {
     let [order, setOrder] = useState();         // order详情
     let [stages, setStages] = useState();       // 阶段详情
     let [progress, setProgress] = useState(0);       // 阶段详情
+
+    // ERC20授权
+    const { useWethContractWrite: approve } = useContracts('approve');
     
     const switchStages = () => {
         switch (order.progress) {
@@ -31,6 +35,7 @@ export default function Order(props) {
                     task={task} 
                     amount={task.budget}
                     dataStages={stages}
+                    approve={approve}
                  />     //   设置阶段
             default:
                 return <OrderStageList 

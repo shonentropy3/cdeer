@@ -16,11 +16,11 @@ export default function ConnectModal(params) {
     const { setStatus, status, propsInit } = params;
     const { connect, connectors } = useConnect();
     const { address, isConnecting } = useAccount();
-    const permit2Address = "0x000000000022D473030F116dDEE9F6B43aC78BA3";
+    // const permit2Address = "0x000000000022D473030F116dDEE9F6B43aC78BA3";
     
     // 是否调用过 approve
-    const { useWethRead } = useRead('allowance',[address, permit2Address]);
-    const { useWethContractWrite: approve } = useContracts('approve');
+    // const { useWethRead } = useRead('allowance',[address, permit2Address]);
+    // const { useWethContractWrite: approve } = useContracts('approve');
     // 签名
     const { data: signer } = useSigner();
     const [message, setMessage] = useState();
@@ -120,16 +120,16 @@ export default function ConnectModal(params) {
         chain && network()
     },[chain])
 
-    useEffect(() => {
-        if (useWethRead.isSuccess) {
-            if (useWethRead.data.toString() == 0) {
-                // unApprove
-                approve.write({
-                    recklesslySetUnpreparedArgs: [permit2Address, ethers.constants.MaxUint256]
-                })
-            }
-        }
-    },[useWethRead.isSuccess])
+    // useEffect(() => {
+    //     if (useWethRead.isSuccess) {
+    //         if (useWethRead.data.toString() == 0) {
+    //             // unApprove
+    //             approve.write({
+    //                 recklesslySetUnpreparedArgs: [permit2Address, ethers.constants.MaxUint256]
+    //             })
+    //         }
+    //     }
+    // },[useWethRead.isSuccess])
 
     return <Modal
             title={<p>Link Wallet <CloseOutlined onClick={() => setStatus(false)} /></p>} 

@@ -7,8 +7,6 @@ import Identicon from "identicon.js";
 import { message, Pagination } from "antd";
 import { getJwt } from "../utils/GetJwt";
 
-
-
 export default function MessageCenter(params) {
     
 
