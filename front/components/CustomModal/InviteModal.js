@@ -1,10 +1,15 @@
 import { Button, InputNumber, Modal, Select } from "antd";
 import Image from "next/image";
 import { useState } from "react";
+import { Sysmbol } from "../../utils/Sysmbol";
 const { Option } = Select;
 export default function InviteModal(params) {
     
     const { close, invitation, loading } = params;
+    const dUSDT = Sysmbol().dUSDT;
+    const errorERC20 = "0xd57e02dA8f94d642C75C80CE1985Bf04416CA600";
+
+
     let [amount, setAmount] = useState();
     let [token, setToken] = useState("0x0000000000000000000000000000000000000000");
 
@@ -14,7 +19,8 @@ export default function InviteModal(params) {
           onChange={e => changeToken(e)}
         >
           <Option key="1" value="0x0000000000000000000000000000000000000000">ETH</Option>
-          <Option key="2" value="0x522981BEF10d0906935FB7747d9aE3bC1189e3A4">dUSDT</Option>
+          <Option key="2" value={dUSDT}>dUSDT</Option>
+          <Option key="3" value={errorERC20}>errorERC20</Option>
         </Select>
     );
 

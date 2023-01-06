@@ -8,7 +8,9 @@ import { useEffect, useState } from "react"
 import { useAccount, useNetwork } from "wagmi";
 import { multicallWrite, muticallEncode, useContracts, useRead, useSignData } from "../../controller";
 import { startOrder, updatedStage } from "../../http/_api/order";
+import { Currency } from "../../utils/Currency";
 import { getDate } from "../../utils/GetDate";
+import { Sysmbol } from "../../utils/Sysmbol";
 import InnerStageCard from "../CustomCard/InnerStageCard";
 
 export default function OrderSetStage(params) {
@@ -28,7 +30,7 @@ export default function OrderSetStage(params) {
     const { chain } = useNetwork();
     const { address } = useAccount();
 
-    const { useOrderContractWrite: payOrder } = useContracts('payOrder')
+    const { useOrderContractWrite: payOrder } = useContracts('permitStage')
     
 
     // 链上数据
@@ -86,14 +88,16 @@ export default function OrderSetStage(params) {
         let arr = [];
         // 是否有预付款
         if (stage.orderModel) {
-            _amount.push(ethers.utils.parseEther(`${stage.value}`))
+            var amount = Currency(order.currency, e.amount)
+            _amount.push(amount);
             _period.push(`${0 * 24 * 60 * 60}`)
         }
         for (const i in inner) {
             arr.push(inner[i]);
         }
         arr.map(e => {
-            _amount.push(ethers.utils.parseEther(`${e.amount}`))
+            var amount = Currency(order.currency, e.amount)
+            _amount.push(amount);
             _period.push(`${e.period * 24 * 60 * 60}`)
         })
 
@@ -214,7 +218,7 @@ export default function OrderSetStage(params) {
         dataStages.map(e => {
             sum += e.amount;
         })
-        if (sum > (order.amount / Math.pow(10,18))) {
+        if (sum > Currency(order.currency,order.amount)) {
             confirm({
                 title: '你确认支付这笔订单吗?',
                 icon: <ExclamationCircleOutlined />,
@@ -233,19 +237,26 @@ export default function OrderSetStage(params) {
         let r = '0x' + order.signature.substring(2).substring(0, 64);
         let s = '0x' + order.signature.substring(2).substring(64, 128);
         let v = '0x' + order.signature.substring(2).substring(128, 130);
-        let value = ethers.utils.parseEther(`${sum}`);
+        let value = Currency(order.currency, sum);
+        
         let _amount = [];
         let _period = [];
         let funcList = [];
 
+
+
         dataStages.map((e,i) => {
-            // _amount.push(ethers.utils.parseEther(`${e.amount}`));
-            _amount.push(ethers.utils.parseEther(`${e.amount}`));
+            var amount = Currency(order.currency, e.amount)
+            _amount.push(amount);
             _period.push(e.period * 24 * 60 * 60);
-            // _period.push(`${e.period * 24 * 60 * 60}`);
         })
+
+
+        // console.log(order.order_id, _amount, _period, order.sign_nonce, order.stages.deadline, v, r, s);
         // payOrder.write({
-        //     recklesslySetUnpreparedArgs: [order.order_id, value]
+        //     recklesslySetUnpreparedArgs: [
+        //         order.order_id, _amount, _period, order.sign_nonce, order.stages.deadline, v, r, s
+        //     ]
         // })
         // return
         funcList.push({
@@ -266,13 +277,9 @@ export default function OrderSetStage(params) {
             functionName: 'startOrder',
             params: [order.order_id]
         })
-        // console.log(funcList);
-        console.log('Beforevalue ==>',address,value);
-
         if (order.currency !== ethers.constants.AddressZero) {
             value = 0
         }
-        console.log('value ==>',address,value);
         multicallWrite(muticallEncode(funcList),address,value)
         .then(res => {
             if (res) {
@@ -386,10 +393,10 @@ export default function OrderSetStage(params) {
         }
         if (order.currency !== ethers.constants.AddressZero && allowance.data.toString() == 0) {
             // approve
-            const orderAddress = require("../../../deployments/dev/DeOrder.json").address;  //  DeOrder
+            // const orderAddress = require("../../../deployments/dev/DeOrder.json").address;  //  DeOrder
             approve.writeAsync({
                 recklesslySetUnpreparedArgs: [
-                    orderAddress, (Math.pow(2,32)-1).toString()
+                    Sysmbol().DeOrder, (Math.pow(2,32)-1).toString()
                 ]
             })
         }else{

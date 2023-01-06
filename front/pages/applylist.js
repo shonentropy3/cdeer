@@ -15,6 +15,8 @@ import { ethers } from "ethers";
 import { createOrder } from "../http/_api/order";
 import { useRouter } from "next/router";
 import Identicon from "identicon.js";
+import { Sysmbol } from "../utils/Sysmbol";
+import { Currency } from "../utils/Currency";
 
 export default function ApplyList(params) {
 
@@ -64,7 +66,8 @@ export default function ApplyList(params) {
     }
 
     const invitation = async(amount,token) => {
-        contractParams.amount = ethers.utils.parseEther(`${amount}`);
+        contractParams.amount = Currency(token,amount)
+        
         console.log("createOrder ==>",[
             contractParams.task_id,
             address,
@@ -171,7 +174,7 @@ export default function ApplyList(params) {
                 break;
         }
     },[useOrderContractWrite.status])
-
+    
     return <div className="Applylist">
         {/* 用户详情弹窗 */}
         <UserInfoModal show={isUserInfo} setShow={setIsUserInfo} userInfo={userInfo} />
