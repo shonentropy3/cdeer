@@ -46,7 +46,7 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
 
     event OrderCreated(uint indexed taskId, uint indexed orderId,  address issuer, address worker, address token, uint amount);
     event OrderModified(uint indexed orderId, address token, uint amount);
-    event OrderStarted(uint indexed orderId, address who);
+    event OrderStarted(uint indexed orderId, address who, uint payType);
     event OrderAbort(uint indexed orderId, address who, uint stageIndex);
     event Withdraw(uint indexed orderId, uint amount, uint stageIndex);
     event AttachmentUpdated(uint indexed orderId, string attachment);
@@ -248,7 +248,7 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
 
         order.progress = OrderProgess.Ongoing;
         order.startDate = uint32(block.timestamp);
-        emit OrderStarted(_orderId, msg.sender);
+        emit OrderStarted(_orderId, msg.sender, uint(order.payType));
         
         IStage(stage).startOrder(_orderId);
     }
