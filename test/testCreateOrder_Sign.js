@@ -76,6 +76,7 @@ describe("testCreateOrder&Sign", function () {
       orderId,
       amounts,
       periods,
+      1,
       nonce,  
       deadline,
     );
@@ -91,7 +92,7 @@ describe("testCreateOrder&Sign", function () {
       let v = '0x' + sig.substring(2).substring(128, 130);
       
       
-    await DeOrder.permitStage(orderId,amounts,periods,nonce, deadline, v, r, s);
+    await DeOrder.permitStage(orderId,amounts,periods, 1, nonce, deadline, v, r, s);
     // await DeOrder.permitStage(8,["10000"],["1"],0, "99999999999", v, r, s);
     // let signer = await DeOrder.testPermitStage(orderId,amounts,periods,nonce, deadline, v, r, s);
     // console.log("signer:", signer);

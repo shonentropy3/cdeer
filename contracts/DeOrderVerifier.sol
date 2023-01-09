@@ -3,6 +3,7 @@
 pragma solidity ^0.8.0;
 
 import "./libs/ECDSA.sol";
+import "./interface/IOrder.sol";
 
 contract DeOrderVerifier {
 
@@ -10,7 +11,7 @@ contract DeOrderVerifier {
     error Expired();
 
     bytes32 public DOMAIN_SEPARATOR;
-    bytes32 public constant PERMITSTAGE_TYPEHASH = keccak256("PermitStage(uint256 orderId,uint256[] amounts,uint256[] periods,uint256 nonce,uint256 deadline)");
+    bytes32 public constant PERMITSTAGE_TYPEHASH = keccak256("PermitStage(uint256 orderId,uint256[] amounts,uint256[] periods,uint256 payType,uint256 nonce,uint256 deadline)");
     bytes32 public constant PERMITPROSTAGE_TYPEHASH = keccak256("PermitProStage(uint256 orderId,uint256 stageIndex,uint256 period,uint256 nonce,uint256 deadline)");
     bytes32 public constant PERMITAPPENDSTAGE_TYPEHASH = keccak256("PermitAppendStage(uint256 orderId,uint256 amount,uint256 period,uint256 nonce,uint256 deadline)");
 
@@ -34,6 +35,7 @@ contract DeOrderVerifier {
 
 
     function recoverPermitStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods,
+        uint256 payType,
         uint nonce,
         uint deadline,
         uint8 v,
@@ -41,7 +43,7 @@ contract DeOrderVerifier {
         bytes32 s) external returns (address signAddr) {
             
             bytes32 structHash  = keccak256(abi.encode(PERMITSTAGE_TYPEHASH, _orderId,
-                keccak256(abi.encodePacked(_amounts)), keccak256(abi.encodePacked(_periods)), nonce, deadline));
+                keccak256(abi.encodePacked(_amounts)), keccak256(abi.encodePacked(_periods)), payType, nonce, deadline));
             return recoverVerify(structHash, _orderId, nonce, deadline, v , r, s);
     }
 

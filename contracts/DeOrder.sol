@@ -116,6 +116,7 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
     }
 
     function permitStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods,
+        PaymentType payType,
         uint nonce,
         uint deadline,
         uint8 v,
@@ -125,17 +126,13 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
         Order storage order = orders[_orderId];
         if(order.progress >= OrderProgess.Ongoing) revert ProgressError();
 
-        address signAddr = verifier.recoverPermitStage(_orderId, _amounts, _periods,
+        address signAddr = verifier.recoverPermitStage(_orderId, _amounts, _periods, uint(payType),
             nonce, deadline, v, r, s);
         
         roleCheck(order, signAddr);
 
         order.progress = OrderProgess.Staged;
-        if(_periods[0] == 0) { //  
-            order.payType = PaymentType.Confirm;
-        } else {
-            order.payType = PaymentType.Due;
-        }
+        order.payType = payType;
 
         IStage(stage).setStage(_orderId, _amounts, _periods);
     }
@@ -242,8 +239,8 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
 
     function startOrder(uint _orderId) external payable {
         Order storage order = orders[_orderId];
-        if(order.progress != OrderProgess.Staged) {
-            revert PermissionsError();
+        if(order.progress != OrderProgess.Staged || order.payType == PaymentType.Unknown) {
+            revert ProgressError();
         }
         
         if(order.amount != IStage(stage).totalAmount(_orderId)) revert AmountError(0);
