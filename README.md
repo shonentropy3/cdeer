@@ -1,3 +1,19 @@
+# 代码逻辑：
+Detask : 用于描述任务 IPFS
+ 
+DeOrder: 用于敲定合作，邀请合作时创建 Order（createOrder）
+
+确认双方（两个地址）  
+确认合作进展（阶段）、项目规划、分阶段付款（按期付款模式、验收付款模式）
+确认 付款方式
+
+payOrder + startOrder()  锁定资金 
+验收付款模式下， 项目方确认验收、接单方收款
+最后一个阶段，接单方收款，项目完成（领 SBT）
+
+穿插逻辑：延长、增加阶段、终止合作
+
+
 # 分支
 
 master: 开发分支;
@@ -90,3 +106,5 @@ npx hardhat run scripts/2_deploy_Order.js --network dev
 // 启动项目
 npm run start:dev
 ```
+
+
