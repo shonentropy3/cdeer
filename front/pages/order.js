@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Steps } from "antd";
+import { Button, Steps } from "antd";
 import { useAccount } from 'wagmi'
 const { Step } = Steps;
 import { deform_Skills } from '../utils/Deform';
@@ -24,17 +24,11 @@ export default function Order(props) {
     let [stages, setStages] = useState();       // 阶段详情
     let [progress, setProgress] = useState(0);       // 阶段详情
 
-    // ERC20授权
+    // dUSDT授权
     const { usedUSDTContractWrite: approve, test } = useContracts('approve');
-    const { usedUSDTRead: allowance } = useRead('allowance', [address, Sysmbol().DeOrder])
+    // dUSDT是否授权
+    const { usedUSDTRead: allowance } = useRead('allowance', [address, "0xd5fcbca53263fcac0a98f0231ad9361f1481692b"])
 
-    
-    useEffect(() => {
-        if (test) {
-            console.log('test ==>',test);
-        }
-    },[test])
-    
     const switchStages = () => {
         switch (order.progress) {
             case 0:
@@ -76,7 +70,7 @@ export default function Order(props) {
         getOrderDetail({order_id: order_id, ...obj})
         .then(res => {
             console.log(res);
-            if (res.data?.list.length !== 0) {
+            if (res.data?.list?.length !== 0) {
                 task = res.data.list[0].task;
                 task.role = deform_Skills(task.role);
                 setTask({...task});
@@ -125,8 +119,17 @@ export default function Order(props) {
         init();
     },[])
 
+    const approveTest = () => {
+        approve.writeAsync({
+            recklesslySetUnpreparedArgs: [
+                "0xd5fcbca53263fcac0a98f0231ad9361f1481692b", (Math.pow(2,32)-1).toString()
+            ]
+        })
+    }
+
     return <div className="WorkerProject">
                 <TaskNav task={task} />
+                <Button onClick={() => approveTest()}>approve</Button>
 
                 {
                     order &&

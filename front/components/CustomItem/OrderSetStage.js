@@ -100,7 +100,8 @@ export default function OrderSetStage(params) {
             _amount.push(amount);
             _period.push(`${e.period * 24 * 60 * 60}`)
         })
-
+        // console.log(nonces);
+        // return
         signObj = {
             amounts: _amount,
             periods: _period,

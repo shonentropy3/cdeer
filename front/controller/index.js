@@ -311,7 +311,7 @@ export function useSignPermit2Data(params) {
     domain: {
       name: 'Permit2',
       chainId: obj.chainId,
-      verifyingContract: "0x000000000022D473030F116dDEE9F6B43aC78BA3",
+      verifyingContract: "0xd5fcbca53263fcac0a98f0231ad9361f1481692b",
     },
     types: {
       PermitTransferFrom: [

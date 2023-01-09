@@ -43,7 +43,7 @@ export default function MessageCenter(params) {
     }
 
     const init = () => {
-        const token = localStorage.getItem(`session.${address.toLowerCase()}`);
+        const token = localStorage.getItem(`session.${address?.toLowerCase()}`);
         if (!token) {
             return
         }else{
