@@ -11,6 +11,8 @@ https://learnblockchain.cn/article/3502
 forge install openzeppelin/openzeppelin-contracts --no-commit
 forge install https://github.com/Brechtpd/base64.git --no-commit
 forge install foundry-rs/forge-std --no-commit
+forge install https://github.com/Uniswap/permit2 --no-commit
+forge install https://github.com/rari-capital/solmate --no-commit
 ```
 ### 3、forge教程 
 
