@@ -15,7 +15,8 @@ type Order struct {
 	Signature   string `gorm:"column:signature" json:"signature" form:"signature"`
 	SignAddress string `gorm:"column:sign_address" json:"sign_address" form:"sign_address"`
 	SignNonce   int64  `gorm:"column:sign_nonce" json:"sign_nonce" form:"sign_nonce"`
-	Currency    string `gorm:"column:currency;size:30" json:"currency" form:"currency"`              // 币种
+	Currency    string `gorm:"column:currency;type:char(42)" json:"currency" form:"currency"`        // 币种
+	Amount      string `gorm:"column:amount" json:"amount" form:"amount"`                            // 金额
 	Stages      string `gorm:"column:stages" json:"stages" form:"stages"`                            // 阶段JSON
 	PaymentType uint8  `gorm:"column:payment_type" json:"payment_type" form:"payment_type"`          // 付款方式 0: Unknown 1: Due 2: Confirm
 	State       *uint8 `gorm:"column:state;default:0" json:"state" form:"state"`                     // 任务状态 0:进行中 1: 已完成

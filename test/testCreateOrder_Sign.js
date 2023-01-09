@@ -3,6 +3,8 @@ const { expect } = require("chai");
 const { signPermitStage, signPermitProlongStage } = require("./signPermitStage.js");
 
 const DeOrderAddr = require(`../deployments/${hre.network.name}/DeOrder.json`)
+const dUSDTAddr = require(`../deployments/${hre.network.name}/dUSDT.json`)
+
 const DeOrderVerifierAddr = require(`../deployments/${hre.network.name}/DeOrderVerifier.json`)
 
 // const { expectRevert } = require("@openzeppelin/test-helpers");
@@ -31,13 +33,17 @@ describe("testCreateOrder&Sign", function () {
 
   it("createOrder", async function () {
     let currOrderId = await DeOrder.currOrderId();
-    let amount = ethers.utils.parseEther("1")
+    let amount = ethers.utils.parseUnits("1", 6)
     console.log("amount:" + amount)
 
-    let tx = await DeOrder.createOrder(1, 
+
+    let tx =await DeOrder.setSupportToken(dUSDTAddr.address, true);
+    tx.wait();
+
+    tx = await DeOrder.createOrder(1, 
       account1.address,
       account2.address, 
-      ethers.constants.AddressZero,
+      dUSDTAddr.address,
       amount);
     
     await tx.wait();
@@ -53,11 +59,11 @@ describe("testCreateOrder&Sign", function () {
 
   it("signPermitStage", async function () {
     let { chainId } = await ethers.provider.getNetwork();
-    let nonce = await DeOrderVerifier.nonces(account2.address);  // get from  
+    let nonce = await DeOrderVerifier.nonces(account2.address, orderId);  // get from  
     console.log("nonce:" + nonce)
 
-    let amount1 = ethers.utils.parseEther("0.1")
-    let amount2 = ethers.utils.parseEther("0.9")
+    let amount1 = ethers.utils.parseUnits("0.1", 6)
+    let amount2 = ethers.utils.parseUnits("0.9", 6);  // parseEther("0.9")
 
     let amounts = [amount1, amount2]
     let periods = ["0", "36000"] 

@@ -154,9 +154,10 @@ export default function Header(props) {
     },[isModalVisible])
 
     useEffect(() => {
+        console.log(router.pathname);
         if (router.pathname === "/") {
             setSelectItem('home')
-        }else if (router.pathname === "projects") {
+        }else if (router.pathname === "/projects") {
             setSelectItem('task')
         }else{
             setSelectItem('')
@@ -165,20 +166,22 @@ export default function Header(props) {
 
     return <div className="Header">
         <div className={`content ${isScroll ? 'scroll':''}`}>
-            <div className="header-logo">
-                <Image src="/logo1.png" alt="" layout="fill" objectFit="cover" />
-            </div>
-            <div className="header-nav">
-                {
-                    item.map((e,i) => 
-                        <Link key={i} href={{pathname:e.url}}>
-                            <div className={`li ${selectItem === e.value ? 'li-active':''}`} onClick={() => onchange(e.value)}>
-                                {e.title}
-                                <div className="line" />
-                            </div>
-                        </Link>
-                    )
-                }
+            <div className="content-left">
+                <div className="header-logo">
+                    <Image src="/logo1.png" alt="" layout="fill" objectFit="cover" />
+                </div>
+                <div className="header-nav">
+                    {
+                        item.map((e,i) => 
+                            <Link key={i} href={{pathname:e.url}}>
+                                <div className={`li ${selectItem === e.value ? 'li-active':''}`} onClick={() => onchange(e.value)}>
+                                    {e.title}
+                                    <div className="line" />
+                                </div>
+                            </Link>
+                        )
+                    }
+                </div>
             </div>
             <div className="header-info">
                 {/* TODO: 中英文切换入口 ==> img or font */}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Steps } from "antd";
+import { Button, Steps } from "antd";
 import { useAccount } from 'wagmi'
 const { Step } = Steps;
 import { deform_Skills } from '../utils/Deform';
@@ -10,7 +10,8 @@ import TaskNav from "../components/nav/TaskNav";
 import UserDetail from "../components/CustomItem/UserDetail";
 import OrderSetStage from "../components/CustomItem/OrderSetStage";
 import OrderStageList from "../components/CustomItem/OrderStageList";
-import { useContracts } from "../controller";
+import { useContracts, useRead } from "../controller";
+import { Sysmbol } from "../utils/Sysmbol";
 
 export default function Order(props) {
     
@@ -23,9 +24,11 @@ export default function Order(props) {
     let [stages, setStages] = useState();       // 阶段详情
     let [progress, setProgress] = useState(0);       // 阶段详情
 
-    // ERC20授权
-    const { useWethContractWrite: approve } = useContracts('approve');
-    
+    // dUSDT授权
+    const { usedUSDTContractWrite: approve, test } = useContracts('approve');
+    // dUSDT是否授权
+    const { usedUSDTRead: allowance } = useRead('allowance', [address, "0xd5fcbca53263fcac0a98f0231ad9361f1481692b"])
+
     const switchStages = () => {
         switch (order.progress) {
             case 0:
@@ -36,6 +39,7 @@ export default function Order(props) {
                     amount={task.budget}
                     dataStages={stages}
                     approve={approve}
+                    allowance={allowance}
                  />     //   设置阶段
             default:
                 return <OrderStageList 
@@ -66,7 +70,7 @@ export default function Order(props) {
         getOrderDetail({order_id: order_id, ...obj})
         .then(res => {
             console.log(res);
-            if (res.data?.list.length !== 0) {
+            if (res.data?.list?.length !== 0) {
                 task = res.data.list[0].task;
                 task.role = deform_Skills(task.role);
                 setTask({...task});
@@ -103,8 +107,8 @@ export default function Order(props) {
                 }
                 setOrder({...order});
 
-                if (order.progress !== 0) {
-                    progress = order.progress === 4 ? 1 : 2;
+                if (order.progress !== 0 && order.progress !== 1) {
+                    progress = order.progress === 2 ? 1 : 2;
                     setProgress(progress);
                 }
             }
@@ -115,8 +119,17 @@ export default function Order(props) {
         init();
     },[])
 
+    const approveTest = () => {
+        approve.writeAsync({
+            recklesslySetUnpreparedArgs: [
+                "0xd5fcbca53263fcac0a98f0231ad9361f1481692b", (Math.pow(2,32)-1).toString()
+            ]
+        })
+    }
+
     return <div className="WorkerProject">
                 <TaskNav task={task} />
+                <Button onClick={() => approveTest()}>approve</Button>
 
                 {
                     order &&

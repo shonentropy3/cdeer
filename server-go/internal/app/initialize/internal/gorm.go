@@ -20,8 +20,9 @@ var Gorm = new(_gorm)
 type _gorm struct{}
 
 // Config gorm 自定义配置
-func (g *_gorm) Config() *gorm.Config {
+func (g *_gorm) Config(Prefix string) *gorm.Config {
 	config := &gorm.Config{DisableForeignKeyConstraintWhenMigrating: true, NamingStrategy: schema.NamingStrategy{
+		TablePrefix:   Prefix + "_",
 		SingularTable: true,
 	}}
 	_default := logger.New(NewWriter(log.New(os.Stdout, "\r\n", log.LstdFlags)), logger.Config{

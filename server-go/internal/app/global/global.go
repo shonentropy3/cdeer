@@ -12,8 +12,9 @@ import (
 )
 
 var (
-	DB           *gorm.DB      // 数据库链接
-	CONFIG       config.Server // 配置信息
+	MAPDB        map[string]*gorm.DB // 多链数据库链接
+	DB           *gorm.DB            // 数据库链接
+	CONFIG       config.Server       // 配置信息
 	LOG          *zap.Logger
 	VIP          *viper.Viper
 	TokenCache   *bigcache.BigCache // Token缓存

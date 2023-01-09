@@ -28,8 +28,6 @@ export default function OutputStageCard(params) {
     let [isLoading, setIsLoading] = useState(false);
     let [activeIndex, setActiveIndex] = useState();
     let [deadline, setDeadline] = useState();
-    let [going, setGoing] = useState(false);
-    
 
     const { useDeOrderVerifierRead: nonces } = useRead('nonces', [address, Number(oid)]);
     // 交付
@@ -44,7 +42,6 @@ export default function OutputStageCard(params) {
     const { useOrderContractWrite: abortOrder } = useContracts('abortOrder');
     
     
-
     // 请求返回处理
     const handelRes = (res) => {
         if (res.code === 0) {

@@ -1,7 +1,7 @@
 
 async function signPermit2(
     chainId,
-    contractAddress,
+    permit2Address,
     worker,
     token,
     amount,
@@ -13,7 +13,7 @@ async function signPermit2(
     const domain = {
       name: "Permit2",
       chainId,
-      verifyingContract: contractAddress,
+      verifyingContract: permit2Address,
     };
   
     const types = {

@@ -39,12 +39,11 @@ import store from '../redux/store'
 
 const {chains, provider} = configureChains([chain.mainnet,chain.goerli,chain.hardhat,chain.polygonMumbai,
   {
-    id: 8148,
+    id: 8166,
     name: 'BuildBear',
     network: 'buildBear',
     rpcUrls: {
-      // default: 'https://backend.buildbear.io/node/charming-bohr-99d0de',
-      default: 'https://rpc.buildbear.io/Lengthy_Corde_3d0361ee'
+      default: 'https://rpc.buildbear.io/Urgent_Bib_Fortuna_77c584c8'
     }
   }],
   [

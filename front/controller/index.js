@@ -9,6 +9,8 @@ const orderVerifier = require(`../../deployments/abi/DeOrderVerifier.json`);
 const orderVerifierAddr = require(`../../deployments/${process.env.NEXT_PUBLIC_DEVELOPMENT_CHAIN}/DeOrderVerifier.json`);
 const weth = require(`../../deployments/abi/WETH.json`);
 const wethAddr = require(`../../deployments/${process.env.NEXT_PUBLIC_DEVELOPMENT_CHAIN}/WETH.json`);
+const dUSDT = require(`../../deployments/abi/dUSDT.json`);
+const dUSDTAddr = require(`../../deployments/${process.env.NEXT_PUBLIC_DEVELOPMENT_CHAIN}/dUSDT.json`);
 
 var Web3 = require('web3');
 var web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:8545");
@@ -54,6 +56,16 @@ export function ConfigWeth(functionName) {
   return wethConfig
 }
 
+export function ConfigdUSDT(functionName) { 
+
+  const dUSDTConfig = {
+    addressOrName: dUSDTAddr.address,
+    contractInterface: dUSDT.abi,
+    functionName: functionName,
+  }
+  return dUSDTConfig
+}
+
 export function ConfigStage(functionName) { 
 
   const stageConfig = {
@@ -74,9 +86,11 @@ export function useContracts(functionName) {
 
   const useWethContractWrite = useContractWrite(ConfigWeth(functionName))
 
-  const test = ConfigOrder(functionName);
+  const usedUSDTContractWrite = useContractWrite(ConfigdUSDT(functionName))
 
-  return { useTaskContractWrite, useOrderContractWrite, test, useStageContractWrite, useWethContractWrite }
+  const test = ConfigdUSDT(functionName);
+
+  return { useTaskContractWrite, useOrderContractWrite, test, useStageContractWrite, useWethContractWrite, usedUSDTContractWrite }
 }
 
 export function useRead(functionName,args) {
@@ -101,13 +115,18 @@ export function useRead(functionName,args) {
     ...ConfigWeth(functionName),
     args: args
   };
+  let objF = {
+    ...ConfigdUSDT(functionName),
+    args: args
+  };
   const useTaskRead = useContractRead(objA)
   const useOrderRead = useContractRead(objB)
   const useStageRead = useContractRead(objC)
   const useDeOrderVerifierRead = useContractRead(objD)
   const useWethRead = useContractRead(objE)
+  const usedUSDTRead = useContractRead(objF)
 
-  return { useTaskRead, useOrderRead, useStageRead, useDeOrderVerifierRead, useWethRead }
+  return { useTaskRead, useOrderRead, useStageRead, useDeOrderVerifierRead, useWethRead, usedUSDTRead }
 }
 
 export function useReads(functionName,list) {
@@ -292,7 +311,7 @@ export function useSignPermit2Data(params) {
     domain: {
       name: 'Permit2',
       chainId: obj.chainId,
-      verifyingContract: "0x000000000022D473030F116dDEE9F6B43aC78BA3",
+      verifyingContract: "0xd5fcbca53263fcac0a98f0231ad9361f1481692b",
     },
     types: {
       PermitTransferFrom: [

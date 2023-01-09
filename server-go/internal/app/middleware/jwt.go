@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"code-market-admin/internal/app/global"
 	"code-market-admin/internal/app/model/response"
 	"code-market-admin/internal/app/utils"
 	"github.com/gin-gonic/gin"
@@ -46,7 +47,13 @@ func JWTAuth() gin.HandlerFunc {
 		// c.Set("claims", claims)
 		c.Set("address", claims.Address)
 		c.Set("userID", claims.UserID)
-
+		// jwt鉴权取头部信息： x-token
+		chain := c.Request.Header.Get("chain")
+		if chain != "" {
+			c.Set("chain", chain)
+		} else {
+			c.Set("chain", global.CONFIG.Contract.DefaultNet) // 默认链
+		}
 		c.Next()
 	}
 }

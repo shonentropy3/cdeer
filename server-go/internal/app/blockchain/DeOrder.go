@@ -11,7 +11,6 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/tidwall/gjson"
 	"go.uber.org/zap"
 	"gorm.io/gorm/clause"
 	"math/big"
@@ -51,8 +50,8 @@ func ParseOrderCreated(transHash model.TransHash, Logs []*types.Log) (err error)
 			order.Issuer = orderCreated.Issuer.String() // 甲方
 			order.Worker = orderCreated.Worker.String() // 乙方
 			// 解析 币种
-			// 解析Raw数据
-			order.Currency = gjson.Get(transHash.Raw, "currency").String()
+			order.Currency = orderCreated.Token.String()
+			order.Amount = orderCreated.Amount.String()
 			// 更新||插入数据
 			err = tx.Model(&model.Order{}).Clauses(clause.OnConflict{
 				Columns:   []clause.Column{{Name: "order_id"}},
@@ -104,7 +103,7 @@ func UpdatedProgress(orderID int64) (err error) {
 		return err
 	}
 	// client
-	client, err := ethclient.Dial(global.CONFIG.Contract.Provider)
+	client, err := ethclient.Dial("global.CONFIG.Contract.Provider")
 	if err != nil {
 		return err
 	}
@@ -118,10 +117,13 @@ func UpdatedProgress(orderID int64) (err error) {
 	if err != nil {
 		return err
 	}
-	fmt.Println(order.Progress)
 	// 获取失败
-	if order.Progress == 0 && progress != 0 {
+	if order.TaskId.Int64() == 0 && progress != 0 {
 		return errors.New("操作失败")
+	}
+	// 修改Amount
+	if err = global.DB.Model(&model.Order{}).Where("order_id = ?", orderID).Update("amount", order.Amount.String()).Error; err != nil {
+		return err
 	}
 	// 任务进行中
 	if order.Progress == 2 && progress != 2 {

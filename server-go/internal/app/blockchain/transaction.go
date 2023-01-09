@@ -28,7 +28,7 @@ func HandleTransaction() {
 		}
 	}()
 	//
-	client, err := ethclient.Dial(global.CONFIG.Contract.Provider)
+	client, err := ethclient.Dial("global.CONFIG.Contract.Provider")
 	//client, err := ethclient.Dial("https://summer-tame-pine.matic-testnet.discover.quiknode.pro/fdf3c786bf1dd3e5e848f0c98947ea4f5caee358/")
 	if err != nil {
 		panic("Error dial")
