@@ -27,7 +27,6 @@ export default function Order(props) {
     // ERC20授权
     const { usedUSDTContractWrite: approve, test } = useContracts('approve');
     const { usedUSDTRead: allowance } = useRead('allowance', [address, Sysmbol().DeOrder])
-    // const { usedUSDTRead: allowance } = useRead('allowance', [address, "0xFeF82c000aa2e749c2A54e43814C2dA09C940381"])
 
     
     useEffect(() => {

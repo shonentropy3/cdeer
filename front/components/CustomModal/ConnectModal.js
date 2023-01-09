@@ -37,15 +37,15 @@ export default function ConnectModal(params) {
               method: 'wallet_addEthereumChain',
               params: [
                   {
-                      chainId: Web3.utils.numberToHex(8164),
+                      chainId: Web3.utils.numberToHex(8166),
                       chainName: 'BuildBear Charming Bohr 99d0de',
                       nativeCurrency: {
                       name: 'BuildBear',
                       symbol: 'BB ETH', // 2-6 characters long
                       decimals: 18
                       },
-                      rpcUrls: ['https://rpc.buildbear.io/Inappropriate_Plo_Koon_10447fff'],
-                      blockExplorerUrls: ['https://explorer.buildbear.io/node/Inappropriate_Plo_Koon_10447fff']
+                      rpcUrls: ['https://rpc.buildbear.io/Urgent_Bib_Fortuna_77c584c8'],
+                      blockExplorerUrls: ['https://explorer.buildbear.io/node/Urgent_Bib_Fortuna_77c584c8']
                   }
               ]
             }).then(() => {
