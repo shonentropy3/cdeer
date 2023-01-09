@@ -8,17 +8,30 @@ import (
 	"os"
 )
 
-// Gorm 初始化数据库并产生数据库全局变量
-func Gorm() *gorm.DB {
-	return GormPgSql()
+//type MultiChain struct{}
+
+func InitChain() {
+	global.MAPDB = make(map[string]*gorm.DB) // 初始化map
+	for _, chain := range global.CONFIG.BlockChain {
+		db := GormPgSql(chain.Name)
+		if db != nil {
+			global.MAPDB[chain.Name] = db
+			RegisterTables(db) // 初始化表
+		}
+	}
 }
+
+//func (c *MultiChain) Chian(name string) *gorm.DB { return global.DBMAP[name] }
+
+//// Gorm 初始化数据库并产生数据库全局变量
+//func Gorm() *gorm.DB {
+//	return GormPgSql()
+//}
 
 // RegisterTables 注册数据库表专用
 func RegisterTables(db *gorm.DB) {
 	err := db.AutoMigrate(
-		model.Nft{},
 		model.Apply{},
-		model.BlockLog{},
 		model.Order{},
 		model.User{},
 		model.TransHash{},
@@ -28,7 +41,6 @@ func RegisterTables(db *gorm.DB) {
 		model.Message{},
 		model.OrderFlow{},
 		model.MessageTmpl{},
-		model.NftContract{},
 	)
 	if err != nil {
 		global.LOG.Error("register table failed", zap.Error(err))

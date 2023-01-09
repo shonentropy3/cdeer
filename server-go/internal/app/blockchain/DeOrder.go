@@ -103,7 +103,7 @@ func UpdatedProgress(orderID int64) (err error) {
 		return err
 	}
 	// client
-	client, err := ethclient.Dial(global.CONFIG.Contract.Provider)
+	client, err := ethclient.Dial("global.CONFIG.Contract.Provider")
 	if err != nil {
 		return err
 	}
