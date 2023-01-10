@@ -49,9 +49,7 @@ export default function OrderStageList(params) {
         let now = parseInt(new Date().getTime()/1000);
         let setTime = 2 * 24 * 60 * 60;
 
-
         setDeadline(now+setTime)
-        // console.log('nonce ==>',BigNumber.from('0xffffffffffff').toString());
         permit2 = {
             chainId: chain.id,
             token: _token,        //  dUSDT

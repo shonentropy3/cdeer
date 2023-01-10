@@ -33,7 +33,7 @@ export default function OutputStageCard(params) {
     // 交付
     const { useOrderContractWrite: updateAttachment } = useContracts('updateAttachment');
     // 确认交付
-    const { useOrderContractWrite: confirmAttachment, test } = useContracts('confirmDelivery');
+    const { useOrderContractWrite: confirmAttachment } = useContracts('confirmDelivery');
     // 延期
     const { useOrderContractWrite: prolongStage } = useContracts('prolongStage');
     // 领钱

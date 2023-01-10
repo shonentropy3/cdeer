@@ -12,6 +12,8 @@ import OrderSetStage from "../components/CustomItem/OrderSetStage";
 import OrderStageList from "../components/CustomItem/OrderStageList";
 import { useContracts, useRead } from "../controller";
 import { Sysmbol } from "../utils/Sysmbol";
+import BigNumber from "bignumber.js";
+import { BigNumberRandom, NonceBitmap, Permit2Nonce } from "../utils/Permit2Nonce";
 
 export default function Order(props) {
     
@@ -24,11 +26,27 @@ export default function Order(props) {
     let [stages, setStages] = useState();       // 阶段详情
     let [progress, setProgress] = useState(0);       // 阶段详情
 
-    // dUSDT授权
-    const { usedUSDTContractWrite: approve, test } = useContracts('approve');
-    // dUSDT是否授权
-    const { usedUSDTRead: allowance } = useRead('allowance', [address, "0xd5fcbca53263fcac0a98f0231ad9361f1481692b"])
+    // permit2 Nonce
+    let [nonce, setNonce] = useState(0);
+    let [nonceBitmap, setNonceBitmap] = useState(0);
+    let [isUse, setIsUse] = useState(true);
+    const { usePermit2Read: permit2Nonce } = useRead('nonceBitmap', [address, nonceBitmap])
 
+    // dUSDT授权
+    const { usedUSDTContractWrite: dUSDTapprove } = useContracts('approve');
+    // dUSDT是否授权
+    const { usedUSDTRead: dUSDTallowance } = useRead('allowance', [address, process.env.NEXT_PUBLIC_PERMIT2])
+
+    useEffect(() => {
+        if (permit2Nonce.data && nonce != 0) {
+            isUse = Permit2Nonce(nonce, permit2Nonce.data.toString())
+            setIsUse(isUse);
+            if (!isUse) {
+                nonceInit()
+            }
+        }
+    },[permit2Nonce])
+    
     const switchStages = () => {
         switch (order.progress) {
             case 0:
@@ -38,8 +56,8 @@ export default function Order(props) {
                     task={task} 
                     amount={task.budget}
                     dataStages={stages}
-                    approve={approve}
-                    allowance={allowance}
+                    approve={dUSDTapprove}
+                    allowance={dUSDTallowance}
                  />     //   设置阶段
             default:
                 return <OrderStageList 
@@ -69,7 +87,6 @@ export default function Order(props) {
 
         getOrderDetail({order_id: order_id, ...obj})
         .then(res => {
-            console.log(res);
             if (res.data?.list?.length !== 0) {
                 task = res.data.list[0].task;
                 task.role = deform_Skills(task.role);
@@ -115,21 +132,50 @@ export default function Order(props) {
         })
     }
 
+    // const currencyAllowance = () => {
+
+    //     function isApprove(allowance, func) {
+    //         console.log(allowance);
+    //         if (allowance == 0) {
+    //             approve = func;
+    //             setApprove({...approve});
+    //         }
+    //     }
+    //     switch (order?.currency) {
+    //         case Sysmbol().dUSDT:
+    //             allowance = dUSDTallowance.data.toString();
+    //             isApprove(allowance, dUSDTapprove);
+    //             break;
+        
+    //         default:
+    //             break;
+    //     }
+    //     setAllowance(allowance);
+    // }
+
+    const nonceInit = () => {
+        nonce = BigNumberRandom();
+        setNonce(nonce);
+    
+        nonceBitmap = NonceBitmap(nonce);
+        setNonceBitmap(nonceBitmap);
+    }
+
     useEffect(() => {
         init();
+        nonceInit()
     },[])
 
-    const approveTest = () => {
-        approve.writeAsync({
-            recklesslySetUnpreparedArgs: [
-                "0xd5fcbca53263fcac0a98f0231ad9361f1481692b", (Math.pow(2,32)-1).toString()
-            ]
-        })
-    }
+    // const approveTest = () => {
+    //     approve.writeAsync({
+    //         recklesslySetUnpreparedArgs: [
+    //             "0xd5fcbca53263fcac0a98f0231ad9361f1481692b", (Math.pow(2,32)-1).toString()
+    //         ]
+    //     })
+    // }
 
     return <div className="WorkerProject">
                 <TaskNav task={task} />
-                <Button onClick={() => approveTest()}>approve</Button>
 
                 {
                     order &&

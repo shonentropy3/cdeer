@@ -154,7 +154,6 @@ export default function Header(props) {
     },[isModalVisible])
 
     useEffect(() => {
-        console.log(router.pathname);
         if (router.pathname === "/") {
             setSelectItem('home')
         }else if (router.pathname === "/projects") {

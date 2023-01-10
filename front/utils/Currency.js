@@ -15,3 +15,17 @@ export function Currency(token, value) {
     }
     return newValue
 }
+
+export function ConvertTokenAddress(tokenAddress) {
+    let token;
+    switch (tokenAddress) {
+        case Sysmbol().dUSDT:
+            token = "dUSDT";
+            break;
+    
+        default:
+            token = "ETH";
+            break;
+    }
+    return token
+}
