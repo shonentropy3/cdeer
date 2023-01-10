@@ -185,11 +185,13 @@ contract DeTaskTest is Test, Permit2Sign {
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(1, digest);
         // 甲方提交
         vm.startPrank(issuer);
+        PaymentType payType = PaymentType.Due;
         vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
         deOrder.permitStage(
             _orderId,
             _amounts,
             _periods,
+            payType,
             nonce,
             deadline,
             v,
@@ -207,6 +209,7 @@ contract DeTaskTest is Test, Permit2Sign {
             _orderId,
             _amounts,
             _periods,
+            payType,
             nonce,
             deadline,
             v,
@@ -221,6 +224,7 @@ contract DeTaskTest is Test, Permit2Sign {
             _orderId,
             _amounts,
             _periods,
+            payType,
             nonce,
             deadline,
             v,
@@ -235,6 +239,7 @@ contract DeTaskTest is Test, Permit2Sign {
             _orderId,
             _amounts,
             _periods,
+            payType,
             nonce,
             deadline,
             v,
@@ -249,16 +254,19 @@ contract DeTaskTest is Test, Permit2Sign {
     function permitStage(
         address sign,
         address submit,
-        bytes memory payType
+        bytes memory payTypeString
     ) public {
         uint256 _orderId = 1;
         uint256[] memory _amounts = new uint256[](1);
         uint256[] memory _periods = new uint256[](1);
         _amounts[0] = 100;
-        if (keccak256(payType) == keccak256("Confirm")) {
+        PaymentType payType = PaymentType.Unknown;
+        if (keccak256(payTypeString) == keccak256("Confirm")) {
             _periods[0] = 0;
-        } else if (keccak256(payType) == keccak256("Due")) {
+            payType = PaymentType.Confirm;
+        } else if (keccak256(payTypeString) == keccak256("Due")) {
             _periods[0] = 1;
+            payType = PaymentType.Due;
         }
         uint256 nonce = 0;
         uint256 deadline = 200;
@@ -268,6 +276,7 @@ contract DeTaskTest is Test, Permit2Sign {
                 _orderId,
                 keccak256(abi.encodePacked(_amounts)),
                 keccak256(abi.encodePacked(_periods)),
+                payType,
                 nonce,
                 deadline
             )
@@ -293,6 +302,7 @@ contract DeTaskTest is Test, Permit2Sign {
             _orderId,
             _amounts,
             _periods,
+            payType,
             nonce,
             deadline,
             v,
@@ -328,7 +338,7 @@ contract DeTaskTest is Test, Permit2Sign {
         uint256 _orderId = 1;
         uint256 _stageIndex = 0;
         uint256 _appendPeriod = 10;
-        uint256 nonce = _verifier.nonces(sign);
+        uint256 nonce = _verifier.nonces(sign, 0);
         uint256 deadline = 200;
         bytes32 structHash = keccak256(
             abi.encode(
@@ -463,7 +473,7 @@ contract DeTaskTest is Test, Permit2Sign {
         uint256 _orderId = 1;
         uint256 amount = 10;
         uint256 period = 10;
-        uint256 nonce = _verifier.nonces(sign);
+        uint256 nonce = _verifier.nonces(sign, 0);
         uint256 deadline = 200;
         bytes32 structHash = keccak256(
             abi.encode(
@@ -522,7 +532,7 @@ contract DeTaskTest is Test, Permit2Sign {
         );
         // 甲方签名
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(1, digest);
-         payOrder(issuer, 100); // 支付
+        payOrder(issuer, 100); // 支付
         // 乙方调用
         vm.startPrank(worker);
         // 任务不在进行中
@@ -565,7 +575,6 @@ contract DeTaskTest is Test, Permit2Sign {
         deOrder.appendStage(_orderId, amount, period, nonce, deadline, v, r, s);
         vm.stopPrank();
     }
-
 
     // startOrder
     // @Summary 开始任务
