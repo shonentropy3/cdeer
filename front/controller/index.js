@@ -103,7 +103,7 @@ export function useContracts(functionName) {
 
   const usedPermit2ContractWrite = useContractWrite(ConfigPermit2(functionName))
 
-  const test = ConfigPermit2(functionName);
+  const test = ConfigOrder(functionName);
 
   return { useTaskContractWrite, useOrderContractWrite, test, useStageContractWrite, useWethContractWrite, usedUSDTContractWrite, usedPermit2ContractWrite }
 }
@@ -188,6 +188,7 @@ export function useSignData(params) {
       orderId: params.oid,
       amounts: params.amounts,
       periods: params.periods,
+      payType: params.payType,
       nonce: params.nonce,  
       deadline: params.deadline,
   }
@@ -204,6 +205,7 @@ export function useSignData(params) {
         { name: "orderId", type: "uint256" },
         { name: "amounts", type: "uint256[]" },
         { name: "periods", type: "uint256[]" },
+        { name: "payType", type: "uint256" },
         { name: "nonce", type: "uint256" },
         { name: "deadline", type: "uint256" },
       ]
@@ -212,6 +214,7 @@ export function useSignData(params) {
       orderId: obj.orderId,
       amounts: obj.amounts,
       periods: obj.periods,
+      payType: obj.payType,
       nonce: obj.nonce,
       deadline: obj.deadline,
     },
