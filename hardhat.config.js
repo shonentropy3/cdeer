@@ -66,7 +66,7 @@ module.exports = {
     },
 
     mumbai: {
-      url: "https://matic-mumbai.chainstacklabs.com",
+      url: "https://endpoints.omniatech.io/v1/matic/mumbai/public",
       accounts: [privateKey],
       chainId: 80001,
     },

@@ -2,9 +2,9 @@
 pragma solidity >=0.8.0;
 
 import "forge-std/Test.sol";
-import "../../src/DeOrder.sol";
-import "../../src/libs/ECDSA.sol";
-import "../../src/mock/WETH.sol";
+import "contracts/DeOrder.sol";
+import "contracts/libs/ECDSA.sol";
+import "contracts/mock/WETH.sol";
 
 contract Permit2Sign is Test {
     bytes32 public constant _PERMIT_DETAILS_TYPEHASH =
