@@ -21,9 +21,11 @@ describe("testCreateOrder&Sign", function () {
     const accounts = await ethers.getSigners();
     account1 = accounts[0];
     account2 = accounts[1];
+    // account2 = "ffa0bb7d74316bd2583d6302507cf03e395b5810824e6b05e1a72ec0d23a3c79";
     
     console.log("account1:" + account1.address);
-    console.log("account2:" + account2.address);
+    // console.log("account2:" + account2.address);
+    console.log("test ==>", accounts);
 
     DeOrder = await ethers.getContractAt("DeOrder", DeOrderAddr.address, account1);
 
@@ -39,7 +41,7 @@ describe("testCreateOrder&Sign", function () {
 
     let tx =await DeOrder.setSupportToken(dUSDTAddr.address, true);
     tx.wait();
-
+    
     tx = await DeOrder.createOrder(1, 
       account1.address,
       account2.address, 
@@ -76,7 +78,6 @@ describe("testCreateOrder&Sign", function () {
       orderId,
       amounts,
       periods,
-      1,
       nonce,  
       deadline,
     );
@@ -92,7 +93,7 @@ describe("testCreateOrder&Sign", function () {
       let v = '0x' + sig.substring(2).substring(128, 130);
       
       
-    await DeOrder.permitStage(orderId,amounts,periods, 1, nonce, deadline, v, r, s);
+    await DeOrder.permitStage(orderId,amounts,periods,nonce, deadline, v, r, s);
     // await DeOrder.permitStage(8,["10000"],["1"],0, "99999999999", v, r, s);
     // let signer = await DeOrder.testPermitStage(orderId,amounts,periods,nonce, deadline, v, r, s);
     // console.log("signer:", signer);

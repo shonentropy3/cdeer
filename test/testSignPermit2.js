@@ -45,7 +45,7 @@ describe("testStartOrder", function () {
 
     it("signPermit2", async function () {
         let { chainId } = await ethers.provider.getNetwork();
-        let nonce = 1;
+        let nonce = 999;
         console.log("nonce:" + nonce + ", chainId: " + chainId);
 
         let deadline = "2672910607"

@@ -47,7 +47,7 @@ export default function OrderStageList(params) {
 
     const testPermit2 = () => {
         let now = parseInt(new Date().getTime()/1000);
-        let setTime = 2 * 24 * 60 * 60;
+        let setTime = 1 * 1 * 60 * 60;
 
         setDeadline(now+setTime)
         permit2 = {
