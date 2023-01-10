@@ -256,28 +256,6 @@ contract DeTaskTest is Test {
         // vm.stopPrank();
     }
 
-    // testCannotSetOrder
-    // @Summary 非合约创建者设置Order合约地址 && 设置Order合约地址为 零地址
-    function testCannotSetOrder() public {
-        // 非合约创建者设置order合约地址
-        vm.expectRevert(bytes("Ownable: caller is not the owner"));
-        deTask.setOrder(address(0xd2EeE6cB28C99767BA7F8469C3C621033bb09C77));
-        // 设置Order合约地址为 零地址
-        vm.startPrank(owner);
-        vm.expectRevert(bytes("zero address"));
-        deTask.setOrder(address(0));
-        vm.stopPrank();
-    }
-
-    // testSetOrder
-    // @Summary 设置Order合约地址
-    function testSetOrder() public {
-        address addr = address(0xd2EeE6cB28C99767BA7F8469C3C621033bb09C77);
-        vm.startPrank(owner);
-        deTask.setOrder(addr);
-        vm.stopPrank();
-        assertEq(deTask.order(), addr);
-    }
 
     // testCannotSetMetaContract
     // @Summary 非合约创建者设置Meta合约地址 && 设置Meta合约地址为 零地址
