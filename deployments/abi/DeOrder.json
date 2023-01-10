@@ -198,6 +198,12 @@
           "internalType": "address",
           "name": "who",
           "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "enum PaymentType",
+          "name": "payType",
+          "type": "uint8"
         }
       ],
       "name": "OrderStarted",

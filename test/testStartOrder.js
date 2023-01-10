@@ -85,6 +85,9 @@ describe("testStartOrder", function () {
     tx = await DeOrder.startOrder(orderId);
     await tx.wait();
 
+    let receipt = await ethers.provider.getTransactionReceipt(tx.hash);
+    console.log("startOrder gasUsed" , receipt.gasUsed);
+
   });
 
   it("signPermitProlongStage", async function () {
