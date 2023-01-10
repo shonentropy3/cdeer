@@ -424,6 +424,10 @@ export function muticallEncode(params) {
         var code = contract.methods[e.functionName](e.params[0],e.params[1],e.params[2],e.params[3],e.params[4],e.params[5],e.params[6],e.params[7]).encodeABI()
         arr.push(code)
         break;
+      case 9:
+        var code = contract.methods[e.functionName](e.params[0],e.params[1],e.params[2],e.params[3],e.params[4],e.params[5],e.params[6],e.params[7],e.params[8]).encodeABI()
+        arr.push(code)
+        break;
       default:
         break;
     }
