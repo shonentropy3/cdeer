@@ -3,15 +3,15 @@ pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
 import "forge-std/console.sol";
-import "../src/DeOrder.sol";
-import "../src/DeStage.sol";
-import "../src/mock/WETH.sol";
-import "../src/libs/ECDSA.sol";
-import "../src/DeOrderVerifier.sol";
+import "contracts/DeOrder.sol";
+import "contracts/DeStage.sol";
+import "contracts/mock/WETH.sol";
+import "contracts/libs/ECDSA.sol";
+import "contracts/DeOrderVerifier.sol";
 import {Permit2Sign} from "./utils/Permit2Sign.sol";
 import {Permit2} from "permit2/Permit2.sol";
 import {MockERC20} from "./mock/MockERC20.sol";
-import {IPermit2} from "../src/interface/IPermit2.sol";
+import {IPermit2} from "contracts/interface/IPermit2.sol";
 import {Mock} from "./mock/mock.sol";
 
 contract DeTaskTest is Test, Permit2Sign {
