@@ -15,7 +15,7 @@ import InnerStageCard from "../CustomCard/InnerStageCard";
 
 export default function OrderSetStage(params) {
     
-    const { search, order, amount, task, dataStages } = params;
+    const { search, order, amount, task, dataStages, permit2Nonce } = params;
     const { confirm } = Modal;
     let [progressSet, setProgressSet] = useState();
     let [stage, setStage] = useSetState({
@@ -219,6 +219,8 @@ export default function OrderSetStage(params) {
             })
             return
         }
+        // 签名 ==> TODO: ==>
+
         setIsLoading(true);
         let sum = 0;
         dataStages.map(e => {

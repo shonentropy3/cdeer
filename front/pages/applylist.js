@@ -36,6 +36,7 @@ export default function ApplyList(params) {
     const [loading, setLoading] = useState(false);
 
     // approve ==> allowance
+    // dUSDT
     const { usedUSDTRead: dUSDTallowance } = useRead('allowance', [address, process.env.NEXT_PUBLIC_PERMIT2])
     const { usedUSDTContractWrite: dUSDTapprove } = useContracts('approve');
 

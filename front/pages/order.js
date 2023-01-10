@@ -51,6 +51,7 @@ export default function Order(props) {
                     task={task} 
                     amount={task.budget}
                     dataStages={stages}
+                    permit2Nonce={nonce}
                  />     //   设置阶段
             default:
                 return <OrderStageList 
