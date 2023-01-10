@@ -10,7 +10,7 @@ import UserInfoModal from "../components/CustomModal/UserInfoModal";
 import { useAccount, useProvider } from "wagmi";
 import { message } from "antd";
 import InviteModal from "../components/CustomModal/InviteModal";
-import { useContracts } from "../controller";
+import { useContracts, useRead } from "../controller";
 import { ethers } from "ethers";
 import { createOrder } from "../http/_api/order";
 import { useRouter } from "next/router";
@@ -34,6 +34,11 @@ export default function ApplyList(params) {
     const [isModalOpen, setIsModalOpen] = useState(false);      //  邀请弹窗
     let [contractParams, setContractParams] = useState({});
     const [loading, setLoading] = useState(false);
+
+    // approve ==> allowance
+    // dUSDT
+    const { usedUSDTRead: dUSDTallowance } = useRead('allowance', [address, process.env.NEXT_PUBLIC_PERMIT2])
+    const { usedUSDTContractWrite: dUSDTapprove } = useContracts('approve');
 
 
     // 更改排序
@@ -65,17 +70,32 @@ export default function ApplyList(params) {
         setIsModalOpen(true);
     }
 
-    const invitation = async(amount,token) => {
-        contractParams.amount = Currency(token,amount)
-        
-        console.log("createOrder ==>",[
-            contractParams.task_id,
-            address,
-            contractParams.worker,
-            token,
-            contractParams.amount
-        ]);
+    const tokenIsApprove = async(approve) => {
+        await approve.writeAsync({
+            recklesslySetUnpreparedArgs: [
+                process.env.NEXT_PUBLIC_PERMIT2, (Math.pow(2,32)-1).toString()
+            ]
+        })
+    }
 
+    const invitation = async(amount,token) => {
+        setLoading(true);
+        // 判断是否为ERC20
+        if (token != ethers.constants.AddressZero) {
+            // 判断当前币种是否approve ==> 发起approve
+            switch (token) {
+                case Sysmbol().dUSDT:
+                    if (dUSDTallowance.data.toString() == 0) {
+                        await tokenIsApprove(dUSDTapprove)
+                    }
+                    break;
+            
+                default:
+                    break;
+            }
+        }
+
+        contractParams.amount = Currency(token,amount)
         useOrderContractWrite.write({
             recklesslySetUnpreparedArgs: [
                 contractParams.task_id,
@@ -226,7 +246,7 @@ export default function ApplyList(params) {
                                         process &&
                                         <img 
                                             src={ e.user.avatar ? 
-                                            "http://" + window.document.location.hostname + process.env.NEXT_PUBLIC_DEVELOPMENT_API + e.user.avatar 
+                                            process.env.NEXT_PUBLIC_DEVELOPMENT_API + "/" + e.user.avatar 
                                             :
                                             hashAvt(e.apply_addr)} 
                                         />

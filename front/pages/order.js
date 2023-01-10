@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Steps } from "antd";
+import { Button, Steps } from "antd";
 import { useAccount } from 'wagmi'
 const { Step } = Steps;
 import { deform_Skills } from '../utils/Deform';
@@ -12,6 +12,8 @@ import OrderSetStage from "../components/CustomItem/OrderSetStage";
 import OrderStageList from "../components/CustomItem/OrderStageList";
 import { useContracts, useRead } from "../controller";
 import { Sysmbol } from "../utils/Sysmbol";
+import BigNumber from "bignumber.js";
+import { BigNumberRandom, NonceBitmap, Permit2Nonce } from "../utils/Permit2Nonce";
 
 export default function Order(props) {
     
@@ -24,17 +26,21 @@ export default function Order(props) {
     let [stages, setStages] = useState();       // 阶段详情
     let [progress, setProgress] = useState(0);       // 阶段详情
 
-    // ERC20授权
-    const { usedUSDTContractWrite: approve, test } = useContracts('approve');
-    const { usedUSDTRead: allowance } = useRead('allowance', [address, Sysmbol().DeOrder])
-    // const { usedUSDTRead: allowance } = useRead('allowance', [address, "0xFeF82c000aa2e749c2A54e43814C2dA09C940381"])
+    // permit2 Nonce
+    let [nonce, setNonce] = useState(0);
+    let [nonceBitmap, setNonceBitmap] = useState(0);
+    let [isUse, setIsUse] = useState(true);
+    const { usePermit2Read: permit2Nonce } = useRead('nonceBitmap', [address, nonceBitmap])
 
-    
     useEffect(() => {
-        if (test) {
-            console.log('test ==>',test);
+        if (permit2Nonce.data && nonce != 0) {
+            isUse = Permit2Nonce(nonce, permit2Nonce.data.toString())
+            setIsUse(isUse);
+            if (!isUse) {
+                nonceInit()
+            }
         }
-    },[test])
+    },[permit2Nonce])
     
     const switchStages = () => {
         switch (order.progress) {
@@ -45,8 +51,7 @@ export default function Order(props) {
                     task={task} 
                     amount={task.budget}
                     dataStages={stages}
-                    approve={approve}
-                    allowance={allowance}
+                    permit2Nonce={nonce}
                  />     //   设置阶段
             default:
                 return <OrderStageList 
@@ -76,8 +81,7 @@ export default function Order(props) {
 
         getOrderDetail({order_id: order_id, ...obj})
         .then(res => {
-            console.log(res);
-            if (res.data?.list.length !== 0) {
+            if (res.data?.list?.length !== 0) {
                 task = res.data.list[0].task;
                 task.role = deform_Skills(task.role);
                 setTask({...task});
@@ -122,8 +126,17 @@ export default function Order(props) {
         })
     }
 
+    const nonceInit = () => {
+        nonce = BigNumberRandom();
+        setNonce(nonce);
+    
+        nonceBitmap = NonceBitmap(nonce);
+        setNonceBitmap(nonceBitmap);
+    }
+
     useEffect(() => {
         init();
+        nonceInit()
     },[])
 
     return <div className="WorkerProject">

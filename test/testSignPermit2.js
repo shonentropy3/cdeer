@@ -2,7 +2,9 @@ const { ethers, network } = require("hardhat");
 const { expect } = require("chai");
 const { signPermit2 } = require("./signPermit2.js");
 
-const permit2Addr = "0x000000000022D473030F116dDEE9F6B43aC78BA3";
+const dUSDTAddr = require(`../deployments/${network.name}/dUSDT.json`)
+const DeOrderAddr = require(`../deployments/${network.name}/DeOrder.json`)
+const permit2Addr = "0xd5fcbca53263fcac0a98f0231ad9361f1481692b";
 
 /** 
  * 测试用例：
@@ -15,81 +17,81 @@ const permit2Addr = "0x000000000022D473030F116dDEE9F6B43aC78BA3";
 
 // run testCreateOrder_Sign
 
-
 describe("testStartOrder", function () {
-  let account1;
-  let account2;
-  let Permi2;
-  let mToken;
+    let account1;
+    let account2;
+    let Permi2;
+    let mToken;
+    let DeOrder;
+    beforeEach(async function () {
+        const accounts = await ethers.getSigners();
+        account1 = accounts[0];
+        account2 = { address: "0x8ba1f109551bd432803012645ac136ddd64dba72" };
 
-  beforeEach(async function () {
-    const accounts = await ethers.getSigners();
-    account1 = accounts[0];
-    account2 = accounts[1];
-    
-    console.log("account1:" + account1.address);
-    console.log("account2:" + account2.address);
+        console.log("account1:" + account1.address);
+        console.log("account2:" + account2.address);
 
-    Permi2 = await ethers.getContractAt("IPermit2", permit2Addr, account1);
-    mToken = await ethers.getContractAt("dUSDT", "0x1b003f330614e5a94d1c1ea4cd30db4a88169641", account1);
+        Permi2 = await ethers.getContractAt("IPermit2", permit2Addr, account1);
+        DeOrder = await ethers.getContractAt("DeOrder", DeOrderAddr.address, account1);
 
+        mToken = await ethers.getContractAt("dUSDT", dUSDTAddr.address, account1);
+        let tx = await mToken.approve(permit2Addr, ethers.constants.MaxUint256); // 授权
+        await tx.wait();
+        let txCreate = await DeOrder.createOrder(1, account1.address, account2.address, dUSDTAddr.address, 1);// 创建Order
+        await txCreate.wait();
+        // console.log("Permi2:" + Permi2)
 
-    // let tx = await mToken.approve(permit2Addr, ethers.constants.MaxUint256);
-    // await tx.wait();
+    });
 
-    console.log("Permi2:" + Permi2)
+    it("signPermit2", async function () {
+        let { chainId } = await ethers.provider.getNetwork();
+        let nonce = 1;
+        console.log("nonce:" + nonce + ", chainId: " + chainId);
 
-  });
+        let deadline = "2672910607"
+        let spender = DeOrder.address
+        let token = dUSDTAddr.address
 
-  it("signPermit2", async function () {
-    let { chainId } = await ethers.provider.getNetwork();
-    let nonce = 0;  // get from  
-    console.log("nonce:" + nonce + ", chainId: " + chainId);
+        const sig = await signPermit2(
+            chainId,
+            permit2Addr,
+            account1,
+            token,
+            1,
+            spender,
+            nonce,
+            deadline,
+        );
 
-    let deadline = "2672910607"
-    let spender = account2.address
-    let token = "0x1b003f330614e5a94d1c1ea4cd30db4a88169641"
+        //  椭圆曲线签名签名的值:
+        // r = 签名的前 32 字节
+        // s = 签名的第2个32 字节
+        // v = 签名的最后一个字节
+        console.log("sig:", sig);
+        //   let r = '0x' + sig.substring(2).substring(0, 64);
+        //   let s = '0x' + sig.substring(2).substring(64, 128);
+        //   let v = '0x' + sig.substring(2).substring(128, 130);
+        let orderId = await DeOrder.currOrderId();
+        console.log(orderId);
+        let amount = 1;
 
-
-    const sig = await signPermit2(
-        chainId,
-        "0x000000000022D473030F116dDEE9F6B43aC78BA3",
-        account1,
-        token,
-        1,
-        spender,
-        nonce,
-        deadline,
-        { gas_limit: 9000000}
-    );
-
-      //  椭圆曲线签名签名的值:
-      // r = 签名的前 32 字节
-      // s = 签名的第2个32 字节
-      // v = 签名的最后一个字节
-
-      console.log("sig:", sig);
-    //   let r = '0x' + sig.substring(2).substring(0, 64);
-    //   let s = '0x' + sig.substring(2).substring(64, 128);
-    //   let v = '0x' + sig.substring(2).substring(128, 130);
-
-    let tx = await Permi2.permitTransferFrom(
-        {
-            permitted: {
-                token: token,
-                amount: 1
+        let tx = await DeOrder.payOrderWithPermit2(
+            orderId,
+            amount,
+            {
+                permitted: {
+                    token: token,
+                    amount: 1
+                },
+                nonce: nonce,
+                deadline: deadline
             },
-            nonce: nonce,
-            deadline: deadline
-        },
-        {
-            to: spender,
-            requestedAmount: 1
-        },
-        account1.address,
-        sig
-    )
-    await tx.wait();
-  });
+            sig
+        )
+        await tx.wait();
+        console.log(tx);
+
+
+    });
 
 });

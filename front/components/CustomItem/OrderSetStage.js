@@ -6,7 +6,7 @@ import { ethers } from "ethers";
 import Image from "next/image";
 import { useEffect, useState } from "react"
 import { useAccount, useNetwork } from "wagmi";
-import { multicallWrite, muticallEncode, useContracts, useRead, useSignData } from "../../controller";
+import { multicallWrite, muticallEncode, useContracts, useRead, useSignData, useSignPermit2Data } from "../../controller";
 import { startOrder, updatedStage } from "../../http/_api/order";
 import { Currency } from "../../utils/Currency";
 import { getDate } from "../../utils/GetDate";
@@ -15,7 +15,7 @@ import InnerStageCard from "../CustomCard/InnerStageCard";
 
 export default function OrderSetStage(params) {
     
-    const { search, order, amount, task, dataStages, approve, allowance } = params;
+    const { search, order, amount, task, dataStages, permit2Nonce } = params;
     const { confirm } = Modal;
     let [progressSet, setProgressSet] = useState();
     let [stage, setStage] = useSetState({
@@ -29,9 +29,6 @@ export default function OrderSetStage(params) {
     let [inner, setInner] = useState();     //  阶段划分
     const { chain } = useNetwork();
     const { address } = useAccount();
-
-    const { useOrderContractWrite: payOrder } = useContracts('permitStage')
-    
 
     // 链上数据
     const { useDeOrderVerifierRead: nonces } = useRead('nonces', [address, Number(order.order_id)]);
@@ -49,6 +46,14 @@ export default function OrderSetStage(params) {
     // 设置阶段按钮
     let [btnDisabled,setBtnDisabled] = useState(true);
     let [isLoading,setIsLoading] = useState(false);
+
+    let [signature,setSignature] = useState();
+    let [permit2Ready, setPermit2Ready] = useState(false);
+    let [permit2, setPermit2] = useState({});  //  permit2
+    const { useOrderContractWrite: permit2Write } = useContracts('payOrderWithPermit2');  //  permit2
+    const { useSign: permit2Sign, obj: permit2Obj } = useSignPermit2Data(permit2);  //  permit2
+
+
 
     //  切换order模式 ==> 预付款
     const toggleModel = (e) => {
@@ -100,7 +105,8 @@ export default function OrderSetStage(params) {
             _amount.push(amount);
             _period.push(`${e.period * 24 * 60 * 60}`)
         })
-
+        // console.log(nonces);
+        // return
         signObj = {
             amounts: _amount,
             periods: _period,
@@ -213,6 +219,8 @@ export default function OrderSetStage(params) {
             })
             return
         }
+        // 签名 ==> TODO: ==>
+
         setIsLoading(true);
         let sum = 0;
         dataStages.map(e => {
@@ -243,22 +251,11 @@ export default function OrderSetStage(params) {
         let _period = [];
         let funcList = [];
 
-
-
         dataStages.map((e,i) => {
             var amount = Currency(order.currency, e.amount)
             _amount.push(amount);
             _period.push(e.period * 24 * 60 * 60);
         })
-
-
-        // console.log(order.order_id, _amount, _period, order.sign_nonce, order.stages.deadline, v, r, s);
-        // payOrder.write({
-        //     recklesslySetUnpreparedArgs: [
-        //         order.order_id, _amount, _period, order.sign_nonce, order.stages.deadline, v, r, s
-        //     ]
-        // })
-        // return
         funcList.push({
             functionName: 'permitStage',
             params: [order.order_id, _amount, _period, order.sign_nonce, order.stages.deadline, v, r, s]
@@ -309,19 +306,6 @@ export default function OrderSetStage(params) {
             setIsLoading(false);
         })
     }
-
-    useEffect(() => {
-        if (payOrder.isSuccess) {
-            console.log(payOrder.data);
-        }
-    },[payOrder.isSuccess])
-
-    useEffect(() => {
-        if (payOrder.error) {
-            console.log(payOrder);
-            console.log(payOrder.error);
-        }
-    },[payOrder.error])
 
     // 总计各阶段
     const printStageTotal = () => {
@@ -391,17 +375,7 @@ export default function OrderSetStage(params) {
             // 乙方同意阶段划分
             setStatus('WorkerAgreeStage')
         }
-        if (order.currency !== ethers.constants.AddressZero && allowance.data.toString() == 0) {
-            // approve
-            // const orderAddress = require("../../../deployments/dev/DeOrder.json").address;  //  DeOrder
-            approve.writeAsync({
-                recklesslySetUnpreparedArgs: [
-                    Sysmbol().DeOrder, (Math.pow(2,32)-1).toString()
-                ]
-            })
-        }else{
-            permitStage()
-        }
+        permitStage()
     }
 
     const changeAdvance = (e) => {
@@ -541,13 +515,6 @@ export default function OrderSetStage(params) {
                 break;
         }
     }
-
-    // approve 成功
-    useEffect(() => {
-        if (approve.isSuccess) {
-            permitStage();
-        }
-    },[approve.isSuccess])
 
     useEffect(() => {
         // 判断是否设置过

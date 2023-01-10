@@ -457,6 +457,116 @@ contract DeTaskTest is Test, Permit2Sign {
         vm.stopPrank();
     }
 
+    // appendStage
+    // @Summary 添加阶段
+    function appendStage(address sign, address submit) public {
+        uint256 _orderId = 1;
+        uint256 amount = 10;
+        uint256 period = 10;
+        uint256 nonce = _verifier.nonces(sign);
+        uint256 deadline = 200;
+        bytes32 structHash = keccak256(
+            abi.encode(
+                _verifier.PERMITAPPENDSTAGE_TYPEHASH(),
+                _orderId,
+                amount,
+                period,
+                nonce,
+                deadline
+            )
+        );
+        bytes32 digest = ECDSA.toTypedDataHash(
+            _verifier.DOMAIN_SEPARATOR(),
+            structHash
+        );
+        // 签名
+        uint8 v;
+        bytes32 r;
+        bytes32 s;
+        if (sign == issuer) {
+            (v, r, s) = vm.sign(1, digest);
+        } else if (sign == worker) {
+            (v, r, s) = vm.sign(2, digest);
+        } else {
+            (v, r, s) = vm.sign(3, digest);
+        }
+        // 调用
+        vm.startPrank(submit);
+        deOrder.appendStage(_orderId, amount, period, nonce, deadline, v, r, s);
+        vm.stopPrank();
+    }
+
+    //testCannotAppendStage
+    // @Summary 添加阶段失败情况
+    function testCannotAppendStage() public {
+        createOrder(); // 创建Order
+        permitStage(worker, issuer, "Confirm"); // 许可阶段划分
+        uint256 _orderId = 1;
+        uint256 amount = 10;
+        uint256 period = 10;
+        uint256 nonce = 0;
+        uint256 deadline = 200;
+        bytes32 structHash = keccak256(
+            abi.encode(
+                _verifier.PERMITAPPENDSTAGE_TYPEHASH(),
+                _orderId,
+                amount,
+                period,
+                nonce,
+                deadline
+            )
+        );
+        bytes32 digest = ECDSA.toTypedDataHash(
+            _verifier.DOMAIN_SEPARATOR(),
+            structHash
+        );
+        // 甲方签名
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(1, digest);
+         payOrder(issuer, 100); // 支付
+        // 乙方调用
+        vm.startPrank(worker);
+        // 任务不在进行中
+        vm.expectRevert(abi.encodeWithSignature("ProgressError()"));
+        deOrder.appendStage(_orderId, amount, period, nonce, deadline, v, r, s);
+        vm.stopPrank();
+    }
+
+    // testAppendStage
+    // @Summary 测试添加阶段
+    function testAppendStage() public {
+        createOrder(); // 创建Order
+        permitStage(worker, issuer, "Due"); // 阶段划分
+        payOrder(issuer, 100); // 支付
+        startOrder(issuer); // 开始任务
+        uint256 _orderId = 1;
+        uint256 amount = 100;
+        uint256 period = 10;
+        uint256 nonce = 0;
+        uint256 deadline = 200;
+        bytes32 structHash = keccak256(
+            abi.encode(
+                _verifier.PERMITAPPENDSTAGE_TYPEHASH(),
+                _orderId,
+                amount,
+                period,
+                nonce,
+                deadline
+            )
+        );
+        bytes32 digest = ECDSA.toTypedDataHash(
+            _verifier.DOMAIN_SEPARATOR(),
+            structHash
+        );
+        // 甲方签名
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(1, digest);
+        payOrder(issuer, 100); // 支付
+        // 乙方调用
+        vm.startPrank(worker);
+        deOrder.appendStage(_orderId, amount, period, nonce, deadline, v, r, s);
+        vm.stopPrank();
+    }
+
+
     // startOrder
     // @Summary 开始任务
     function startOrder(address who) public {

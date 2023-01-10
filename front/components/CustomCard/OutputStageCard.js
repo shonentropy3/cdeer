@@ -28,14 +28,12 @@ export default function OutputStageCard(params) {
     let [isLoading, setIsLoading] = useState(false);
     let [activeIndex, setActiveIndex] = useState();
     let [deadline, setDeadline] = useState();
-    let [going, setGoing] = useState(false);
-    
 
     const { useDeOrderVerifierRead: nonces } = useRead('nonces', [address, Number(oid)]);
     // 交付
     const { useOrderContractWrite: updateAttachment } = useContracts('updateAttachment');
     // 确认交付
-    const { useOrderContractWrite: confirmAttachment, test } = useContracts('confirmDelivery');
+    const { useOrderContractWrite: confirmAttachment } = useContracts('confirmDelivery');
     // 延期
     const { useOrderContractWrite: prolongStage } = useContracts('prolongStage');
     // 领钱
@@ -44,7 +42,6 @@ export default function OutputStageCard(params) {
     const { useOrderContractWrite: abortOrder } = useContracts('abortOrder');
     
     
-
     // 请求返回处理
     const handelRes = (res) => {
         if (res.code === 0) {

@@ -20,7 +20,7 @@ export default function UserDetail(params) {
                 user = res.data;
                 user.role = deform_Skills(user.role);
                 // 处理username
-                user.username = user?.username || (user.address.slice(0,5) + "..." + user.address.slice(user.address.length-5,user.address.length-1))
+                user.username = user?.username || (user.address.slice(0,5) + "..." + user.address.slice(user.address.length-4,user.address.length))
                 setUser({...user});
             }
         })

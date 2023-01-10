@@ -7,7 +7,6 @@ export default function InviteModal(params) {
     
     const { close, invitation, loading } = params;
     const dUSDT = Sysmbol().dUSDT;
-    const errorERC20 = "0xd57e02dA8f94d642C75C80CE1985Bf04416CA600";
 
 
     let [amount, setAmount] = useState();
@@ -20,7 +19,6 @@ export default function InviteModal(params) {
         >
           <Option key="1" value="0x0000000000000000000000000000000000000000">ETH</Option>
           <Option key="2" value={dUSDT}>dUSDT</Option>
-          <Option key="3" value={errorERC20}>errorERC20</Option>
         </Select>
     );
 

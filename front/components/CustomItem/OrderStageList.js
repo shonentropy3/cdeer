@@ -8,6 +8,7 @@ import { startOrder, updatedStage } from "../../http/_api/order";
 import OutputStageCard from "../CustomCard/OutputStageCard";
 import AppendStage from "./AppendStage";
 import { BigNumber } from '@ethersproject/bignumber'
+import { Sysmbol } from "../../utils/Sysmbol";
 
 
 export default function OrderStageList(params) {
@@ -34,66 +35,80 @@ export default function OrderStageList(params) {
     const { useOrderContractWrite: getWithdraw } = useContracts('withdraw');
 
 
-    // let [signature,setSignature] = useState();
-    // let [permit2, setPermit2] = useState({});  //  permit2
-    // const { useSign, obj } = useSignPermit2Data(permit2);  //  permit2
-    // const { useOrderContractWrite: permit2Write } = useContracts('payOrderWithPermit2');  //  permit2
-    // let [permit2Ready, setPermit2Ready] = useState(false);
+    let [signature,setSignature] = useState();
+    let [permit2, setPermit2] = useState({});  //  permit2
+    const { useSign, obj } = useSignPermit2Data(permit2);  //  permit2
+    const { useOrderContractWrite: permit2Write } = useContracts('payOrderWithPermit2');  //  permit2
+    let [permit2Ready, setPermit2Ready] = useState(false);
+    let _nonce = 2;
+    let _amount = 1;
+    let _token = "0xb23d2C9AE84ee60CfF90c394bfe79C74E794d012";
+    let _deadline = "2672910607";
 
-    // const testPermit2 = () => {
-    //     let now = parseInt(new Date().getTime()/1000);
-    //     let setTime = 2 * 24 * 60 * 60;
-    //     setDeadline(now+setTime)
-    //     // console.log('nonce ==>',BigNumber.from('0xffffffffffff').toString());
-    //     permit2 = {
-    //         chainId: chain.id,
-    //         token: "0x522981BEF10d0906935FB7747d9aE3bC1189e3A4",        //  dUSDT
-    //         amount: ethers.utils.parseEther(`${0.0001}`),
-    //         spender: "0x517b0cAE834407F993C8d3b49858A2C55D245b2A",
-    //         // nonce: BigNumber.from('0xffffffffffff').toString(),
-    //         nonce: '0',
-    //         deadline: '1672999039'
-    //     }
-    //     setPermit2({...permit2});
-    //     setPermit2Ready(true);
-    // }
+    const testPermit2 = () => {
+        let now = parseInt(new Date().getTime()/1000);
+        let setTime = 2 * 24 * 60 * 60;
 
-    // const writePermit2 = () => {
-    //     console.log(permit2Write);
-    //     console.log(permit2);
+        setDeadline(now+setTime)
+        permit2 = {
+            chainId: chain.id,
+            token: _token,        //  dUSDT
+            amount: _amount,
+            spender: Sysmbol().DeOrder,
+            nonce: _nonce,
+            deadline: _deadline
+        }
+        setPermit2({...permit2});
+        setPermit2Ready(true);
+    }
 
-    //     permit2Write.write({
-    //         recklesslySetUnpreparedArgs: [
-    //             order.order_id,
-    //             ethers.utils.parseEther(`${0.0001}`),
-    //             {
-    //                 permitted: {
-    //                     token: "0x522981BEF10d0906935FB7747d9aE3bC1189e3A4",        //  dUSDT
-    //                     amount: ethers.utils.parseEther(`${0.0001}`)
-    //                 },
-    //                 // nonce: BigNumber.from('0xffffffffffff').toString(),
-    //                 nonce: '0',
-    //                 deadline: '1672999039'
-    //             },
-    //             signature
-    //         ]
-    //     })
-    // }
+    const writePermit2 = () => {
+        console.log(permit2Write);
+        console.log(permit2);
 
-    // useEffect(() => {
-    //     if (permit2.chainId && permit2Ready) {
-    //         useSign.signTypedDataAsync()
-    //         .then(res => {
-    //             console.log('res ==> ', res);
-    //             setSignature(res);
-    //             // update(res, 'WaitAppendAgree')
-    //             // 修改data ==> 上传后端更新
-    //         })
-    //         .catch(err => {
-    //             // setIsLoading(false)
-    //         })
-    //     }
-    // },[permit2])
+        permit2Write.write({
+            recklesslySetUnpreparedArgs: [
+                order.order_id,
+                _amount,
+                {
+                    permitted: {
+                        token: _token,        //  dUSDT
+                        amount: _amount
+                    },
+                    nonce: _nonce,
+                    deadline: _deadline
+                },
+                signature
+            ]
+        })
+    }
+
+    useEffect(() => {
+        if (permit2Write.error) {
+            console.log(permit2Write.error);
+        }
+    },[permit2Write.isError])
+
+    useEffect(() => {
+        if (permit2Write.isSuccess) {
+            console.log(permit2Write.data);
+        }
+    },[permit2Write.isSuccess])
+
+    useEffect(() => {
+        if (permit2.chainId && permit2Ready) {
+            useSign.signTypedDataAsync()
+            .then(res => {
+                console.log('res ==> ', res);
+                setSignature(res);
+                // update(res, 'WaitAppendAgree')
+                // 修改data ==> 上传后端更新
+            })
+            .catch(err => {
+                // setIsLoading(false)
+            })
+        }
+    },[permit2])
 
 
     // 领钱
@@ -337,8 +352,8 @@ export default function OrderStageList(params) {
 
     return (
         <div className="stageCard">
-            {/* <Button onClick={() => testPermit2()}>Test Permit2</Button> */}
-            {/* <Button onClick={() => writePermit2()}>Test Permit2 Write</Button> */}
+            <Button onClick={() => testPermit2()}>Test Permit2</Button>
+            <Button onClick={() => writePermit2()}>Test Permit2 Write</Button>
             
             <p className="title">Task stage division</p>
             {

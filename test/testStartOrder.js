@@ -53,8 +53,8 @@ describe("testStartOrder", function () {
   it("测试付款，开始订单", async function () {
     let amount = ethers.utils.parseUnits("1", 6)
 
-    // let ab = await dUSDT.balanceOf(account1.address)
-    // console.log("dUSDT balance:", ab.toString())
+    let ab = await dUSDT.balanceOf(account1.address)
+    console.log("dUSDT balance:", ab.toString())
 
     let tx
     tx = await dUSDT.approve(DeOrder.address, amount);
@@ -64,7 +64,7 @@ describe("testStartOrder", function () {
     console.log("dUSDT allowanced:", allowanced.toString())
 
     try {
-      let tx = await DeOrder.payOrder(orderId, amount, {value: amount});
+      let tx = await DeOrder.payOrder(orderId, amount, {value: 0});
       await tx.wait();
     } catch (error) {
       console.log("payOrder error", error)
@@ -84,6 +84,9 @@ describe("testStartOrder", function () {
 
     tx = await DeOrder.startOrder(orderId);
     await tx.wait();
+
+    let receipt = await ethers.provider.getTransactionReceipt(tx.hash);
+    console.log("startOrder gasUsed" , receipt.gasUsed);
 
   });
 

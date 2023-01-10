@@ -7,6 +7,7 @@ interface IOrderVerifier {
         uint256 _orderId,
         uint256[] memory _amounts,
         uint256[] memory _periods,
+        uint256 payType,
         uint256 nonce,
         uint256 deadline,
         uint8 v,

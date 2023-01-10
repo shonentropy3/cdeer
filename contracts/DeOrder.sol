@@ -25,7 +25,7 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
     error UnSupportToken();
 
     uint private constant FEE_BASE = 10000;
-    uint public fee = 500;
+    uint public fee = 500;   // 5%
     address public feeTo;
 
     address public stage;
@@ -46,7 +46,7 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
 
     event OrderCreated(uint indexed taskId, uint indexed orderId,  address issuer, address worker, address token, uint amount);
     event OrderModified(uint indexed orderId, address token, uint amount);
-    event OrderStarted(uint indexed orderId, address who);
+    event OrderStarted(uint indexed orderId, address who, uint payType);
     event OrderAbort(uint indexed orderId, address who, uint stageIndex);
     event Withdraw(uint indexed orderId, uint amount, uint stageIndex);
     event AttachmentUpdated(uint indexed orderId, string attachment);
@@ -69,9 +69,11 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
         assert(msg.sender == address(WETH)); // only accept ETH via fallback from the WETH contract
     }
 
+    // 1 确定合作意向
     function createOrder(uint _taskId, address _issuer, address _worker, address _token, uint _amount) external payable {
         if(address(0) == _worker || address(0) == _issuer || _worker == _issuer) revert ParamError();
         safe96(_amount);
+
         if(!supportTokens[_token]) revert UnSupportToken();
 
         unchecked {
@@ -115,7 +117,9 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
         emit OrderModified(orderId, token, amount);
     }
 
+    // 2. 确定规划 （阶段、对应金额）
     function permitStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods,
+        PaymentType payType,
         uint nonce,
         uint deadline,
         uint8 v,
@@ -125,21 +129,18 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
         Order storage order = orders[_orderId];
         if(order.progress >= OrderProgess.Ongoing) revert ProgressError();
 
-        address signAddr = verifier.recoverPermitStage(_orderId, _amounts, _periods,
+        address signAddr = verifier.recoverPermitStage(_orderId, _amounts, _periods, uint(payType),
             nonce, deadline, v, r, s);
         
         roleCheck(order, signAddr);
 
         order.progress = OrderProgess.Staged;
-        if(_periods[0] == 0) { //  
-            order.payType = PaymentType.Confirm;
-        } else {
-            order.payType = PaymentType.Due;
-        }
+        order.payType = payType;
 
         IStage(stage).setStage(_orderId, _amounts, _periods);
     }
 
+    // 
     function prolongStage(uint _orderId, uint _stageIndex, uint _appendPeriod,
         uint nonce, uint deadline, uint8 v, bytes32 r, bytes32 s) external {
         Order storage order = orders[_orderId];
@@ -173,11 +174,13 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
         } 
     }
 
+    // 3. 付款 Permit
     function payOrderWithPermit(uint orderId, uint amount, uint deadline, uint8 v, bytes32 r, bytes32 s) external {
         IERC20Permit(orders[orderId].token).permit(msg.sender, address(this), amount, deadline, v, r, s);
         payOrder(orderId, amount);
     }
 
+    // 3. 付款
     // anyone can pay for this order
     function payOrder(uint orderId, uint amount) public payable nonReentrant {
         Order storage order = orders[orderId];
@@ -200,6 +203,7 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
         }
     }
 
+    // // 3. 付款 Permit2
     function payOrderWithPermit2(
         uint orderId,
         uint256 amount,
@@ -240,10 +244,11 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
         emit AttachmentUpdated(_orderId, _attachment);
     }
 
+    //  订单开始
     function startOrder(uint _orderId) external payable {
         Order storage order = orders[_orderId];
-        if(order.progress != OrderProgess.Staged) {
-            revert PermissionsError();
+        if(order.progress != OrderProgess.Staged || order.payType == PaymentType.Unknown) {
+            revert ProgressError();
         }
         
         if(order.amount != IStage(stage).totalAmount(_orderId)) revert AmountError(0);
@@ -251,11 +256,12 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
 
         order.progress = OrderProgess.Ongoing;
         order.startDate = uint32(block.timestamp);
-        emit OrderStarted(_orderId, msg.sender);
+        emit OrderStarted(_orderId, msg.sender, uint(order.payType));
         
         IStage(stage).startOrder(_orderId);
     }
 
+    // 甲方验收
     function confirmDelivery(uint _orderId, uint[] memory _stageIndexs) external {
         Order storage order = orders[_orderId];
         if(order.progress != OrderProgess.Ongoing) revert ProgressError();
@@ -307,6 +313,7 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
         doTransfer(order.token, _to, _amount);
     }
 
+    // 乙方提款
     // worker withdraw the fee.
     function withdraw(uint _orderId, address to) external {
         Order storage order = orders[_orderId];
