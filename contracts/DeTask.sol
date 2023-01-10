@@ -18,7 +18,6 @@ contract DeTask is SBTBase, Ownable {
     uint private applyFee = 0;
     address private feeReceiver;
 
-    address public order;
     address public meta;
 
     using Counters for Counters.Counter;
@@ -51,7 +50,7 @@ contract DeTask is SBTBase, Ownable {
         uint taskId = taskIds.current();        
         tasks[taskId] = TaskInfo({
             title: task.title,
-            attachment: task.attachment,
+            attachment: task.attachment,  // ipfs hash
             currency: task.currency,
             budget: task.budget,
             period: task.period,
@@ -100,6 +99,7 @@ contract DeTask is SBTBase, Ownable {
             disabled = task.disabled;
         }
 
+
     function applyFor(address who, uint taskId, uint _cost) public payable {
         require(msg.value >= applyFee, "low fee");
         doApply(who, taskId, _cost);
@@ -143,11 +143,6 @@ contract DeTask is SBTBase, Ownable {
     function transferFee(uint amount) external {
         (bool success, ) = feeReceiver.call{value: amount}(new bytes(0));
         require(success, 'ETH transfer failed');
-    }
-
-    function setOrder(address _order) external onlyOwner {
-        require(_order != address(0), "zero address");
-        order = _order;
     }
 
     function updateFeeReceiver(uint _taskFee, uint _applyFee, address _receiver) external onlyOwner {
