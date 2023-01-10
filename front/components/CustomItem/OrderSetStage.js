@@ -47,10 +47,12 @@ export default function OrderSetStage(params) {
     let [btnDisabled,setBtnDisabled] = useState(true);
     let [isLoading,setIsLoading] = useState(false);
 
+    // permit2
     let [signature,setSignature] = useState();
     let [permit2Ready, setPermit2Ready] = useState(false);
     let [permit2, setPermit2] = useState({});  //  permit2
-    const { useOrderContractWrite: permit2Write } = useContracts('payOrderWithPermit2');  //  permit2
+    let [permitDeadline, setPermitDeadline] = useState();
+    const { useOrderContractWrite: permit2Write, test } = useContracts('permitStage');  //  permit2
     const { useSign: permit2Sign, obj: permit2Obj } = useSignPermit2Data(permit2);  //  permit2
 
 
@@ -113,6 +115,7 @@ export default function OrderSetStage(params) {
             chainId: chain.id,
             address: address,
             oid: search.order_id,
+            payType: 1,     //  TODO ==> 临时变量
             nonce: Number(nonces.data.toString()),
             deadline: stages.deadline
         }
@@ -219,7 +222,6 @@ export default function OrderSetStage(params) {
             })
             return
         }
-        // 签名 ==> TODO: ==>
 
         setIsLoading(true);
         let sum = 0;
@@ -258,13 +260,32 @@ export default function OrderSetStage(params) {
         })
         funcList.push({
             functionName: 'permitStage',
-            params: [order.order_id, _amount, _period, order.sign_nonce, order.stages.deadline, v, r, s]
+            params: [order.order_id, _amount, _period, 1, order.sign_nonce, order.stages.deadline, v, r, s]
         })
-        funcList.push({
-            functionName: 'payOrder',
-            params: [order.order_id, value]
-        })
-        if ((order.amount / Math.pow(10,18)) !== sum) {
+        if (order.currency !== ethers.constants.AddressZero) {
+            funcList.push({
+                functionName: 'payOrderWithPermit2',
+                params: [
+                    order.order_id, 
+                    value, 
+                    {
+                        permitted: {
+                            token: order.currency,        //  dUSDT
+                            amount: value
+                        },
+                        nonce: permit2Nonce.toString(),
+                        deadline: `${permitDeadline}`
+                    },
+                    signature
+                ]
+            })           
+        }else{
+            funcList.push({
+                functionName: 'payOrder',
+                params: [order.order_id, value]
+            })
+        }
+        if (Currency(order.currency,order.amount) !== sum) {
             funcList.push({
                 functionName: 'modifyOrder',
                 params: [order.order_id, order.currency, value]
@@ -277,6 +298,7 @@ export default function OrderSetStage(params) {
         if (order.currency !== ethers.constants.AddressZero) {
             value = 0
         }
+        console.log(funcList);
         multicallWrite(muticallEncode(funcList),address,value)
         .then(res => {
             if (res) {
@@ -375,7 +397,33 @@ export default function OrderSetStage(params) {
             // 乙方同意阶段划分
             setStatus('WorkerAgreeStage')
         }
-        permitStage()
+        if (address != order.worker && order.currency != ethers.constants.AddressZero) {
+            // 签名 ==> TODO: ==>
+            let sum = 0;
+            dataStages.map(e => {
+                sum += e.amount;
+            })
+            let now = parseInt(new Date().getTime()/1000);
+            let setTime = 60 * 60;
+            permitDeadline = now+setTime;
+            setPermitDeadline(permitDeadline);
+            // console.log(typeof permitDeadline);
+            // console.log(permitDeadline);
+            // return
+            permit2 = {
+                chainId: chain.id,
+                token: order.currency,        //  dUSDT
+                amount: Currency(order.currency, sum),
+                spender: Sysmbol().DeOrder,
+                // nonce: ethers.utils.parseEther(`${permit2Nonce}`),
+                nonce: permit2Nonce.toString(),
+                deadline: `${permitDeadline}`
+            }
+            setPermit2({...permit2});
+            setPermit2Ready(true);
+        }else{
+            permitStage()
+        }
     }
 
     const changeAdvance = (e) => {
@@ -531,6 +579,25 @@ export default function OrderSetStage(params) {
             setStage({...stage});
         }
     },[])
+
+    // 发起permit2签名
+    useEffect(() => {
+        if (permit2.chainId && permit2Ready) {
+            permit2Sign.signTypedDataAsync()
+            .then(res => {
+                signature = res;
+                setSignature(signature);
+                console.log("signature ==>",signature);
+                if (res) {
+                    permitStage();
+                }
+            })
+            .catch(err => {
+                // setIsLoading(false)
+            })
+        }
+        console.log('签名 ===>', permit2.chainId, permit2Ready, permit2Obj, permit2Sign);
+    },[permit2])
 
     // 发起签名
     useEffect(() => {

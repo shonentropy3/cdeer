@@ -85,6 +85,7 @@ export default function ApplyList(params) {
             // 判断当前币种是否approve ==> 发起approve
             switch (token) {
                 case Sysmbol().dUSDT:
+                    console.log('allowance ===>',dUSDTallowance.data.toString());
                     if (dUSDTallowance.data.toString() == 0) {
                         await tokenIsApprove(dUSDTapprove)
                     }

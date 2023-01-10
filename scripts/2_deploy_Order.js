@@ -23,7 +23,7 @@ async function main() {
     // const order = await contractFactory.deploy(WETHAddr.address, "0x000000000022D473030F116dDEE9F6B43aC78BA3", VerifierAddr.address);
 
     // buildBear
-    const order = await contractFactory.deploy(WETHAddr.address, "0x000000000022D473030F116dDEE9F6B43aC78BA3", VerifierAddr.address);
+    const order = await contractFactory.deploy(WETHAddr.address, "0xd5fcbca53263fcac0a98f0231ad9361f1481692b", VerifierAddr.address);
 
     await order.deployed();
     console.log("DeOrder deployed to:", order.address);
