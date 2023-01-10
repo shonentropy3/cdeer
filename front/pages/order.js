@@ -32,11 +32,6 @@ export default function Order(props) {
     let [isUse, setIsUse] = useState(true);
     const { usePermit2Read: permit2Nonce } = useRead('nonceBitmap', [address, nonceBitmap])
 
-    // dUSDT授权
-    const { usedUSDTContractWrite: dUSDTapprove } = useContracts('approve');
-    // dUSDT是否授权
-    const { usedUSDTRead: dUSDTallowance } = useRead('allowance', [address, process.env.NEXT_PUBLIC_PERMIT2])
-
     useEffect(() => {
         if (permit2Nonce.data && nonce != 0) {
             isUse = Permit2Nonce(nonce, permit2Nonce.data.toString())
@@ -56,8 +51,6 @@ export default function Order(props) {
                     task={task} 
                     amount={task.budget}
                     dataStages={stages}
-                    approve={dUSDTapprove}
-                    allowance={dUSDTallowance}
                  />     //   设置阶段
             default:
                 return <OrderStageList 
@@ -132,27 +125,6 @@ export default function Order(props) {
         })
     }
 
-    // const currencyAllowance = () => {
-
-    //     function isApprove(allowance, func) {
-    //         console.log(allowance);
-    //         if (allowance == 0) {
-    //             approve = func;
-    //             setApprove({...approve});
-    //         }
-    //     }
-    //     switch (order?.currency) {
-    //         case Sysmbol().dUSDT:
-    //             allowance = dUSDTallowance.data.toString();
-    //             isApprove(allowance, dUSDTapprove);
-    //             break;
-        
-    //         default:
-    //             break;
-    //     }
-    //     setAllowance(allowance);
-    // }
-
     const nonceInit = () => {
         nonce = BigNumberRandom();
         setNonce(nonce);
@@ -165,14 +137,6 @@ export default function Order(props) {
         init();
         nonceInit()
     },[])
-
-    // const approveTest = () => {
-    //     approve.writeAsync({
-    //         recklesslySetUnpreparedArgs: [
-    //             "0xd5fcbca53263fcac0a98f0231ad9361f1481692b", (Math.pow(2,32)-1).toString()
-    //         ]
-    //     })
-    // }
 
     return <div className="WorkerProject">
                 <TaskNav task={task} />

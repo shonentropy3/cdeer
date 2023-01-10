@@ -15,7 +15,7 @@ import InnerStageCard from "../CustomCard/InnerStageCard";
 
 export default function OrderSetStage(params) {
     
-    const { search, order, amount, task, dataStages, approve, allowance } = params;
+    const { search, order, amount, task, dataStages } = params;
     const { confirm } = Modal;
     let [progressSet, setProgressSet] = useState();
     let [stage, setStage] = useSetState({
@@ -373,17 +373,7 @@ export default function OrderSetStage(params) {
             // 乙方同意阶段划分
             setStatus('WorkerAgreeStage')
         }
-        // 所选币种是否为ERC20 ==> 所选币种是否approve过Permit2
-        if (order.currency !== ethers.constants.AddressZero && allowance.data.toString() == 0) {
-            // dUSDT approve
-            approve.writeAsync({
-                recklesslySetUnpreparedArgs: [
-                    process.env.NEXT_PUBLIC_PERMIT2, (Math.pow(2,32)-1).toString()
-                ]
-            })
-        }else{
-            permitStage()
-        }
+        permitStage()
     }
 
     const changeAdvance = (e) => {
@@ -523,13 +513,6 @@ export default function OrderSetStage(params) {
                 break;
         }
     }
-
-    // approve 成功
-    useEffect(() => {
-        if (approve.isSuccess) {
-            permitStage();
-        }
-    },[approve?.isSuccess])
 
     useEffect(() => {
         // 判断是否设置过
