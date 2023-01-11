@@ -182,7 +182,7 @@ export default function TaskItem(params) {
             skeletonHash && select === skeletonHash.bar &&    
             <div className="item" >
                 <div className="li">
-                    <Skeleton active />
+                    <Skeleton active title={false} />
                 </div>
             </div>
         }

@@ -106,7 +106,6 @@ export default function OrderStageList(params) {
         setAppendParams({...appendParams});
 
         setAppendReady(true);
-        console.log('gpgpgpgpgpgpp');
     }
     // 乙方同意新增
     const agreeAppend = () => {
@@ -314,6 +313,7 @@ export default function OrderStageList(params) {
     // 发起签名
     useEffect(() => {
         if (appendConfig.chainId && appendReady) {
+            console.log('appendSign ==> ',appendSign);
             appendSign.signTypedDataAsync()
             .then(res => {
                 update(res, 'WaitAppendAgree')

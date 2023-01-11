@@ -282,6 +282,7 @@ export function useSignAppendData(params) {
     contractAddress: orderVerifierAddr.address,
     orderId: params.orderId,
     amount: params.amount,
+    payType: params.payType,
     period: params.period,
     nonce: params.nonce,  
     deadline: params.deadline,
@@ -298,6 +299,7 @@ export function useSignAppendData(params) {
         { name: "orderId", type: "uint256" },
         { name: "amount", type: "uint256" },
         { name: "period", type: "uint256" },
+        { name: "payType", type: "uint256" },
         { name: "nonce", type: "uint256" },
         { name: "deadline", type: "uint256" },
       ]
@@ -306,6 +308,7 @@ export function useSignAppendData(params) {
       orderId: obj.orderId,
       amount: obj.amount,
       period: obj.period,
+      payType: obj.payType,
       nonce: obj.nonce,
       deadline: obj.deadline,
     },
