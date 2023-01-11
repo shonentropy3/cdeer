@@ -9,7 +9,7 @@ import OutputStageCard from "./OutputStageCard";
 export default function InnerStageCard(params) {
     
 
-    const { defaultAmount, getInner, dataStages, edit, setIsChange } = params;
+    const { defaultAmount, getInner, dataStages, edit, setIsChange, token } = params;
 
     const [activeKey, setActiveKey] = useState();    //  当前选中标签
     let [items,setItems] = useState([]);    //  tabs
@@ -167,7 +167,7 @@ export default function InnerStageCard(params) {
         {
             items.length > 0 && viewModel && !dataStages &&
             <div className="stageList">
-            <OutputStageCard edit={onChange} remove={remove} cache={inner} />
+            <OutputStageCard edit={onChange} remove={remove} cache={inner} token={token} />
             <Button className="btn-add mb60" onClick={() => toggleModel()}>Establish</Button>
             </div>
         }

@@ -8,7 +8,7 @@ import { useEffect, useState } from "react"
 import { useAccount, useNetwork } from "wagmi";
 import { multicallWrite, muticallEncode, useContracts, useRead, useSignData, useSignPermit2Data } from "../../controller";
 import { startOrder, updatedStage } from "../../http/_api/order";
-import { Currency } from "../../utils/Currency";
+import { ConvertTokenAddress, Currency } from "../../utils/Currency";
 import { getDate } from "../../utils/GetDate";
 import { Sysmbol } from "../../utils/Sysmbol";
 import InnerStageCard from "../CustomCard/InnerStageCard";
@@ -352,7 +352,7 @@ export default function OrderSetStage(params) {
         for (const i in inner) {
             sum = sum.plus(inner[i].amount)
         }
-        return <p className="totalText">Total expenses: <span>{sum.toString()}</span></p>
+        return <p className="totalText">Total expenses: <span>{sum.toString()}{ConvertTokenAddress(order.currency)}</span></p>
     }
 
     // 总计周期
@@ -460,7 +460,7 @@ export default function OrderSetStage(params) {
                         </div> 
                     }
                 </div>
-                <InnerStageCard defaultAmount={amount} getInner={getInner} />
+                <InnerStageCard defaultAmount={amount} getInner={getInner} token={order.currency} />
                 
                 {
                     JSON.stringify(inner) !== '{}' && <>

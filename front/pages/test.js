@@ -8,6 +8,7 @@ export default function TestRouter(params) {
     useEffect(() => {
         // console.log(hash);
         console.log(router);
+        console.log(router.asPath.split('?'));
     },[hash])
 
     return <h1>TestRouter</h1>

@@ -29,7 +29,8 @@ function Userprojects() {
     let [pageConfig,setPageConfig] = useState({
         page: 1, pageSize: 5, total: 1
     })
-    let [isLoading,setIsLoading] = useState(false)
+    let [isLoading,setIsLoading] = useState(false);
+    let [skeletonHash, setSkeletonHash] = useState();
 
     const sidbar = {
         issuer: [
@@ -118,7 +119,11 @@ function Userprojects() {
     }
 
     const init = () => {
-        const { w, bar } = qs.parse(location.search.slice(1));
+        const { w, bar, hash } = qs.parse(location.search.slice(1));
+        console.log(hash);
+        // 骨架屏显示位置 ==> bar 
+        skeletonHash = {hash: hash, bar: bar};
+        setSkeletonHash({...skeletonHash});
         if (w) {
             who = w;
             setWho(who);
@@ -265,7 +270,16 @@ function Userprojects() {
                 }
             </div>
             <div className="content">
-                <TaskItem taskList={selectData} select={selectBar} who={who} taskModal={setShowModifyTaskModal} taskInfo={changeTaskInfo} setTaskInfo={setChangeTaskInfo} isLoading={isLoading} />
+                <TaskItem 
+                    taskList={selectData} 
+                    select={selectBar} 
+                    who={who} 
+                    skeletonHash={skeletonHash}
+                    taskModal={setShowModifyTaskModal} 
+                    taskInfo={changeTaskInfo} 
+                    setTaskInfo={setChangeTaskInfo} 
+                    isLoading={isLoading} 
+                />
                 {
                     selectData.length > 0 &&
                     <Pagination

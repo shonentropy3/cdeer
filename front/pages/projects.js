@@ -23,25 +23,6 @@ export default function Projects() {
         page: 1, pageSize: 10, total: 1
     })
 
-    const handleRouteChangeError = (err, url) => {
-        if (err.cancelled) {
-          console.log(`Route to ${url} was cancelled!`)
-        }
-        console.log('url ==>',url);
-    }
-
-    const testRouter = () => {
-        // history.pushState('ewqeqw','','/test')
-        history.push({
-            pathname: '/test',
-            state: {
-                hash: "dasdadss"
-            }
-        });
-        // router.push({pathname:"/test" , isPreview: true })
-        // router.events.on('routeChangeError', handleRouteChangeError)
-    }
-    
     // 跳转
     const goProject = (id) => {
         let flag = false;
@@ -101,7 +82,6 @@ export default function Projects() {
     return <div className="Projects">
         <div className='banner'>
             <div className='banner-content'>
-                <Button onClick={() => testRouter()}>Tesst</Button>
                 <p className='content-title'>Looking for items</p>
                 <p className='content-subtitle'>There are skilled developers here</p>
             </div>

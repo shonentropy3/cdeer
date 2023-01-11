@@ -1,11 +1,11 @@
-import { Button, Empty, Modal, message } from "antd";
+import { Button, Empty, Modal, message, Skeleton } from "antd";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { modifyApplySwitch, deleteTask } from '../../http/_api/task'
 export default function TaskItem(params) {
     
-    const { taskList, select, who, taskModal, setTaskInfo, taskInfo, isLoading } = params;
+    const { taskList, select, who, taskModal, setTaskInfo, taskInfo, isLoading, skeletonHash } = params;
     const router = useRouter();
     const { address } = useAccount();
 
@@ -59,6 +59,7 @@ export default function TaskItem(params) {
             }
         })
     }
+    // TODO 
 
     const print = () => {
         switch (select) {
@@ -176,10 +177,20 @@ export default function TaskItem(params) {
         }
     }
 
-    return (
-        taskList.length > 0 ?
-            print()
-            :
-            <Empty />
-    )
+    return <>
+        {
+            skeletonHash && select === skeletonHash.bar &&    
+            <div className="item" >
+                <div className="li">
+                    <Skeleton active />
+                </div>
+            </div>
+        }
+        {
+            taskList.length > 0 ?
+                print()
+                :
+                <Empty />
+        }
+    </>
 }

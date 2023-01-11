@@ -180,7 +180,7 @@ export default function Publish() {
         .then(res => {
           message.success('交易成功');
           setTimeout(() => {
-              router.push(`/user/projects?w=issuer&bar=tasks`)    //  跳转链接
+              router.push(`/user/projects?w=issuer&bar=tasks&hash=${Task.data.hash}`)    //  跳转链接
           }, 500);
         })
         .catch(err => {
