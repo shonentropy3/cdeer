@@ -1,5 +1,6 @@
 import { Button } from "antd";
 import { useEffect, useState } from "react";
+import { ConvertTokenAddress } from "../../utils/Currency";
 import { getDate } from "../../utils/GetDate";
 
 
@@ -252,7 +253,7 @@ export default function StageOutput(params) {
             </p>
             <p className="container">
                 <span>Stage cost:</span>
-                {detail?.amount}
+                {detail?.amount}{ConvertTokenAddress(Order.currency)}
             </p>
             <div className="container">
                 <span>Delivery instructions:</span>

@@ -14,6 +14,7 @@ import { useContracts, useRead } from "../controller";
 import { Sysmbol } from "../utils/Sysmbol";
 import BigNumber from "bignumber.js";
 import { BigNumberRandom, NonceBitmap, Permit2Nonce } from "../utils/Permit2Nonce";
+import { ConvertToken, ConvertTokenAddress, Currency } from "../utils/Currency";
 
 export default function Order(props) {
     
@@ -82,11 +83,13 @@ export default function Order(props) {
         getOrderDetail({order_id: order_id, ...obj})
         .then(res => {
             if (res.data?.list?.length !== 0) {
+                order = res.data.list[0];
                 task = res.data.list[0].task;
                 task.role = deform_Skills(task.role);
-                setTask({...task});
+                task.budget = ConvertToken(order.currency, order.amount);
+                task.currency = ConvertTokenAddress(order.currency);
+
                 delete res.data.list[0].task;
-                order = res.data.list[0];
                 if (order.stage_json) {
                     // 如果有last_stage_json ==>
                     // 如果有last_stages ==>
@@ -116,6 +119,7 @@ export default function Order(props) {
                     stages = arr;
                     setStages([...stages]);
                 }
+                setTask({...task});
                 setOrder({...order});
 
                 if (order.progress !== 0 && order.progress !== 1) {

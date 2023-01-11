@@ -16,6 +16,20 @@ export function Currency(token, value) {
     return newValue
 }
 
+export function ConvertToken(token, value) {
+    let newValue;
+    switch (token) {
+        case Sysmbol().dUSDT:
+            newValue = value / Math.pow(10,6);
+            break;
+    
+        default:
+            newValue = value / Math.pow(10,18);
+            break;
+    }
+    return newValue
+}
+
 export function ConvertTokenAddress(tokenAddress) {
     let token;
     switch (tokenAddress) {

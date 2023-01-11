@@ -11,7 +11,7 @@ describe("testCreateTask", function () {
         
         dUSDT = await ethers.getContractAt("dUSDT", dUSDTAddr.address, account1);
     
-        console.log("dUSDT ==>",dUSDT);
+        // console.log("dUSDT ==>",dUSDT);
       });
 
       it("transfer", async function () {
