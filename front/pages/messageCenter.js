@@ -6,6 +6,7 @@ import { getDate } from "../utils/GetDate";
 import Identicon from "identicon.js";
 import { message, Pagination } from "antd";
 import { getJwt } from "../utils/GetJwt";
+import { HashAvatar } from "../utils/HashAvatar";
 
 export default function MessageCenter(params) {
     
@@ -35,11 +36,17 @@ export default function MessageCenter(params) {
         setPageConfig({...pageConfig});
     }
 
-    const hashAvt = (address) => {
-        var hash = address;  // 15+ hex chars
-        var data = new Identicon(hash, {format: 'svg'}).toString();
-        data = `data:image/svg+xml;base64,${data}`
-        return data
+    const switchAvatar = (e) => {
+        // 是否是自己的消息
+        if (e.send_id === 0) {
+            return <Image src="/icon/message.png" layout="fill" />
+        }else{
+            if (e.user.avatar) {
+                return <img src={process.env.NEXT_PUBLIC_DEVELOPMENT_API + "/" + e.avatar} alt="" />
+            }else{
+                return <img src={HashAvatar(e.user.address)} alt="" />
+            }
+        }          
     }
 
     const init = () => {
@@ -81,16 +88,7 @@ export default function MessageCenter(params) {
                         messageList.map((e,i) => 
                             <div key={e.ID} className="message-item" onClick={() => {read(e.ID,i)}}>
                                 <div className="item-icon">
-                                    {
-                                        // 是否是自己的消息
-                                        e.send_id === 0 ? 
-                                            <Image src="/icon/message.png" layout="fill" />
-                                        :
-                                            e.avatar ? 
-                                                <img src={process.env.NEXT_PUBLIC_DEVELOPMENT_API + "/" + e.avatar} alt="" />
-                                            :
-                                                <img src={hashAvt(e?.send_addr)} alt="" />
-                                    }
+                                    {switchAvatar(e)}
                                     {e.status === 0 && <div className="unread" />}
                                 </div>
                                 <div className={`item-content ${e.status === 0 ? "block" : "none"}`} dangerouslySetInnerHTML={{__html: e.message}} />

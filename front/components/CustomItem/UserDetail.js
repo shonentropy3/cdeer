@@ -1,8 +1,7 @@
-import { Tooltip } from "antd";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { getUserInfo } from "../../http/_api/public";
 import { deform_Skills } from "../../utils/Deform";
+import { HashAvatar } from "../../utils/HashAvatar";
 import UserSocialMedia from "./UserSocialMedia";
 
 
@@ -30,7 +29,17 @@ export default function UserDetail(params) {
         <div className="issuer-workerInfo">
             <div className="workerInfo-title">{who === 'issuer' ? '接单者' : '发单者'}</div>
             <div className="workerInfo-content">
-                <div className="img"></div>
+                <div className="img">
+                    {
+                        process &&
+                        <img 
+                            src={ user.avatar ? 
+                            process.env.NEXT_PUBLIC_DEVELOPMENT_API + "/" + user.avatar 
+                            :
+                            HashAvatar(user.address)} 
+                        />
+                    }
+                </div>
                 <div className="info">
                     <p className="title">{user.username}<span>View personal information</span></p>
                     <p className="subtitle">Good at skills： 

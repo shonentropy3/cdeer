@@ -17,6 +17,7 @@ import { useRouter } from "next/router";
 import Identicon from "identicon.js";
 import { Sysmbol } from "../utils/Sysmbol";
 import { Currency } from "../utils/Currency";
+import { HashAvatar } from "../utils/HashAvatar";
 
 export default function ApplyList(params) {
 
@@ -130,23 +131,6 @@ export default function ApplyList(params) {
         })
     }
 
-    // 头像
-    const hashAvt = (address) => {
-        var hash = address;  // 15+ hex chars
-        // var options = {
-        //     foreground: [r, g, b, 255],               // rgba black
-        //     background: [255, 255, 255, 255],         // rgba white
-        //     margin: 0.2,                              // 20% margin
-        //     size: 420,                                // 420px square
-        //     format: 'svg'                             // use SVG instead of PNG
-        //     };
-        // create a base64 encoded SVG
-        // var data = new Identicon(hash, options).toString();
-        var data = new Identicon(hash, {format: 'svg'}).toString();
-        data = `data:image/svg+xml;base64,${data}`
-        return data
-    }
-
     const init = async() => {
         const { task_id } = qs.parse(location.search.slice(1));
         contractParams = {
@@ -249,7 +233,7 @@ export default function ApplyList(params) {
                                             src={ e.user.avatar ? 
                                             process.env.NEXT_PUBLIC_DEVELOPMENT_API + "/" + e.user.avatar 
                                             :
-                                            hashAvt(e.apply_addr)} 
+                                            HashAvatar(e.apply_addr)} 
                                         />
                                     }
                                 </div>
