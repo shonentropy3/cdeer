@@ -8,7 +8,7 @@ if (typeof window !== "undefined") {
   const url = window.document.location.hostname;
   // 创建 axios 请求实例
 serviceAxios = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_DEVELOPMENT_API, // 基础请求地址
+  baseURL: "http://" + url + process.env.NEXT_PUBLIC_DEVELOPMENT_API, // 基础请求地址
   timeout: 60000 // 请求超时设置
 //   withCredentials: false, // 跨域请求是否需要携带 cookie
 });
