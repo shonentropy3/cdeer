@@ -58,7 +58,6 @@ function Userprojects() {
     let polling = useRef();
 
     const awaitRun = async() => {
-        // runAsync()
         polling.current = setInterval(() => {
             hashPending({hash: skeletonHash?.hash})
             .then(res => {
@@ -70,9 +69,7 @@ function Userprojects() {
                     router.push(href);
                 }
             })
-        }, 3000);
-        // console.log(data);
-
+        }, 1000);
     }
 
     const changeItem = value => {
