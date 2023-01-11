@@ -26,7 +26,6 @@ export default function OrderStageList(params) {
     let [appendObj, setAppendObj] = useState({name: '', period: '', amount: '', desc: ''});  //  新增
     let [appendParams, setAppendParams] = useState({});
     let [appendReady, setAppendReady] = useState(false);
-    let [multicall, setMulticall] = useState();
     const { useSign: appendSign, obj: appendConfig } = useSignAppendData(appendParams);  //  延长签名
 
     const { useStageRead: chainStages } = useRead('getStages',order.order_id);
@@ -100,7 +99,6 @@ export default function OrderStageList(params) {
             orderId: order.order_id,
             amount: Currency(order.currency, appendObj.amount),
             period: appendObj.period * 24 * 60 * 60,
-            payType: 1,     //  TODO ==> 临时变量
             nonce: Number(nonces.data.toString()),    //  id nonce form sql? or chain
             deadline: `${deadline}`,
         }
@@ -179,14 +177,11 @@ export default function OrderStageList(params) {
                 '0x' + order.signature.substring(2).substring(64, 128)
             ]
         })
-        multicall = arr;
-        setMulticall([...multicall]);
         console.log(arr);
-        let params = muticallEncode(multicall);
         if (order.currency !== ethers.constants.AddressZero) {
             amount = 0
         }
-        multicallWrite(params,address,amount)
+        multicallWrite(muticallEncode(arr),address,amount)
         .then(res => {
             if (res) {
                 //  更新数据库状态
@@ -393,6 +388,7 @@ export default function OrderStageList(params) {
                             cancel={setIsAppend}
                             updateAppend={updateAppend}
                             isLoading={isLoading}
+                            order={order}
                         />
                     </div>
                     :

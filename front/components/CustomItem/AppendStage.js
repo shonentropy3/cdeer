@@ -1,11 +1,12 @@
 import { Button, Input, InputNumber, message } from "antd";
 import { useEffect, useState } from "react";
+import { ConvertToken, ConvertTokenAddress } from "../../utils/Currency";
 const { TextArea } = Input;
 
 
 export default function AppendStage(params) {
     
-    const { setInner, inner, cancel, updateAppend, isLoading } = params;
+    const { setInner, inner, cancel, updateAppend, isLoading, order } = params;
     const [percent, setPercent] = useState([
         {title: '10%', value: 0.1, active: false},
         {title: '25%', value: 0.25, active: false},
@@ -13,6 +14,7 @@ export default function AppendStage(params) {
         {title: '75%', value: 0.75, active: false},
         {title: '100%', value: 1, active: false}
     ])
+    let [amount,setAmount] = useState();
 
     const changePercent = (i) => {
         percent.map(e => {
@@ -20,6 +22,16 @@ export default function AppendStage(params) {
         })
         percent[i].active = true;
         setPercent([...percent]);
+
+        // 百分比
+        if (order.amount !== 0) {
+            const _amount = ConvertToken(order.currency, order.amount)
+
+            inner.amount = _amount * percent[i].value;
+            setInner({...inner})
+            amount = inner.amount;
+            setAmount(amount);
+        }
     }
 
     const onChange = (key, value) => {
@@ -79,7 +91,7 @@ export default function AppendStage(params) {
                     }
                 </div>
                 <div className="flex">
-                    <InputNumber min={0} className="amount" onChange={(e) => onChange('amount', e)} /> <p>currency</p>
+                    <InputNumber min={0} value={amount} className="amount" onChange={(e) => onChange('amount', e)} /> <p>{ConvertTokenAddress(order.currency)}</p>
                 </div>
             </div>
         </div>
