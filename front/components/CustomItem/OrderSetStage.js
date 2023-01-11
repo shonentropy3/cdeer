@@ -52,7 +52,6 @@ export default function OrderSetStage(params) {
     let [permit2Ready, setPermit2Ready] = useState(false);
     let [permit2, setPermit2] = useState({});  //  permit2
     let [permitDeadline, setPermitDeadline] = useState();
-    const { useOrderContractWrite: permit2Write, test } = useContracts('permitStage');  //  permit2
     const { useSign: permit2Sign, obj: permit2Obj } = useSignPermit2Data(permit2);  //  permit2
 
 
@@ -407,9 +406,6 @@ export default function OrderSetStage(params) {
             let setTime = 60 * 60;
             permitDeadline = now+setTime;
             setPermitDeadline(permitDeadline);
-            // console.log(typeof permitDeadline);
-            // console.log(permitDeadline);
-            // return
             permit2 = {
                 chainId: chain.id,
                 token: order.currency,        //  dUSDT
@@ -587,7 +583,6 @@ export default function OrderSetStage(params) {
             .then(res => {
                 signature = res;
                 setSignature(signature);
-                console.log("signature ==>",signature);
                 if (res) {
                     permitStage();
                 }
@@ -596,7 +591,6 @@ export default function OrderSetStage(params) {
                 // setIsLoading(false)
             })
         }
-        console.log('签名 ===>', permit2.chainId, permit2Ready, permit2Obj, permit2Sign);
     },[permit2])
 
     // 发起签名
