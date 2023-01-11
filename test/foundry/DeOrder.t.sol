@@ -58,7 +58,7 @@ contract DeTaskTest is Test, Permit2Sign {
         console.log(owner);
         console.log(issuer);
         console.log(worker);
-        token0.mint(issuer, 100 ** 18);
+        token0.mint(issuer, 100**18);
         vm.startPrank(issuer);
         token0.approve(address(permit2), type(uint256).max);
         vm.stopPrank();
@@ -671,7 +671,7 @@ contract DeTaskTest is Test, Permit2Sign {
 
     // abortOrder
     // @Summary 中止任务
-    function abortOrder(address who, uint _orderId) public {
+    function abortOrder(address who, uint256 _orderId) public {
         vm.startPrank(who);
         deOrder.abortOrder(_orderId);
         vm.stopPrank();
@@ -701,5 +701,23 @@ contract DeTaskTest is Test, Permit2Sign {
         startOrder(issuer); // 开始任务
         // 中止任务 已经完成的阶段和预付款 付款给乙方
         abortOrder(worker, 1);
+    }
+
+    // issuer check worker withdraw
+    // @Summary 甲方验收 乙方提款
+    function testcheckAndwithdraw() public {
+        uint256[] memory _stageIndex = new uint256[](1);
+        _stageIndex[0] = 0;
+        createOrder(); // 创建Order
+
+        permitStage(worker, issuer, "Confirm"); // 许可阶段划分
+        payOrder(issuer, 100); // 付款
+        startOrder(issuer); // 开始任务
+        vm.startPrank(issuer); // 甲方
+        deOrder.confirmDelivery(1, _stageIndex);
+        vm.stopPrank();
+        vm.startPrank(worker); // 乙方
+        deOrder.withdraw(1, worker);
+        vm.stopPrank();
     }
 }
