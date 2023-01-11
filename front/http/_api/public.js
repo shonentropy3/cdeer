@@ -65,3 +65,12 @@ export const createUserInfo = (data) => {
         data,
     });
 }
+
+// 获取hash状态
+export const hashPending = (data) => {
+    return serviceAxios({
+        url: `/common/hashPending?hash=${data.hash}`,
+        method: "get",
+        data,
+    });
+}

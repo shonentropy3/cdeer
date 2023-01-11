@@ -1,5 +1,5 @@
 import { Button, Empty, Input, message, Modal, Pagination, Select } from "antd";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAccount } from 'wagmi'
 import { useRouter } from 'next/router'
 import { deform_Count, deform_Skills } from "../../utils/Deform";
@@ -9,10 +9,11 @@ import { applyFor,cancelApply } from "../../http/api/apply";
 import TaskItem from "../../components/CustomItem/TaskItem";
 
 import qs from 'querystring';
-import { searchTask } from "../../http/_api/public";
+import { hashPending, searchTask } from "../../http/_api/public";
 import { Modal_ModifyTask } from "../../components/Modal_modifyTask.js";
 import { getApplyList } from "../../http/_api/task";
 import { getOrderFinish, getOrderList } from "../../http/_api/order";
+import { useRequest } from "ahooks";
 
 function Userprojects() {
 
@@ -52,6 +53,27 @@ function Userprojects() {
     
     const router = useRouter()
     const { address } = useAccount();
+
+    // 轮询
+    let polling = useRef();
+
+    const awaitRun = async() => {
+        // runAsync()
+        polling.current = setInterval(() => {
+            hashPending({hash: skeletonHash?.hash})
+            .then(res => {
+                if (res.code === 0 && res.data === 2) {
+                    // 解析成功
+                    clearInterval(polling.current);
+                    let arr = router.asPath.split('&');
+                    let href = arr[0] + "&" + arr[1];
+                    router.push(href);
+                }
+            })
+        }, 3000);
+        // console.log(data);
+
+    }
 
     const changeItem = value => {
         router.push(`/user/projects?w=${who}&bar=${value}`)
@@ -120,7 +142,6 @@ function Userprojects() {
 
     const init = () => {
         const { w, bar, hash } = qs.parse(location.search.slice(1));
-        console.log(hash);
         // 骨架屏显示位置 ==> bar 
         skeletonHash = {hash: hash, bar: bar};
         setSkeletonHash({...skeletonHash});
@@ -214,6 +235,13 @@ function Userprojects() {
             }
         })
     }
+
+    // 骨架屏轮询
+    useEffect(() => {
+        if (skeletonHash?.hash) {
+            awaitRun()
+        }
+    },[skeletonHash?.hash])
 
     useEffect(()=>{
         Task.isSuccess ?

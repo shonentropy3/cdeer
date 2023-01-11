@@ -61,6 +61,7 @@
         border-radius: 5px;
         .item{
             margin-bottom: 30px;
+            padding-bottom: 34px;
             border-bottom: 1px solid #E2E2E2;
             .li{
                 width: 642px;
@@ -74,7 +75,6 @@
                 position: relative;
                 display: flex;
                 justify-content: space-between;
-                // align-items: center;
                 .li-info{
                     .title{
                         font-size: 18px;
@@ -154,7 +154,7 @@
             button{
                 width: 134px;
                 height: 40px;
-                margin: 11px auto 34px;
+                margin: 11px auto 0;
                 background: #1F1E2E;
                 border-radius: 31px;
                 position: relative;

@@ -1,6 +1,5 @@
 import { Button, Empty, Modal, message, Skeleton } from "antd";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { modifyApplySwitch, deleteTask } from '../../http/_api/task'
 export default function TaskItem(params) {
@@ -173,16 +172,15 @@ export default function TaskItem(params) {
                         </div>
                     </div>
                 )
-                break;
         }
     }
 
     return <>
         {
-            skeletonHash && select === skeletonHash.bar &&    
+            skeletonHash && skeletonHash.hash && select === skeletonHash.bar &&    
             <div className="item" >
                 <div className="li">
-                    <Skeleton active title={false} />
+                    <Skeleton active  paragraph={{ rows: 2, }} />
                 </div>
             </div>
         }
