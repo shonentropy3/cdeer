@@ -233,6 +233,26 @@ function Userprojects() {
         })
     }
 
+    const getData = () => {
+        const { w } = qs.parse(location.search.slice(1));
+        switch (selectBar) {
+            case 'tasks':
+                getTasks();
+                break;
+            case 'developping':
+                getDevelopping(w);
+                break;       
+            case 'developend':
+                getDevelopend(w);
+                break;
+            case 'apply':
+                getApplys();
+                break;
+            default:
+                break;
+        }
+    }
+
     // 骨架屏轮询
     useEffect(() => {
         if (skeletonHash?.hash) {
@@ -253,27 +273,12 @@ function Userprojects() {
     },[celTask.isSuccess])
 
     useEffect(() => {
-        const { w } = qs.parse(location.search.slice(1));
-        switch (selectBar) {
-            case 'tasks':
-                getTasks();
-                break;
-            case 'developping':
-                getDevelopping(w);
-                break;       
-            case 'developend':
-                getDevelopend(w);
-                break;
-            case 'apply':
-                getApplys();
-                break;
-            default:
-                break;
-        }
+        getData()
     },[selectBar, pageConfig.page])
 
     useEffect(() => {
         init()
+        getData()
     },[router])
 
     return (
