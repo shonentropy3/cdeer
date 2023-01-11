@@ -106,7 +106,7 @@ export default function Task() {
                 message.success(res.msg);
                 setApplyLoading(false)
                 setTimeout(()=>{
-                    router.push(`/user/projects?w=worker&bar=apply`)
+                    router.push(`/user/projects?w=worker&bar=apply&hash=${Task.data.hash}`)
                 },500)
             }else{
                 setApplyLoading(false)
@@ -125,7 +125,7 @@ export default function Task() {
                 setApplyLoading(false)
                 message.success(res.msg);
                 setTimeout(() => {
-                    router.push(`/user/projects?w=worker&bar=apply`)    //  跳转链接
+                    router.push(`/user/projects?w=worker&bar=apply&hash=${Task.data.hash}`)    //  跳转链接
                 }, 500);
             } else {
                 setApplyLoading(false)

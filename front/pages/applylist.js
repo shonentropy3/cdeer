@@ -86,7 +86,6 @@ export default function ApplyList(params) {
             // 判断当前币种是否approve ==> 发起approve
             switch (token) {
                 case Sysmbol().dUSDT:
-                    console.log('allowance ===>',dUSDTallowance.data.toString());
                     if (dUSDTallowance.data.toString() == 0) {
                         await tokenIsApprove(dUSDTapprove)
                     }
@@ -123,7 +122,7 @@ export default function ApplyList(params) {
         .then(res => {
           message.success('操作成功');
           setTimeout(() => {
-              router.push(`/user/projects?w=issuer&bar=developping`)    //  跳转链接
+              router.push(`/user/projects?w=issuer&bar=developping&hash=${hash}`)    //  跳转链接
           }, 500);
         })
         .catch(err => {
