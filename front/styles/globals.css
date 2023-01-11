@@ -23,7 +23,8 @@ p{
   min-height: 800px;
 }
 
-@media (prefers-color-scheme: dark) {
+/* 检测用户主题是否为深色 ==> prefers-color-scheme: dark */
+/* @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
   }
@@ -31,4 +32,4 @@ p{
     color: white;
     background: black;
   }
-}
+} */

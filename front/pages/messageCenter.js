@@ -64,6 +64,8 @@ export default function MessageCenter(params) {
        .then(res => {
             if (res.code === 0) {
                 messageList = res.data?.list || [];
+                pageConfig.total = res.data.total;
+                setPageConfig({...pageConfig})
                 messageList.map(e => {
                     e.created_at = getDate(e.created_at, 'd')
                 })
@@ -99,7 +101,7 @@ export default function MessageCenter(params) {
                         )
                     }
                 </div>
-                <Pagination onChange={(e) => changeConfig(e)} className="pagination" defaultCurrent={1} total={pageConfig.total} />
+                <Pagination onChange={(e) => changeConfig(e)} className="pagination" defaultCurrent={1} total={pageConfig.total} size={pageConfig.pageSize} />
             </div>
         </div>
     </div>
