@@ -705,19 +705,25 @@ contract DeTaskTest is Test, Permit2Sign {
 
     // issuer check worker withdraw
     // @Summary 甲方验收 乙方提款
-    function testcheckAndwithdraw() public {
+    function checkAndwithdraw() public {
         uint256[] memory _stageIndex = new uint256[](1);
-        _stageIndex[0] = 0;
-        createOrder(); // 创建Order
-
-        permitStage(worker, issuer, "Confirm"); // 许可阶段划分
-        payOrder(issuer, 100); // 付款
-        startOrder(issuer); // 开始任务
+        _stageIndex[0] = 0;  
         vm.startPrank(issuer); // 甲方
         deOrder.confirmDelivery(1, _stageIndex);
         vm.stopPrank();
         vm.startPrank(worker); // 乙方
         deOrder.withdraw(1, worker);
         vm.stopPrank();
+    }
+
+
+    // issuer check worker withdraw
+    // @Summary 测试甲方验收 和乙方提款
+    function testcheckAndwithdraw() public {
+        createOrder(); // 创建Order
+        permitStage(worker, issuer, "Confirm"); // 许可阶段划分
+        payOrder(issuer, 100); // 付款
+        startOrder(issuer); // 开始任务
+        checkAndwithdraw();
     }
 }
