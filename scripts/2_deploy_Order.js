@@ -15,12 +15,16 @@ async function main() {
     const [owner] = await hre.ethers.getSigners();
 
 
-
+    const permit2Addr = 
+        hre.network.name === "mumbai" ? 
+        "0x000000000022D473030F116dDEE9F6B43aC78BA3"
+        :
+        "0xd5fcbca53263fcac0a98f0231ad9361f1481692b";
 
     const contractFactory = await hre.ethers.getContractFactory("DeOrder");
 
     // polygon
-    const order = await contractFactory.deploy(WETHAddr.address, "0x000000000022D473030F116dDEE9F6B43aC78BA3", VerifierAddr.address);
+    const order = await contractFactory.deploy(WETHAddr.address, permit2Addr, VerifierAddr.address);
 
     // buildBear
     // const order = await contractFactory.deploy(WETHAddr.address, "0xd5fcbca53263fcac0a98f0231ad9361f1481692b", VerifierAddr.address);
