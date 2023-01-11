@@ -98,8 +98,9 @@ export default function OrderStageList(params) {
         appendParams = {
             chainId: chain.id,  //  id
             orderId: order.order_id,
-            amount: ConvertToken(order.currency, appendObj.amount),
+            amount: Currency(order.currency, appendObj.amount),
             period: appendObj.period * 24 * 60 * 60,
+            payType: 1,     //  TODO ==> 临时变量
             nonce: Number(nonces.data.toString()),    //  id nonce form sql? or chain
             deadline: `${deadline}`,
         }
@@ -119,7 +120,7 @@ export default function OrderStageList(params) {
         appendParams = {
             chainId: chain.id,  //  id
             orderId: order.order_id,
-            amount: ethers.utils.parseEther(`${cache.amount}`),
+            amount: Currency(order.currency, cache.amount),
             period: cache.period * 24 * 60 * 60,
             nonce: Number(nonces.data.toString()),    //  id nonce form sql? or chain
             deadline: `${deadline}`,
