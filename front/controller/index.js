@@ -330,7 +330,6 @@ export function useSignPermit2Data(params) {
     nonce: params.nonce,
     deadline: params.deadline
   }
-  
   const useSign = useSignTypedData({
     domain: {
       name: 'Permit2',

@@ -59,7 +59,8 @@ export default function Order(props) {
                     order={order} 
                     dataStages={stages} 
                     task={task} 
-                />     //   阶段开始
+                    permit2Nonce={nonce}
+                    />     //   阶段开始
         }
     }
 

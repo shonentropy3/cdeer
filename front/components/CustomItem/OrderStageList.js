@@ -9,12 +9,12 @@ import OutputStageCard from "../CustomCard/OutputStageCard";
 import AppendStage from "./AppendStage";
 import { BigNumber } from '@ethersproject/bignumber'
 import { Sysmbol } from "../../utils/Sysmbol";
-import { ConvertToken } from "../../utils/Currency";
+import { ConvertToken, Currency } from "../../utils/Currency";
 
 
 export default function OrderStageList(params) {
     
-    const { order, dataStages, task } = params;
+    const { order, dataStages, task, permit2Nonce } = params;
     const { address } = useAccount();
     const { chain } = useNetwork();
     let [data, setData] = useState([]);
@@ -34,6 +34,13 @@ export default function OrderStageList(params) {
     const { useDeOrderVerifierRead: nonces } = useRead('nonces', [address, Number(order.order_id)]);
     // 领钱
     const { useOrderContractWrite: getWithdraw } = useContracts('withdraw');
+
+    // permit2
+    let [signature,setSignature] = useState();
+    let [permit2Ready, setPermit2Ready] = useState(false);
+    let [permit2, setPermit2] = useState({});  //  permit2
+    let [permitDeadline, setPermitDeadline] = useState();
+    const { useSign: permit2Sign, obj: permit2Obj } = useSignPermit2Data(permit2);  //  permit2
 
     // 领钱
     const withdraw = () => {
@@ -91,7 +98,7 @@ export default function OrderStageList(params) {
         appendParams = {
             chainId: chain.id,  //  id
             orderId: order.order_id,
-            amount: ethers.utils.parseEther(`${appendObj.amount}`),
+            amount: ConvertToken(order.currency, appendObj.amount),
             period: appendObj.period * 24 * 60 * 60,
             nonce: Number(nonces.data.toString()),    //  id nonce form sql? or chain
             deadline: `${deadline}`,
@@ -99,6 +106,7 @@ export default function OrderStageList(params) {
         setAppendParams({...appendParams});
 
         setAppendReady(true);
+        console.log('gpgpgpgpgpgpp');
     }
     // 乙方同意新增
     const agreeAppend = () => {
@@ -127,13 +135,37 @@ export default function OrderStageList(params) {
         if (!inspection()) {
             return
         }
+        if (order.currency !== ethers.constants.AddressZero && !signature) {
+            // 发起permit2签名
+            permit2Get()
+            return
+        }
         let data = dataStages[dataStages.length-1];
-        let amount = ethers.utils.parseEther(`${data.amount}`);
+        let amount = Currency(order.currency, data.amount);
         let arr = [];
-        arr.push({
-            functionName: 'payOrder',
-            params: [order.order_id, amount]
-        })
+        if (order.currency !== ethers.constants.AddressZero) {
+            arr.push({
+                functionName: 'payOrderWithPermit2',
+                params: [
+                    order.order_id, 
+                    amount, 
+                    {
+                        permitted: {
+                            token: order.currency,        //  dUSDT
+                            amount: amount
+                        },
+                        nonce: permit2Nonce.toString(),
+                        deadline: `${permitDeadline}`
+                    },
+                    signature
+                ]
+            })
+        }else{
+            arr.push({
+                functionName: 'payOrder',
+                params: [order.order_id, amount]
+            })
+        }
         arr.push({
             functionName: 'appendStage',
             params: [
@@ -149,20 +181,45 @@ export default function OrderStageList(params) {
         })
         multicall = arr;
         setMulticall([...multicall]);
+        console.log(arr);
         let params = muticallEncode(multicall);
+        if (order.currency !== ethers.constants.AddressZero) {
+            amount = 0
+        }
         multicallWrite(params,address,amount)
         .then(res => {
-            console.log('multicall ==> ', res);
-            //  更新数据库状态
-            updatedStage({
-                order_id: order.order_id,
-                hash: res,
-                status: 'AgreeAppend'
-            })
-            .then(res => {
-                handelRes(res)
-            })
+            if (res) {
+                //  更新数据库状态
+                updatedStage({
+                    order_id: order.order_id,
+                    hash: res,
+                    status: 'AgreeAppend'
+                })
+                .then(res => {
+                    handelRes(res)
+                })
+            }
         })
+    }
+
+    const permit2Get = () => {
+        // 签名 ==> TODO: ==>
+        let data = dataStages[dataStages.length-1];
+        let amount = Currency(order.currency, data.amount);
+        let now = parseInt(new Date().getTime()/1000);
+        let setTime = 60 * 60;
+        permitDeadline = now+setTime;
+        setPermitDeadline(permitDeadline);
+        permit2 = {
+            chainId: chain.id,
+            token: order.currency,        //  dUSDT
+            amount: amount,
+            spender: Sysmbol().DeOrder,
+            nonce: permit2Nonce.toString(),
+            deadline: `${permitDeadline}`
+        }
+        setPermit2({...permit2});
+        setPermit2Ready(true);
     }
 
     // 更新阶段
@@ -209,6 +266,23 @@ export default function OrderStageList(params) {
             handelRes(res)
         })
     }
+
+    // 发起permit2签名
+    useEffect(() => {
+        if (permit2.chainId && permit2Ready) {
+            permit2Sign.signTypedDataAsync()
+            .then(res => {
+                signature = res;
+                setSignature(signature);
+                if (res) {
+                    payAppend();
+                }
+            })
+            .catch(err => {
+                // setIsLoading(false)
+            })
+        }
+    },[permit2])
 
     useEffect(() => {
         if (chainStages.data && data.length === 0) {
@@ -321,7 +395,7 @@ export default function OrderStageList(params) {
                         />
                     </div>
                     :
-                    order.progress === 4 && order.status !== 'WaitAppendAgree' && 
+                    order.progress === 2 && order.status !== 'WaitAppendAgree' && 
                     <Button className="btn-add mb60" onClick={() => setIsAppend(true)}>Establish</Button>
                 }
 
