@@ -34,7 +34,7 @@ goodiebag
 
 # Foundry files
 forge-cache
-lib
+/lib/%
 /lcov.info
 
 # Compiler files
