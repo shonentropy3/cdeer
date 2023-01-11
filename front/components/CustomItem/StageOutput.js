@@ -6,7 +6,7 @@ import { getDate } from "../../utils/GetDate";
 
 export default function StageOutput(params) {
     
-    const { data, index, edit, remove, isEdit, ongoing, stageIndex, who, updateDelivery, confirmDelivery, updateProlong, confirmProlong, rejectProlong, confirmAppend, rejectAppend, setActiveIndex, status, sign_address, address, Order, loading, withdraw, abort } = params;
+    const { data, index, edit, remove, isEdit, ongoing, stageIndex, who, updateDelivery, confirmDelivery, updateProlong, confirmProlong, rejectProlong, confirmAppend, rejectAppend, setActiveIndex, status, sign_address, address, Order, loading, withdraw, abort, token } = params;
     let [isOpen, setIsOpen] = useState(false);
     let [detail, setDetail] = useState();
     let [last, setLast] = useState(false);
@@ -253,7 +253,7 @@ export default function StageOutput(params) {
             </p>
             <p className="container">
                 <span>Stage cost:</span>
-                {detail?.amount}{ConvertTokenAddress(Order.currency)}
+                {detail?.amount}{ConvertTokenAddress(Order ? Order.currency : token)}
             </p>
             <div className="container">
                 <span>Delivery instructions:</span>

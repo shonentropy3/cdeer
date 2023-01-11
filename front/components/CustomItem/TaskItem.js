@@ -179,7 +179,7 @@ export default function TaskItem(params) {
 
     return <>
         {
-            select === skeletonHash.bar &&    
+            skeletonHash && select === skeletonHash.bar &&    
             <div className="item" >
                 <div className="li">
                     <Skeleton active />

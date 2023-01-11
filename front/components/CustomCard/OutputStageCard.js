@@ -11,7 +11,7 @@ import ProlongModal from "../CustomModal/ProlongModal";
 
 export default function OutputStageCard(params) {
     
-    const { edit, remove, cache, isEdit, data, stageIndex, who, oid, task, order, agreeAppend, payAppend, inspection } = params;
+    const { edit, remove, cache, isEdit, data, stageIndex, who, oid, task, order, agreeAppend, payAppend, inspection, token } = params;
     const { chain } = useNetwork();
     const { address } = useAccount();
 
@@ -405,6 +405,8 @@ export default function OutputStageCard(params) {
 
                         Order={order}
                         loading={isLoading}
+
+                        token={token}
                     />
                 </div>
             )
