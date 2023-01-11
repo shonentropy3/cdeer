@@ -7,6 +7,7 @@ import UserSocialMedia from '../components/CustomItem/UserSocialMedia';
 import { FormOutlined } from '@ant-design/icons';
 import { Button, Input, Modal } from 'antd';
 import ModifyUserModal from '../components/CustomModal/ModifyUserModal';
+import { HashAvatar } from '../utils/HashAvatar';
 const { confirm } = Modal;
 
 export default function MyInfo() {
@@ -45,13 +46,6 @@ export default function MyInfo() {
               console.log('Cancel');
             },
         });
-    }
-
-    const hashAvt = (address) => {
-        var hash = address;  // 15+ hex chars
-        var data = new Identicon(hash, {format: 'svg'}).toString();
-        data = `data:image/svg+xml;base64,${data}`
-        return data
     }
 
     const init = () => {
@@ -98,7 +92,7 @@ export default function MyInfo() {
                                 userInfo.avatar ? 
                                 <img src={process.env.NEXT_PUBLIC_DEVELOPMENT_API + "/" + userInfo.avatar} alt="" />
                                 :
-                                <img src={hashAvt(userInfo.address)} alt="" />
+                                <img src={HashAvatar(userInfo.address)} alt="" />
                             }
                         </div>
                         <p className="detail-name">

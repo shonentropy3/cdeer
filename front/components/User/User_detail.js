@@ -19,6 +19,7 @@ import {
 import Identicon, { IdenticonOptions } from "identicon.js";
 
 import { getUserInfo, createUserInfo, updateUserInfo } from '../../http/_api/user.js'
+import { HashAvatar } from '../../utils/HashAvatar.js';
 
 export default function User_detail () {
     const _data = require("../../data/data.json")
@@ -126,17 +127,6 @@ export default function User_detail () {
         })
     }
 
-    // 用户初始头像
-    const hashAvt = () => {
-        if (!address) {
-            return
-        }
-        var hash = address;  // 15+ hex chars
-        var data = new Identicon(hash, {format: 'svg'}).toString();
-        data = `data:image/svg+xml;base64,${data}`
-        return data
-    }
-
     // 初始化技能列表
     const initSkills = () => {
         let arr = []
@@ -210,8 +200,8 @@ export default function User_detail () {
             <div className="top">
                 <div className="img">
                     {
-                        wagmi.isActive ? 
-                        <img src={avatar?avatar:hashAvt()} alt="" />
+                        wagmi.isActive && address ? 
+                        <img src={avatar?avatar:HashAvatar(address)} alt="" />
                         :
                         ""
                     }

@@ -4,29 +4,13 @@ import Identicon from "identicon.js";
 import Image from "next/image"
 import { useEffect } from "react";
 import { deform_Skills } from "../../utils/Deform"
+import { HashAvatar } from "../../utils/HashAvatar";
 
 
 
 export default function UserInfoModal(params) {
     
     const { show, setShow, userInfo } = params;
-
-    // 头像
-    const hashAvt = (address) => {
-        var hash = address;  // 15+ hex chars
-        // var options = {
-        //     foreground: [r, g, b, 255],               // rgba black
-        //     background: [255, 255, 255, 255],         // rgba white
-        //     margin: 0.2,                              // 20% margin
-        //     size: 420,                                // 420px square
-        //     format: 'svg'                             // use SVG instead of PNG
-        //     };
-        // create a base64 encoded SVG
-        // var data = new Identicon(hash, options).toString();
-        var data = new Identicon(hash, {format: 'svg'}).toString();
-        data = `data:image/svg+xml;base64,${data}`
-        return data
-    }
 
     useEffect(() => {
         console.log(userInfo);
@@ -50,7 +34,7 @@ export default function UserInfoModal(params) {
                                 src={ userInfo.avatar ? 
                                 "http://" + window.document.location.hostname + process.env.NEXT_PUBLIC_DEVELOPMENT_API + userInfo.avatar 
                                 :
-                                hashAvt(userInfo.address)} 
+                                HashAvatar(userInfo.address)} 
                             />
                         }
                     </div>

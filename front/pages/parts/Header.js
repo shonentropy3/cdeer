@@ -9,6 +9,7 @@ import ConnectModal from '../../components/CustomModal/ConnectModal';
 import MessagePopover from '../../components/CustomItem/MessagePopover';
 import { unReadMsgList } from '../../http/_api/user';
 import store from '../../redux/store';
+import { HashAvatar } from '../../utils/HashAvatar';
 export default function Header(props) {
 
     const {isConnected, address} = useAccount()
@@ -82,26 +83,6 @@ export default function Header(props) {
         selectItem = value;
         setSelectItem(selectItem);
     }
-
-    const hashAvt = () => {
-        if (!address) {
-            return
-        }
-        var hash = address;  // 15+ hex chars
-        // var options = {
-        //     foreground: [r, g, b, 255],               // rgba black
-        //     background: [255, 255, 255, 255],         // rgba white
-        //     margin: 0.2,                              // 20% margin
-        //     size: 420,                                // 420px square
-        //     format: 'svg'                             // use SVG instead of PNG
-        //     };
-        // create a base64 encoded SVG
-        // var data = new Identicon(hash, options).toString();
-        var data = new Identicon(hash, {format: 'svg'}).toString();
-        data = `data:image/svg+xml;base64,${data}`
-        return data
-    }
-
 
     useEffect(() => {
         item.map(e => {
@@ -204,7 +185,10 @@ export default function Header(props) {
                             
                             <Dropdown overlay={menu} placement="bottom">
                                 <div>
-                                    <img className="img" src={hashAvt()} alt="" />
+                                    {
+                                        address && 
+                                        <img className="img" src={HashAvatar(address)} alt="" />
+                                    }
                                 </div>
                             </Dropdown>
                             <Dropdown overlay={menu1} placement="bottom" trigger={['click']}>

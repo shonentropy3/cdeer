@@ -838,6 +838,11 @@
                 border-radius: 50%;
                 background-color: yellowgreen;
                 margin-right: 28px;
+                overflow: hidden;
+                img{
+                    width: 100%;
+                    height: 100%;
+                }
             }
             .info{
                 display: flex;
