@@ -55,7 +55,6 @@
                 box-shadow: 0px 0px 44px -24px #7C7879;
                 border-radius: 10px;
                 overflow: hidden;
-                cursor: pointer;
                 .li-title{
                     width: 100%;
                     height: 85px;
@@ -70,49 +69,69 @@
                     padding: 42px 57px 32px 30px;
                     position: relative;
                 }
-                .li-info{
-                    .role{
-                        display: flex;
-                        align-items: center;
-                        span{
-                            padding: 3px 12px;
-                            font-size: 12px;
-                            color: #000000;
-                            line-height: 17px;
-                            letter-spacing: 1.14px;
-                            display: inline-block;
-                            &:nth-child(2n-1){
-                                background-color: #FFB1BE;
-                            }
-                            &:nth-child(2n){
-                                background-color: #FEE7B9;
-                            }
-                            &:nth-child(3n){
-                                background-color: #C9B1FF;
-                            }
+                .flex{
+                    display: flex;
+                }
+                .role{
+                    display: flex;
+                    align-items: center;
+                    span{
+                        padding: 3px 12px;
+                        font-size: 12px;
+                        color: #000000;
+                        line-height: 17px;
+                        letter-spacing: 1.14px;
+                        display: inline-block;
+                        &:nth-child(2n-1){
+                            background-color: #FFB1BE;
+                        }
+                        &:nth-child(2n){
+                            background-color: #FEE7B9;
+                        }
+                        &:nth-child(3n){
+                            background-color: #C9B1FF;
                         }
                     }
-                    .info-title{
-                        color: #828282;
+                }
+                .info-title{
+                    color: #828282;
+                    font-size: 18px;
+                    line-height: 25px;
+                    letter-spacing: 0.64px;
+                }
+                .info-content{
+                    margin-right: 80px;
+                    position: relative;
+                    &:last-child{
+                        margin-right: 0;
+                    }
+                    span{
                         font-size: 18px;
+                        font-weight: 500;
+                        color: #1F1E2E;
                         line-height: 25px;
-                        letter-spacing: 0.64px;
                     }
-                    .info-content{
-                        span{
-                            font-size: 18px;
-                            font-weight: 500;
-                            color: #1F1E2E;
-                            line-height: 25px;
+                    .avatar{
+                        width: 46px;
+                        height: 46px;
+                        background-color: yellowgreen;
+                        position: absolute;
+                        top: -10px;
+                        left: 81px;
+                        border-radius: 50%;
+                        overflow: hidden;
+                        img{
+                            width: 100%;
+                            height: 100%;
                         }
                     }
-                    .detail{
-                        margin-top: 22px;
-                        display: flex;
-                        p:first-child{
-                            margin-right: 80px;
-                        }
-                    }
+                }
+                .ml55{
+                    margin-left: 55px;
+                }
+                .detail{
+                    margin-top: 22px;
+                    display: flex;
                 }
                 .li-num{
                     margin-top: 15px;
@@ -143,7 +162,7 @@
                 display: flex;
                 justify-content: flex-end;
                 button{
-                    width: 150px;
+                    min-width: 150px;
                     height: 45px;
                     margin-right: 30px;
                     background-color: #E7E7E7;

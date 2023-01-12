@@ -2,6 +2,10 @@ import { Button, Empty, Modal, message, Skeleton } from "antd";
 import { useRouter } from "next/router";
 import { useAccount } from "wagmi";
 import { modifyApplySwitch, deleteTask } from '../../http/_api/task'
+import { ConvertToken, ConvertTokenAddress } from "../../utils/Currency";
+import { HashAvatar } from "../../utils/HashAvatar";
+
+
 export default function TaskItem(params) {
     
     const { taskList, select, who, taskModal, setTaskInfo, taskInfo, isLoading, skeletonHash } = params;
@@ -60,6 +64,22 @@ export default function TaskItem(params) {
     }
     // TODO 
 
+    const getAvatar = (url, addr) => {
+        if (url) {
+            return process.env.NEXT_PUBLIC_DEVELOPMENT_API + "/" + url
+        }else{
+            return HashAvatar(addr)
+        }
+    }
+
+    const getUsername = (name, addr) => {
+        if (name) {
+            return name
+        }else{
+            return addr.substring(0,5) + "..." + addr.substring(38,42)
+        }
+    }
+
     const print = () => {
         switch (select) {
             case 'tasks':
@@ -103,7 +123,7 @@ export default function TaskItem(params) {
                         </div>
                     </div>
                 )
-            case 'apply':
+            case 'apply':       //  TODO ==>
                 return taskList.map((e,i) => 
                     <div className="item" key={i} onClick={() => router.push(`/project?task_id=${e.task_id}`)}>
                         <div className="li">
@@ -134,44 +154,108 @@ export default function TaskItem(params) {
                 )
             case 'developping':
                 return taskList.map((e,i) => 
-                    <div className="item" key={i} onClick={() => router.push(`/order?w=${who}&order_id=${e.order_id}`)}>
+                    <div className="item" key={i}>
                         <div className="li">
-                            <div className="li-info">
-                                <p className="title">{e.task.title}</p>
-                                <p className="role">Recruitment type: {e.task.role.map((ele,index) => <span key={index}>{ele}</span> )}</p>
-                                <div className="detail">
-                                    <p>Cycle: {e.task.period / 60 / 60 / 24}天 <span>&nbsp;</span></p>
-                                    <p>Cost: 
-                                    {
-                                        e.task.budget == 0 ? 
-                                        <span>可报价</span>
-                                        :
-                                        <span>{e.task.budget}{e.task.currency}</span>
-                                    }   
-                                    </p>
+                        <div className="li-title">
+                                <p className="text-ellipsis">{e.task.title}</p>
+                            </div>
+                            <div className="li-content">
+                                <div className="li-info">
+                                    <p className="role info-title">Recruitment type: &nbsp;{e.task.role.map((ele,index) => <span key={index}>{ele}</span> )}</p>
+                                    <div className="detail">
+                                        <p className="info-content info-title">Cycle: &nbsp;<span>{e.task.period / 60 / 60 / 24}</span><span>&nbsp;Day</span></p>
+                                        
+                                        <p className="info-content info-title">Stage cost: &nbsp;
+                                        {
+                                            e.budget == 0 ? 
+                                            <span>可报价</span>
+                                            :
+                                            <span>{ConvertToken(e.currency, e.amount)}{ConvertTokenAddress(e.currency)}</span>
+                                        }
+                                        </p>
+                                        <div className="info-title info-content flex">
+                                            {
+                                                address === e.issuer ? "Worker" : "Issuer"
+                                            }: &nbsp;
+                                            <div className="avatar">
+                                                {
+                                                   address === e.issuer ? 
+                                                        <img src={getAvatar(e.worker_info.avatar, e.worker)} alt="" />
+                                                        :    
+                                                        <img src={getAvatar(e.issuer_info.avatar, e.issuer)} alt="" />
+                                                }
+                                            </div>
+                                            <span className="ml55">
+                                                {
+                                                    address === e.issuer ? 
+                                                        getUsername(e.worker_info.username, e.worker)
+                                                        :
+                                                        getUsername(e.issuer_info.username, e.issuer)
+                                                }
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
+                                {
+                                    address && 
+                                    <div className="btns">
+                                        <Button  onClick={() => router.push(`/order?w=${who}&order_id=${e.order_id}`)}>View project progress</Button>
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>
                 )
             default:
                 return taskList.map((e,i) => 
-                    <div className="item" key={i} onClick={() => router.push(`/order?w=${who}&order_id=${e.order_id}`)}>
+                    <div className="item" key={i}>
                         <div className="li">
-                            <div className="li-info">
-                                <p className="title">{e.task.title}</p>
-                                <p className="role">Recruitment type: {e.task.role.map((ele,index) => <span key={index}>{ele}</span> )}</p>
-                                <div className="detail">
-                                    <p>Cycle: {e.task.period / 60 / 60 / 24}天 <span>&nbsp;</span></p>
-                                    <p>Cost: 
-                                    {
-                                        e.task.budget == 0 ? 
-                                        <span>可报价</span>
-                                        :
-                                        <span>{e.task.budget}{e.task.currency}</span>
-                                    }
-                                    </p>
+                        <div className="li-title">
+                                <p className="text-ellipsis">{e.task.title}</p>
+                            </div>
+                            <div className="li-content">
+                                <div className="li-info">
+                                    <p className="role info-title">Recruitment type: &nbsp;{e.task.role.map((ele,index) => <span key={index}>{ele}</span> )}</p>
+                                    <div className="detail">
+                                        <p className="info-content info-title">Cycle: &nbsp;<span>{e.task.period / 60 / 60 / 24}</span><span>&nbsp;Day</span></p>
+                                        
+                                        <p className="info-content info-title">Stage cost: &nbsp;
+                                        {
+                                            e.budget == 0 ? 
+                                            <span>可报价</span>
+                                            :
+                                            <span>{ConvertToken(e.currency, e.amount)}{ConvertTokenAddress(e.currency)}</span>
+                                        }
+                                        </p>
+                                        <div className="info-title info-content flex">
+                                            {
+                                                address === e.issuer ? "Worker" : "Issuer"
+                                            }: &nbsp;
+                                            <div className="avatar">
+                                                {
+                                                   address === e.issuer ? 
+                                                        <img src={getAvatar(e.worker_info.avatar, e.worker)} alt="" />
+                                                        :    
+                                                        <img src={getAvatar(e.issuer_info.avatar, e.issuer)} alt="" />
+                                                }
+                                            </div>
+                                            <span className="ml55">
+                                                {
+                                                    address === e.issuer ? 
+                                                        getUsername(e.worker_info.username, e.worker)
+                                                        :
+                                                        getUsername(e.issuer_info.username, e.issuer)
+                                                }
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
+                                {
+                                    address && 
+                                    <div className="btns">
+                                        <Button  onClick={() => router.push(`/order?w=${who}&order_id=${e.order_id}`)}>View project progress</Button>
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>
