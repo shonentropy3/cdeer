@@ -237,7 +237,7 @@ export default function Publish() {
                     return
                 }
                 return <div className="item-num">
-                            <InputNumber max={Math.pow(2,52)} min={0} controls={false} addonAfter={selectAfter} onChange={(e)=>{params.budget = e}} />
+                            <InputNumber defaultValue={0} max={Math.pow(2,52)} min={0} controls={false} addonAfter={selectAfter} onChange={(e)=>{params.budget = e}} />
                         </div>
             case 'select': 
                 return <div className="item-select">
@@ -280,6 +280,10 @@ export default function Publish() {
             // 获取签名
             GetSignature({address:address,signer:signer});
             return  
+        }
+
+        if (params.budget === undefined) {
+            params.budget = 0;
         }
         params = {...values, budget: params.budget}
         setParams({...params});
