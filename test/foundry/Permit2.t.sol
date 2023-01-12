@@ -148,8 +148,6 @@ contract Permit2Test is Test {
             );
         emit printDetail(permit, transferDetails, from, sig);
         permit2.permitTransferFrom(permit, transferDetails, from, sig);
-
-        permit2.permitTransferFrom(permit, transferDetails, from, sig);
         assertEq(token0.balanceOf(from), startBalanceFrom - defaultAmount);
         assertEq(token0.balanceOf(address2), startBalanceTo + defaultAmount);
     }
