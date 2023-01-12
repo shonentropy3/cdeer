@@ -245,32 +245,36 @@ export default function ApplyList(params) {
                                         } 
                                     </p>
                                     <div className="applicant-mess">
-                                        <div className="applicant-mess-item">
-                                            {
-                                                e.user.telegram ? <Image src="/icon/telegram.png" alt="" quality={100} width={29} height={29} /> : ''
-                                            }
-                                        </div>
-                                        <div className="applicant-mess-item">
-                                            {
-                                                e.user.skype ? 
-                                                <Image src="/icon/skype.png" alt="" quality={100} width={29} height={29} /> : ''
-                                            }
-                                        </div>
-                                        <div className="applicant-mess-item">
-                                            {
-                                                e.user.wechat ? <Image src="/icon/wechat.png" alt="" quality={100} width={29} height={29} /> : ''
-                                            }
-                                        </div>
-                                        <div className="applicant-mess-item">
-                                            {
-                                                e.user.discord ? <Image src="/icon/discord.png" alt="" quality={100} width={29} height={29} /> : ''
-                                            }
-                                        </div>
-                                        <div className="applicant-mess-item">
-                                            {
-                                                e.user.phone ? <Image src="/icon/whatsapp.png" alt="" quality={100} width={29} height={29} /> : ''
-                                            }
-                                        </div>
+                                        {
+                                            e.user.telegram &&
+                                            <div className="applicant-mess-item">
+                                                <Image src="/icon/telegram.png" alt="" quality={100} width={29} height={29} />
+                                            </div>
+                                        }
+                                        {
+                                            e.user.skype &&
+                                            <div className="applicant-mess-item">
+                                                <Image src="/icon/skype.png" alt="" quality={100} width={29} height={29} />
+                                            </div>
+                                        }
+                                        {
+                                            e.user.wechat &&
+                                            <div className="applicant-mess-item">
+                                                <Image src="/icon/wechat.png" alt="" quality={100} width={29} height={29} />
+                                            </div>
+                                        }
+                                        {
+                                            e.user.discord &&
+                                            <div className="applicant-mess-item">
+                                                <Image src="/icon/discord.png" alt="" quality={100} width={29} height={29} />
+                                            </div>
+                                        }
+                                        {
+                                            e.user.phone &&
+                                            <div className="applicant-mess-item">
+                                                <Image src="/icon/phone.png" alt="" quality={100} width={29} height={29} />
+                                            </div>
+                                        }
                                     </div>
                                 </div>
                                 <div className="product-apply">
