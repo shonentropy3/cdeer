@@ -125,31 +125,33 @@ export default function TaskItem(params) {
                 )
             case 'apply':       //  TODO ==>
                 return taskList.map((e,i) => 
-                    <div className="item" key={i} onClick={() => router.push(`/project?task_id=${e.task_id}`)}>
+                    <div className="item" key={i} onClick={() => router.push(`/task/${e.task_id}`)}>
                         <div className="li">
-                            <div className="li-info">
-                                <p className="title">{e.title}</p>
-                                <p className="role">Recruitment type: {e.role.map((ele,index) => <span key={index}>{ele}</span> )}</p>
-                                <div className="detail">
-                                    <p>Cycle: {e.period / 60 / 60 / 24}天 <span>&nbsp;</span></p>
-                                    <p>Cost: 
-                                    {
-                                        e.budget == 0 ? 
-                                        <span>可报价</span>
-                                        :
-                                        <span>{e.budget}{e.currency}</span>
-                                    }    
-                                    </p>
+                            <div className="li-title" onClick={() => router.push(`/applylist?task_id=${e.task_id}`)}>
+                                <p className="text-ellipsis">{e.title}</p>
+                            </div>
+                            <div className="li-content">
+                                <div className="li-info">
+                                    <p className="role info-title">Recruitment type:  &nbsp;{e.role.map((ele,index) => <span key={index}>{ele}</span> )}</p>
+                                    <div className="detail">
+                                        <p className="info-content info-title">Cycle: &nbsp;<span>{e.period / 60 / 60 / 24}</span><span>&nbsp;Day</span></p>
+                                        
+                                        <p className="info-content info-title">Stage cost: &nbsp;
+                                        {
+                                            e.budget == 0 ? 
+                                            <span>可报价</span>
+                                            :
+                                            <span>{e.budget}{e.currency}</span>
+                                        }
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="btns">
+                                    <Button>修改报名</Button>
+                                    <Button>取消报名</Button>
                                 </div>
                             </div>
                         </div>
-                        {
-                            e.status === 0 &&
-                            <>
-                                <Button>修改报名</Button>
-                                <Button>取消报名</Button>
-                            </>
-                        }
                     </div>
                 )
             case 'developping':
