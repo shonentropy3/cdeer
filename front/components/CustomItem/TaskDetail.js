@@ -10,7 +10,7 @@ export default function TaskDetail(params) {
                 <div className='task-detail-list'>
                     <p className='task-type task-li'>
                         <span className='task-type-title title'>Type：</span>
-                        <span className='task-type-text content'>Blockchain</span>
+                        <span className='task-type-text content'></span>
                     </p>
                     <p className='task-cost task-li'>
                         <span className='task-cost-title title'>Cost：</span>
