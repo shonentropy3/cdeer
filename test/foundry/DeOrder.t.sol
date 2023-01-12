@@ -523,7 +523,7 @@ contract DeTaskTest is Test, Utilities, Permit2Sign {
     function testCannotStartOrder() public {
         createOrder(); // 创建Order
         // 阶段划分未完成
-        vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
+        vm.expectRevert(abi.encodeWithSignature("ProgressError()"));
         startOrder(issuer);
         permitStage(issuer, worker, "Due", ""); // 阶段划分
         // 订单没有付款
@@ -596,9 +596,9 @@ contract DeTaskTest is Test, Utilities, Permit2Sign {
         vm.startPrank(issuer); // 甲方
         deOrder.createOrder(64, issuer, worker, address(token0), 100);
         vm.stopPrank();
-        console.log(deOrder.supportTokens(address(token0)));
+        // console.log(deOrder.supportTokens(address(token0)));
         // 甲方付款
-        payOrderWithPermit2(issuer, 1);
+        payOrderWithPermit2(issuer, 100);
         Order memory order = deOrder.getOrder(1);
         assertEq(order.payed, 100);
     }
