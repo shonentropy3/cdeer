@@ -66,37 +66,41 @@ export default function TaskItem(params) {
                 return taskList.map((e,i) => 
                     <div className="item" key={i}>
                         <div className="li" onClick={() => router.push(`/applylist?task_id=${e.task_id}`)}>
-                            <div className="li-info">
-                                <p className="title">{e.title}</p>
-                                <p className="role">Recruitment type: {e.role.map((ele,index) => <span key={index}>{ele}</span> )}</p>
-                                <div className="detail">
-                                    <p>Cycle: {e.period / 60 / 60 / 24}天 <span>&nbsp;</span></p>
-                                    
-                                    <p>Cost: 
-                                    {
-                                        e.budget == 0 ? 
-                                        <span>可报价</span>
-                                        :
-                                        <span>{e.budget}{e.currency}</span>
-                                    }
-                                    </p>
-                                </div>
+                            <div className="li-title">
+                                <p className="text-ellipsis">{e.title}</p>
                             </div>
-                            {/* TODO: 修改Task ==> resolution */}
-                            {/* <Button onClick={() => }>修改</Button> */}
-                            <div className="li-num">
-                                <p>{e.apply_count}</p>
-                                <p>Number of applicants</p>
+                            <div className="li-content">
+                                <div className="li-info">
+                                    <p className="role info-title">Recruitment type:  &nbsp;{e.role.map((ele,index) => <span key={index}>{ele}</span> )}</p>
+                                    <div className="detail">
+                                        <p className="info-content info-title">Cycle: &nbsp;<span>{e.period / 60 / 60 / 24}</span><span>&nbsp;Day</span></p>
+                                        
+                                        <p className="info-content info-title">Stage cost: &nbsp;
+                                        {
+                                            e.budget == 0 ? 
+                                            <span>可报价</span>
+                                            :
+                                            <span>{e.budget}{e.currency}</span>
+                                        }
+                                        </p>
+                                    </div>
+                                </div>
+                                {/* TODO: 修改Task ==> resolution */}
+                                {/* <Button onClick={() => }>修改</Button> */}
+                                <div className="li-num">
+                                    <p>{e.apply_count}</p>
+                                    <p>Number of applicants</p>
+                                </div>
+                                {
+                                    address && 
+                                    <div className="btns">
+                                        <Button onClick={() => applySwitch(e.task_id,e.apply_switch)}>报名开关</Button>
+                                        <Button onClick={() => delTask(e.task_id) }>删除需求</Button>
+                                        <Button loading={isLoading} onClick={() => checkItem(e.task_id)}>Edit this item</Button>
+                                    </div>
+                                }
                             </div>
                         </div>
-                        {
-                            address && 
-                            <>
-                                <Button loading={isLoading} onClick={() => checkItem(e.task_id)}>Edit this item</Button>
-                                <Button onClick={() => applySwitch(e.task_id,e.apply_switch)}>报名开关</Button>
-                                <Button onClick={() => delTask(e.task_id) }>删除需求</Button>
-                            </>
-                        }
                     </div>
                 )
             case 'apply':

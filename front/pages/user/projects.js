@@ -28,7 +28,7 @@ function Userprojects() {
     let [isModal,setIsModal] = useState(false)
     let [showModifyTaskModal,setShowModifyTaskModal] = useState(false)
     let [pageConfig,setPageConfig] = useState({
-        page: 1, pageSize: 5, total: 1
+        page: 1, pageSize: 3, total: 1
     })
     let [isLoading,setIsLoading] = useState(false);
     let [skeletonHash, setSkeletonHash] = useState();
@@ -294,7 +294,6 @@ function Userprojects() {
                             >
                             <p>
                                 {e.title}
-                                <span className="point" ></span>
                             </p>
                         </div>)
                 }
