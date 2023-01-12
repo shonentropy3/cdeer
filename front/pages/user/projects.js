@@ -283,42 +283,44 @@ function Userprojects() {
 
     return (
         <div className="Userprojects">
-            <div className="sidbar">
-                {
-                    who &&
-                    sidbar[who].map((e,i) => 
-                        <div
-                            key={i} 
-                            className={`li ${selectBar === e.value ? 'active':''}`}
-                            onClick={() => changeItem(e.value)}
-                            >
-                            <p>
-                                {e.title}
-                            </p>
-                        </div>)
-                }
-            </div>
-            <div className="content">
-                <TaskItem 
-                    taskList={selectData} 
-                    select={selectBar} 
-                    who={who} 
-                    skeletonHash={skeletonHash}
-                    taskModal={setShowModifyTaskModal} 
-                    taskInfo={changeTaskInfo} 
-                    setTaskInfo={setChangeTaskInfo} 
-                    isLoading={isLoading} 
-                />
-                {
-                    selectData.length > 0 &&
-                    <Pagination
-                        className='item-pagination' 
-                        pageSize={pageConfig.pageSize} 
-                        current={pageConfig.page}
-                        total={pageConfig.total}
-                        onChange={(e) => {pageConfig.page = e, setPageConfig({...pageConfig})}}
+            <div className="Userprojects-content">
+                <div className="sidbar">
+                    {
+                        who &&
+                        sidbar[who].map((e,i) => 
+                            <div
+                                key={i} 
+                                className={`li ${selectBar === e.value ? 'active':''}`}
+                                onClick={() => changeItem(e.value)}
+                                >
+                                <p>
+                                    {e.title}
+                                </p>
+                            </div>)
+                    }
+                </div>
+                <div className="content">
+                    <TaskItem 
+                        taskList={selectData} 
+                        select={selectBar} 
+                        who={who} 
+                        skeletonHash={skeletonHash}
+                        taskModal={setShowModifyTaskModal} 
+                        taskInfo={changeTaskInfo} 
+                        setTaskInfo={setChangeTaskInfo} 
+                        isLoading={isLoading} 
                     />
-                }
+                    {
+                        selectData.length > 0 &&
+                        <Pagination
+                            className='item-pagination' 
+                            pageSize={pageConfig.pageSize} 
+                            current={pageConfig.page}
+                            total={pageConfig.total}
+                            onChange={(e) => {pageConfig.page = e, setPageConfig({...pageConfig})}}
+                        />
+                    }
+                </div>
             </div>
             <Modal 
                 open={isModal}

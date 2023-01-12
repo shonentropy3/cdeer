@@ -76,7 +76,7 @@ export default function MessageCenter(params) {
 
     useEffect(() => {
         init()
-    },[pageConfig])
+    },[pageConfig.page])
 
     return  <div className="messageCenter">
         <div className="banner">

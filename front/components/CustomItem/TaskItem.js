@@ -85,8 +85,8 @@ export default function TaskItem(params) {
             case 'tasks':
                 return taskList.map((e,i) => 
                     <div className="item" key={i}>
-                        <div className="li" onClick={() => router.push(`/applylist?task_id=${e.task_id}`)}>
-                            <div className="li-title">
+                        <div className="li">
+                            <div className="li-title" onClick={() => router.push(`/applylist?task_id=${e.task_id}`)}>
                                 <p className="text-ellipsis">{e.title}</p>
                             </div>
                             <div className="li-content">
@@ -114,9 +114,9 @@ export default function TaskItem(params) {
                                 {
                                     address && 
                                     <div className="btns">
-                                        <Button onClick={() => applySwitch(e.task_id,e.apply_switch)}>报名开关</Button>
-                                        <Button onClick={() => delTask(e.task_id) }>删除需求</Button>
-                                        <Button loading={isLoading} onClick={() => checkItem(e.task_id)}>Edit this item</Button>
+                                        <Button onClick={() => applySwitch(e.task_id,e.apply_switch)}>{e.apply_switch === 0 ? "Open" : "Hide"}</Button>
+                                        <Button onClick={() => delTask(e.task_id) }>Cancel</Button>
+                                        <Button loading={isLoading} onClick={() => checkItem(e.task_id)}>Edit</Button>
                                     </div>
                                 }
                             </div>
@@ -253,7 +253,8 @@ export default function TaskItem(params) {
                                 {
                                     address && 
                                     <div className="btns">
-                                        <Button  onClick={() => router.push(`/order?w=${who}&order_id=${e.order_id}`)}>View project progress</Button>
+                                        {/* TODO ==> 套用任务模版 ==> 新建Task */}
+                                        <Button>编辑此任务</Button>
                                     </div>
                                 }
                             </div>
