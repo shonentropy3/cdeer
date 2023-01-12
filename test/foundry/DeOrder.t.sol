@@ -114,8 +114,9 @@ contract DeTaskTest is Test, Utilities, Permit2Sign {
         assertEq(order.startDate, 0);
         assertEq(order.payed, 0);
         // amount最大值
-        deOrder.createOrder(1, issuer, worker, address(0), 2 ** 96 - 1);
-        assertEq(order.amount, 2 ** 96 - 1);
+        deOrder.createOrder(686, issuer, worker, address(0), 2 ** 96 - 1);
+        Order memory order2 = deOrder.getOrder(2);
+        assertEq(order2.amount, 2 ** 96 - 1);
     }
 
     // testCannotModifyOrder
