@@ -8,13 +8,14 @@ import "contracts/DeStage.sol";
 import "contracts/mock/WETH.sol";
 import "contracts/libs/ECDSA.sol";
 import "contracts/DeOrderVerifier.sol";
+import {Utilities} from "./utils/Utilities.sol";
 import {Permit2Sign} from "./utils/Permit2Sign.sol";
 import {Permit2} from "permit2/Permit2.sol";
 import {MockERC20} from "./mock/MockERC20.sol";
 import {IPermit2} from "contracts/interface/IPermit2.sol";
 import {Mock} from "./mock/mock.sol";
 
-contract DeTaskTest is Test, Permit2Sign {
+contract DeTaskTest is Test, Utilities, Permit2Sign {
     Mock internal mock;
     MockERC20 token0;
     Permit2 permit2;
@@ -28,6 +29,7 @@ contract DeTaskTest is Test, Permit2Sign {
     address issuer; // 甲方
     address worker; // 乙方
     address other; // 第三方
+    error ParamError();
 
     // address _permit2 = 0x250182E0C0885e355E114f2FcCC03292aa6Ea2fC;
 
@@ -58,7 +60,7 @@ contract DeTaskTest is Test, Permit2Sign {
         console.log(owner);
         console.log(issuer);
         console.log(worker);
-        token0.mint(issuer, 100**18);
+        token0.mint(issuer, 100 ** 18);
         vm.startPrank(issuer);
         token0.approve(address(permit2), type(uint256).max);
         vm.stopPrank();
@@ -115,7 +117,7 @@ contract DeTaskTest is Test, Permit2Sign {
     // @Summary 修改Order失败情况
     function testCannotModifyOrder() public {
         createOrder(); // 创建Order
-        permitStage(issuer, worker, "Due"); // 阶段划分
+        permitStage(issuer, worker, "Due", ""); // 阶段划分
         // 非本人修改
         vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
         deOrder.modifyOrder(1, address(0), 1);
@@ -160,93 +162,19 @@ contract DeTaskTest is Test, Permit2Sign {
     // @Summary 许可阶段划分失败情况
     function testCannotPermitStage() public {
         createOrder(); // 创建Order
-        uint256 _orderId = 1;
-        uint256[] memory _amounts = new uint256[](1);
-        uint256[] memory _periods = new uint256[](1);
-        _amounts[0] = 69;
-        _periods[0] = 1889;
-        uint256 nonce = 0;
-        uint256 deadline = 200;
-        bytes32 structHash = keccak256(
-            abi.encode(
-                _verifier.PERMITSTAGE_TYPEHASH(),
-                _orderId,
-                keccak256(abi.encodePacked(_amounts)),
-                keccak256(abi.encodePacked(_periods)),
-                nonce,
-                deadline
-            )
-        );
-        bytes32 digest = ECDSA.toTypedDataHash(
-            _verifier.DOMAIN_SEPARATOR(),
-            structHash
-        );
-        // 甲方签名
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(1, digest);
-        // 甲方提交
-        vm.startPrank(issuer);
-        PaymentType payType = PaymentType.Due;
-        vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
-        deOrder.permitStage(
-            _orderId,
-            _amounts,
-            _periods,
-            payType,
-            nonce,
-            deadline,
-            v,
-            r,
-            s
-        );
-        vm.stopPrank();
-
-        // 乙方签名
-        (v, r, s) = vm.sign(2, digest);
-        // 乙方提交
-        vm.startPrank(worker);
-        vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
-        deOrder.permitStage(
-            _orderId,
-            _amounts,
-            _periods,
-            payType,
-            nonce,
-            deadline,
-            v,
-            r,
-            s
-        );
-        vm.stopPrank();
-
-        // 其它人提交
-        vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
-        deOrder.permitStage(
-            _orderId,
-            _amounts,
-            _periods,
-            payType,
-            nonce,
-            deadline,
-            v,
-            r,
-            s
-        );
+        // 甲方签名 && 甲方提交
+        permitStage(issuer, issuer, "Due", "PermissionsError()");
+        // 乙方签名 && 乙方提交
+        permitStage(worker, worker, "Due", "PermissionsError()");
+        // 乙方签名 && 其它人提交
+        permitStage(worker, other, "Due", "PermissionsError()");
+        // 其它人签名 && 乙方提交
+        permitStage(other, worker, "Due", "PermissionsError()");
         // 任务已经开始 提交
+        permitStage(worker, issuer, "Due", ""); // 正常划分阶段
         payOrder(issuer, 100); // 付款
         startOrder(issuer); // 开始任务
-        vm.startPrank(issuer);
-        deOrder.permitStage(
-            _orderId,
-            _amounts,
-            _periods,
-            payType,
-            nonce,
-            deadline,
-            v,
-            r,
-            s
-        );
-        vm.stopPrank();
+        permitStage(worker, issuer, "Due", "ProgressError()");
     }
 
     // permitStage
@@ -254,7 +182,8 @@ contract DeTaskTest is Test, Permit2Sign {
     function permitStage(
         address sign,
         address submit,
-        bytes memory payTypeString
+        bytes memory payTypeString,
+        string memory expectRevert
     ) public {
         uint256 _orderId = 1;
         uint256[] memory _amounts = new uint256[](1);
@@ -267,6 +196,8 @@ contract DeTaskTest is Test, Permit2Sign {
         } else if (keccak256(payTypeString) == keccak256("Due")) {
             _periods[0] = 1;
             payType = PaymentType.Due;
+        } else {
+            revert ParamError();
         }
         uint256 nonce = 0;
         uint256 deadline = 200;
@@ -298,6 +229,9 @@ contract DeTaskTest is Test, Permit2Sign {
         }
         // 提交
         vm.startPrank(submit);
+        if (!isStringEmpty(expectRevert)) {
+            vm.expectRevert(abi.encodeWithSignature(expectRevert));
+        }
         deOrder.permitStage(
             _orderId,
             _amounts,
@@ -317,7 +251,7 @@ contract DeTaskTest is Test, Permit2Sign {
     function testPermitStage() public {
         createOrder(); // 创建Order
         // 甲方签名 乙方提交
-        permitStage(issuer, worker, "Due");
+        permitStage(issuer, worker, "Due", "");
         Order memory order = deOrder.getOrder(1);
         DeStage.Stage[] memory stages = deStage.getStages(1);
         assertTrue(order.progress == OrderProgess.Staged);
@@ -325,7 +259,7 @@ contract DeTaskTest is Test, Permit2Sign {
         assertEq(stages[0].period, 1);
         assertTrue(order.payType == PaymentType.Due); // 付款模式
         // 乙方签名 甲方提交
-        permitStage(worker, issuer, "Confirm");
+        permitStage(worker, issuer, "Confirm", "");
         order = deOrder.getOrder(1);
         stages = deStage.getStages(1);
         assertTrue(order.progress == OrderProgess.Staged);
@@ -384,7 +318,7 @@ contract DeTaskTest is Test, Permit2Sign {
     // @Summary 延长阶段失败情况
     function testCannotProlongStage() public {
         createOrder(); // 创建Order
-        permitStage(worker, issuer, "Confirm"); // 许可阶段划分
+        permitStage(worker, issuer, "Confirm", ""); // 许可阶段划分
         uint256 _orderId = 1;
         uint256 _stageIndex = 0;
         uint256 _appendPeriod = 10;
@@ -428,7 +362,7 @@ contract DeTaskTest is Test, Permit2Sign {
     // @Summary 延长阶段
     function testProlongStage() public {
         createOrder(); // 创建Order
-        permitStage(worker, issuer, "Due"); // 阶段划分
+        permitStage(worker, issuer, "Due", ""); // 阶段划分
         payOrder(issuer, 100); // 支付
         startOrder(issuer); // 开始任务
         uint256 _orderId = 1;
@@ -510,7 +444,7 @@ contract DeTaskTest is Test, Permit2Sign {
     // @Summary 添加阶段失败情况
     function testCannotAppendStage() public {
         createOrder(); // 创建Order
-        permitStage(worker, issuer, "Confirm"); // 许可阶段划分
+        permitStage(worker, issuer, "Confirm", ""); // 许可阶段划分
         uint256 _orderId = 1;
         uint256 amount = 10;
         uint256 period = 10;
@@ -545,7 +479,7 @@ contract DeTaskTest is Test, Permit2Sign {
     // @Summary 测试添加阶段
     function testAppendStage() public {
         createOrder(); // 创建Order
-        permitStage(worker, issuer, "Due"); // 阶段划分
+        permitStage(worker, issuer, "Due", ""); // 阶段划分
         payOrder(issuer, 100); // 支付
         startOrder(issuer); // 开始任务
         uint256 _orderId = 1;
@@ -591,7 +525,7 @@ contract DeTaskTest is Test, Permit2Sign {
         // 阶段划分未完成
         vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
         startOrder(issuer);
-        permitStage(issuer, worker, "Due"); // 阶段划分
+        permitStage(issuer, worker, "Due", ""); // 阶段划分
         // 订单没有付款
         vm.expectRevert(abi.encodeWithSignature("AmountError(uint256)", 1));
         startOrder(issuer);
@@ -684,7 +618,7 @@ contract DeTaskTest is Test, Permit2Sign {
         // 状态不在Ongoing
         vm.expectRevert(abi.encodeWithSignature("ProgressError()"));
         abortOrder(issuer, 1); // 中止任务
-        permitStage(issuer, worker, "Due"); // 阶段划分
+        permitStage(issuer, worker, "Due", ""); // 阶段划分
         payOrder(issuer, 100); // 付款
         startOrder(issuer); // 开始任务
         // 其它人调用合约中止
@@ -696,7 +630,7 @@ contract DeTaskTest is Test, Permit2Sign {
     // @Summary 中止任务失败情况
     function testAbortOrder() public {
         createOrder(); // 创建Order
-        permitStage(issuer, worker, "Due"); // 阶段划分
+        permitStage(issuer, worker, "Due", ""); // 阶段划分
         payOrder(issuer, 100); // 付款
         startOrder(issuer); // 开始任务
         // 中止任务 已经完成的阶段和预付款 付款给乙方
@@ -707,7 +641,7 @@ contract DeTaskTest is Test, Permit2Sign {
     // @Summary 甲方验收 乙方提款
     function checkAndwithdraw() public {
         uint256[] memory _stageIndex = new uint256[](1);
-        _stageIndex[0] = 0;  
+        _stageIndex[0] = 0;
         vm.startPrank(issuer); // 甲方
         deOrder.confirmDelivery(1, _stageIndex);
         vm.stopPrank();
@@ -716,12 +650,11 @@ contract DeTaskTest is Test, Permit2Sign {
         vm.stopPrank();
     }
 
-
     // issuer check worker withdraw
     // @Summary 测试甲方验收 和乙方提款
     function testcheckAndwithdraw() public {
         createOrder(); // 创建Order
-        permitStage(worker, issuer, "Confirm"); // 许可阶段划分
+        permitStage(worker, issuer, "Confirm", ""); // 许可阶段划分
         payOrder(issuer, 100); // 付款
         startOrder(issuer); // 开始任务
         checkAndwithdraw();
