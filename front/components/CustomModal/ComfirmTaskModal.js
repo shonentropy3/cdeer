@@ -6,7 +6,7 @@ export default function ComfirmTaskModal(params) {
     
     const { comfirm, inner, skills, setStatus } = params
 
-    let [needSkills,setNeedSkills] = useState([])
+    let [needSkills,setNeedSkills] = useState([]);
     
     useEffect(()=>{
         let nedSkills = []
@@ -16,7 +16,7 @@ export default function ComfirmTaskModal(params) {
         })
         needSkills = nedSkills
         setNeedSkills([...needSkills])
-    },[])
+    },[params])
 
 
     return <div className='comfirm-task'>

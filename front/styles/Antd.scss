@@ -168,6 +168,8 @@
     }
     .modal-info{
         padding: 0 53px 0 61px;
+        overflow-x: hidden;
+        overflow-y: scroll;
         .info-full{
             .title{
                 font-size: 24px;
@@ -224,11 +226,13 @@
             color: white;
             border-radius: 45px;
             font-size: 28px;
-            // margin-left: calc((100% - 360px) / 2);
+            margin-left: calc((100% - 280px) / 2);
+            margin-bottom: 80px;
+            border: none;
             // margin-left: 257px;
-            position: absolute;
-            left: 310px;
-            bottom: 80px;
+            // position: absolute;
+            // left: 310px;
+            // bottom: 80px;
         }
     }
 }

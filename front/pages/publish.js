@@ -220,12 +220,16 @@ export default function Publish() {
         })
     },[])
 
+    // const onchange = (key,value) => {
+
+    // }
+
     const innerPrint = (e) => {
         switch (e.type) {
             case 'input':
-                return <Input className="item-input" onChange={value => {e.value = value}} />
+                return <Input className="item-input" />
             case 'textarea':
-                return <TextArea className="item-text" onChange={value => {e.value = value.target.value}} />
+                return <TextArea className="item-text" />
             case 'ul':
                 return <SkillsCard stree={skill} value={skills} setValue={setSkills} />
             case 'inputNumber':
@@ -277,7 +281,7 @@ export default function Publish() {
             GetSignature({address:address,signer:signer});
             return  
         }
-        params = {...values, ...params}
+        params = {...values, budget: params.budget}
         setParams({...params});
         setIsModalVisibleC(true)
     };
