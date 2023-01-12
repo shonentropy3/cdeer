@@ -1,12 +1,12 @@
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { useSetState } from "ahooks";
-import { Button, Checkbox, InputNumber, message, Modal } from "antd";
+import { Button, Checkbox, InputNumber, message, Modal, Radio } from "antd";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import Image from "next/image";
 import { useEffect, useState } from "react"
 import { useAccount, useNetwork } from "wagmi";
-import { multicallWrite, muticallEncode, useContracts, useRead, useSignData, useSignPermit2Data } from "../../controller";
+import { multicallWrite, muticallEncode, useRead, useSignData, useSignPermit2Data } from "../../controller";
 import { startOrder, updatedStage } from "../../http/_api/order";
 import { ConvertTokenAddress, Currency } from "../../utils/Currency";
 import { getDate } from "../../utils/GetDate";
@@ -35,6 +35,7 @@ export default function OrderSetStage(params) {
 
     // 状态
     let [status, setStatus] = useState('WaitWorkerStage');
+    let [payType, setPayType] = useState(0);    //  0: 初始化  1: 按期  2: 验收
 
     // 签名部分
     let [signObj,setSignObj] = useState({});    //  签名信息
@@ -114,7 +115,7 @@ export default function OrderSetStage(params) {
             chainId: chain.id,
             address: address,
             oid: search.order_id,
-            payType: 1,     //  TODO ==> 临时变量
+            payType: payType,     //  TODO ==> 临时变量
             nonce: Number(nonces.data.toString()),
             deadline: stages.deadline
         }
@@ -186,7 +187,8 @@ export default function OrderSetStage(params) {
             obj: JSON.stringify(stageDetail),
             order_id: order.order_id,
             stages: JSON.stringify(stages),
-            status: status
+            status: status,
+            pay_type: payType
         })
         .then(res => {
             if (res.code === 0) {
@@ -259,7 +261,7 @@ export default function OrderSetStage(params) {
         })
         funcList.push({
             functionName: 'permitStage',
-            params: [order.order_id, _amount, _period, 1, order.sign_nonce, order.stages.deadline, v, r, s]
+            params: [order.order_id, _amount, _period, payType, order.sign_nonce, order.stages.deadline, v, r, s]
         })
         if (order.currency !== ethers.constants.AddressZero) {
             funcList.push({
@@ -383,6 +385,10 @@ export default function OrderSetStage(params) {
     }
 
     const initStatus = () => {
+        if (payType == 0) {
+            message.warning('请选择收款方式!');
+            return
+        }
         // 等待甲方确认阶段划分
         setStatus('WaitIssuerAgree')
         sendSignature()
@@ -428,6 +434,18 @@ export default function OrderSetStage(params) {
         setIsChange(true);
     }
 
+    const changePayType = (e) => {
+        payType = Number(e);
+        setPayType(payType);
+        setIsChange(true);
+    }
+
+    const totalPanel = <>
+        {printStageTotal()}
+        {printTotal()}
+        {printTotalPeriod()}
+    </>
+
     const switchSetStageCard = () => {
 
         switch (progressSet) {
@@ -465,9 +483,13 @@ export default function OrderSetStage(params) {
                             {
                                 stage.orderModel && <p>Advance charge: <span>{stage.value}</span></p>
                             }
-                            {printStageTotal()}
-                            {printTotal()}
-                            {printTotalPeriod()}
+                            {totalPanel}
+                        </div>
+                        <div className="payType">
+                            <Radio.Group defaultValue=""onChange={(e) => changePayType(e.target.value)}>
+                                <Radio value="1">按期模式</Radio>
+                                <Radio value="2">验收模式</Radio>
+                            </Radio.Group>
                         </div>
                         <Button className={`submit ${btnDisabled ? 'hidden' : 'show'}`} onClick={() => initStatus()} disabled={btnDisabled}>Complete and submit phasing</Button>
                     </>
@@ -498,9 +520,13 @@ export default function OrderSetStage(params) {
                                     dataStages[0].period === 0 && 
                                     <p>Advance charge: <span>{stage.value}</span></p>
                                 }
-                                {printStageTotal()}
-                                {printTotal()}
-                                {printTotalPeriod()}
+                                {totalPanel}
+                            </div>
+                            <div className="payType">
+                                <Radio.Group defaultValue={payType} disabled onChange={(e) => changePayType(e.target.value)}>
+                                    <Radio value="1">按期模式</Radio>
+                                    <Radio value="2">验收模式</Radio>
+                                </Radio.Group>
                             </div>
                         </>
                     }else{
@@ -532,9 +558,13 @@ export default function OrderSetStage(params) {
                                     dataStages && dataStages[0].period === 0 && 
                                     <p>Advance charge: <span>{stage.value}</span></p>
                                 }
-                                {printStageTotal()}
-                                {printTotal()}
-                                {printTotalPeriod()}
+                                {totalPanel}
+                            </div>
+                            <div className="payType">
+                                <Radio.Group defaultValue={payType} onChange={(e) => changePayType(e.target.value)}>
+                                    <Radio value="1">按期模式</Radio>
+                                    <Radio value="2">验收模式</Radio>
+                                </Radio.Group>
                             </div>
                             {
                                 !isChange ? 
@@ -573,6 +603,10 @@ export default function OrderSetStage(params) {
             stage.orderModel = true;
             stage.value = dataStages[0].amount;
             setStage({...stage});
+        }
+        if (order.pay_type) {
+            payType = (order.pay_type).toString();
+            setPayType(payType);
         }
     },[])
 

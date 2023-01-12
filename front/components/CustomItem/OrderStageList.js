@@ -347,7 +347,7 @@ export default function OrderStageList(params) {
     return (
         <div className="stageCard">
             
-            <p className="title">Task stage division</p>
+            <p className="title">Task stage division <span>{order.pay_type == 1 ? "按期模式" : "验收模式"}</span></p>
             {
                 // 预付款
                order.worker === address && order.stages.period[0] === 0 &&
