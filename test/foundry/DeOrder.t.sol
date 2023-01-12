@@ -637,6 +637,29 @@ contract DeTaskTest is Test, Utilities, Permit2Sign {
         abortOrder(worker, 1);
     }
 
+    // submit delivery
+    // @Summary 提交交付
+    function SubmitDelivery() public {
+        createOrder(); // 创建Order
+        permitStage(worker, issuer, "Confirm",""); // 许可阶段划分
+        payOrder(issuer, 100); // 付款
+        startOrder(issuer); // 开始任务
+        vm.startPrank(worker); // 乙方
+        deOrder.updateAttachment(1, "ok");
+        vm.stopPrank();
+    }
+
+    // submit delivery
+    // @Summary 测试提交交付失败
+    function testCannotSubmitDelivery() public {
+        createOrder(); // 创建Order
+        permitStage(worker, issuer, "Confirm",""); // 许可阶段划分
+        payOrder(issuer, 100); // 付款
+        startOrder(issuer); // 开始任务
+        vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
+        deOrder.updateAttachment(1, "ok");
+    }
+
     // issuer check worker withdraw
     // @Summary 甲方验收 乙方提款
     function checkAndwithdraw() public {
@@ -651,12 +674,24 @@ contract DeTaskTest is Test, Utilities, Permit2Sign {
     }
 
     // issuer check worker withdraw
-    // @Summary 测试甲方验收 和乙方提款
-    function testcheckAndwithdraw() public {
+    // @Summary 测试 甲方验收 乙方提款失败
+    function testCannotcheckAndwithdraw() public {
         createOrder(); // 创建Order
         permitStage(worker, issuer, "Confirm", ""); // 许可阶段划分
         payOrder(issuer, 100); // 付款
         startOrder(issuer); // 开始任务
+        uint256[] memory _stageIndex = new uint256[](1);
+        _stageIndex[0] = 0;
+        vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
+        deOrder.confirmDelivery(1, _stageIndex);
+        vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
+        deOrder.withdraw(1, worker);
+    }
+
+    // issuer check worker withdraw
+    // @Summary 测试提交交付后 甲方验收 和乙方提款 成功
+    function testcheckAndwithdraw() public {
+        SubmitDelivery();
         checkAndwithdraw();
     }
 }
