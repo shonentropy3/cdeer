@@ -33,7 +33,6 @@ contract DeTaskTest is Test, Utilities, Permit2Sign {
     error ParamError();
 
     // address _permit2 = 0x250182E0C0885e355E114f2FcCC03292aa6Ea2fC;
-
     function setUp() public {
         mock = new Mock();
         token0 = new MockERC20("Test0", "TEST0", 18);
@@ -102,9 +101,10 @@ contract DeTaskTest is Test, Utilities, Permit2Sign {
     // testCreateOrder
     // @Summary 测试创建Order
     function testCreateOrder() public {
+        Order memory order;
         // 甲方创建Task ，只能甲方创建此Task的Order
         createOrder(); // 创建Order
-        Order memory order = deOrder.getOrder(1);
+        order = deOrder.getOrder(1);
         assertEq(order.issuer, issuer);
         assertEq(order.worker, worker);
         assertEq(order.token, address(0));
@@ -114,9 +114,9 @@ contract DeTaskTest is Test, Utilities, Permit2Sign {
         assertEq(order.startDate, 0);
         assertEq(order.payed, 0);
         // amount最大值
-        deOrder.createOrder(686, issuer, worker, address(0), 2 ** 96 - 1);
-        Order memory order2 = deOrder.getOrder(2);
-        assertEq(order2.amount, 2 ** 96 - 1);
+        deOrder.createOrder(1, issuer, worker, address(0), 2 ** 96 - 1);
+        order = deOrder.getOrder(2); // ID 为2
+        assertEq(order.amount, 2 ** 96 - 1);
     }
 
     // testCannotModifyOrder
@@ -127,25 +127,30 @@ contract DeTaskTest is Test, Utilities, Permit2Sign {
         // 非本人修改
         vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
         deOrder.modifyOrder(1, address(0), 1);
+
         // 【使用不存在的token地址，其他地址，不支持的token地址】
+        vm.startPrank(issuer); // 甲方
         vm.expectRevert(abi.encodeWithSignature("UnSupportToken()"));
         deOrder.modifyOrder(
             1,
             address(0x69BB456f9181C798f6B31149004a5A1ADfAd241B),
             1
         );
+        vm.stopPrank();
         // 任务已经开始修改
         payOrder(issuer, 100, zero); // 付款
         startOrder(issuer); // 开始任务
+        vm.startPrank(issuer); // 甲方
         vm.expectRevert(abi.encodeWithSignature("ProgressError()"));
         deOrder.modifyOrder(1, issuer, 1);
+        vm.stopPrank();
     }
 
     // testModifyOrder
     // @Summary 修改Order
     function testModifyOrder() public {
         Order memory order;
-        uint balance;
+        uint256 balance;
 
         createOrder(); // 创建Order
         vm.startPrank(issuer); // 甲方
@@ -155,14 +160,17 @@ contract DeTaskTest is Test, Utilities, Permit2Sign {
         assertEq(order.token, address(0));
         assertEq(order.amount, 1);
         /* 更换token退款 (原生币改为Token)
-         * @Expect 更改成功，且退还一次金额
+         * @Expect 更改成功3，且退还一次金额
          * @Assert 返还金额一致
          */
         balance = issuer.balance;
         payOrder(issuer, 100, zero); // 付款
         assertEq(balance - 100, issuer.balance); // balance-100
         order = deOrder.getOrder(1);
+        vm.startPrank(issuer); // 甲方
+        vm.stopPrank();
         assertEq(order.payed, 100); // 支付了100
+        assertEq(address(_weth).balance, 100); // weth合约余额
         setSupportToken(owner, address(token0), true);
         vm.startPrank(issuer); // 甲方
         deOrder.modifyOrder(1, address(token0), 1); // 修改Order
@@ -170,20 +178,26 @@ contract DeTaskTest is Test, Utilities, Permit2Sign {
         assertEq(balance, issuer.balance); // 已支付部分返还甲方
         order = deOrder.getOrder(1);
         assertEq(order.token, address(token0));
+        assertEq(address(_weth).balance, 0); // weth合约余额
         assertEq(order.payed, 0); // 清除支付部分
         /* 更换token退款 (Token改为原生币)
          * @Expect 更改成功，且退还一次金额
          * @Assert 返还金额一致
          */
         balance = token0.balanceOf(issuer);
+        vm.startPrank(issuer); // 甲方
+        token0.approve(address(deOrder), 100); // 授权
+        vm.stopPrank();
         payOrder(issuer, 100, address(token0)); // 付款
-        assertEq(balance - 100, token0.balanceOf(issuer)); // balance-100
+        assertEq(balance - 100, token0.balanceOf(issuer)); // 用户balance-100
+        assertEq(token0.balanceOf(address(deOrder)), 100); // 合约balance +100
         order = deOrder.getOrder(1);
         assertEq(order.payed, 100); // 支付了100
         vm.startPrank(issuer); // 甲方
         deOrder.modifyOrder(1, address(0), 1); // 修改为原生币
         vm.stopPrank();
         assertEq(balance, token0.balanceOf(issuer)); // 已支付部分返还甲方
+        assertEq(token0.balanceOf(address(deOrder)), 0); // 合约balance 0
         order = deOrder.getOrder(1);
         assertEq(order.token, address(0));
         assertEq(order.payed, 0); // 清除支付部分
@@ -606,7 +620,6 @@ contract DeTaskTest is Test, Utilities, Permit2Sign {
         } else {
             deOrder.payOrder(1, amount);
         }
-
         vm.stopPrank();
     }
 
