@@ -296,7 +296,16 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
         }
 
         doTransfer(order.token, order.issuer, issuerAmount);
-        doTransfer(order.token, order.worker, workerAmount);
+        if (fee > 0) {
+            uint feeAmount;
+            unchecked {
+                feeAmount = workerAmount * fee / FEE_BASE;
+            }
+            doTransfer(order.token, feeTo, feeAmount);
+            doTransfer(order.token, order.worker, workerAmount - feeAmount);
+        } else {
+            doTransfer(order.token, order.worker, workerAmount);
+        }
 
         emit OrderAbort(_orderId, msg.sender, currStageIndex);
     }
