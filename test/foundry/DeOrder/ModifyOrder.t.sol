@@ -72,7 +72,7 @@ contract ModifyOrder is DeOrderTest {
          */
         balance = token0.balanceOf(issuer);
         vm.startPrank(issuer); // 甲方
-        token0.approve(address(deOrder), 100); // 授权
+        // token0.approve(address(deOrder), 100); // 授权
         vm.stopPrank();
         payOrder(issuer, 100, address(token0)); // 付款
         assertEq(balance - 100, token0.balanceOf(issuer)); // 用户balance-100

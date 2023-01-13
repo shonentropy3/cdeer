@@ -22,9 +22,8 @@ contract AppendStage is DeOrderTest {
         permitStage(worker, issuer, "Due", ""); // 阶段划分
         payOrder(issuer, 100, zero); // 支付
         startOrder(issuer); // 开始任务
-        modifyOrder(issuer, 1, zero, 110);
+
         payOrder(issuer, 10, zero); // 支付
-        appendStage(issuer, worker, "");
         appendStage(worker, issuer, "");
     }
 }

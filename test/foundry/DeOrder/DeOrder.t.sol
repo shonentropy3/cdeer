@@ -64,7 +64,8 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
         console.log(worker);
         token0.mint(issuer, 100 ** 18);
         vm.startPrank(issuer);
-        token0.approve(address(permit2), type(uint256).max);
+        token0.approve(address(permit2), type(uint256).max); // 授权
+        token0.approve(address(deOrder), type(uint256).max); // 授权
         vm.stopPrank();
         vm.deal(issuer, 1000); // 初始化原生币余额
     }

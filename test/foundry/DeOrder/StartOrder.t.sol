@@ -36,6 +36,6 @@ contract StartOrder is DeOrderTest {
         Order memory order = deOrder.getOrder(1);
         DeStage.Stage[] memory stages = deStage.getStages(1);
         assert(order.progress == OrderProgess.Ongoing);
-        assert(stages[0].status == DeStage.StageStatus.Accepted);
+        assert(stages[0].status == DeStage.StageStatus.Init);
     }
 }
