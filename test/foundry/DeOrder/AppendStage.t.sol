@@ -7,8 +7,8 @@ contract AppendStage is DeOrderTest {
     //testCannotAppendStage
     // @Summary 添加阶段失败情况
     function testCannotAppendStage() public {
-        createOrder(); // 创建Order
-        permitStage(worker, issuer, "Confirm", ""); // 许可阶段划分
+        createOrder(issuer, address(0), 100); // 创建Order
+        permitStage(worker, issuer,amounts,periods, "Confirm", ""); // 许可阶段划分
         // 任务不在进行中
         // vm.expectRevert(abi.encodeWithSignature("ProgressError()"));
         appendStage(issuer, worker, "ProgressError()");
@@ -18,8 +18,8 @@ contract AppendStage is DeOrderTest {
     // testAppendStage
     // @Summary 测试添加阶段
     function testAppendStage() public {
-        createOrder(); // 创建Order
-        permitStage(worker, issuer, "Due", ""); // 阶段划分
+        createOrder(issuer, address(0), 100); // 创建Order
+        permitStage(worker, issuer,amounts,periods, "Due", ""); // 阶段划分
         payOrder(issuer, 100, zero); // 支付
         startOrder(issuer); // 开始任务
 

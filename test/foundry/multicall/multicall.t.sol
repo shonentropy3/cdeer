@@ -31,7 +31,7 @@ contract MulticallTest is DeOrderTest {
     }
 
     function testMulticallPayOrderWithZero() public {
-        createOrder(); // 创建Order
+        createOrder(issuer, address(0), 100); // 创建Order
 
         bytes[] memory data = new bytes[](2);
         data[0] = abi.encodeWithSelector(deOrder.payOrder.selector, 1, 100);
@@ -41,12 +41,11 @@ contract MulticallTest is DeOrderTest {
         assertEq(address(_weth).balance, 100); // weth合约余额
     }
 
-
     function testMulticallPayOrderWithToken() public {
         // console.log(block.timestamp);
         // vm.warp(990000);
         // console.log(block.timestamp);
-        createOrder(); // 创建Order
+        createOrder(issuer, address(0), 100); // 创建Order
         setSupportToken(owner, address(token0), true);
         modifyOrder(issuer, 1, address(token0), 100);
 
@@ -54,7 +53,7 @@ contract MulticallTest is DeOrderTest {
         data[0] = abi.encodeWithSelector(deOrder.payOrder.selector, 1, 100);
         data[1] = abi.encodeWithSelector(deOrder.payOrder.selector, 1, 100);
         console.log(token0.balanceOf(issuer));
-        
+
         multicall(issuer, data);
         assertEq(token0.balanceOf(address(deOrder)), 200);
     }

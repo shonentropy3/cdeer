@@ -28,9 +28,13 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
     address worker; // 乙方
     address other; // 第三方
     address zero = address(0);
+
+    uint[] amounts = [50, 50];
+    uint[] periods = [1000,1000];
     error ParamError();
     event SupportToken(address token, bool enabled);
     event OrderModified(uint indexed orderId, address token, uint amount);
+
     // address _permit2 = 0x250182E0C0885e355E114f2FcCC03292aa6Ea2fC;
     function setUp() public {
         token0 = new MockERC20("Test0", "TEST0", 18);
@@ -68,12 +72,14 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
 
     // createOrder
     // @Summary 创建Order
-    function createOrder() public {
-        vm.startPrank(issuer); // 甲方
-        deOrder.createOrder(64, issuer, worker, address(0), 100 ether);
+    function createOrder(address who, address _token, uint _amount) public {
+        vm.startPrank(who); // 甲方
+        deOrder.createOrder(64, issuer, worker, address(_token), _amount);
         vm.stopPrank();
     }
 
+    // modifyOrder
+    // @Summary 修改Order
     function modifyOrder(
         address who,
         uint orderId,
@@ -86,7 +92,6 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
         deOrder.modifyOrder(orderId, token, amount);
         vm.stopPrank();
     }
-
 
     // testSetDeStage
     // @Summary 设置DeStage合约地址
@@ -105,31 +110,26 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
         deOrder.setDeStage(address(deStage));
     }
 
-
-
     // permitStage
     // @Summary 阶段划分
     function permitStage(
         address sign,
         address submit,
+        uint256[] memory _amounts,
+        uint256[] memory _periods,
         bytes memory payTypeString,
         string memory expectRevert
     ) public {
         uint256 _orderId = 1;
-        uint256[] memory _amounts = new uint256[](1);
-        uint256[] memory _periods = new uint256[](1);
-        _amounts[0] = 100 ether;
         PaymentType payType = PaymentType.Unknown;
         if (keccak256(payTypeString) == keccak256("Confirm")) {
-            _periods[0] = 0;
             payType = PaymentType.Confirm;
         } else if (keccak256(payTypeString) == keccak256("Due")) {
-            _periods[0] = 172800;
             payType = PaymentType.Due;
         } else {
             revert ParamError();
         }
-        uint256 nonce = 0;
+        uint256 nonce = _verifier.nonces(sign, _orderId);
         uint256 deadline = 200;
         bytes32 structHash = keccak256(
             abi.encode(
@@ -180,7 +180,7 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
         uint256 _orderId = 1;
         uint256 _stageIndex = 0;
         uint256 _appendPeriod = 10;
-        uint256 nonce = _verifier.nonces(sign, 0);
+        uint256 nonce = _verifier.nonces(sign, _orderId);
         uint256 deadline = 200;
         bytes32 structHash = keccak256(
             abi.encode(
@@ -221,8 +221,6 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
         );
         vm.stopPrank();
     }
-
-   
 
     // appendStage
     // @Summary 添加阶段
@@ -289,7 +287,6 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
         vm.stopPrank();
     }
 
-    
     // abortOrder
     // @Summary 中止任务
     function abortOrder(address who, uint256 _orderId) public {
@@ -297,9 +294,6 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
         deOrder.abortOrder(_orderId);
         vm.stopPrank();
     }
-
-    
-   
 
     //
     function setSupportToken(address who, address _token, bool enable) public {

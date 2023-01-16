@@ -8,8 +8,8 @@ contract ProlongStage is DeOrderTest {
     // testCannotProlongStage
     // @Summary 延长阶段失败情况
     function testCannotProlongStage() public {
-        createOrder(); // 创建Order
-        permitStage(worker, issuer, "Confirm", ""); // 许可阶段划分
+        createOrder(issuer, address(0), 100); // 创建Order
+        permitStage(worker, issuer,amounts,periods, "Confirm", ""); // 许可阶段划分
         uint256 _orderId = 1;
         uint256 _stageIndex = 0;
         uint256 _appendPeriod = 10;
@@ -52,8 +52,8 @@ contract ProlongStage is DeOrderTest {
     // testProlongStage
     // @Summary 延长阶段
     function testProlongStage() public {
-        createOrder(); // 创建Order
-        permitStage(worker, issuer, "Due", ""); // 阶段划分
+        createOrder(issuer, address(0), 100); // 创建Order
+        permitStage(worker, issuer,amounts,periods, "Due", ""); // 阶段划分
         payOrder(issuer, 100, zero); // 支付
         startOrder(issuer); // 开始任务
         uint256 _orderId = 1;

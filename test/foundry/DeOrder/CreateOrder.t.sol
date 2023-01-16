@@ -34,7 +34,7 @@ contract CreateOrder is DeOrderTest {
     function testCreateOrder() public {
         Order memory order;
         // 甲方创建Task ，只能甲方创建此Task的Order
-        createOrder(); // 创建Order
+        createOrder(issuer, address(0), 100); // 创建Order
         order = deOrder.getOrder(1);
         assertEq(order.issuer, issuer);
         assertEq(order.worker, worker);

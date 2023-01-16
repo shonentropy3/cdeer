@@ -4,7 +4,7 @@ pragma solidity ^0.8.13;
 import {DeOrderTest} from "./DeOrder.t.sol";
 
 contract Withdraw is DeOrderTest {
-     // issuer check worker withdraw
+    // issuer check worker withdraw
     // @Summary 甲方验收 乙方提款
     function checkAndwithdraw() public {
         uint256[] memory _stageIndex = new uint256[](1);
@@ -20,8 +20,10 @@ contract Withdraw is DeOrderTest {
     // issuer check worker withdraw
     // @Summary 测试 甲方验收 乙方提款失败
     function testCannotcheckAndwithdraw() public {
-        createOrder(); // 创建Order
-        permitStage(worker, issuer, "Confirm", ""); // 许可阶段划分
+        createOrder(issuer, address(0), 100); // 创建Order
+        // uint256[] memory amounts = [1,2,3];
+        // uint[] memory periods = [uint256(1),uint256(2),uint256(3)];
+        permitStage(worker, issuer, amounts, periods, "Confirm", ""); // 许可阶段划分
         payOrder(issuer, 100, zero); // 付款
         startOrder(issuer); // 开始任务
         uint256[] memory _stageIndex = new uint256[](1);

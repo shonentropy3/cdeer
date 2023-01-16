@@ -9,11 +9,11 @@ contract StartOrder is DeOrderTest {
     // testCannotStartOrder
     // @Summary 开始任务
     function testCannotStartOrder() public {
-        createOrder(); // 创建Order
+        createOrder(issuer, address(0), 100); // 创建Order
         // 阶段划分未完成
         vm.expectRevert(abi.encodeWithSignature("ProgressError()"));
         startOrder(issuer);
-        permitStage(issuer, worker, "Due", ""); // 阶段划分
+        permitStage(issuer, worker, amounts, periods, "Due", ""); // 阶段划分
         // 订单没有付款
         vm.expectRevert(abi.encodeWithSignature("AmountError(uint256)", 1));
         startOrder(issuer);
@@ -28,8 +28,8 @@ contract StartOrder is DeOrderTest {
     // testStartOrder
     // @Summary 开始任务
     function testStartOrder() public {
-        createOrder(); // 创建Order
-        permitStage(issuer, worker, "Due", ""); // 阶段划分
+        createOrder(issuer, address(0), 100); // 创建Order
+        permitStage(issuer, worker, amounts, periods, "Due", ""); // 阶段划分
         payOrder(issuer, 100, zero); // 付款
         // 甲方调用
         startOrder(issuer);

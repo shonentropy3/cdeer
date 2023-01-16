@@ -8,8 +8,8 @@ contract ModifyOrder is DeOrderTest {
     // testCannotModifyOrder
     // @Summary 修改Order失败情况
     function testCannotModifyOrder() public {
-        createOrder(); // 创建Order
-        permitStage(issuer, worker, "Due", ""); // 阶段划分
+        createOrder(issuer, address(0), 100); // 创建Order
+        permitStage(issuer, worker,amounts,periods, "Due", ""); // 阶段划分
         // 非本人修改
         vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
         deOrder.modifyOrder(1, address(0), 1);
@@ -38,7 +38,7 @@ contract ModifyOrder is DeOrderTest {
         Order memory order;
         uint256 balance;
 
-        createOrder(); // 创建Order
+        createOrder(issuer, address(0), 100); // 创建Order
         vm.startPrank(issuer); // 甲方
         deOrder.modifyOrder(1, address(0), 1);
         vm.stopPrank();
