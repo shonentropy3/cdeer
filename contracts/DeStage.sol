@@ -1,15 +1,12 @@
 import "./interface/IOrder.sol";
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-
-//TODO: as upgradeable
-contract DeStage is Ownable {
+abstract contract DeStage {
     error InvalidCaller();
     error ParamError(uint);
     error StatusError();
     error AmountError();
 
-    uint public maxStages = 12;
+    uint constant maxStages = 12;
     address public deOrder;
 
     enum StageStatus {
@@ -33,21 +30,12 @@ contract DeStage is Ownable {
     event SetStage(uint indexed orderId, uint[] amounts, uint[] periods);
     event ProlongStage(uint indexed orderId, uint stageIndex, uint appendPeriod);
     event AppendStage(uint indexed orderId, uint amount, uint period);
-    event SetDeorder(address deorder);
-    event SetMaxStages(uint max);
 
-    constructor(address _order) {
-        deOrder = _order; 
-        emit SetDeorder(_order);
-    }
-
-    modifier onlyDeorder() {
-        if(msg.sender != deOrder) revert InvalidCaller(); 
-        _;
+    constructor() internal {
     }
 
 
-    function setStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods) external onlyDeorder {
+    function setStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods) internal {
 
         if(_amounts.length != _periods.length || _amounts.length == 0) revert ParamError(0);
         if(maxStages < _amounts.length) revert ParamError(1);
@@ -69,7 +57,7 @@ contract DeStage is Ownable {
         emit SetStage(_orderId, _amounts, _periods);
     }
 
-    function prolongStage(uint _orderId, uint _stageIndex, uint _appendPeriod) external onlyDeorder {
+    function prolongStage(uint _orderId, uint _stageIndex, uint _appendPeriod) internal {
         safe32(_appendPeriod);
 
         Stage storage stage = orderStages[_orderId][_stageIndex];
@@ -79,7 +67,7 @@ contract DeStage is Ownable {
         emit ProlongStage(_orderId, _stageIndex, _appendPeriod);
     }
 
-    function appendStage(uint _orderId, uint _amount, uint _period) external onlyDeorder {
+    function appendStage(uint _orderId, uint _amount, uint _period) internal {
         safe32(_period);
 
         Stage[] storage stages = orderStages[_orderId];
@@ -107,7 +95,7 @@ contract DeStage is Ownable {
         }
     }
 
-    function startOrder(uint _orderId) external onlyDeorder {
+    function startOrder(uint _orderId) internal {
         Stage[] storage stages = orderStages[_orderId];
         if (stages[0].period == 0) {
             stages[0].status = StageStatus.Accepted;
@@ -134,7 +122,7 @@ contract DeStage is Ownable {
 
     }
 
-    function withdrawStage(uint _orderId, uint _nextStage) external onlyDeorder {
+    function withdrawStage(uint _orderId, uint _nextStage) internal {
         Stage[] storage stages = orderStages[_orderId];
 
         for ( uint i = 0; i < stages.length && i < _nextStage; i++) {
@@ -144,7 +132,7 @@ contract DeStage is Ownable {
         }
     }
 
-    function abortOrder(uint _orderId, bool issuerAbort) external onlyDeorder returns(uint currStageIndex, uint issuerAmount, uint workerAmount) {
+    function abortOrder(uint _orderId, bool issuerAbort) internal returns(uint currStageIndex, uint issuerAmount, uint workerAmount) {
         uint stageStartDate;
         ( currStageIndex, stageStartDate) = ongoingStage(_orderId);
         
@@ -184,7 +172,7 @@ contract DeStage is Ownable {
     }
 
         // confirm must continuous
-    function confirmDelivery(uint _orderId, uint _stageIndex) external onlyDeorder {
+    function confirmDelivery(uint _orderId, uint _stageIndex) internal {
         StageStatus currStatus = orderStages[_orderId][_stageIndex].status;
         if( currStatus == StageStatus.Withdrawed || currStatus == StageStatus.Aborted ) revert StatusError();
 
@@ -239,14 +227,5 @@ contract DeStage is Ownable {
         if(n >= 2**32) revert AmountError();
     }
 
-    function setMaxStages(uint8 _maxStages) external onlyOwner {
-        maxStages = _maxStages;
-        emit SetMaxStages(_maxStages);
-    }
-
-    function setDeOrder(address _order) external onlyOwner {
-        deOrder = _order;
-        emit SetDeorder(_order);
-    }
 
 }
