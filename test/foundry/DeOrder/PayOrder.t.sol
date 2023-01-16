@@ -3,7 +3,7 @@ pragma solidity ^0.8.13;
 
 import "contracts/interface/IOrder.sol";
 import {IPermit2} from "contracts/interface/IPermit2.sol";
-import {DeOrderTest} from "./Deorder.t.sol";
+import {DeOrderTest} from "./DeOrder.t.sol";
 
 contract PayOrder is DeOrderTest {
     // testPayOrder

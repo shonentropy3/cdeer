@@ -7,17 +7,14 @@ import "contracts/DeOrder.sol";
 import "contracts/DeStage.sol";
 import "contracts/mock/WETH.sol";
 import "contracts/libs/ECDSA.sol";
-import "contracts/interface/IOrder.sol";
 import "contracts/DeOrderVerifier.sol";
 import {Utilities} from "../utils/Utilities.sol";
 import {Permit2Sign} from "../utils/Permit2Sign.sol";
 import {Permit2} from "permit2/Permit2.sol";
 import {MockERC20} from "../mock/MockERC20.sol";
 import {IPermit2} from "contracts/interface/IPermit2.sol";
-import {Mock} from "../mock/mock.sol";
 
 contract DeOrderTest is Test, Utilities, Permit2Sign {
-    Mock internal mock;
     MockERC20 token0;
     Permit2 permit2;
     IPermit2 internal PERMIT2;
@@ -36,7 +33,6 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
     event OrderModified(uint indexed orderId, address token, uint amount);
     // address _permit2 = 0x250182E0C0885e355E114f2FcCC03292aa6Ea2fC;
     function setUp() public {
-        mock = new Mock();
         token0 = new MockERC20("Test0", "TEST0", 18);
         permit2 = new Permit2{salt: 0x00}();
         DOMAIN_SEPARATOR = permit2.DOMAIN_SEPARATOR();

@@ -19,14 +19,14 @@ https://book.getfoundry.sh/forge/tests
 ```bash
 # 运行所有测试
 forge test
-# 启用优化器--Temporary Solve Stack too deep
-forge test --via-ir
 # 显示详细信息
 forge test -vvvvv
 # 指定函数测试
 forge test --match-test testCannotApplyYourself
-#
-forge test --via-ir -vvvvv --match-test testProlongStage
+# 指定函数测试  && 显示详细信息
+forge test  -vvvvv --match-test testProlongStage
+# 加快运行速度
+FOUNDRY_PROFILE=lite forge test
 ```
 ### 5、覆盖率
 ```bash

@@ -3,7 +3,7 @@ pragma solidity ^0.8.13;
 
 import "contracts/DeStage.sol";
 import "contracts/interface/IOrder.sol";
-import {DeOrderTest} from "./Deorder.t.sol";
+import {DeOrderTest} from "./DeOrder.t.sol";
 
 contract PermitStage is DeOrderTest {
     // testPermitStage
