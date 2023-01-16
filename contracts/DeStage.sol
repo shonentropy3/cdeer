@@ -1,13 +1,14 @@
+pragma solidity ^0.8.0;
+
 import "./interface/IOrder.sol";
 
-abstract contract DeStage {
+abstract contract DeStage is IOrder {
     error InvalidCaller();
     error ParamError(uint);
     error StatusError();
     error AmountError();
 
     uint constant maxStages = 12;
-    address public deOrder;
 
     enum StageStatus {
         Init,
@@ -33,6 +34,8 @@ abstract contract DeStage {
 
     constructor() internal {
     }
+
+    function getOrder(uint orderId) public override virtual view returns (Order memory);
 
 
     function setStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods) internal {
@@ -88,7 +91,7 @@ abstract contract DeStage {
         }
     }
 
-    function totalAmount(uint orderId) external view returns(uint total)  {
+    function stageTotalAmount(uint orderId) public view returns(uint total)  {
         Stage[] storage stages = orderStages[orderId];
         for ( uint i = 0; i < stages.length; i++ ) {
             total += stages[i].amount;
@@ -102,8 +105,8 @@ abstract contract DeStage {
         }
     }
 
-    function pendingWithdraw(uint _orderId) external view returns (uint pending, uint nextStage) {
-        Order memory order = IOrder(deOrder).getOrder(_orderId);
+    function pendingWithdraw(uint _orderId) public view returns (uint pending, uint nextStage) {
+        Order memory order = getOrder(_orderId);
         if(order.progress != OrderProgess.Ongoing) revert StatusError();
         uint lastStageEnd = order.startDate;
         bool payByDue = order.payType == PaymentType.Due;
@@ -136,7 +139,7 @@ abstract contract DeStage {
         uint stageStartDate;
         ( currStageIndex, stageStartDate) = ongoingStage(_orderId);
         
-        Order memory order = IOrder(deOrder).getOrder(_orderId);
+        Order memory order = getOrder(_orderId);
         bool payByDue = order.payType == PaymentType.Due;
         Stage[] storage stages = orderStages[_orderId];
 
@@ -190,7 +193,7 @@ abstract contract DeStage {
         emit ConfirmOrderStage(_orderId, _stageIndex);
     }
 
-    function stagesLength(uint orderId) external view returns(uint len)  {
+    function stagesLength(uint orderId) public view returns(uint len)  {
         len = orderStages[orderId].length; 
     }
 
@@ -199,7 +202,7 @@ abstract contract DeStage {
     }
 
     function ongoingStage(uint _orderId) public view returns (uint stageIndex, uint stageStartDate) {
-        Order memory order = IOrder(deOrder).getOrder(_orderId);
+        Order memory order = getOrder(_orderId);
         stageStartDate = order.startDate;
         if(order.progress != OrderProgess.Ongoing) revert StatusError();
 

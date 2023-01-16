@@ -2,6 +2,9 @@
 
 pragma solidity ^0.8.0;
 
+error AmountError(uint reason); // 0: mismatch , 1: need pay
+error ParamError();
+
 enum OrderProgess {
     Init,
     Staged,
@@ -35,5 +38,4 @@ struct Order {
 
 interface IOrder {
     function getOrder(uint orderId) external view returns (Order memory);
-    function stage() external view returns (address);
 }
