@@ -63,14 +63,14 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
         token0.approve(address(permit2), type(uint256).max); // 授权
         token0.approve(address(deOrder), type(uint256).max); // 授权
         vm.stopPrank();
-        vm.deal(issuer, 1000); // 初始化原生币余额
+        vm.deal(issuer, 1000 ether); // 初始化原生币余额
     }
 
     // createOrder
     // @Summary 创建Order
     function createOrder() public {
         vm.startPrank(issuer); // 甲方
-        deOrder.createOrder(64, issuer, worker, address(0), 100);
+        deOrder.createOrder(64, issuer, worker, address(0), 100 ether);
         vm.stopPrank();
     }
 
@@ -118,13 +118,13 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
         uint256 _orderId = 1;
         uint256[] memory _amounts = new uint256[](1);
         uint256[] memory _periods = new uint256[](1);
-        _amounts[0] = 100;
+        _amounts[0] = 100 ether;
         PaymentType payType = PaymentType.Unknown;
         if (keccak256(payTypeString) == keccak256("Confirm")) {
             _periods[0] = 0;
             payType = PaymentType.Confirm;
         } else if (keccak256(payTypeString) == keccak256("Due")) {
-            _periods[0] = 1;
+            _periods[0] = 172800;
             payType = PaymentType.Due;
         } else {
             revert ParamError();

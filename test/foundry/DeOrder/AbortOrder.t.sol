@@ -38,13 +38,14 @@ contract AbortOrder is DeOrderTest {
 
         permitStage(issuer, worker, "Due", ""); // 阶段划分
         payOrder(issuer, 100 ether, zero); // 付款
+        vm.warp(0);
         startOrder(issuer); // 开始任务
 
-        vm.warp(100);//增加500s
+        vm.warp(17280);//增加500s
         abortOrder(issuer, 1);
         
-        assertEq(address(issuer).balance, 990.1 ether); 
-        assertEq(address(worker).balance, 9.9 ether);
+        assertEq(address(issuer).balance, 990 ether); 
+        assertEq(address(worker).balance, 9.5 ether);
         
         console2.log(address(issuer).balance);
         console2.log(address(worker).balance);
@@ -55,7 +56,6 @@ contract AbortOrder is DeOrderTest {
     function testCannotDueIusserAbortOrder() public {
         createOrder(); // 创建Order
         // 状态不在Ongoing
-
         permitStage(issuer, worker, "Due", ""); // 阶段划分
         payOrder(issuer, 100 ether, zero); // 付款
         startOrder(issuer); // 开始任务
