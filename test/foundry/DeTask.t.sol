@@ -13,6 +13,7 @@ contract DeTaskTest is Test {
     address owner; // 合约拥有者
     address issuer; // 甲方
     address worker; // 乙方
+    address other; // 项目无关方
 
     function setUp() public {
         mock = new Mock();
@@ -20,6 +21,7 @@ contract DeTaskTest is Test {
         owner = msg.sender;
         issuer = vm.addr(1);
         worker = vm.addr(2);
+        other = vm.addr(3);
 
         vm.startPrank(owner); // 切换合约发起人
         deTask = new DeTask();
@@ -29,6 +31,96 @@ contract DeTaskTest is Test {
         console.log(issuer);
         console.log(worker);
     }
+
+    // 测试不同身份创建task(pan)
+    function testCreateTaskByDifferentPerson() public {
+        string memory title;
+        string memory attachment;
+        uint8 currency;
+        uint128 budget;
+        uint32 period;
+        uint48 skills;
+        uint32 timestamp;
+        bool disabled;
+        // 生成Task
+        TaskInfo memory task = mock.mockOneTask(1);
+        TaskInfo memory taskRecord;
+
+        vm.startPrank(issuer); // 甲方
+        deTask.createTask(issuer, task);
+        vm.stopPrank();
+        (
+            title,
+            attachment,
+            currency,
+            budget,
+            period,
+            skills,
+            timestamp,
+            disabled
+        ) = deTask.getTaskInfo(1);
+        assertEq(bytes(title).length == 0, false);
+
+        
+        vm.startPrank(worker); // 乙方
+        deTask.createTask(issuer, task);
+        vm.stopPrank();
+        (
+            title,
+            attachment,
+            currency,
+            budget,
+            period,
+            skills,
+            timestamp,
+            disabled
+        ) = deTask.getTaskInfo(2);
+         assertEq(bytes(title).length == 0, false);
+       
+        vm.startPrank(other); // 其他
+        deTask.createTask(other, task);
+        vm.stopPrank();
+        (
+            title,
+            attachment,
+            currency,
+            budget,
+            period,
+            skills,
+            timestamp,
+            disabled
+        ) = deTask.getTaskInfo(3);
+         assertEq(bytes(title).length == 0, false);
+    }
+    // 测试创建task时task数据异常情况(pan)(异常数据的情况只要task的数据符合规范就不会报错)
+    // function testCreateTaskByAbnormal() public {
+    //     string memory title;
+    //     string memory attachment;
+    //     uint8 currency;
+    //     uint128 budget;
+    //     uint32 period;
+    //     uint48 skills;
+    //     uint32 timestamp;
+    //     bool disabled;
+    //     // 生成Task
+    //     TaskInfo memory task = mock.mockOneTask(0);
+    //     TaskInfo memory taskRecord;
+
+    //     vm.startPrank(issuer); // 甲方
+    //     deTask.createTask(issuer, task);
+    //     vm.stopPrank();
+    //     (
+    //         title,
+    //         attachment,
+    //         currency,
+    //         budget,
+    //         period,
+    //         skills,
+    //         timestamp,
+    //         disabled
+    //     ) = deTask.getTaskInfo(1);
+    //     assertEq(bytes(title).length == 0, false);
+    // }
 
     // testCreateTask
     // @Summary 创建需求
@@ -69,7 +161,25 @@ contract DeTaskTest is Test {
         vm.expectRevert(bytes("No permission."));
         deTask.modifyTask(1, task);
     }
-
+    // 测试taskid不存在(pan)
+    function testModifyTaskUseTaskIdNotExist() public {
+        testCreateTask();
+        TaskInfo memory task = mock.mockOneTask(2);
+        vm.startPrank(issuer);
+        vm.expectRevert(bytes("ERC721: invalid token ID"));
+        deTask.modifyTask(2, task);
+        vm.stopPrank();
+    }
+    // 测试task数据异常情况(pan)(异常数据的情况只要task的数据符合规范就不会报错)
+    // function testModifyTaskUseUnexpectTaskMessage() public {
+    //      testCreateTask();
+    //     TaskInfo memory task = mock.mockOneTask(2);
+    //     vm.startPrank(issuer);
+    //     // vm.expectRevert(bytes("ERC721: invalid token ID"));
+    //     deTask.modifyTask(1, task);
+    //     vm.stopPrank();
+    // }
+    
     // testModifyTask
     // @Summary 修改Task
     function testModifyTask() public {
@@ -99,6 +209,60 @@ contract DeTaskTest is Test {
         assertEq(task.skills, skills);
         assertEq(task.disabled, disabled);
     }
+    // 测试getTaskInfo
+    // taskid不存在的情况(pan)
+    function testGetTaskInfoUseNotExistTaskId() public {
+        string memory title;
+        string memory attachment;
+        uint8 currency;
+        uint128 budget;
+        uint32 period;
+        uint48 skills;
+        uint32 timestamp;
+        bool disabled;
+
+        testCreateTask();
+        vm.startPrank(issuer);
+        (
+            title,
+            attachment,
+            currency,
+            budget,
+            period,
+            skills,
+            timestamp,
+            disabled
+        ) = deTask.getTaskInfo(1);
+        assertEq(bytes(title).length == 0, false);
+        vm.stopPrank();
+        vm.startPrank(worker);
+               (
+            title,
+            attachment,
+            currency,
+            budget,
+            period,
+            skills,
+            timestamp,
+            disabled
+        ) = deTask.getTaskInfo(1);
+        assertEq(bytes(title).length == 0, false);
+        vm.stopPrank();
+        vm.startPrank(other);
+               (
+            title,
+            attachment,
+            currency,
+            budget,
+            period,
+            skills,
+            timestamp,
+            disabled
+        ) = deTask.getTaskInfo(1);
+        assertEq(bytes(title).length == 0, false);
+        vm.stopPrank();
+
+    }
 
     // testCannotApplyFor
     // @Summary 报名Task失败情况
@@ -118,6 +282,36 @@ contract DeTaskTest is Test {
         vm.expectRevert(bytes("low fee"));
         deTask.applyFor{value: 9}(worker, 1, 100);
         vm.stopPrank();
+    }
+    // 测试报名时传入的报名地址为创建人/其他人/零
+    // 事件
+    event ApplyFor(uint indexed taskId, address indexed worker, uint cost);
+    function testApplyForApplicantNotExist() public {
+        
+        testCreateTask();
+        // 零地址
+        address dre = 0x0000000000000000000000000000000000000000;
+        vm.expectEmit(true, true, false, true);
+        emit ApplyFor(1,0x0000000000000000000000000000000000000001,100);
+        deTask.applyFor(dre, 1, 100);
+    }
+
+
+    // 测试报名时传入的taskId不存在
+    function testApplyForTaskIdNotExist() public {
+        
+        testCreateTask();
+        vm.expectRevert(bytes("ERC721: invalid token ID"));
+        deTask.applyFor(worker, 2, 100);
+    }
+    // 测试报名时传入的cost>=0
+    function testApplyForCostNotEnought() public {
+        
+        testCreateTask();
+        // vm.expectRevert(bytes("ERC721: invalid token ID"));
+        vm.expectEmit(true, true, false, true);
+        emit ApplyFor(1,worker,100);
+        deTask.applyFor(worker, 1, 0);
     }
 
     // testApplyFor
@@ -149,7 +343,19 @@ contract DeTaskTest is Test {
     function testCannotCancelApply() public {
         testApplyFor();
         vm.expectRevert(bytes("Not applied."));
+        // vm.startPrank(issuer);
         deTask.cancelApply(1);
+        // vm.stopPrank();
+    }
+
+    //测试取消报名不存在的taskid
+    function testCancelApplyTaskIdNotExist() public {
+        testApplyFor();
+        vm.expectRevert(bytes("Not applied."));
+        // vm.startPrank(issuer);
+        vm.startPrank(worker);
+        deTask.cancelApply(2);
+        vm.stopPrank();
     }
 
     // testCancelApply
@@ -256,13 +462,14 @@ contract DeTaskTest is Test {
         // vm.stopPrank();
     }
 
-
     // testCannotSetMetaContract
     // @Summary 非合约创建者设置Meta合约地址 && 设置Meta合约地址为 零地址
     function testCannotSetMetaContract() public {
         // 非合约创建者设置order合约地址
         vm.expectRevert(bytes("Ownable: caller is not the owner"));
-        deTask.setMetaContract(address(0xd2EeE6cB28C99767BA7F8469C3C621033bb09C77));
+        deTask.setMetaContract(
+            address(0xd2EeE6cB28C99767BA7F8469C3C621033bb09C77)
+        );
         // 设置Order合约地址为 零地址
         vm.startPrank(owner);
         vm.expectRevert(bytes("zero address"));
@@ -278,9 +485,24 @@ contract DeTaskTest is Test {
         deTask.setMetaContract(addr);
         vm.stopPrank();
         assertEq(deTask.meta(), addr);
-    }    
+    }
 
     // function testTokenURI()public{
     //     console.log(deTask.tokenURI(1));
+    // }
+
+    // 设置手续费收取地址
+    function testUpdateFeeReceiverNotOwner() public {
+        vm.startPrank(other);
+        vm.expectRevert("Ownable: caller is not the owner");
+        deTask.updateFeeReceiver(20,20,issuer);
+        vm.stopPrank();
+    }
+
+    // 设置合约的代币地址
+    // function testTokenURINotExist() public {
+    //     vm.startPrank(owner);
+    //     deTask.tokenURI();
+    //     vm.stopPrank();
     // }
 }
