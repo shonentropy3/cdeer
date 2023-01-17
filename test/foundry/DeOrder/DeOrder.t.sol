@@ -31,6 +31,7 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
 
     uint[] amounts = [50, 50];
     uint[] periods = [1000, 1000];
+    uint[] stageIndexs = [0, 1, 2];
     error ParamError();
     event SupportToken(address token, bool enabled);
     event OrderModified(uint indexed orderId, address token, uint amount);
@@ -176,7 +177,12 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
         vm.stopPrank();
     }
 
-    function prolongStage(address sign, address submit,uint256 _stageIndex,uint256 _appendPeriod) public {
+    function prolongStage(
+        address sign,
+        address submit,
+        uint256 _stageIndex,
+        uint256 _appendPeriod
+    ) public {
         uint256 _orderId = 1;
         // uint256 _stageIndex = 0;
         // uint256 _appendPeriod = 17280;
@@ -227,13 +233,15 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
     function appendStage(
         address sign,
         address submit,
-        string memory expectRevert
+        string memory expectRevert,
+        uint256 amount,
+        uint256 period
     ) public {
         uint256 _orderId = 1;
-        uint256 amount = 10;
-        uint256 period = 10;
+        // uint256 amount = 10;
+        // uint256 period = 10;
         uint256 nonce = _verifier.nonces(sign, _orderId);
-        uint256 deadline = 200;
+        uint256 deadline = 1000000;
         bytes32 structHash = keccak256(
             abi.encode(
                 _verifier.PERMITAPPENDSTAGE_TYPEHASH(),
@@ -306,5 +314,16 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
 
     function testsetSupportToken() public {
         setSupportToken(owner, address(token0), true);
+    }
+
+    //驗收
+    function confirmDelivery(
+        address who,
+        uint256 _orderId,
+        uint[] memory _stageIndexs
+    ) public {
+        vm.startPrank(who);
+        deOrder.confirmDelivery(_orderId, _stageIndexs);
+        vm.stopPrank();
     }
 }

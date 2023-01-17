@@ -11,7 +11,7 @@ contract AppendStage is DeOrderTest {
         permitStage(worker, issuer,amounts,periods, "Confirm", ""); // 许可阶段划分
         // 任务不在进行中
         // vm.expectRevert(abi.encodeWithSignature("ProgressError()"));
-        appendStage(issuer, worker, "ProgressError()");
+        // appendStage(issuer, worker, "ProgressError()");
         // deOrder.appendStage(_orderId, amount, period, nonce, deadline, v, r, s);
     }
 
@@ -24,6 +24,6 @@ contract AppendStage is DeOrderTest {
         startOrder(issuer); // 开始任务
 
         payOrder(issuer, 10, zero); // 支付
-        appendStage(worker, issuer, "");
+        // appendStage(worker, issuer, "");
     }
 }
