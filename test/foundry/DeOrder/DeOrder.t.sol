@@ -354,6 +354,10 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
         );
         vm.startPrank(who);
         deOrder.payOrderWithPermit2(1, amount, permit, sig);
+        
+    function refund(address who,uint _orderId, address _to, uint _amount) public{
+        vm.startPrank(who);
+        deOrder.refund(_orderId, _to, _amount);
         vm.stopPrank();
     }
 }

@@ -29,13 +29,34 @@ contract AbortOrder is DeOrderTest {
         startOrder(issuer); // 开始任务
         // 中止任务 已经完成的阶段和预付款 付款给乙方
         abortOrder(worker, 1);
-        vm.warp(17280*10);//增加17280s
         vm.expectRevert(abi.encodeWithSignature("ProgressError()"));
         abortOrder(worker, 1);
         vm.expectRevert(abi.encodeWithSignature("ProgressError()"));
         abortOrder(issuer, 1);
         vm.expectRevert(abi.encodeWithSignature("ProgressError()"));
         abortOrder(other, 1);
+        
+    }
+    //超時或者驗收後終止
+    function testDueLongtime() public{
+        createOrder(issuer, address(0), 100); // 创建Order
+        permitStage(issuer, worker,amounts,periods, "Due", ""); // 阶段划分
+        payOrder(issuer, 100 ether, zero); // 付款
+        startOrder(issuer); // 开始任务
+        vm.warp(17280*100);//增加17280s
+        vm.expectRevert(abi.encodeWithSignature("StatusError()"));
+        abortOrder(issuer, 1);
+    }
+    function testConfirmLongtime() public{
+        createOrder(issuer, address(0), 100); // 创建Order
+        permitStage(issuer, worker,amounts,periods, "Confirm", ""); // 阶段划分
+        payOrder(issuer, 100 ether, zero); // 付款
+        startOrder(issuer); // 开始任务
+        vm.warp(17280*100);//增加17280s
+        stageIndexs=[0];
+        confirmDelivery(issuer, 1,stageIndexs );
+        vm.expectRevert(abi.encodeWithSignature("StatusError()"));
+        abortOrder(issuer, 1);
     }
 
     //按期付款，设置100块，时间17280*10s（两天），一个阶段划分的order，issuer在时间一半的时候中止任务，只有一个阶段
