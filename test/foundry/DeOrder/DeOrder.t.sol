@@ -35,6 +35,7 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
     error ParamError();
     event SupportToken(address token, bool enabled);
     event OrderModified(uint indexed orderId, address token, uint amount);
+    event AttachmentUpdated(uint indexed orderId, string attachment);
 
     // address _permit2 = 0x250182E0C0885e355E114f2FcCC03292aa6Ea2fC;
     function setUp() public {
@@ -57,8 +58,8 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
             address(_verifier)
         );
         deStage = new DeStage(address(deOrder));
+        deOrder.setDeStage(address(deStage));
         vm.stopPrank();
-        testSetDeStage(); // 设置DeStage地址
         // 打印信息
         console.log(owner);
         console.log(issuer);
@@ -92,15 +93,6 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
         emit OrderModified(orderId, token, amount);
         deOrder.modifyOrder(orderId, token, amount);
         vm.stopPrank();
-    }
-
-    // testSetDeStage
-    // @Summary 设置DeStage合约地址
-    function testSetDeStage() public {
-        vm.startPrank(owner);
-        deOrder.setDeStage(address(deStage));
-        vm.stopPrank();
-        assertEq(deOrder.stage(), address(deStage));
     }
 
     // testCannotSetDeStage
@@ -303,17 +295,13 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
         vm.stopPrank();
     }
 
-    //
+    // setSupportToken 设置支持的Token
     function setSupportToken(address who, address _token, bool enable) public {
         vm.startPrank(who);
         vm.expectEmit(false, false, false, true);
         emit SupportToken(address(_token), enable);
         deOrder.setSupportToken(_token, enable);
         vm.stopPrank();
-    }
-
-    function testsetSupportToken() public {
-        setSupportToken(owner, address(token0), true);
     }
 
     function confirmDelivery(
@@ -326,9 +314,46 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
         vm.stopPrank();
     }
 
+    // withdraw 提款
     function withdraw(address who, uint _orderId, address to) public {
         vm.startPrank(who);
         deOrder.withdraw(_orderId, to);
+        vm.stopPrank();
+    }
+
+    function updateAttachment(
+        address who,
+        uint _orderId,
+        string memory _attachment,
+        bytes memory expectRevert
+    ) public {
+        vm.startPrank(who);
+        if (expectRevert.length != 0) {
+            vm.expectRevert(expectRevert);
+        } else {
+            vm.expectEmit(true, true, true, true);
+            emit AttachmentUpdated(_orderId, _attachment);
+        }
+        deOrder.updateAttachment(_orderId, _attachment);
+        vm.stopPrank();
+    }
+
+    // payOrderWithPermit2
+    // @Summary 使用Permit2付款
+    function payOrderWithPermit2(address who, uint256 amount) public {
+        uint256 nonce = 0;
+        IPermit2.PermitTransferFrom memory permit = defaultERC20PermitTransfer(
+            address(token0),
+            nonce
+        );
+        // 签名数据
+        bytes memory sig = getPermitTransferSignature(
+            permit,
+            DOMAIN_SEPARATOR,
+            address(deOrder)
+        );
+        vm.startPrank(who);
+        deOrder.payOrderWithPermit2(1, amount, permit, sig);
         vm.stopPrank();
     }
 }

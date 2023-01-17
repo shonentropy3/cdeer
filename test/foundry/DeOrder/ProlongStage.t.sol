@@ -49,7 +49,7 @@ contract ProlongStage is DeOrderTest {
         DeStage.Stage[] memory stages0 = deStage.getStages(1);
         prolongStage(issuer, worker, 1, 1, 1000, "");
         DeStage.Stage[] memory stages = deStage.getStages(1);
-        assertEq(stages0[0].period, stages[0].period, "hello");
+        assertEq(stages0[0].period, stages[0].period);
         assertEq(stages0[1].period + 1000, stages[1].period);
     }
 }

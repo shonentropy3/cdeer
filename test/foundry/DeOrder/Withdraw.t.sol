@@ -5,21 +5,14 @@ import {DeOrderTest} from "./DeOrder.t.sol";
 
 contract Withdraw is DeOrderTest {
     // issuer check worker withdraw
-    // @Summary 甲方验收 乙方提款
-    function checkAndwithdraw() public {
-        uint256[] memory _stageIndex = new uint256[](1);
-        _stageIndex[0] = 0;
-        vm.startPrank(issuer); // 甲方
-        deOrder.confirmDelivery(1, _stageIndex);
-        vm.stopPrank();
-        vm.startPrank(worker); // 乙方
-        deOrder.withdraw(1, worker);
-        vm.stopPrank();
-    }
-
-    // issuer check worker withdraw
     // @Summary 测试 甲方验收 乙方提款失败
     function testCannotcheckAndwithdraw() public {
+        
+
+
+
+
+
         createOrder(issuer, address(0), 100); // 创建Order
         // uint256[] memory amounts = [1,2,3];
         // uint[] memory periods = [uint256(1),uint256(2),uint256(3)];

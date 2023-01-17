@@ -12,25 +12,7 @@ contract PayOrder is DeOrderTest {
         // 甲方付款
         payOrder(issuer, 1, zero);
         Order memory order = deOrder.getOrder(1);
-    }
-
-    // payOrderWithPermit2
-    // @Summary 使用Permit2付款
-    function payOrderWithPermit2(address who, uint256 amount) public {
-        uint256 nonce = 0;
-        IPermit2.PermitTransferFrom memory permit = defaultERC20PermitTransfer(
-            address(token0),
-            nonce
-        );
-        // 签名数据
-        bytes memory sig = getPermitTransferSignature(
-            permit,
-            DOMAIN_SEPARATOR,
-            address(deOrder)
-        );
-        vm.startPrank(who);
-        deOrder.payOrderWithPermit2(1, amount, permit, sig);
-        vm.stopPrank();
+        assertEq(order.payed, 1);
     }
 
     // testPayOrderWithPermit2
