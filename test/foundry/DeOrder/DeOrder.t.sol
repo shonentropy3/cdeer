@@ -30,7 +30,7 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
     address zero = address(0);
 
     uint[] amounts = [50, 50];
-    uint[] periods = [1000,1000];
+    uint[] periods = [1000, 1000];
     error ParamError();
     event SupportToken(address token, bool enabled);
     event OrderModified(uint indexed orderId, address token, uint amount);
@@ -118,7 +118,7 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
         uint256[] memory _amounts,
         uint256[] memory _periods,
         bytes memory payTypeString,
-        string memory expectRevert
+        bytes memory expectRevert
     ) public {
         uint256 _orderId = 1;
         PaymentType payType = PaymentType.Unknown;
@@ -159,8 +159,8 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
         }
         // 提交
         vm.startPrank(submit);
-        if (!isStringEmpty(expectRevert)) {
-            vm.expectRevert(abi.encodeWithSignature(expectRevert));
+        if (expectRevert.length != 0) {
+            vm.expectRevert(expectRevert);
         }
         deOrder.permitStage(
             _orderId,

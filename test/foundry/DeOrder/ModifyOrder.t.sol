@@ -9,11 +9,14 @@ contract ModifyOrder is DeOrderTest {
     // @Summary 修改Order失败情况
     function testCannotModifyOrder() public {
         createOrder(issuer, address(0), 100); // 创建Order
-        permitStage(issuer, worker,amounts,periods, "Due", ""); // 阶段划分
+        permitStage(issuer, worker, amounts, periods, "Due", ""); // 阶段划分
         // 非本人修改
         vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
         deOrder.modifyOrder(1, address(0), 1);
-
+        // 非本人修改已经付款的Order
+        payOrder(issuer, 100, zero); // 付款
+        vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
+        deOrder.modifyOrder(1, address(0), 1);
         // 【使用不存在的token地址，其他地址，不支持的token地址】
         vm.startPrank(issuer); // 甲方
         vm.expectRevert(abi.encodeWithSignature("UnSupportToken()"));
@@ -24,7 +27,6 @@ contract ModifyOrder is DeOrderTest {
         );
         vm.stopPrank();
         // 任务已经开始修改
-        payOrder(issuer, 100, zero); // 付款
         startOrder(issuer); // 开始任务
         vm.startPrank(issuer); // 甲方
         vm.expectRevert(abi.encodeWithSignature("ProgressError()"));
@@ -87,5 +89,17 @@ contract ModifyOrder is DeOrderTest {
         order = deOrder.getOrder(1);
         assertEq(order.token, address(0));
         assertEq(order.payed, 0); // 清除支付部分
+    }
+
+    /* 更换token退款（未付款）(原生币改为Token)
+     * @Expect 更改成功
+     * @Assert order不用返还金额
+     */
+    function testModifyOrderNotPay() public {
+        vm.deal(address(_weth), 1000 ether); // 初始化WETH原生币余额
+        createOrder(issuer, address(0), 100); // 创建Order
+        setSupportToken(owner, address(token0), true);
+        modifyOrder(issuer, 1, address(token0), 1);
+        assertEq(address(_weth).balance, 1000 ether); // weth合约余额
     }
 }
