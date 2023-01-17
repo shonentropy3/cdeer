@@ -176,12 +176,12 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
         vm.stopPrank();
     }
 
-    function prolongStage(address sign, address submit) public {
+    function prolongStage(address sign, address submit,uint256 _stageIndex,uint256 _appendPeriod) public {
         uint256 _orderId = 1;
-        uint256 _stageIndex = 0;
-        uint256 _appendPeriod = 10;
+        // uint256 _stageIndex = 0;
+        // uint256 _appendPeriod = 17280;
         uint256 nonce = _verifier.nonces(sign, _orderId);
-        uint256 deadline = 200;
+        uint256 deadline = 1000000;
         bytes32 structHash = keccak256(
             abi.encode(
                 _verifier.PERMITPROSTAGE_TYPEHASH(),
