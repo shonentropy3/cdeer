@@ -24,7 +24,6 @@ contract StartOrder is DeOrderTest {
         vm.expectRevert(abi.encodeWithSignature("AmountError(uint256)", 0));
         startOrder(issuer);
     }
-
     // testStartOrder
     // @Summary 开始任务
     function testStartOrder() public {

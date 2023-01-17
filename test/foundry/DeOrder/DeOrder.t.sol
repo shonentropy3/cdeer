@@ -180,12 +180,11 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
     function prolongStage(
         address sign,
         address submit,
+        uint256 _orderId,
         uint256 _stageIndex,
-        uint256 _appendPeriod
+        uint256 _appendPeriod,
+        bytes memory expectRevert
     ) public {
-        uint256 _orderId = 1;
-        // uint256 _stageIndex = 0;
-        // uint256 _appendPeriod = 17280;
         uint256 nonce = _verifier.nonces(sign, _orderId);
         uint256 deadline = 1000000;
         bytes32 structHash = keccak256(
@@ -215,6 +214,9 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
         }
         // 调用
         vm.startPrank(submit);
+        if (expectRevert.length != 0) {
+            vm.expectRevert(expectRevert);
+        }
         deOrder.prolongStage(
             _orderId,
             _stageIndex,
@@ -233,13 +235,11 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
     function appendStage(
         address sign,
         address submit,
-        string memory expectRevert,
+        uint256 _orderId,
         uint256 amount,
-        uint256 period
+        uint256 period,
+        bytes memory expectRevert
     ) public {
-        uint256 _orderId = 1;
-        // uint256 amount = 10;
-        // uint256 period = 10;
         uint256 nonce = _verifier.nonces(sign, _orderId);
         uint256 deadline = 1000000;
         bytes32 structHash = keccak256(
@@ -269,8 +269,8 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
         }
         // 调用
         vm.startPrank(submit);
-        if (!isStringEmpty(expectRevert)) {
-            vm.expectRevert(abi.encodeWithSignature(expectRevert));
+        if (expectRevert.length != 0) {
+            vm.expectRevert(expectRevert);
         }
         deOrder.appendStage(_orderId, amount, period, nonce, deadline, v, r, s);
         vm.stopPrank();
@@ -305,7 +305,7 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
 
     //
     function setSupportToken(address who, address _token, bool enable) public {
-        vm.startPrank(who); // 乙方
+        vm.startPrank(who);
         vm.expectEmit(false, false, false, true);
         emit SupportToken(address(_token), enable);
         deOrder.setSupportToken(_token, enable);
@@ -316,14 +316,19 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
         setSupportToken(owner, address(token0), true);
     }
 
-    //驗收
     function confirmDelivery(
         address who,
-        uint256 _orderId,
+        uint _orderId,
         uint[] memory _stageIndexs
     ) public {
         vm.startPrank(who);
         deOrder.confirmDelivery(_orderId, _stageIndexs);
+        vm.stopPrank();
+    }
+
+    function withdraw(address who, uint _orderId, address to) public {
+        vm.startPrank(who);
+        deOrder.withdraw(_orderId, to);
         vm.stopPrank();
     }
 }
