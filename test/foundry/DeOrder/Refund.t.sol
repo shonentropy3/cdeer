@@ -58,7 +58,7 @@ contract Refund is DeOrderTest {
         payOrder(issuer, 100 ether, zero); // 付款
         assertEq(address(issuer).balance, 800 ether);
         //增加階段
-        appendStage(issuer, worker, 1, 100, 4000, "");
+        appendStage(issuer, worker, 1, 100 ether, 4000, "");
         payOrder(issuer, 100 ether, zero); // 付款
         vm.warp(100000);
         vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
@@ -237,7 +237,7 @@ contract Refund is DeOrderTest {
     }
 
     //在各个阶段提取大于合约内的金钱
-    function testhhhhdasdasd() public{
+    function testRefundGreaterOrder() public{
         vm.deal(owner, 0 ether); // 初始化原生币余额
         createOrder(issuer, address(0), 100 ether); // 创建Order
 
