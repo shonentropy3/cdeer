@@ -20,7 +20,6 @@ import './Multicall.sol';
 contract DeOrder is DeStage, Multicall, Ownable, ReentrancyGuard {
     error PermissionsError();
     error ProgressError();
-
     error UnSupportToken();
 
     uint private constant FEE_BASE = 10000;
@@ -92,7 +91,7 @@ contract DeOrder is DeStage, Multicall, Ownable, ReentrancyGuard {
         emit OrderCreated(_taskId, currOrderId, _issuer, _worker, _token, _amount);
     }
 
-    function getOrder(uint orderId) external view override returns (Order memory) {
+    function getOrder(uint orderId) public override view returns (Order memory) {
         return orders[orderId];
     }
 
@@ -255,7 +254,7 @@ contract DeOrder is DeStage, Multicall, Ownable, ReentrancyGuard {
         order.startDate = uint32(block.timestamp);
         emit OrderStarted(_orderId, msg.sender, uint(order.payType));
         
-        startOrder(_orderId);
+        startOrderStage(_orderId);
     }
 
     // 甲方验收
@@ -373,10 +372,6 @@ contract DeOrder is DeStage, Multicall, Ownable, ReentrancyGuard {
         } else {
             SafeERC20.safeTransfer(IERC20(_token), _to, _amount);
         }
-    }
-
-    function safe96(uint n) internal {
-        if(n >= 2**96) revert AmountError(0);
     }
 
     function setFeeTo(uint _fee, address _feeTo) external onlyOwner {

@@ -3,10 +3,10 @@ pragma solidity ^0.8.0;
 import "./interface/IOrder.sol";
 
 abstract contract DeStage is IOrder {
+    error AmountError(uint reason); // 0: amount error, 1: need pay
     error InvalidCaller();
-    error ParamError(uint);
+    error ParamError();
     error StatusError();
-    error AmountError();
 
     uint constant maxStages = 12;
 
@@ -40,8 +40,8 @@ abstract contract DeStage is IOrder {
 
     function setStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods) internal {
 
-        if(_amounts.length != _periods.length || _amounts.length == 0) revert ParamError(0);
-        if(maxStages < _amounts.length) revert ParamError(1);
+        if(_amounts.length != _periods.length || _amounts.length == 0) revert ParamError();
+        if(maxStages < _amounts.length) revert ParamError();
 
         delete orderStages[_orderId];
         Stage[] storage stages = orderStages[_orderId];
@@ -98,7 +98,7 @@ abstract contract DeStage is IOrder {
         }
     }
 
-    function startOrder(uint _orderId) internal {
+    function startOrderStage(uint _orderId) internal {
         Stage[] storage stages = orderStages[_orderId];
         if (stages[0].period == 0) {
             stages[0].status = StageStatus.Accepted;
@@ -221,13 +221,12 @@ abstract contract DeStage is IOrder {
         revert StatusError();
     }
 
-
     function safe96(uint n) internal {
-        if(n >= 2**96) revert AmountError();
+        if(n >= 2**96) revert AmountError(0);
     }
 
     function safe32(uint n) internal {
-        if(n >= 2**32) revert AmountError();
+        if(n >= 2**32) revert AmountError(0);
     }
 
 
