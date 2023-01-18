@@ -11,12 +11,12 @@ contract Refund is DeOrderTest {
     // Due测试项目超时自动验收后甲乙双方正常取款和退款（没有测超时后项目的状态）
     function testDueRefundByTimeOutGetNormal() public {
         vm.deal(owner, 0 ether); // 初始化原生币余额
+        //创建order并阶段划分
         createOrder(issuer, address(0), 100 ether); // 创建Order
-
-
         amounts = [100 ether]; //100块
         periods = [172800]; // 两天
         permitStage(issuer, worker, amounts, periods, "Due", ""); // 阶段划分
+
         vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
         refund(worker, 1, issuer, 100 ether);
         vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
