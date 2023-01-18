@@ -212,7 +212,7 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
     ) external nonReentrant {
         safe96(amount);
         Order storage order = orders[orderId];
-        if (permit.permitted.token != order.token) {
+        if (permit.permitted.token != order.token || order.token == address(0)) {
             revert UnSupportToken(); 
         }
         
