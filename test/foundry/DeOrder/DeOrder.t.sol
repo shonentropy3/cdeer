@@ -340,10 +340,15 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
 
     // payOrderWithPermit2
     // @Summary 使用Permit2付款
-    function payOrderWithPermit2(address who, uint256 amount) public {
+    function payOrderWithPermit2(
+        address who,
+        uint orderId,
+        uint256 amount,
+        address _token
+    ) public {
         uint256 nonce = 0;
         IPermit2.PermitTransferFrom memory permit = defaultERC20PermitTransfer(
-            address(token0),
+            _token,
             nonce
         );
         // 签名数据
@@ -353,10 +358,16 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
             address(deOrder)
         );
         vm.startPrank(who);
-        deOrder.payOrderWithPermit2(1, amount, permit, sig);
+        deOrder.payOrderWithPermit2(orderId, amount, permit, sig);
+        vm.stopPrank();
     }
-        
-    function refund(address who,uint _orderId, address _to, uint _amount) public{
+
+    function refund(
+        address who,
+        uint _orderId,
+        address _to,
+        uint _amount
+    ) public {
         vm.startPrank(who);
         deOrder.refund(_orderId, _to, _amount);
         vm.stopPrank();
