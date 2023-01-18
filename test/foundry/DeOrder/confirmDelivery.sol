@@ -14,6 +14,8 @@ contract confirmDelivery is DeOrderTest {
         stageIndexs=[0];
         confirmDelivery(issuer, 1, stageIndexs);
         vm.expectRevert(abi.encodeWithSignature("ProgressError()"));
+        confirmDelivery(zero, 1, stageIndexs);
+        vm.expectRevert(abi.encodeWithSignature("ProgressError()"));
         confirmDelivery(worker, 1, stageIndexs);
         vm.expectRevert(abi.encodeWithSignature("ProgressError()"));
         confirmDelivery(other, 1, stageIndexs);
@@ -46,11 +48,13 @@ contract confirmDelivery is DeOrderTest {
         startOrder(issuer); // 开始任务
         vm.warp(86400);
         //
+
+        stageIndexs=[0];
+
         vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
         confirmDelivery(worker, 1, stageIndexs);
         vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
         confirmDelivery(other, 1, stageIndexs);
-        stageIndexs=[0];
         confirmDelivery(issuer, 1, stageIndexs);
         vm.expectRevert(abi.encodeWithSignature("AmountError(uint256)",1));
         refund(issuer, 1, issuer, 1 ether);
@@ -93,11 +97,12 @@ contract confirmDelivery is DeOrderTest {
         startOrder(issuer); // 开始任务
         vm.warp(864000);
         //
+        stageIndexs=[0];
         vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
         confirmDelivery(worker, 1, stageIndexs);
         vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
         confirmDelivery(other, 1, stageIndexs);
-        stageIndexs=[0];
+    
         confirmDelivery(issuer, 1, stageIndexs);
         vm.expectRevert(abi.encodeWithSignature("AmountError(uint256)",1));
         refund(issuer, 1, issuer, 1 ether);
@@ -169,11 +174,12 @@ contract confirmDelivery is DeOrderTest {
 
         //驗收第一個阶段
         vm.warp(182800);
+        stageIndexs=[0];
         vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
         confirmDelivery(worker, 1, stageIndexs);
         vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
         confirmDelivery(other, 1, stageIndexs);
-        stageIndexs=[0];
+        
         confirmDelivery(issuer, 1, stageIndexs);
         vm.expectRevert(abi.encodeWithSignature("AmountError(uint256)",1));
         refund(issuer, 1, issuer, 1 ether);
@@ -183,11 +189,11 @@ contract confirmDelivery is DeOrderTest {
 
         //验收第二个阶段
         vm.warp(1828000);
+        stageIndexs=[1];
         vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
         confirmDelivery(worker, 1, stageIndexs);
         vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
         confirmDelivery(other, 1, stageIndexs);
-        stageIndexs=[1];
         confirmDelivery(issuer, 1, stageIndexs);
         vm.expectRevert(abi.encodeWithSignature("AmountError(uint256)",1));
         refund(issuer, 1, issuer, 1 ether);
@@ -195,6 +201,22 @@ contract confirmDelivery is DeOrderTest {
         withdraw(worker, 1, worker);
         assertEq(address(worker).balance,190 ether);
     }
+        
 
+    function testfailzero() public{
+        vm.deal(owner, 0 ether); // 初始化原生币余额
+        createOrder(issuer, zero, 100 ether);
+        amounts = [100 ether]; //100块
+        periods = [172800]; // 两天
+        permitStage(issuer, worker, amounts, periods, "Due", ""); // 阶段划分
+        payOrder(issuer, 100 ether, zero);         
+        vm.warp(0); //初始化时间
+        startOrder(issuer); // 开始任务
+        vm.warp(86400);
+        
+        stageIndexs=[0];
+        vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
+        confirmDelivery(zero, 1, stageIndexs);
 
+    }
 }                                
