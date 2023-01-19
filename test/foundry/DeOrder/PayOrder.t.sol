@@ -42,12 +42,11 @@ contract PayOrder is DeOrderTest {
         assertEq(order3.payed, 50);
         assertEq(issuer.balance, balance3 - 50);
         assertEq(address(_weth).balance, balanceOfWeth3 + 50);
-
     }
 
     // testCannotPayOrder
     // @Summary 付款失败情况
-    function testCannotPayOrder() public {
+    function testCannotPayOrder1() public {
         createOrder(issuer, address(0), 100); // 创建Order
         // 订单-原生币 用Token付款
         payOrder(issuer, 100, address(token0));
@@ -60,11 +59,62 @@ contract PayOrder is DeOrderTest {
     function testCannotPayOrder2() public {
         setSupportToken(owner, address(token0), true);
         createOrder(issuer, address(token0), 100); // 创建Order
-        // 订单-原生币 用Token付款
+        // 订单-Token 用原生币付款
         vm.startPrank(issuer);
         vm.expectRevert(abi.encodeWithSignature("AmountError(uint256)", 0));
         deOrder.payOrder{value: 100}(1, 100);
         vm.stopPrank();
+        Order memory order = deOrder.getOrder(1);
+        assertEq(order.payed, 0);
+    }
+    // testCannotPayOrder
+    // @Summary 付款失败情况--订单不存在付款
+    function testCannotPayOrder3() public {
+        vm.startPrank(issuer);
+        vm.expectRevert(abi.encodeWithSignature("AmountError(uint256)", 0));
+        deOrder.payOrder{value: 100}(1, 100);
+        vm.stopPrank();
+    }
+
+    // testCannotPayOrder
+    // @Summary 付款失败情况3--使用不存在的token
+    function testFailPayOrder3() public {
+        setSupportToken(
+            owner,
+            address(0x69BB456f9181C798f6B31149004a5A1ADfAd241B),
+            true
+        );
+        createOrder(
+            issuer,
+            address(0x69BB456f9181C798f6B31149004a5A1ADfAd241B),
+            100
+        ); // 创建Order
+        // 订单-原生币 用Token付款
+        payOrder(
+            issuer,
+            100,
+            address(0x69BB456f9181C798f6B31149004a5A1ADfAd241B)
+        );
+        Order memory order2 = deOrder.getOrder(1);
+        assertEq(order2.payed, 0);
+    }
+
+    // testCannotPayOrder
+    // @Summary 付款失败情况--余额不足
+    function testCannotPayOrder4() public {
+        createOrder(issuer, address(0), 100); // 创建Order
+        // 订单-原生币 用Token付款
+        payOrder(worker, 100, address(token0));
+        Order memory order = deOrder.getOrder(1);
+        assertEq(order.payed, 0);
+    }
+
+    // testCannotPayOrder
+    // @Summary 付款失败情况--余额不足
+    function testFailPayOrder5() public {
+        setSupportToken(owner, address(token0), true);
+        createOrder(issuer, address(token0), 100); // 创建Order
+        payOrder(worker, 100, address(token0));
         Order memory order = deOrder.getOrder(1);
         assertEq(order.payed, 0);
     }
@@ -74,7 +124,7 @@ contract PayOrder is DeOrderTest {
     function testPayOrderWithPermit2() public {
         setSupportToken(owner, address(token0), true);
         createOrder(issuer, address(token0), 100); // 创建Order
-        permitStage(worker, issuer, amounts, periods, "Confirm", ""); // 正常划分阶段
+        permitStage(worker, issuer, 1, amounts, periods, "Confirm", ""); // 正常划分阶段
         // 付款-代币
         uint256 balance = token0.balanceOf(issuer); // 甲方余额
         uint256 balanceOfDeOrder = token0.balanceOf(address(deOrder)); // 合约余额

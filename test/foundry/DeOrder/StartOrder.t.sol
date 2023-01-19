@@ -13,7 +13,7 @@ contract StartOrder is DeOrderTest {
         // 阶段划分未完成
         vm.expectRevert(abi.encodeWithSignature("ProgressError()"));
         startOrder(issuer);
-        permitStage(issuer, worker, amounts, periods, "Due", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Due", ""); // 阶段划分
         // 订单没有付款
         vm.expectRevert(abi.encodeWithSignature("AmountError(uint256)", 1));
         startOrder(issuer);
@@ -28,7 +28,7 @@ contract StartOrder is DeOrderTest {
     // @Summary 开始任务
     function testStartOrder() public {
         createOrder(issuer, address(0), 100); // 创建Order
-        permitStage(issuer, worker, amounts, periods, "Due", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Due", ""); // 阶段划分
         payOrder(issuer, 100, zero); // 付款
         // 甲方调用
         startOrder(issuer);

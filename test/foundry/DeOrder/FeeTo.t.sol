@@ -25,7 +25,7 @@ contract FeeToTest is DeOrderTest {
         createOrder(issuer, address(0), 100 ether); // 创建Order
         amounts = [100 ether];
         periods = [86400]; // 一天
-        permitStage(issuer, worker, amounts, periods, "Due", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Due", ""); // 阶段划分
         payOrder(issuer, 100 ether, zero); // 付款
         vm.warp(0); //初始化时间
         startOrder(issuer); // 开始任务
@@ -49,7 +49,7 @@ contract FeeToTest is DeOrderTest {
         createOrder(issuer, address(0), 100 ether); // 创建Order
         amounts = [100 ether];
         periods = [86400]; // 一天
-        permitStage(issuer, worker, amounts, periods, "Due", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Due", ""); // 阶段划分
         payOrder(issuer, 100 ether, zero); // 付款
         vm.warp(0); //初始化时间
         startOrder(issuer); // 开始任务
@@ -73,7 +73,7 @@ contract FeeToTest is DeOrderTest {
         createOrder(issuer, address(0), 100 ether); // 创建Order
         amounts = [100 ether];
         periods = [86400]; // 一天
-        permitStage(issuer, worker, amounts, periods, "Due", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Due", ""); // 阶段划分
         payOrder(issuer, 100 ether, zero); // 付款
         vm.warp(0); //初始化时间
         startOrder(issuer); // 开始任务
@@ -85,7 +85,7 @@ contract FeeToTest is DeOrderTest {
     }
 
     function testCannotSetFeeTo() public {
-        vm.expectRevert(abi.encodeWithSignature("Ownable: caller is not the owner"));
+        vm.expectRevert("Ownable: caller is not the owner");
         setFeeTo(issuer, 100, address(issuer));
     }
 }

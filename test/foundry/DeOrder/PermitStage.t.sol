@@ -14,7 +14,7 @@ contract PermitStage is DeOrderTest {
         // 甲方签名 乙方提交
         amounts = [100];
         periods = [1000];
-        permitStage(issuer, worker, amounts, periods, "Due", "");
+        permitStage(issuer, worker, 1, amounts, periods, "Due", "");
         Order memory order = deOrder.getOrder(1);
         DeStage.Stage[] memory stages = deStage.getStages(1);
         assertTrue(order.progress == OrderProgess.Staged);
@@ -30,7 +30,7 @@ contract PermitStage is DeOrderTest {
         amounts = [100];
         periods = [1000];
         // 乙方签名 甲方提交
-        permitStage(worker, issuer, amounts, periods, "Confirm", "");
+        permitStage(worker, issuer, 1, amounts, periods, "Confirm", "");
         Order memory order = deOrder.getOrder(1);
         DeStage.Stage[] memory stages = deStage.getStages(1);
         assertTrue(order.progress == OrderProgess.Staged);
@@ -47,6 +47,7 @@ contract PermitStage is DeOrderTest {
         permitStage(
             issuer,
             issuer,
+            1,
             amounts,
             periods,
             "Due",
@@ -56,6 +57,7 @@ contract PermitStage is DeOrderTest {
         permitStage(
             worker,
             worker,
+            1,
             amounts,
             periods,
             "Due",
@@ -65,6 +67,7 @@ contract PermitStage is DeOrderTest {
         permitStage(
             worker,
             other,
+            1,
             amounts,
             periods,
             "Due",
@@ -74,6 +77,7 @@ contract PermitStage is DeOrderTest {
         permitStage(
             other,
             worker,
+            1,
             amounts,
             periods,
             "Due",
@@ -83,6 +87,7 @@ contract PermitStage is DeOrderTest {
         permitStage(
             owner,
             other,
+            1,
             amounts,
             periods,
             "Due",
@@ -93,6 +98,7 @@ contract PermitStage is DeOrderTest {
         permitStage(
             worker,
             issuer,
+            1,
             amounts,
             periods,
             "Due",
@@ -100,12 +106,13 @@ contract PermitStage is DeOrderTest {
         );
         vm.warp(0);
         // 任务已经开始 提交
-        permitStage(worker, issuer, amounts, periods, "Due", ""); // 正常划分阶段
+        permitStage(worker, issuer, 1, amounts, periods, "Due", ""); // 正常划分阶段
         payOrder(issuer, 100, zero); // 付款
         startOrder(issuer); // 开始任务
         permitStage(
             worker,
             issuer,
+            1,
             amounts,
             periods,
             "Due",
@@ -122,6 +129,7 @@ contract PermitStage is DeOrderTest {
         permitStage(
             worker,
             issuer,
+            1,
             amounts,
             periods,
             "Due",
@@ -173,7 +181,7 @@ contract PermitStage is DeOrderTest {
         );
         vm.stopPrank();
         // 使用已使用的Nonce
-        permitStage(worker, issuer, amounts, periods, "Due", "");
+        permitStage(worker, issuer, 1, amounts, periods, "Due", "");
         nonce = 0;
         structHash = keccak256(
             abi.encode(

@@ -20,7 +20,7 @@ contract Withdraw is DeOrderTest {
 
         amounts = [100 ether]; //100块
         periods = [172800]; // 两天
-        permitStage(issuer, worker, amounts, periods, "Due", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Due", ""); // 阶段划分
 
         vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
         withdraw(issuer,1, issuer);
@@ -122,7 +122,7 @@ contract Withdraw is DeOrderTest {
 
         amounts = [100 ether]; //100块
         periods = [172800]; // 两天
-        permitStage(issuer, worker, amounts, periods, "Confirm", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Confirm", ""); // 阶段划分
 
         vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
         withdraw(issuer,1, issuer);

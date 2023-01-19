@@ -108,12 +108,12 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
     function permitStage(
         address sign,
         address submit,
+        uint256 _orderId,
         uint256[] memory _amounts,
         uint256[] memory _periods,
         bytes memory payTypeString,
         bytes memory expectRevert
     ) public {
-        uint256 _orderId = 1;
         PaymentType payType = PaymentType.Unknown;
         if (keccak256(payTypeString) == keccak256("Confirm")) {
             payType = PaymentType.Confirm;

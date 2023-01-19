@@ -8,7 +8,7 @@ contract Common is DeOrderTest {
     // testUpdateAttachment 上传附件
     function testUpdateAttachment() public {
         createOrder(issuer, address(0), 100); // 创建Order
-        permitStage(worker, issuer, amounts, periods, "Due", ""); // 阶段划分
+        permitStage(worker, issuer, 1, amounts, periods, "Due", ""); // 阶段划分
         payOrder(issuer, 100, zero); // 支付
         startOrder(issuer); // 开始任务
         updateAttachment(
@@ -30,7 +30,7 @@ contract Common is DeOrderTest {
         );
 
         createOrder(issuer, address(0), 100); // 创建Order
-        permitStage(worker, issuer, amounts, periods, "Due", ""); // 阶段划分
+        permitStage(worker, issuer, 1, amounts, periods, "Due", ""); // 阶段划分
         payOrder(issuer, 100, zero); // 支付
         startOrder(issuer); // 开始任务
         updateAttachment(

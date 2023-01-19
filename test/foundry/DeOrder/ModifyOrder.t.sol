@@ -9,7 +9,7 @@ contract ModifyOrder is DeOrderTest {
     // @Summary 修改Order失败情况
     function testCannotModifyOrder() public {
         createOrder(issuer, address(0), 100); // 创建Order
-        permitStage(issuer, worker, amounts, periods, "Due", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Due", ""); // 阶段划分
         // 非本人修改
         vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
         deOrder.modifyOrder(1, address(0), 1);

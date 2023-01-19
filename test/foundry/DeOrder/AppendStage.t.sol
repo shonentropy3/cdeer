@@ -11,7 +11,7 @@ contract AppendStage is DeOrderTest {
     // @Summary 添加阶段失败情况
     function testCannotAppendStage() public {
         createOrder(issuer, address(0), 100); // 创建Order
-        permitStage(worker, issuer, amounts, periods, "Confirm", ""); // 许可阶段划分
+        permitStage(worker, issuer, 1, amounts, periods, "Confirm", ""); // 许可阶段划分
         // 任务不在进行中
         appendStage(issuer, worker, 1, 10, 1000, enFunc("ProgressError()"));
         // 任务进行中
@@ -33,7 +33,7 @@ contract AppendStage is DeOrderTest {
     // @Summary 测试添加阶段
     function testAppendStage() public {
         createOrder(issuer, address(0), 100); // 创建Order
-        permitStage(worker, issuer, amounts, periods, "Due", ""); // 阶段划分
+        permitStage(worker, issuer, 1, amounts, periods, "Due", ""); // 阶段划分
         payOrder(issuer, 100, zero); // 支付
         startOrder(issuer); // 开始任务
         DeStage.Stage[] memory stages0 = deStage.getStages(1);

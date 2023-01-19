@@ -15,7 +15,7 @@ contract Refund is DeOrderTest {
         createOrder(issuer, address(0), 100 ether); // 创建Order
         amounts = [100 ether]; //100块
         periods = [172800]; // 两天
-        permitStage(issuer, worker, amounts, periods, "Due", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Due", ""); // 阶段划分
 
         vm.expectRevert(abi.encodeWithSignature("PermissionsError()"));
         refund(worker, 1, issuer, 100 ether);
@@ -94,12 +94,13 @@ contract Refund is DeOrderTest {
         // console2.log(address(_weth).balance);
         // console2.log(address(owner).balance);
     }
+
     function testConfirmRefundByTimeOutGetNormal() public {
         vm.deal(owner, 0 ether); // 初始化原生币余额
         createOrder(issuer, address(0), 100 ether); // 创建Order
         amounts = [100 ether]; //100块
         periods = [172800]; // 两天
-        permitStage(issuer, worker, amounts, periods, "Confirm", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Confirm", ""); // 阶段划分
 
         payOrder(issuer, 200 ether, zero); // 付款
 
@@ -179,7 +180,7 @@ contract Refund is DeOrderTest {
         createOrder(issuer, address(0), 100 ether); // 创建Order
         amounts = [100 ether]; //100块
         periods = [172800]; // 两天
-        permitStage(issuer, worker, amounts, periods, "Due", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Due", ""); // 阶段划分
 
         payOrder(issuer, 200 ether, zero); // 付款
         vm.warp(0); //初始化时间
@@ -197,7 +198,6 @@ contract Refund is DeOrderTest {
         refund(issuer, 1, issuer, 100 ether);
         vm.expectRevert(abi.encodeWithSignature("AmountError(uint256)", 1)); //多次調用
         refund(issuer, 1, issuer, 100 ether);
-
     }
 
     function testConfirmIssuerAbortOrderrefund() public {
@@ -205,7 +205,7 @@ contract Refund is DeOrderTest {
         createOrder(issuer, address(0), 100 ether); // 创建Order
         amounts = [100 ether]; //100块
         periods = [172800]; // 两天
-        permitStage(issuer, worker, amounts, periods, "Confirm", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Confirm", ""); // 阶段划分
 
         payOrder(issuer, 200 ether, zero); // 付款
         vm.warp(0); //初始化时间
@@ -223,7 +223,6 @@ contract Refund is DeOrderTest {
         refund(issuer, 1, issuer, 100 ether);
         vm.expectRevert(abi.encodeWithSignature("AmountError(uint256)", 1)); //多次調用
         refund(issuer, 1, issuer, 100 ether);
-
     }
 
     //階段劃分後issuer提錢
@@ -232,22 +231,20 @@ contract Refund is DeOrderTest {
         createOrder(issuer, address(0), 100 ether); // 创建Order
         amounts = [100 ether]; //100块
         periods = [172800]; // 两天
-        permitStage(issuer, worker, amounts, periods, "Due", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Due", ""); // 阶段划分
         refund(issuer, 1, issuer, 100 ether);
     }
 
     //在各个阶段提取大于合约内的金钱
-    function testRefundGreaterOrder() public{
+    function testRefundGreaterOrder() public {
         vm.deal(owner, 0 ether); // 初始化原生币余额
         createOrder(issuer, address(0), 100 ether); // 创建Order
 
-
         amounts = [100 ether]; //100块
         periods = [172800]; // 两天
-        permitStage(issuer, worker, amounts, periods, "Due", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Due", ""); // 阶段划分
 
         payOrder(issuer, 200 ether, zero); // 付款
-
 
         // refund(issuer, 1, issuer, 120 ether);
         // assertEq(address(issuer).balance, 800 ether); //项目甲方余额
@@ -267,7 +264,7 @@ contract Refund is DeOrderTest {
         prolongStage(issuer, worker, 1, 0, 1000, "");
         vm.expectRevert(abi.encodeWithSignature("AmountError(uint256)", 1)); //多次調用
         refund(issuer, 1, issuer, 150 ether);
-        
+
         assertEq(address(issuer).balance, 800 ether);
         // //增加階段
         appendStage(issuer, worker, 1, 100, 4000, "");
@@ -276,8 +273,29 @@ contract Refund is DeOrderTest {
         vm.expectRevert(abi.encodeWithSignature("AmountError(uint256)", 1)); //多次調用
         refund(issuer, 1, issuer, 200 ether);
         assertEq(address(issuer).balance, 700 ether);
-
-
     }
 
+    function testRefundNotStartOrder() public {
+        uint256 balance = issuer.balance; // 甲方余额
+        createOrder(issuer, zero, 100);
+        assertEq(_weth.totalSupply(), 0);
+        payOrder(issuer, 100, zero);
+        assertEq(_weth.totalSupply(), 100);
+        assertEq(issuer.balance, balance - 100);
+        refund(issuer, 1, issuer, 100);
+        assertEq(_weth.totalSupply(), 0);
+        assertEq(issuer.balance, balance);
+    }
+
+    function testRefundNotStartOrder2() public {
+        uint256 balance = issuer.balance; // 甲方余额
+        createOrder(issuer, zero, 100);
+        assertEq(_weth.totalSupply(), 0);
+        payOrder(issuer, 100, zero);
+        assertEq(_weth.totalSupply(), 100);
+        assertEq(issuer.balance, balance - 100);
+        refund(issuer, 1, address(issuer), 100);
+        assertEq(_weth.totalSupply(), 0);
+        assertEq(issuer.balance, balance);
+    }
 }

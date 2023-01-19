@@ -22,7 +22,7 @@ contract confirmDelivery is DeOrderTest {
 
         amounts = [100 ether]; //100块
         periods = [172800]; // 两天
-        permitStage(issuer, worker, amounts, periods, "Due", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Due", ""); // 阶段划分
 
         //order未开始验收阶段
         vm.expectRevert(abi.encodeWithSignature("ProgressError()"));
@@ -71,7 +71,7 @@ contract confirmDelivery is DeOrderTest {
 
         amounts = [100 ether]; //100块
         periods = [172800]; // 两天
-        permitStage(issuer, worker, amounts, periods, "Confirm", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Confirm", ""); // 阶段划分
 
         //order未开始验收阶段
         vm.expectRevert(abi.encodeWithSignature("ProgressError()"));
@@ -120,7 +120,7 @@ contract confirmDelivery is DeOrderTest {
         createOrder(issuer, zero, 100 ether);
         amounts = [100 ether]; //100块
         periods = [172800]; // 两天
-        permitStage(issuer, worker, amounts, periods, "Due", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Due", ""); // 阶段划分
         payOrder(issuer, 100 ether, zero); 
         vm.warp(0); //初始化时间
         startOrder(issuer); // 开始任务
@@ -165,7 +165,7 @@ contract confirmDelivery is DeOrderTest {
         createOrder(issuer, zero, 100 ether);
         amounts = [100 ether]; //100块
         periods = [172800]; // 两天
-        permitStage(issuer, worker, amounts, periods, "Confirm", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Confirm", ""); // 阶段划分
         payOrder(issuer, 100 ether, zero); 
         vm.warp(0); //初始化时间
         startOrder(issuer); // 开始任务
@@ -208,7 +208,7 @@ contract confirmDelivery is DeOrderTest {
         createOrder(issuer, zero, 100 ether);
         amounts = [100 ether]; //100块
         periods = [172800]; // 两天
-        permitStage(issuer, worker, amounts, periods, "Due", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Due", ""); // 阶段划分
         payOrder(issuer, 100 ether, zero);         
         vm.warp(0); //初始化时间
         startOrder(issuer); // 开始任务

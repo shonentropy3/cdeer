@@ -7,7 +7,7 @@ contract WithdrawMulticallTest is MulticallTest {
     function testFailMulticallWithdraw() public {
         createOrder(issuer, address(0), 100); // 创建Order
         vm.deal(address(_weth), 1 ether); // 初始化原生币余额
-        permitStage(worker, issuer, amounts, periods, "Due", ""); // 阶段划分
+        permitStage(worker, issuer, 1, amounts, periods, "Due", ""); // 阶段划分
         payOrder(issuer, 100, zero); // 支付
         startOrder(issuer); // 开始任务
         stageIndexs = [0, 1];

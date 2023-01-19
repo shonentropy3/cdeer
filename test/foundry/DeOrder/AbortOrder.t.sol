@@ -12,7 +12,7 @@ contract AbortOrder is DeOrderTest {
         // 状态不在Ongoing
         vm.expectRevert(abi.encodeWithSignature("ProgressError()"));
         abortOrder(issuer, 1); // 中止任务
-        permitStage(issuer, worker, amounts, periods, "Due", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Due", ""); // 阶段划分
         payOrder(issuer, 100 ether, zero); // 付款
         startOrder(issuer); // 开始任务
         // 其它人调用合约中止
@@ -24,7 +24,7 @@ contract AbortOrder is DeOrderTest {
     // // @Summary 中止任务失败情况
     function testAbortOrder() public {
         createOrder(issuer, address(0), 100); // 创建Order
-        permitStage(issuer, worker, amounts, periods, "Due", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Due", ""); // 阶段划分
         payOrder(issuer, 100 ether, zero); // 付款
         startOrder(issuer); // 开始任务
         // 中止任务 已经完成的阶段和预付款 付款给乙方
@@ -40,7 +40,7 @@ contract AbortOrder is DeOrderTest {
     //超時或者驗收後終止
     function testDueLongtime() public {
         createOrder(issuer, address(0), 100); // 创建Order
-        permitStage(issuer, worker, amounts, periods, "Due", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Due", ""); // 阶段划分
         payOrder(issuer, 100 ether, zero); // 付款
         startOrder(issuer); // 开始任务
         vm.warp(17280 * 100); //增加17280s
@@ -50,7 +50,7 @@ contract AbortOrder is DeOrderTest {
 
     function testConfirmLongtime() public {
         createOrder(issuer, address(0), 100); // 创建Order
-        permitStage(issuer, worker, amounts, periods, "Confirm", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Confirm", ""); // 阶段划分
         payOrder(issuer, 100 ether, zero); // 付款
         startOrder(issuer); // 开始任务
         vm.warp(17280 * 100); //增加17280s
@@ -65,7 +65,7 @@ contract AbortOrder is DeOrderTest {
         createOrder(issuer, address(0), 100 ether); // 创建Order
         amounts = [100 ether]; //100块
         periods = [172800]; // 两天
-        permitStage(issuer, worker, amounts, periods, "Due", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Due", ""); // 阶段划分
         payOrder(issuer, 100 ether, zero); // 付款
         assertEq(address(issuer).balance, 900 ether); //项目甲方余额
         vm.warp(0); //初始化时间
@@ -81,7 +81,7 @@ contract AbortOrder is DeOrderTest {
         createOrder(issuer, address(0), 100 ether); // 创建Order
         amounts = [100 ether];
         periods = [172800]; // 两天
-        permitStage(issuer, worker, amounts, periods, "Due", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Due", ""); // 阶段划分
         payOrder(issuer, 100 ether, zero); // 付款
         assertEq(address(issuer).balance, 900 ether);
         vm.warp(0); //初始化时间
@@ -97,7 +97,7 @@ contract AbortOrder is DeOrderTest {
         createOrder(issuer, address(0), 100 ether); // 创建Order
         amounts = [100 ether];
         periods = [172800]; // 两天
-        permitStage(issuer, worker, amounts, periods, "Confirm", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Confirm", ""); // 阶段划分
         payOrder(issuer, 100 ether, zero); // 付款
         assertEq(address(issuer).balance, 900 ether);
         vm.warp(0); //初始化时间
@@ -112,7 +112,7 @@ contract AbortOrder is DeOrderTest {
         createOrder(issuer, address(0), 100 ether); // 创建Order
         amounts = [100 ether];
         periods = [172800]; // 两天
-        permitStage(issuer, worker, amounts, periods, "Confirm", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Confirm", ""); // 阶段划分
         payOrder(issuer, 100 ether, zero); // 付款
         assertEq(address(issuer).balance, 900 ether);
         vm.warp(0); //初始化时间
@@ -129,7 +129,7 @@ contract AbortOrder is DeOrderTest {
         createOrder(issuer, address(0), 100 ether); // 创建Order
         amounts = [100 ether];
         periods = [86400]; // 一天
-        permitStage(issuer, worker, amounts, periods, "Due", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Due", ""); // 阶段划分
         payOrder(issuer, 100 ether, zero); // 付款
         assertEq(address(issuer).balance, 900 ether);
         vm.warp(0); //初始化时间
@@ -153,7 +153,7 @@ contract AbortOrder is DeOrderTest {
         createOrder(issuer, address(0), 100 ether); // 创建Order
         amounts = [100 ether];
         periods = [86400]; // 一天
-        permitStage(issuer, worker, amounts, periods, "Due", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Due", ""); // 阶段划分
         payOrder(issuer, 100 ether, zero); // 付款
         assertEq(address(issuer).balance, 900 ether);
         vm.warp(0); //初始化时间
@@ -170,7 +170,7 @@ contract AbortOrder is DeOrderTest {
         createOrder(issuer, address(0), 100 ether); // 创建Order
         amounts = [100 ether];
         periods = [86400]; // 一天
-        permitStage(issuer, worker, amounts, periods, "Confirm", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Confirm", ""); // 阶段划分
         payOrder(issuer, 100 ether, zero); // 付款
         assertEq(address(issuer).balance, 900 ether);
         vm.warp(0); //初始化时间
@@ -187,7 +187,7 @@ contract AbortOrder is DeOrderTest {
         createOrder(issuer, address(0), 100 ether); // 创建Order
         amounts = [100 ether];
         periods = [86400]; // 一天
-        permitStage(issuer, worker, amounts, periods, "Confirm", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Confirm", ""); // 阶段划分
         payOrder(issuer, 100 ether, zero); // 付款
         assertEq(address(issuer).balance, 900 ether);
         vm.warp(0); //初始化时间
@@ -204,7 +204,7 @@ contract AbortOrder is DeOrderTest {
         createOrder(issuer, address(0), 100 ether); // 创建Order
         amounts = [20 ether, 40 ether, 60 ether];
         periods = [86400, 172800, 259200]; // 一天
-        permitStage(issuer, worker, amounts, periods, "Due", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Due", ""); // 阶段划分
         modifyOrder(issuer, 1, zero, 120 ether); //修改總金額
         payOrder(issuer, 120 ether, zero); // 付款
         assertEq(address(issuer).balance, 880 ether);
@@ -221,7 +221,7 @@ contract AbortOrder is DeOrderTest {
         createOrder(issuer, address(0), 100 ether); // 创建Order
         amounts = [20 ether, 40 ether, 60 ether];
         periods = [86400, 172800, 259200]; // 一天
-        permitStage(issuer, worker, amounts, periods, "Due", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Due", ""); // 阶段划分
         modifyOrder(issuer, 1, zero, 120 ether); //修改總金額
         payOrder(issuer, 120 ether, zero); // 付款
         assertEq(address(issuer).balance, 880 ether);
@@ -238,7 +238,7 @@ contract AbortOrder is DeOrderTest {
         createOrder(issuer, address(0), 100 ether); // 创建Order
         amounts = [20 ether, 40 ether, 60 ether];
         periods = [86400, 172800, 259200]; // 一天
-        permitStage(issuer, worker, amounts, periods, "Confirm", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Confirm", ""); // 阶段划分
         modifyOrder(issuer, 1, zero, 120 ether); //修改總金額
         payOrder(issuer, 120 ether, zero); // 付款
         assertEq(address(issuer).balance, 880 ether);
@@ -257,7 +257,7 @@ contract AbortOrder is DeOrderTest {
         createOrder(issuer, address(0), 100 ether); // 创建Order
         amounts = [20 ether, 40 ether, 60 ether];
         periods = [86400, 172800, 259200]; // 一天
-        permitStage(issuer, worker, amounts, periods, "Confirm", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Confirm", ""); // 阶段划分
         modifyOrder(issuer, 1, zero, 120 ether); //修改總金額
         payOrder(issuer, 120 ether, zero); // 付款
         assertEq(address(issuer).balance, 880 ether);
@@ -276,7 +276,7 @@ contract AbortOrder is DeOrderTest {
         createOrder(issuer, address(0), 100 ether); // 创建Order
         amounts = [20 ether, 40 ether];
         periods = [86400, 172800]; // 一天
-        permitStage(issuer, worker, amounts, periods, "Due", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Due", ""); // 阶段划分
         modifyOrder(issuer, 1, zero, 60 ether); //修改總金額
         payOrder(issuer, 60 ether, zero); // 付款
         assertEq(address(issuer).balance, 940 ether);
@@ -295,7 +295,7 @@ contract AbortOrder is DeOrderTest {
         createOrder(issuer, address(0), 100 ether); // 创建Order
         amounts = [20 ether, 40 ether];
         periods = [86400, 172800]; // 一天
-        permitStage(issuer, worker, amounts, periods, "Due", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Due", ""); // 阶段划分
         modifyOrder(issuer, 1, zero, 60 ether); //修改總金額
         payOrder(issuer, 60 ether, zero); // 付款
         assertEq(address(issuer).balance, 940 ether);
@@ -315,7 +315,7 @@ contract AbortOrder is DeOrderTest {
         createOrder(issuer, address(0), 100 ether); // 创建Order
         amounts = [20 ether, 40 ether];
         periods = [86400, 172800]; // 一天
-        permitStage(issuer, worker, amounts, periods, "Due", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Due", ""); // 阶段划分
         modifyOrder(issuer, 1, zero, 60 ether); //修改總金額
         payOrder(issuer, 60 ether, zero); // 付款
         assertEq(address(issuer).balance, 940 ether);
@@ -338,7 +338,7 @@ contract AbortOrder is DeOrderTest {
         createOrder(issuer, address(0), 100 ether); // 创建Order
         amounts = [20 ether, 40 ether];
         periods = [86400, 172800]; // 一天
-        permitStage(issuer, worker, amounts, periods, "Confirm", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Confirm", ""); // 阶段划分
         modifyOrder(issuer, 1, zero, 60 ether); //修改總金額
         payOrder(issuer, 60 ether, zero); // 付款
         assertEq(address(issuer).balance, 940 ether);
@@ -359,7 +359,7 @@ contract AbortOrder is DeOrderTest {
         createOrder(issuer, address(0), 100 ether); // 创建Order
         amounts = [20 ether, 40 ether];
         periods = [86400, 172800]; // 一天
-        permitStage(issuer, worker, amounts, periods, "Confirm", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Confirm", ""); // 阶段划分
         modifyOrder(issuer, 1, zero, 60 ether); //修改總金額
         payOrder(issuer, 60 ether, zero); // 付款
         assertEq(address(issuer).balance, 940 ether);
@@ -381,7 +381,7 @@ contract AbortOrder is DeOrderTest {
         createOrder(issuer, address(0), 100 ether); // 创建Order
         amounts = [20 ether, 40 ether];
         periods = [86400, 172800]; // 一天
-        permitStage(issuer, worker, amounts, periods, "Confirm", ""); // 阶段划分
+        permitStage(issuer, worker, 1, amounts, periods, "Confirm", ""); // 阶段划分
         modifyOrder(issuer, 1, zero, 60 ether); //修改總金額
         payOrder(issuer, 60 ether, zero); // 付款
         assertEq(address(issuer).balance, 940 ether);
