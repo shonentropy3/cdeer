@@ -96,4 +96,13 @@ contract Common is DeOrderTest {
         assertEq(deOrder.feeTo(), address(issuer));
         vm.stopPrank();
     }
+
+    function testTransferOwnership()public{
+        vm.expectRevert("Ownable: caller is not the owner");
+        deOrder.transferOwnership(issuer);
+        vm.startPrank(owner);
+        deOrder.transferOwnership(issuer);
+        vm.stopPrank();
+        assertEq(deOrder.owner(),issuer);
+    }
 }
