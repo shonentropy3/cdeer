@@ -184,6 +184,9 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
     // anyone can pay for this order
     function payOrder(uint orderId, uint amount) public payable nonReentrant {
         Order storage order = orders[orderId];
+        if (order.amount == 0){
+            revert AmountError(0);
+        }
         address token = order.token;
         safe96(amount);
 
