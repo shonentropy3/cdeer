@@ -1,8 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
-import "./multicall.t.sol";
+import "../DeOrder/DeOrder.t.sol";
 
-contract AbortOrderMulticallTest is MulticallTest {
+contract AbortOrderMulticallTest is DeOrderTest {
+    function multicall(address who, bytes[] memory data) public {
+        vm.startPrank(who);
+        deOrder.multicall(data);
+        vm.stopPrank();
+    }
+
     //按期付款，设置100块，时间17280*10s（两天），一个阶段划分的order，issuer在时间一半的时候中止任务，只有一个阶段
     function testFailMulticallCannotDueIusserAbortOrder() public {
         createOrder(issuer, address(0), 100 ether); // 创建Order

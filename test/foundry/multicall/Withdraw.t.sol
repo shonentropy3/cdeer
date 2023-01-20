@@ -1,8 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
-import "./multicall.t.sol";
+import "../DeOrder/DeOrder.t.sol";
 
-contract WithdrawMulticallTest is MulticallTest {
+contract WithdrawMulticallTest is DeOrderTest {
+    function multicall(address who, bytes[] memory data) public {
+        vm.startPrank(who);
+        deOrder.multicall(data);
+        vm.stopPrank();
+    }
+
     // testMulticallPayOrderWithToken Multicall调用多次付款Token
     function testFailMulticallWithdraw() public {
         createOrder(issuer, address(0), 100); // 创建Order
