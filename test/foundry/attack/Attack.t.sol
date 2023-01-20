@@ -4,21 +4,26 @@ pragma solidity ^0.8.13;
 import "forge-std/Test.sol";
 import "forge-std/console2.sol";
 import "contracts/interface/IOrder.sol";
+import "contracts/libs/ECDSA.sol";
 import {DeOrder} from "contracts/DeOrder.sol";
 import {WETH} from "contracts/mock/WETH.sol";
 import {AttackRefund} from "./AttackRefund.sol";
 import {AttackWithdraw} from "./AttackWithdraw.sol";
 import {DeOrderVerifier} from "contracts/DeOrderVerifier.sol";
+import {DeStage} from "contracts/DeStage.sol";
 
 contract AttackTest is Test {
     AttackRefund attackRefund;
     AttackWithdraw attackWithdraw;
     DeOrder public deOrder;
+    DeStage public deStage;
     WETH public weth;
     DeOrderVerifier public verifier;
     address owner; // 合约拥有者
     address issuer; // 甲方
     address other; // 第三方
+    uint256[] amounts = [1 ether];
+    uint256[] periods = [1000];
 
     function setUp() public {
         owner = msg.sender;
@@ -28,6 +33,8 @@ contract AttackTest is Test {
         weth = new WETH();
         verifier = new DeOrderVerifier();
         deOrder = new DeOrder(address(weth), address(0), address(verifier));
+        deStage = new DeStage(address(deOrder));
+        deOrder.setDeStage(address(deStage));
         attackRefund = new AttackRefund(deOrder, weth);
         attackWithdraw = new AttackWithdraw(deOrder, weth, verifier);
         vm.deal(owner, 100 ether); // 初始化原生币余额
@@ -48,16 +55,69 @@ contract AttackTest is Test {
         // console2.log(weth.totalSupply());
     }
 
+    // permitStage
+    // @Summary 阶段划分
+    function permitStage(
+        address sign,
+        uint256 _orderId,
+        uint256[] memory _amounts,
+        uint256[] memory _periods
+    ) public {
+        PaymentType payType = PaymentType.Due;
+        uint256 nonce = 0;
+        uint256 deadline = 20000;
+        bytes32 structHash = keccak256(
+            abi.encode(
+                verifier.PERMITSTAGE_TYPEHASH(),
+                _orderId,
+                keccak256(abi.encodePacked(_amounts)),
+                keccak256(abi.encodePacked(_periods)),
+                payType,
+                nonce,
+                deadline
+            )
+        );
+        bytes32 digest = ECDSA.toTypedDataHash(
+            verifier.DOMAIN_SEPARATOR(),
+            structHash
+        );
+        // 签名
+        uint8 v;
+        bytes32 r;
+        bytes32 s;
+        (v, r, s) = vm.sign(1, digest);
+        attackWithdraw.start(_amounts, _periods, v, r, s);
+    }
+
     function testAttackWithdraw() public {
+        console2.log(address(attackWithdraw).balance);
         vm.startPrank(owner);
         deOrder.createOrder(0, owner, other, address(0), 100);
         deOrder.payOrder{value: 100 ether}(1, 100 ether); // 付款
         vm.stopPrank();
         // console2.log(weth.totalSupply());
-
+        deOrder.createOrder(
+            0,
+            issuer,
+            address(attackWithdraw),
+            address(0),
+            1 ether
+        );
+        amounts = [1 ether]; //100块
+        periods = [172800]; // 两天
+        vm.stopPrank();
+        permitStage(issuer, 2, amounts, periods); // 阶段划分
+        vm.startPrank(issuer);
+        vm.deal(issuer, 2 ether); // 初始化原生币余额
+        deOrder.payOrder{value: 1 ether}(2, 1 ether); // 付款
+        vm.warp(0); //初始化时间
+        deOrder.startOrder(2); // 开始任务
+        vm.warp(1728000); //初始化时间
+        vm.stopPrank();
         vm.startPrank(issuer);
         attackWithdraw.attack{value: 1 ether}();
         vm.stopPrank();
-        // console2.log(weth.totalSupply());
+
+        console2.log(address(attackWithdraw).balance);
     }
 }
