@@ -327,7 +327,7 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
 
     // 乙方提款
     // worker withdraw the fee.
-    function withdraw(uint _orderId, address to) external {
+    function withdraw(uint _orderId, address to) external nonReentrant{
         Order storage order = orders[_orderId];
         if(order.worker != msg.sender) revert PermissionsError();
         if(order.progress != OrderProgess.Ongoing) revert ProgressError();
