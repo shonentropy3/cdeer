@@ -116,6 +116,9 @@
                             color: #1F1E2E;
                             line-height: 25px;
                             letter-spacing: 1px;
+                            white-space: nowrap;  
+                            text-overflow:ellipsis; 
+                            overflow:hidden;
                         }
                         .time,.date{
                             font-size: 12px;
