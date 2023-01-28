@@ -61,25 +61,29 @@ export default function SkillsCard(params) {
     }
 
     const removeSelectItem = (e) => {
+        console.log(e);
         selectItem.map((ele,index) => {
             if (ele.id === e.id) {
                 selectItem.splice(index,1)
             }
         })
-        tree2.map(ele => {
-            if (ele.id === e.id) {
-                ele.checked = !ele.checked
+        console.log("stree ==>",stree);
+        stree.map(item1 => {
+            if (e.id === item1.id) {
+                item1.checked = !item1.checked;
             }
-        })
-        tree1.map(ele => {
-            if (ele.id === e.id) {
-                ele.checked = !ele.checked
-            }
-        })
-        stree.map(ele => {
-            if (ele.id === e.id) {
-                ele.checked = !ele.checked
-            }
+            // 第二层
+            item1.children && item1.children.map(item2 => {
+                if (e.id === item2.id) {
+                    item2.checked = !item2.checked;
+                }
+                // 第三层
+                item2.children && item2.children.map(item3 => {
+                    if (e.id === item3.id) {
+                        item3.checked = !item3.checked;
+                    }
+                })
+            })
         })
 
         setSelectItem([...selectItem]);
