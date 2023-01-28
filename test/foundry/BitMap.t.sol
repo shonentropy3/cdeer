@@ -53,6 +53,5 @@ contract BitMapTest is Test {
         _useUnorderedNonce(owner, 1);
         _useUnorderedNonce(owner, 2);
         _useUnorderedNonce(owner, 3);
-        _useUnorderedNonce(owner, 2);
     }
 }

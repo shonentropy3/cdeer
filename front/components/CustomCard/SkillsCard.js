@@ -37,7 +37,7 @@ export default function SkillsCard(params) {
 
     const checkItem = (e) => {
         // max显示
-        if (selectItem.length === 4) {
+        if (!e.checked && selectItem.length === 4) {
             message.warning('最多可选4个')
             return
         }
@@ -56,8 +56,8 @@ export default function SkillsCard(params) {
                 id: e.id,
                 index: e.index
             });
-            setSelectItem([...selectItem]);
         }
+        setSelectItem([...selectItem]);
     }
 
     const removeSelectItem = (e) => {
