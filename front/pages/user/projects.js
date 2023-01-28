@@ -185,6 +185,8 @@ function Userprojects() {
         .then(res => {
             const data = res.data.list;
             let arr = [];
+            pageConfig.total = res.data.total;
+            setPageConfig({...pageConfig});
             data.map(e => {
                 e.task.role = deform_Skills(e.task.role);
                 e.task.budget = deform_Count(e.task.budget, e.task.currency);
