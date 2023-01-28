@@ -59,7 +59,8 @@ export default function OrderSetStage(params) {
 
     //  切换order模式 ==> 预付款
     const toggleModel = (e) => {
-        setStage({orderModel: e.target.checked})
+        setStage({orderModel: e.target.checked});
+        setIsChange(true);
     }
 
     //  获取阶段划分
@@ -95,7 +96,7 @@ export default function OrderSetStage(params) {
         let arr = [];
         // 是否有预付款
         if (stage.orderModel) {
-            var amount = Currency(order.currency, e.amount)
+            var amount = Currency(order.currency, stage.value)
             _amount.push(amount);
             _period.push(`${0 * 24 * 60 * 60}`)
         }
@@ -470,7 +471,7 @@ export default function OrderSetStage(params) {
                                 min={0}
                                 value={stage.value} 
                                 onChange={ e => changeAdvance(e)}
-                            /><span>{order.currency}</span>
+                            />
                         </div> 
                     }
                 </div>
@@ -548,14 +549,14 @@ export default function OrderSetStage(params) {
                                             min={0}
                                             defaultValue={ dataStages[0].period === 0 ? dataStages[0].amount : null}
                                             onChange={ e => changeAdvance(e)}
-                                        /><span>{order.currency}</span>
+                                        />
                                     </div> 
                                 }
                             </div>
                             <InnerStageCard defaultAmount={amount} getInner={getInner} dataStages={dataStages} edit="block" setIsChange={setIsChange} />
                             <div className="total">
                                 {
-                                    dataStages && dataStages[0].period === 0 && 
+                                    ((dataStages && dataStages[0].period === 0) && stage.orderModel) && 
                                     <p>Advance charge: <span>{stage.value}</span></p>
                                 }
                                 {totalPanel}
