@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import "contracts/interface/IOrder.sol";
-import {DeOrderTest} from "./Deorder.t.sol";
+import {DeOrderTest} from "./DeOrder.t.sol";
 
 contract CreateOrder is DeOrderTest {
     // testCannotCreateOrder
@@ -26,6 +26,7 @@ contract CreateOrder is DeOrderTest {
             address(0x69BB456f9181C798f6B31149004a5A1ADfAd241B),
             1
         );
+        
     }
 
     // testCreateOrder
@@ -33,7 +34,7 @@ contract CreateOrder is DeOrderTest {
     function testCreateOrder() public {
         Order memory order;
         // 甲方创建Task ，只能甲方创建此Task的Order
-        createOrder(); // 创建Order
+        createOrder(issuer, address(0), 100); // 创建Order
         order = deOrder.getOrder(1);
         assertEq(order.issuer, issuer);
         assertEq(order.worker, worker);

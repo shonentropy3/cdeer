@@ -180,6 +180,9 @@ contract DeOrder is DeStage, DeOrderVerifier, Multicall, Ownable, ReentrancyGuar
     // anyone can pay for this order
     function payOrder(uint orderId, uint amount) public payable nonReentrant {
         Order storage order = orders[orderId];
+        if (order.amount == 0){
+            revert AmountError(0);
+        }
         address token = order.token;
         safe96(amount);
 
@@ -208,7 +211,7 @@ contract DeOrder is DeStage, DeOrderVerifier, Multicall, Ownable, ReentrancyGuar
     ) external nonReentrant {
         safe96(amount);
         Order storage order = orders[orderId];
-        if (permit.permitted.token != order.token) {
+        if (permit.permitted.token != order.token || order.token == address(0)) {
             revert UnSupportToken(); 
         }
         
@@ -320,7 +323,7 @@ contract DeOrder is DeStage, DeOrderVerifier, Multicall, Ownable, ReentrancyGuar
 
     // 乙方提款
     // worker withdraw the fee.
-    function withdraw(uint _orderId, address to) external {
+    function withdraw(uint _orderId, address to) external nonReentrant{
         Order storage order = orders[_orderId];
         if(order.worker != msg.sender) revert PermissionsError();
         if(order.progress != OrderProgess.Ongoing) revert ProgressError();

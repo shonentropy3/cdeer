@@ -10,11 +10,9 @@ contract Mock is Test {
     // @Summary 生成测试Task
     // @Param uint256 num
     // @Return: TaskInfo[] memory task
-    function mockTask(uint256 num)
-        public
-        view
-        returns (TaskInfo[] memory task)
-    {
+    function mockTask(
+        uint256 num
+    ) public view returns (TaskInfo[] memory task) {
         task = new TaskInfo[](num);
 
         for (uint256 i = 0; i < num; i++) {
@@ -42,13 +40,11 @@ contract Mock is Test {
     // @Summary 生成一个测试Task
     // @Param uint256 index
     // @Return: TaskInfo memory task
-    function mockOneTask(uint256 index)
-        public
-        view
-        returns (TaskInfo memory task)
-    {
+    function mockOneTask(
+        uint256 index
+    ) public view returns (TaskInfo memory task) {
         require(index > 0, "index must be greater than 0");
         TaskInfo[] memory taskList = mockTask(index);
-        return taskList[index-1];
+        return taskList[index - 1];
     }
 }
