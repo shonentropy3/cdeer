@@ -221,11 +221,11 @@ abstract contract DeStage is IOrder {
         revert StatusError();
     }
 
-    function safe96(uint n) internal {
+    function safe96(uint n) internal pure {
         if(n >= 2**96) revert AmountError(0);
     }
 
-    function safe32(uint n) internal {
+    function safe32(uint n) internal pure {
         if(n >= 2**32) revert AmountError(0);
     }
 

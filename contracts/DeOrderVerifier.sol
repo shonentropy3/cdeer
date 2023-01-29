@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 import "./libs/ECDSA.sol";
 import "./interface/IOrder.sol";
 
-contract DeOrderVerifier {
+abstract contract DeOrderVerifier {
 
     error NonceError();
     error Expired();
@@ -18,7 +18,6 @@ contract DeOrderVerifier {
     mapping(address => mapping(uint => uint)) public nonces;
 
     constructor() {
-
         DOMAIN_SEPARATOR = keccak256(
             abi.encode(
                     keccak256(
@@ -40,7 +39,7 @@ contract DeOrderVerifier {
         uint deadline,
         uint8 v,
         bytes32 r,
-        bytes32 s) external returns (address signAddr) {
+        bytes32 s) internal returns (address signAddr) {
             
             bytes32 structHash  = keccak256(abi.encode(PERMITSTAGE_TYPEHASH, _orderId,
                 keccak256(abi.encodePacked(_amounts)), keccak256(abi.encodePacked(_periods)), payType, nonce, deadline));
@@ -48,16 +47,15 @@ contract DeOrderVerifier {
     }
 
     function recoverProlongStage(uint _orderId, uint _stageIndex, uint _appendPeriod,
-        uint nonce, uint deadline, uint8 v, bytes32 r, bytes32 s) external returns (address signAddr) {
+        uint nonce, uint deadline, uint8 v, bytes32 r, bytes32 s) internal returns (address signAddr) {
 
         bytes32 structHash = keccak256(abi.encode(PERMITPROSTAGE_TYPEHASH, _orderId,
             _stageIndex, _appendPeriod, nonce, deadline));
         return recoverVerify(structHash, _orderId, nonce, deadline, v , r, s);
     }
 
-    function recoverAppendStage(uint _orderId, uint amount, uint period, uint nonce, uint deadline, uint8 v, bytes32 r, bytes32 s) external returns (address signAddr) {
-    
-            bytes32 structHash = keccak256(abi.encode(PERMITAPPENDSTAGE_TYPEHASH, _orderId,
+    function recoverAppendStage(uint _orderId, uint amount, uint period, uint nonce, uint deadline, uint8 v, bytes32 r, bytes32 s) internal returns (address signAddr) {
+        bytes32 structHash = keccak256(abi.encode(PERMITAPPENDSTAGE_TYPEHASH, _orderId,
             amount, period, nonce, deadline));
         return recoverVerify(structHash, _orderId, nonce, deadline, v , r, s);
 
@@ -71,8 +69,5 @@ contract DeOrderVerifier {
         if(deadline < block.timestamp) revert Expired();
         nonces[signAddr][_orderId] += 1;
     }
-
-
-
 
 } 

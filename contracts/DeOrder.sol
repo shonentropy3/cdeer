@@ -2,22 +2,24 @@
 
 pragma solidity ^0.8.0;
 
-import "./interface/IOrder.sol";
-import "./interface/IOrderSBT.sol";
-import "./DeStage.sol";
-import './interface/IWETH9.sol';
-import './interface/IPermit2.sol';
-import './interface/IOrderVerifier.sol';
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/draft-IERC20Permit.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
+
+import "./interface/IOrderSBT.sol";
+import './interface/IWETH9.sol';
+import './interface/IPermit2.sol';
+import './interface/IOrderVerifier.sol';
+
+import "./DeOrderVerifier.sol";
+import "./DeStage.sol";
 import './Multicall.sol';
 
 
 
-contract DeOrder is DeStage, Multicall, Ownable, ReentrancyGuard {
+contract DeOrder is DeStage, DeOrderVerifier, Multicall, Ownable, ReentrancyGuard {
     error PermissionsError();
     error ProgressError();
     error UnSupportToken();
@@ -31,7 +33,6 @@ contract DeOrder is DeStage, Multicall, Ownable, ReentrancyGuard {
 
     IWETH9 public immutable WETH;
     IPermit2 public immutable PERMIT2;
-    IOrderVerifier public immutable verifier;
     
 
     uint public currOrderId;
@@ -50,10 +51,9 @@ contract DeOrder is DeStage, Multicall, Ownable, ReentrancyGuard {
     event FeeUpdated(uint fee, address feeTo);
     event SupportToken(address token, bool enabled);
 
-    constructor(address _weth, address _permit2, address _verifier) {
+    constructor(address _weth, address _permit2) {
         WETH = IWETH9(_weth);
         PERMIT2 = IPermit2(_permit2);
-        verifier = IOrderVerifier(_verifier);
 
         feeTo = msg.sender;
 
@@ -125,7 +125,7 @@ contract DeOrder is DeStage, Multicall, Ownable, ReentrancyGuard {
         Order storage order = orders[_orderId];
         if(order.progress >= OrderProgess.Ongoing) revert ProgressError();
 
-        address signAddr = verifier.recoverPermitStage(_orderId, _amounts, _periods, uint(payType),
+        address signAddr = recoverPermitStage(_orderId, _amounts, _periods, uint(payType),
             nonce, deadline, v, r, s);
         
         roleCheck(order, signAddr);
@@ -143,7 +143,7 @@ contract DeOrder is DeStage, Multicall, Ownable, ReentrancyGuard {
         if(order.progress != OrderProgess.Ongoing) revert ProgressError();
 
 
-        address signAddr = verifier.recoverProlongStage(_orderId, _stageIndex, _appendPeriod, nonce, deadline, v, r,  s );
+        address signAddr = recoverProlongStage(_orderId, _stageIndex, _appendPeriod, nonce, deadline, v, r,  s );
         roleCheck(order, signAddr);
         prolongStage(_orderId, _stageIndex, _appendPeriod);
     }
@@ -153,7 +153,7 @@ contract DeOrder is DeStage, Multicall, Ownable, ReentrancyGuard {
         Order storage order = orders[_orderId];
         if(order.progress != OrderProgess.Ongoing) revert ProgressError();
 
-        address signAddr = verifier.recoverAppendStage(_orderId, amount, period, nonce, deadline, v, r, s);
+        address signAddr = recoverAppendStage(_orderId, amount, period, nonce, deadline, v, r, s);
         roleCheck(order, signAddr);
 
         order.amount += uint96(amount);

@@ -2,8 +2,6 @@
 
 pragma solidity ^0.8.0;
 
-error AmountError(uint reason); // 0: mismatch , 1: need pay
-error ParamError();
 
 enum OrderProgess {
     Init,
