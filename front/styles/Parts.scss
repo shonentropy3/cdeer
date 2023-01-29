@@ -76,15 +76,14 @@ $font-pingfangR: PingFangSC-Regular, PingFang SC;
             align-items: center;
             justify-content: space-between;
             div{
-                margin-right: 83px;
+                margin-right: 85px;
                 &:last-child{
                     margin-right: 0;
                 }
             }
             .message{
-                width: 34px;
-                height: 34px;
-                background-color: yellowgreen;
+                width: 26px;
+                height: 26px;
                 cursor: pointer;
                 position: relative;
                 .unread{
@@ -99,10 +98,10 @@ $font-pingfangR: PingFangSC-Regular, PingFang SC;
             }
             
             .img{
-                width: 50px;
-                height: 50px;
+                width: 26px;
+                height: 26px;
                 border-radius: 50%;
-                background-color: greenyellow;
+                border: 2px solid #1f1e2d;
                 cursor: pointer;
             }
             .btn{
