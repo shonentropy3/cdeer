@@ -11,7 +11,7 @@ $font-pingfangR: PingFangSC-Regular, PingFang SC;
     .content{
         width: 100%;
         height: 68px;
-        padding: 0 165px 0 87px;
+        padding: 0 179px 0 87px;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -106,12 +106,13 @@ $font-pingfangR: PingFangSC-Regular, PingFang SC;
                 cursor: pointer;
             }
             .btn{
-                width: 157px;
-                height: 50px;
+                width: 128px;
+                height: 40px;
                 border-radius: 25px;
                 background-color: #1F1E2E;
                 color: white;
-                font-size: 24px;
+                font-size: 18px;
+                letter-spacing: 1.71px;
                 display: flex;
                 justify-content: center;
                 align-items: center;

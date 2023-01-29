@@ -37,7 +37,7 @@ export default function Home() {
             </div>
             <div className="absolute a2">
               <p className="title">300</p>
-              <p className="subtitle">project</p>
+              <p className="subtitle">Task</p>
             </div>
             <div className="absolute a3">
               <p className="title">800</p>
@@ -47,17 +47,23 @@ export default function Home() {
 
           <div className="data">
               <div className="data-li">
-                <div className="img"></div>
+                <div className="img">
+                  <Image src="/img/index_task.png" alt="" layout="fill" objectFit="cover" />
+                </div>
                 <p className="title">Reference project</p>
                 <p className="text">Browse past project works, sort out complete project needs, or directly find professionals you can trust.</p>
               </div>
               <div className="data-li">
-                <div className="img"></div>
+                <div className="img">
+                  <Image src="/img/index_contract.png" alt="" width={57} height={49} />
+                </div>
                 <p className="title">Smart contract</p>
                 <p className="text">After confirming the cooperation, execute the smart contract, confirm the delivery of automatic payment, and reduce other transaction costs related to the contract.</p>
               </div>
               <div className="data-li">
-                <div className="img"></div>
+                <div className="img">
+                  <Image src="/img/index_nft.png" alt="" layout="fill" objectFit="cover" />
+                </div>
                 <p className="title">NFT display</p>
                 <p className="text">Each time the project is completed, NFTs are displayed on both sides. You can choose the people you trust by the number of NFTs displayed.</p>
               </div>
