@@ -6,7 +6,7 @@
         font-weight: 800;
     }
     .Index-title{
-        margin: 150px auto 38px;
+        margin: 211px auto 38px;
         display: flex;
         position: relative;
         .img{
@@ -33,9 +33,8 @@
         }
     }
     .banner{
-        width: 2000px;
+        // width: 2000px;
         margin: 0 auto;
-        height: 820px;
         display: flex;
         justify-content: space-between;
         position: relative;
@@ -46,7 +45,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            font-family: PingFangSC-Regular, PingFang SC;
             .title{
                 font-size: 48px;
                 color: #1F1E2E;
@@ -60,44 +58,42 @@
             }
         }
         .a1{
-            right: 747px;
-            top: 549px;
+            right: 701px;
+            top: 502px;
         }
         .a2{
-            right: 487px;
-            top: 686px;
+            right: 467px;
+            top: 630px;
         }
         .a3{
-            right: 129px;
-            top: 613px;
+            right: 145px;
+            top: 558px;
         }
         .banner-left{
             margin-left: 5.73%;
             .title{
                 width: 794px;
-                height: 436px;
                 margin-top: 143px;
-                font-size: 92px;
-                line-height: 109px;
-                letter-spacing: 8px;
+                font-size: 80px;
+                line-height: 88px;
+                letter-spacing: 7px;
                 color: #201E2F;
                 font-family: Arial-BoldMT, Arial;
             }
             .info{
-                width: 613px;
-                height: 90px;
-                margin-top: 76px;
+                width: 432px;
+                height: 60px;
+                margin-top: 67px;
                 display: flex;
                 justify-content: space-between;
                 .btn{
-                    width: 280px;
-                    height: 90px;
+                    width: 186px;
+                    height: 60px;
                     border-radius: 45px;
                     border: 2px solid #1F1E2E;
                     box-shadow: 0px 0px 19px -5px #898989;
-                    font-size: 28px;
-                    letter-spacing: 2.66px;
-                    font-family: PingFangSC-Regular, PingFang SC;
+                    font-size: 22px;
+                    letter-spacing: 2.09px;
                     &:first-child{
                         background-color: #1F1E2E;
                         color: white;
@@ -106,34 +102,29 @@
             }
         }
         .banner-right{
-            width: 889px;
-            height: 820px;
+            width: 843px;
+            height: 743px;
             position: relative;
             overflow: hidden;
-            span{
-                right: -30px !important;
-            }
         }
-        
-        
     }   
     .data{
         width: 1200px;
-        margin: 90px auto 0;
+        margin: 110px auto 0;
         display: flex;
         justify-content: space-between;        
         background-color: white;
         .data-li{
             width: 375px;
             color: #1F1E2E;
-            &:nth-child(2){
-                margin-top: 10px;
-            }
             .img{
-                width: 61px;
-                height: 61px;
-                background-color: yellowgreen;
+                width: 60px;
+                height: 60px;
                 margin-bottom: 16px;
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
             .title{
                 font-family: PingFangSC-Medium, PingFang SC;
@@ -155,12 +146,12 @@
         align-items: center;
         background-color: white;
         .ucan-list{
-            width: 1200px;
+            width: 1045px;
             display: flex;
             justify-content: space-between;
             .list-li{
-                width: 580px;
-                height: 731px;
+                width: 480px;
+                height: 580px;
                 box-shadow: 0px 0px 44px -24px #7C7879;
                 border-radius: 30px;
                 background-color: white;
