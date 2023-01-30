@@ -7,7 +7,6 @@ const TaskAddr = require(`../deployments/${hre.network.name}/DeTask.json`);
 const WETHAddr = require(`../deployments/${hre.network.name}/WETH.json`);
 const dUSDTAddr = require(`../deployments/${hre.network.name}/dUSDT.json`);
 const MetaCommonAddr = require(`../deployments/${hre.network.name}/MetaCommon.json`);
-const VerifierAddr = require(`../deployments/${hre.network.name}/DeOrderVerifier.json`);
 
 
 async function main() {
@@ -24,7 +23,7 @@ async function main() {
     const contractFactory = await hre.ethers.getContractFactory("DeOrder");
 
     // polygon
-    const order = await contractFactory.deploy(WETHAddr.address, permit2Addr, VerifierAddr.address);
+    const order = await contractFactory.deploy(WETHAddr.address, permit2Addr);
 
     // buildBear
     // const order = await contractFactory.deploy(WETHAddr.address, "0xd5fcbca53263fcac0a98f0231ad9361f1481692b", VerifierAddr.address);

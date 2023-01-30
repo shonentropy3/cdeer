@@ -299,7 +299,12 @@ export default function ApplyList(params) {
                             {
                                 address && 
                                 <div className="product-collaborate">
-                                    <p onClick={() => invite(e.apply_addr)}>Invite</p>
+                                    {
+                                        e.status === 0 ? 
+                                        <p onClick={() => invite(e.apply_addr)}>Invite</p>
+                                        :
+                                        <p className="product-collaborate-no">已邀请</p>
+                                    }
                                     <p onClick={() => updateData(e)} className="product-collaborate-no">Improper</p>
                                 </div>
                             }

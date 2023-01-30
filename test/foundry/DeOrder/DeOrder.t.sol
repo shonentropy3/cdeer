@@ -4,10 +4,9 @@ pragma solidity ^0.8.13;
 import "forge-std/Test.sol";
 import "forge-std/console.sol";
 import "contracts/DeOrder.sol";
-import "contracts/DeStage.sol";
 import "contracts/mock/WETH.sol";
 import "contracts/libs/ECDSA.sol";
-import "contracts/DeOrderVerifier.sol";
+import "contracts/interface/IOrder.sol";
 import {Utilities} from "../utils/Utilities.sol";
 import {Permit2Sign} from "../utils/Permit2Sign.sol";
 import {Permit2} from "permit2/Permit2.sol";
@@ -19,8 +18,6 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
     Permit2 permit2;
     IPermit2 internal PERMIT2;
     DeOrder internal deOrder;
-    DeOrderVerifier internal _verifier;
-    DeStage internal deStage;
     WETH internal _weth;
     bytes32 DOMAIN_SEPARATOR;
     address owner; // 合约拥有者
@@ -50,15 +47,11 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
         other = vm.addr(3);
 
         vm.startPrank(owner); // 切换合约发起人
-        _verifier = new DeOrderVerifier();
         _weth = new WETH();
         deOrder = new DeOrder(
             address(_weth),
-            address(permit2),
-            address(_verifier)
+            address(permit2)
         );
-        deStage = new DeStage(address(deOrder));
-        deOrder.setDeStage(address(deStage));
         vm.stopPrank();
         // 打印信息
         console.log(owner);
@@ -95,14 +88,6 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
         vm.stopPrank();
     }
 
-    // testCannotSetDeStage
-    // @Summary 非合约创建者设置DeStage合约地址 && 设置DeStage合约地址为 零地址
-    function testCannotSetDeStage() public {
-        // 非合约创建者设置order合约地址
-        vm.expectRevert(bytes("Ownable: caller is not the owner"));
-        deOrder.setDeStage(address(deStage));
-    }
-
     // permitStage
     // @Summary 阶段划分
     function permitStage(
@@ -122,11 +107,11 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
         } else {
             revert ParamError();
         }
-        uint256 nonce = _verifier.nonces(sign, _orderId);
+        uint256 nonce = deOrder.nonces(sign, _orderId);
         uint256 deadline = 200;
         bytes32 structHash = keccak256(
             abi.encode(
-                _verifier.PERMITSTAGE_TYPEHASH(),
+                deOrder.PERMITSTAGE_TYPEHASH(),
                 _orderId,
                 keccak256(abi.encodePacked(_amounts)),
                 keccak256(abi.encodePacked(_periods)),
@@ -136,7 +121,7 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
             )
         );
         bytes32 digest = ECDSA.toTypedDataHash(
-            _verifier.DOMAIN_SEPARATOR(),
+            deOrder.DOMAIN_SEPARATOR(),
             structHash
         );
         // 签名
@@ -177,11 +162,11 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
         uint256 _appendPeriod,
         bytes memory expectRevert
     ) public {
-        uint256 nonce = _verifier.nonces(sign, _orderId);
+        uint256 nonce = deOrder.nonces(sign, _orderId);
         uint256 deadline = 1000000;
         bytes32 structHash = keccak256(
             abi.encode(
-                _verifier.PERMITPROSTAGE_TYPEHASH(),
+                deOrder.PERMITPROSTAGE_TYPEHASH(),
                 _orderId,
                 _stageIndex,
                 _appendPeriod,
@@ -190,7 +175,7 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
             )
         );
         bytes32 digest = ECDSA.toTypedDataHash(
-            _verifier.DOMAIN_SEPARATOR(),
+            deOrder.DOMAIN_SEPARATOR(),
             structHash
         );
         // 签名
@@ -232,11 +217,11 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
         uint256 period,
         bytes memory expectRevert
     ) public {
-        uint256 nonce = _verifier.nonces(sign, _orderId);
+        uint256 nonce = deOrder.nonces(sign, _orderId);
         uint256 deadline = 1000000;
         bytes32 structHash = keccak256(
             abi.encode(
-                _verifier.PERMITAPPENDSTAGE_TYPEHASH(),
+                deOrder.PERMITAPPENDSTAGE_TYPEHASH(),
                 _orderId,
                 amount,
                 period,
@@ -245,7 +230,7 @@ contract DeOrderTest is Test, Utilities, Permit2Sign {
             )
         );
         bytes32 digest = ECDSA.toTypedDataHash(
-            _verifier.DOMAIN_SEPARATOR(),
+            deOrder.DOMAIN_SEPARATOR(),
             structHash
         );
         // 签名

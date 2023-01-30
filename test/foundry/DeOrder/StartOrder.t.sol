@@ -33,7 +33,7 @@ contract StartOrder is DeOrderTest {
         // 甲方调用
         startOrder(issuer);
         Order memory order = deOrder.getOrder(1);
-        DeStage.Stage[] memory stages = deStage.getStages(1);
+        DeStage.Stage[] memory stages = deOrder.getStages(1);
         assert(order.progress == OrderProgess.Ongoing);
         assert(stages[0].status == DeStage.StageStatus.Init);
     }

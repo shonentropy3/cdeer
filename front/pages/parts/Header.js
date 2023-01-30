@@ -179,7 +179,8 @@ export default function Header(props) {
                             <Popover content={content} trigger="click">
                                 {/*  onClick={() => router.push(`/messageCenter`)} */}
                                 <div className="message" onClick={() => getUnReadMsgList()}>
-                                    <div className={isUnread === 'unread' ? 'unread' : ''}></div>
+                                    <Image src="/img/header_notice.png" alt="" layout="fill" objectFit="cover"  />
+                                    <div className={isUnread === 'unread' ? 'unread' : ''} />
                                 </div>
                             </Popover>
                             

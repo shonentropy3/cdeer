@@ -15,12 +15,12 @@ contract IssuerMetadata is IMetadata {
     using uint12a4 for uint48;
 
     ITask public taskAddr;
-    IOrder public orderAddr;
+    address public orderAddr;
     IMetaComm public metaComm;
 
     constructor(address _task, address _order, address _metaComm) {
         taskAddr = ITask(_task);
-        orderAddr = IOrder(_order);
+        orderAddr = _order;
 
         metaComm = IMetaComm(_metaComm);
     }
@@ -36,11 +36,10 @@ contract IssuerMetadata is IMetadata {
         uint48 taskskills,
         string memory attachment
     ) internal view returns (string memory) {
-        address stage = orderAddr.stage();
 
-        Order memory order = orderAddr.getOrder(orderId);
+        Order memory order = IOrder(orderAddr).getOrder(orderId);
         uint startTs = order.startDate;
-        uint endTs = startTs + IStage(stage).totalStagePeriod(orderId);
+        uint endTs = startTs + IStage(orderAddr).totalStagePeriod(orderId);
 
         string memory valueStr = metaComm.tokenAmountApprox(
             order.amount,
@@ -80,7 +79,7 @@ contract IssuerMetadata is IMetadata {
     ) internal view returns (string memory) {
         uint taskId;
         {
-            Order memory order = orderAddr.getOrder(orderId);
+            Order memory order = IOrder(orderAddr).getOrder(orderId);
             taskId = order.taskId;
         }
 
@@ -163,7 +162,7 @@ contract IssuerMetadata is IMetadata {
     }
 
     function generateSVG(uint orderId) public view returns (bytes memory svg) {
-        Order memory order = orderAddr.getOrder(orderId);
+        Order memory order = IOrder(orderAddr).getOrder(orderId);
         uint taskId = order.taskId;
         (
             string memory title,

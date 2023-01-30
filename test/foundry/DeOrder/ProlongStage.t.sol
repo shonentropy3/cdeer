@@ -46,9 +46,9 @@ contract ProlongStage is DeOrderTest {
         permitStage(worker, issuer, 1, amounts, periods, "Due", ""); // 阶段划分
         payOrder(issuer, 100, zero); // 支付
         startOrder(issuer); // 开始任务
-        DeStage.Stage[] memory stages0 = deStage.getStages(1);
+        DeStage.Stage[] memory stages0 = deOrder.getStages(1);
         prolongStage(issuer, worker, 1, 1, 1000, "");
-        DeStage.Stage[] memory stages = deStage.getStages(1);
+        DeStage.Stage[] memory stages = deOrder.getStages(1);
         assertEq(stages0[0].period, stages[0].period);
         assertEq(stages0[1].period + 1000, stages[1].period);
     }

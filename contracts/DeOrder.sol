@@ -2,39 +2,37 @@
 
 pragma solidity ^0.8.0;
 
-import "./interface/IOrder.sol";
-import "./interface/IOrderSBT.sol";
-import "./interface/IStage.sol";
-import './interface/IWETH9.sol';
-import './interface/IPermit2.sol';
-import './interface/IOrderVerifier.sol';
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/draft-IERC20Permit.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
+
+import "./interface/IOrderSBT.sol";
+import './interface/IWETH9.sol';
+import './interface/IPermit2.sol';
+import './interface/IOrderVerifier.sol';
+
+import "./DeOrderVerifier.sol";
+import "./DeStage.sol";
 import './Multicall.sol';
 
 
 
-contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
+contract DeOrder is DeStage, DeOrderVerifier, Multicall, Ownable, ReentrancyGuard {
     error PermissionsError();
     error ProgressError();
-    error AmountError(uint reason); // 0: mismatch , 1: need pay
-    error ParamError();
     error UnSupportToken();
 
     uint private constant FEE_BASE = 10000;
     uint public fee = 500;   // 5%
     address public feeTo;
 
-    address public stage;
     address public builderSBT;
     address public issuerSBT;
 
     IWETH9 public immutable WETH;
     IPermit2 public immutable PERMIT2;
-    IOrderVerifier public immutable verifier;
     
 
     uint public currOrderId;
@@ -51,13 +49,11 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
     event Withdraw(uint indexed orderId, uint amount, uint stageIndex);
     event AttachmentUpdated(uint indexed orderId, string attachment);
     event FeeUpdated(uint fee, address feeTo);
-    event StageUpdated(address stage);
     event SupportToken(address token, bool enabled);
 
-    constructor(address _weth, address _permit2, address _verifier) {
+    constructor(address _weth, address _permit2) {
         WETH = IWETH9(_weth);
         PERMIT2 = IPermit2(_permit2);
-        verifier = IOrderVerifier(_verifier);
 
         feeTo = msg.sender;
 
@@ -95,7 +91,7 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
         emit OrderCreated(_taskId, currOrderId, _issuer, _worker, _token, _amount);
     }
 
-    function getOrder(uint orderId) external view override returns (Order memory) {
+    function getOrder(uint orderId) public override view returns (Order memory) {
         return orders[orderId];
     }
 
@@ -129,7 +125,7 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
         Order storage order = orders[_orderId];
         if(order.progress >= OrderProgess.Ongoing) revert ProgressError();
 
-        address signAddr = verifier.recoverPermitStage(_orderId, _amounts, _periods, uint(payType),
+        address signAddr = recoverPermitStage(_orderId, _amounts, _periods, uint(payType),
             nonce, deadline, v, r, s);
         
         roleCheck(order, signAddr);
@@ -137,7 +133,7 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
         order.progress = OrderProgess.Staged;
         order.payType = payType;
 
-        IStage(stage).setStage(_orderId, _amounts, _periods);
+        setStage(_orderId, _amounts, _periods);
     }
 
     // 
@@ -147,9 +143,9 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
         if(order.progress != OrderProgess.Ongoing) revert ProgressError();
 
 
-        address signAddr = verifier.recoverProlongStage(_orderId, _stageIndex, _appendPeriod, nonce, deadline, v, r,  s );
+        address signAddr = recoverProlongStage(_orderId, _stageIndex, _appendPeriod, nonce, deadline, v, r,  s );
         roleCheck(order, signAddr);
-        IStage(stage).prolongStage(_orderId, _stageIndex, _appendPeriod);
+        prolongStage(_orderId, _stageIndex, _appendPeriod);
     }
 
     function appendStage(uint _orderId, uint amount, uint period, uint nonce, uint deadline, uint8 v, bytes32 r, bytes32 s) external payable {
@@ -157,13 +153,13 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
         Order storage order = orders[_orderId];
         if(order.progress != OrderProgess.Ongoing) revert ProgressError();
 
-        address signAddr = verifier.recoverAppendStage(_orderId, amount, period, nonce, deadline, v, r, s);
+        address signAddr = recoverAppendStage(_orderId, amount, period, nonce, deadline, v, r, s);
         roleCheck(order, signAddr);
 
         order.amount += uint96(amount);
         if(order.payed < order.amount) revert AmountError(1);
 
-        IStage(stage).appendStage(_orderId, amount, period);
+        appendStage(_orderId, amount, period);
     }
 
     function roleCheck(Order storage order, address signAddr) internal {
@@ -254,14 +250,14 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
             revert ProgressError();
         }
         
-        if(order.amount != IStage(stage).totalAmount(_orderId)) revert AmountError(0);
+        if(order.amount != stageTotalAmount(_orderId)) revert AmountError(0);
         if(order.payed < order.amount) revert AmountError(1);
 
         order.progress = OrderProgess.Ongoing;
         order.startDate = uint32(block.timestamp);
         emit OrderStarted(_orderId, msg.sender, uint(order.payType));
         
-        IStage(stage).startOrder(_orderId);
+        startOrderStage(_orderId);
     }
 
     // 甲方验收
@@ -271,7 +267,7 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
         if(msg.sender != order.issuer) revert PermissionsError();
 
         for (uint i = 0; i < _stageIndexs.length;) {
-            IStage(stage).confirmDelivery(_orderId, _stageIndexs[i]);
+            confirmDelivery(_orderId, _stageIndexs[i]);
             unchecked{ i++; }
         }
     }
@@ -290,7 +286,7 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
         } 
 
         (uint currStageIndex, uint issuerAmount, uint workerAmount) = 
-            IStage(stage).abortOrder(_orderId, issuerAbort);
+            abortOrder(_orderId, issuerAbort);
 
         if (issuerAbort) {
             order.progress = OrderProgess.IssuerAbort;
@@ -332,7 +328,7 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
         if(order.worker != msg.sender) revert PermissionsError();
         if(order.progress != OrderProgess.Ongoing) revert ProgressError();
 
-        (uint pending, uint nextStage) = IStage(stage).pendingWithdraw(_orderId);
+        (uint pending, uint nextStage) = pendingWithdraw(_orderId);
         if (pending > 0) {
             if (fee > 0) {
                 uint feeAmount;
@@ -346,7 +342,7 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
                 doTransfer(order.token, to, pending);
             }
             
-            IStage(stage).withdrawStage(_orderId, nextStage);
+            withdrawStage(_orderId, nextStage);
         }
         
         if (nextStage > 0) {
@@ -355,7 +351,7 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
             }
         }
         
-        if (nextStage >= IStage(stage).stagesLength(_orderId)) {
+        if (nextStage >= stagesLength(_orderId)) {
             order.progress = OrderProgess.Done;
 
             if (builderSBT != address(0)) {
@@ -381,20 +377,11 @@ contract DeOrder is IOrder, Multicall, Ownable, ReentrancyGuard {
         }
     }
 
-    function safe96(uint n) internal {
-        if(n >= 2**96) revert AmountError(0);
-    }
-
     function setFeeTo(uint _fee, address _feeTo) external onlyOwner {
         fee = _fee;
         feeTo = _feeTo;
         emit FeeUpdated(_fee, _feeTo);
     } 
-
-    function setDeStage(address _stage) external onlyOwner {
-        stage = _stage;
-        emit StageUpdated(_stage);
-    }
 
     function setSBT(address _builder, address _issuer) external onlyOwner {
         builderSBT = _builder;
