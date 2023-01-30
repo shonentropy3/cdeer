@@ -36,10 +36,10 @@ contract AppendStage is DeOrderTest {
         permitStage(worker, issuer, 1, amounts, periods, "Due", ""); // 阶段划分
         payOrder(issuer, 100, zero); // 支付
         startOrder(issuer); // 开始任务
-        DeStage.Stage[] memory stages0 = deStage.getStages(1);
+        DeStage.Stage[] memory stages0 = deOrder.getStages(1);
         payOrder(issuer, 10, zero); // 支付
         appendStage(worker, issuer, 1, 10, 1000, "");
-        DeStage.Stage[] memory stages = deStage.getStages(1);
+        DeStage.Stage[] memory stages = deOrder.getStages(1);
         assertEq(stages0.length, 2);
         assertEq(stages.length, 3);
         assertEq(stages[2].period, 1000);

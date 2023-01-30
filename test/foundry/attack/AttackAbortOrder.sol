@@ -1,18 +1,15 @@
 import {DeOrder} from "contracts/DeOrder.sol";
 import {WETH} from "contracts/mock/WETH.sol";
-import {DeOrderVerifier} from "contracts/DeOrderVerifier.sol";
 import "contracts/interface/IOrder.sol";
 
 contract AttackAbortOrder {
     DeOrder public deOrder;
     WETH public weth;
-    DeOrderVerifier public verifier;
 
     // 初始化Bank合约地址
-    constructor(DeOrder _deOrder, WETH _weth, DeOrderVerifier _verifier) {
+    constructor(DeOrder _deOrder, WETH _weth) {
         deOrder = _deOrder;
         weth = _weth;
-        verifier = _verifier;
     }
 
     function start(

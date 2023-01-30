@@ -16,7 +16,7 @@ contract PermitStage is DeOrderTest {
         periods = [1000];
         permitStage(issuer, worker, 1, amounts, periods, "Due", "");
         Order memory order = deOrder.getOrder(1);
-        DeStage.Stage[] memory stages = deStage.getStages(1);
+        DeStage.Stage[] memory stages = deOrder.getStages(1);
         assertTrue(order.progress == OrderProgess.Staged);
         assertEq(stages[0].amount, 100);
         assertEq(stages[0].period, 1000);
@@ -32,7 +32,7 @@ contract PermitStage is DeOrderTest {
         // 乙方签名 甲方提交
         permitStage(worker, issuer, 1, amounts, periods, "Confirm", "");
         Order memory order = deOrder.getOrder(1);
-        DeStage.Stage[] memory stages = deStage.getStages(1);
+        DeStage.Stage[] memory stages = deOrder.getStages(1);
         assertTrue(order.progress == OrderProgess.Staged);
         assertEq(stages[0].amount, 100);
         assertEq(stages[0].period, 1000);
@@ -148,7 +148,7 @@ contract PermitStage is DeOrderTest {
         uint256 deadline = 200;
         bytes32 structHash = keccak256(
             abi.encode(
-                _verifier.PERMITSTAGE_TYPEHASH(),
+                deOrder.PERMITSTAGE_TYPEHASH(),
                 _orderId,
                 keccak256(abi.encodePacked(amounts)),
                 keccak256(abi.encodePacked(periods)),
@@ -158,7 +158,7 @@ contract PermitStage is DeOrderTest {
             )
         );
         bytes32 digest = ECDSA.toTypedDataHash(
-            _verifier.DOMAIN_SEPARATOR(),
+            deOrder.DOMAIN_SEPARATOR(),
             structHash
         );
         // 签名
@@ -185,7 +185,7 @@ contract PermitStage is DeOrderTest {
         nonce = 0;
         structHash = keccak256(
             abi.encode(
-                _verifier.PERMITSTAGE_TYPEHASH(),
+                deOrder.PERMITSTAGE_TYPEHASH(),
                 _orderId,
                 keccak256(abi.encodePacked(amounts)),
                 keccak256(abi.encodePacked(periods)),
@@ -195,7 +195,7 @@ contract PermitStage is DeOrderTest {
             )
         );
         digest = ECDSA.toTypedDataHash(
-            _verifier.DOMAIN_SEPARATOR(),
+            deOrder.DOMAIN_SEPARATOR(),
             structHash
         );
         // 签名

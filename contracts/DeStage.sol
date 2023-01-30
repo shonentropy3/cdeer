@@ -1,16 +1,14 @@
+pragma solidity ^0.8.0;
+
 import "./interface/IOrder.sol";
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-
-//TODO: as upgradeable
-contract DeStage is Ownable {
+abstract contract DeStage is IOrder {
+    error AmountError(uint reason); // 0: amount error, 1: need pay
     error InvalidCaller();
-    error ParamError(uint);
+    error ParamError();
     error StatusError();
-    error AmountError();
 
-    uint public maxStages = 12;
-    address public deOrder;
+    uint constant maxStages = 12;
 
     enum StageStatus {
         Init,
@@ -33,24 +31,17 @@ contract DeStage is Ownable {
     event SetStage(uint indexed orderId, uint[] amounts, uint[] periods);
     event ProlongStage(uint indexed orderId, uint stageIndex, uint appendPeriod);
     event AppendStage(uint indexed orderId, uint amount, uint period);
-    event SetDeorder(address deorder);
-    event SetMaxStages(uint max);
 
-    constructor(address _order) {
-        deOrder = _order; 
-        emit SetDeorder(_order);
+    constructor() internal {
     }
 
-    modifier onlyDeorder() {
-        if(msg.sender != deOrder) revert InvalidCaller(); 
-        _;
-    }
+    function getOrder(uint orderId) public override virtual view returns (Order memory);
 
 
-    function setStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods) external onlyDeorder {
+    function setStage(uint _orderId, uint[] memory _amounts, uint[] memory _periods) internal {
 
-        if(_amounts.length != _periods.length || _amounts.length == 0) revert ParamError(0);
-        if(maxStages < _amounts.length) revert ParamError(1);
+        if(_amounts.length != _periods.length || _amounts.length == 0) revert ParamError();
+        if(maxStages < _amounts.length) revert ParamError();
 
         delete orderStages[_orderId];
         Stage[] storage stages = orderStages[_orderId];
@@ -69,7 +60,7 @@ contract DeStage is Ownable {
         emit SetStage(_orderId, _amounts, _periods);
     }
 
-    function prolongStage(uint _orderId, uint _stageIndex, uint _appendPeriod) external onlyDeorder {
+    function prolongStage(uint _orderId, uint _stageIndex, uint _appendPeriod) internal {
         safe32(_appendPeriod);
 
         Stage storage stage = orderStages[_orderId][_stageIndex];
@@ -79,7 +70,7 @@ contract DeStage is Ownable {
         emit ProlongStage(_orderId, _stageIndex, _appendPeriod);
     }
 
-    function appendStage(uint _orderId, uint _amount, uint _period) external onlyDeorder {
+    function appendStage(uint _orderId, uint _amount, uint _period) internal {
         safe32(_period);
 
         Stage[] storage stages = orderStages[_orderId];
@@ -100,22 +91,22 @@ contract DeStage is Ownable {
         }
     }
 
-    function totalAmount(uint orderId) external view returns(uint total)  {
+    function stageTotalAmount(uint orderId) public view returns(uint total)  {
         Stage[] storage stages = orderStages[orderId];
         for ( uint i = 0; i < stages.length; i++ ) {
             total += stages[i].amount;
         }
     }
 
-    function startOrder(uint _orderId) external onlyDeorder {
+    function startOrderStage(uint _orderId) internal {
         Stage[] storage stages = orderStages[_orderId];
         if (stages[0].period == 0) {
             stages[0].status = StageStatus.Accepted;
         }
     }
 
-    function pendingWithdraw(uint _orderId) external view returns (uint pending, uint nextStage) {
-        Order memory order = IOrder(deOrder).getOrder(_orderId);
+    function pendingWithdraw(uint _orderId) public view returns (uint pending, uint nextStage) {
+        Order memory order = getOrder(_orderId);
         if(order.progress != OrderProgess.Ongoing) revert StatusError();
         uint lastStageEnd = order.startDate;
         bool payByDue = order.payType == PaymentType.Due;
@@ -134,7 +125,7 @@ contract DeStage is Ownable {
 
     }
 
-    function withdrawStage(uint _orderId, uint _nextStage) external onlyDeorder {
+    function withdrawStage(uint _orderId, uint _nextStage) internal {
         Stage[] storage stages = orderStages[_orderId];
 
         for ( uint i = 0; i < stages.length && i < _nextStage; i++) {
@@ -144,11 +135,11 @@ contract DeStage is Ownable {
         }
     }
 
-    function abortOrder(uint _orderId, bool issuerAbort) external onlyDeorder returns(uint currStageIndex, uint issuerAmount, uint workerAmount) {
+    function abortOrder(uint _orderId, bool issuerAbort) internal returns(uint currStageIndex, uint issuerAmount, uint workerAmount) {
         uint stageStartDate;
         ( currStageIndex, stageStartDate) = ongoingStage(_orderId);
         
-        Order memory order = IOrder(deOrder).getOrder(_orderId);
+        Order memory order = getOrder(_orderId);
         bool payByDue = order.payType == PaymentType.Due;
         Stage[] storage stages = orderStages[_orderId];
 
@@ -184,7 +175,7 @@ contract DeStage is Ownable {
     }
 
         // confirm must continuous
-    function confirmDelivery(uint _orderId, uint _stageIndex) external onlyDeorder {
+    function confirmDelivery(uint _orderId, uint _stageIndex) internal {
         StageStatus currStatus = orderStages[_orderId][_stageIndex].status;
         if( currStatus == StageStatus.Withdrawed || currStatus == StageStatus.Aborted ) revert StatusError();
 
@@ -202,7 +193,7 @@ contract DeStage is Ownable {
         emit ConfirmOrderStage(_orderId, _stageIndex);
     }
 
-    function stagesLength(uint orderId) external view returns(uint len)  {
+    function stagesLength(uint orderId) public view returns(uint len)  {
         len = orderStages[orderId].length; 
     }
 
@@ -211,7 +202,7 @@ contract DeStage is Ownable {
     }
 
     function ongoingStage(uint _orderId) public view returns (uint stageIndex, uint stageStartDate) {
-        Order memory order = IOrder(deOrder).getOrder(_orderId);
+        Order memory order = getOrder(_orderId);
         stageStartDate = order.startDate;
         if(order.progress != OrderProgess.Ongoing) revert StatusError();
 
@@ -230,23 +221,13 @@ contract DeStage is Ownable {
         revert StatusError();
     }
 
-
-    function safe96(uint n) internal {
-        if(n >= 2**96) revert AmountError();
+    function safe96(uint n) internal pure {
+        if(n >= 2**96) revert AmountError(0);
     }
 
-    function safe32(uint n) internal {
-        if(n >= 2**32) revert AmountError();
+    function safe32(uint n) internal pure {
+        if(n >= 2**32) revert AmountError(0);
     }
 
-    function setMaxStages(uint8 _maxStages) external onlyOwner {
-        maxStages = _maxStages;
-        emit SetMaxStages(_maxStages);
-    }
-
-    function setDeOrder(address _order) external onlyOwner {
-        deOrder = _order;
-        emit SetDeorder(_order);
-    }
 
 }

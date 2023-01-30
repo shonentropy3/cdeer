@@ -14,8 +14,6 @@ import {AttackMulticallWithdraw} from "./AttackMulticallWithdraw.sol";
 import {AttackTransfer} from "./AttackTransfer.t.sol";
 import {AttackModifyOrder} from "./AttackModifyOrder.sol";
 import {AttackAbortOrder} from "./AttackAbortOrder.sol";
-import {DeOrderVerifier} from "contracts/DeOrderVerifier.sol";
-import {DeStage} from "contracts/DeStage.sol";
 
 contract AttackTest is Test {
     AttackRefund attackRefund;
@@ -25,9 +23,7 @@ contract AttackTest is Test {
     AttackModifyOrder attackModifyOrder;
     AttackAbortOrder attackAbortOrder;
     DeOrder public deOrder;
-    DeStage public deStage;
     WETH public weth;
-    DeOrderVerifier public verifier;
     MockERC20 token0;
     address owner; // 合约拥有者
     address issuer; // 甲方
@@ -42,23 +38,19 @@ contract AttackTest is Test {
         other = vm.addr(3);
         vm.startPrank(owner); // 切换合约发起人
         weth = new WETH();
-        verifier = new DeOrderVerifier();
-        deOrder = new DeOrder(address(weth), address(0), address(verifier));
-        deStage = new DeStage(address(deOrder));
-        deOrder.setDeStage(address(deStage));
+        deOrder = new DeOrder(address(weth), address(0));
         attackRefund = new AttackRefund(deOrder, weth);
-        attackWithdraw = new AttackWithdraw(deOrder, weth, verifier);
+        attackWithdraw = new AttackWithdraw(deOrder, weth);
         attackTransfer = new AttackTransfer(deOrder, weth);
         attackModifyOrder = new AttackModifyOrder(
             deOrder,
             weth,
             address(token0)
         );
-        attackAbortOrder = new AttackAbortOrder(deOrder, weth, verifier);
+        attackAbortOrder = new AttackAbortOrder(deOrder, weth);
         attackMulticallWithdraw = new AttackMulticallWithdraw(
             deOrder,
-            weth,
-            verifier
+            weth
         );
         vm.deal(owner, 100 ether); // 初始化原生币余额
         vm.deal(issuer, 1 ether); // 初始化原生币余额
@@ -91,7 +83,7 @@ contract AttackTest is Test {
         uint256 deadline = 20000;
         bytes32 structHash = keccak256(
             abi.encode(
-                verifier.PERMITSTAGE_TYPEHASH(),
+                deOrder.PERMITSTAGE_TYPEHASH(),
                 _orderId,
                 keccak256(abi.encodePacked(_amounts)),
                 keccak256(abi.encodePacked(_periods)),
@@ -101,7 +93,7 @@ contract AttackTest is Test {
             )
         );
         bytes32 digest = ECDSA.toTypedDataHash(
-            verifier.DOMAIN_SEPARATOR(),
+            deOrder.DOMAIN_SEPARATOR(),
             structHash
         );
         // 签名
