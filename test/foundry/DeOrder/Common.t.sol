@@ -70,19 +70,6 @@ contract Common is DeOrderTest {
         vm.stopPrank();
     }
 
-    function testSetDeStage() public {
-        // 非合约创建者调用
-        vm.startPrank(other);
-        vm.expectRevert("Ownable: caller is not the owner");
-        deOrder.setDeStage(address(token0));
-        vm.stopPrank();
-        // 正常调用
-        vm.startPrank(owner);
-        deOrder.setDeStage(address(token0));
-        assertEq(deOrder.stage(), address(token0));
-        vm.stopPrank();
-    }
-
     function testSetFeeTo() public {
         // 非合约创建者调用
         vm.startPrank(other);

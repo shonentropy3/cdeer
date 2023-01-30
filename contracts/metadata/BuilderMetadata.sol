@@ -15,7 +15,7 @@ contract BuilderMetadata is IMetadata {
     using uint12a4 for uint48;
 
     ITask public taskAddr;
-    IOrder public orderAddr;
+    address public orderAddr;
     IMetaComm public metaComm;
 
     constructor(
@@ -24,7 +24,7 @@ contract BuilderMetadata is IMetadata {
         address _metaComm
     ) {
         taskAddr = ITask(_task);
-        orderAddr = IOrder(_order);
+        orderAddr = _order;
 
         metaComm = IMetaComm(_metaComm);
     }
@@ -43,11 +43,10 @@ contract BuilderMetadata is IMetadata {
         uint48 taskskills,
         string memory attachment
     ) internal view returns (string memory) {
-        address stage = orderAddr.stage();
 
-        Order memory order = orderAddr.getOrder(orderId);
+        Order memory order = IOrder(orderAddr).getOrder(orderId);
         uint256 startTs = order.startDate;
-        uint256 endTs = startTs + IStage(stage).totalStagePeriod(orderId);
+        uint256 endTs = startTs + IStage(orderAddr).totalStagePeriod(orderId);
 
         string memory valueStr = metaComm.tokenAmountApprox(
             order.amount,
@@ -90,7 +89,7 @@ contract BuilderMetadata is IMetadata {
     {
         uint256 taskId;
         {
-            Order memory order = orderAddr.getOrder(orderId);
+            Order memory order = IOrder(orderAddr).getOrder(orderId);
             taskId = order.taskId;
         }
 
@@ -180,7 +179,7 @@ contract BuilderMetadata is IMetadata {
         view
         returns (bytes memory svg)
     {
-        Order memory order = orderAddr.getOrder(orderId);
+        Order memory order = IOrder(orderAddr).getOrder(orderId);
         uint256 taskId = order.taskId;
         (
             string memory title,
